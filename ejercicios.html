@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitCasa – Biblioteca de ejercicios funcionales</title>
+  <meta name="description" content="Colección educativa de ejercicios funcionales con filtros, búsqueda y detalles accesibles. No sustituye valoración profesional.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="ejercicios.css">
+  <script defer src="ejercicios.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido principal</a>
+  <header class="site-header">
+    <p class="aviso-superior">FitCasa ofrece contenido informativo y no sustituye la valoración de un profesional de la salud.</p>
+    <nav aria-label="Navegación principal" class="container">
+      <a href="index.html" class="logo">FitCasa</a>
+      <button type="button" class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="menu-principal">Menú</button>
+      <ul id="menu-principal" class="menu">
+        <li><a href="index.html#beneficios">Beneficios</a></li>
+        <li><a href="index.html#programas">Programas</a></li>
+        <li><a href="escoliosis.html">Escoliosis</a></li>
+        <li><a href="ejercicios.html" aria-current="page">Ejercicios</a></li>
+        <li><a href="index.html#testimonios">Testimonios</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="contenido" tabindex="-1" class="container">
+    <h1 class="texto-3xl">Biblioteca de ejercicios funcionales</h1>
+    <section aria-labelledby="filtros-titulo" class="filters-section">
+      <h2 id="filtros-titulo" class="sr-only">Filtros y búsqueda</h2>
+      <form id="filter-form" aria-describedby="result-count" novalidate>
+        <fieldset>
+          <legend>Búsqueda</legend>
+          <label for="search-input">Buscar por nombre</label>
+          <input type="search" id="search-input" name="search" placeholder="Ejemplo: Sentadilla" />
+        </fieldset>
+
+        <fieldset>
+          <legend>Duración</legend>
+          <label><input type="checkbox" name="duration" value="corta" /> ≤10 min</label>
+          <label><input type="checkbox" name="duration" value="media" /> 10‑20 min</label>
+          <label><input type="checkbox" name="duration" value="larga" /> >20 min</label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Dificultad</legend>
+          <label><input type="checkbox" name="difficulty" value="principiante" /> Principiante</label>
+          <label><input type="checkbox" name="difficulty" value="intermedio" /> Intermedio</label>
+          <label><input type="checkbox" name="difficulty" value="avanzado" /> Avanzado</label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Equipamiento</legend>
+          <label><input type="checkbox" name="equipment" value="ninguno" /> Ninguno</label>
+          <label><input type="checkbox" name="equipment" value="bandas" /> Bandas elásticas</label>
+          <label><input type="checkbox" name="equipment" value="peso" /> Pesas / Mancuernas</label>
+          <label><input type="checkbox" name="equipment" value="colchoneta" /> Colchoneta</label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Zona corporal</legend>
+          <label><input type="checkbox" name="zone" value="piernas" /> Piernas</label>
+          <label><input type="checkbox" name="zone" value="core" /> Core / Abdomen</label>
+          <label><input type="checkbox" name="zone" value="espalda" /> Espalda</label>
+          <label><input type="checkbox" name="zone" value="brazos" /> Brazos</label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Adaptación para escoliosis</legend>
+          <label><input type="checkbox" name="adaptation" value="true" /> Disponible</label>
+        </fieldset>
+
+        <div class="filter-actions">
+          <button type="button" id="clear-filters">Limpiar filtros</button>
+          <label for="order-select">Ordenar por</label>
+          <select id="order-select">
+            <option value="name">Nombre</option>
+            <option value="duration">Duración</option>
+            <option value="difficulty">Dificultad</option>
+          </select>
+        </div>
+      </form>
+      <p id="result-count" aria-live="polite" class="result-counter">Mostrando 0 resultados.</p>
+    </section>
+
+    <section id="exercise-list" aria-live="polite" aria-atomic="true" class="exercise-list"></section>
+  </main>
+
+  <dialog id="exercise-dialog" aria-labelledby="dialog-title">
+    <h2 id="dialog-title"></h2>
+    <div id="dialog-content"></div>
+    <button type="button" id="close-dialog">Cerrar</button>
+  </dialog>
+
+  <footer class="site-footer">
+    <p><strong>Aviso de salud y responsabilidad:</strong> La información es educativa y no sustituye la valoración profesional. Consulte siempre a su médico o fisioterapeuta antes de iniciar cualquier ejercicio.</p>
+    <p>© FitCasa. Todos los derechos reservados.</p>
+  </footer>
+</body>
+</html>
