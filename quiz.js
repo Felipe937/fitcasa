@@ -304,9 +304,23 @@
     submitButton.hidden = currentStep !== TOTAL_STEPS;
   }
 
+  function animateStep(stepPanel) {
+    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced || !window.requestAnimationFrame || !stepPanel) return;
+    stepPanel.classList.remove('step-enter', 'step-enter-active');
+    stepPanel.classList.add('step-enter');
+    window.requestAnimationFrame(function () {
+      stepPanel.classList.add('step-enter-active');
+    });
+    window.setTimeout(function () {
+      stepPanel.classList.remove('step-enter', 'step-enter-active');
+    }, 280);
+  }
+
   function goToStep(step) {
     currentStep = step;
     updateStep();
+    animateStep(steps.filter(function (stepPanel) { return Number(stepPanel.dataset.step) === step; })[0]);
     var heading = document.getElementById('step-' + (step === 1 ? 'one' : step === 2 ? 'two' : 'three') + '-heading');
     if (heading) heading.focus();
   }

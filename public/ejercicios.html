@@ -7,6 +7,7 @@
   <meta name="description" content="Colección educativa de ejercicios funcionales con filtros, búsqueda y detalles accesibles. No sustituye valoración profesional.">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="ejercicios.css">
+  <script defer src="script.js"></script>
   <script defer src="ejercicios.js"></script>
 </head>
 <body>
@@ -30,9 +31,9 @@
 
   <main id="contenido" tabindex="-1" class="container exercise-main">
     <span class="eyebrow">Biblioteca FitCasa</span>
-    <h1 class="texto-3xl">Ejercicios para moverte en casa</h1>
+    <h1 class="texto-3xl" data-reveal>Ejercicios para moverte en casa</h1>
     <p class="page-lead">Busca una actividad por tiempo, dificultad, equipamiento o zona corporal. El contenido es educativo y no sustituye una valoración profesional.</p>
-    <section aria-labelledby="filtros-titulo" class="filters-section">
+    <section aria-labelledby="filtros-titulo" class="filters-section" data-reveal>
       <h2 id="filtros-titulo" class="sr-only">Filtros y búsqueda</h2>
       <form id="filter-form" aria-describedby="result-count" novalidate>
         <fieldset>

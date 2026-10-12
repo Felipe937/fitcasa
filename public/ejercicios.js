@@ -28,6 +28,7 @@
   const createCard = (exercise) => {
     const card = document.createElement('article');
     card.className = 'exercise-card';
+    card.setAttribute('data-reveal', '');
 
     const title = document.createElement('h3');
     title.textContent = exercise.name;
@@ -71,6 +72,7 @@
       list.forEach((ex) => fragment.appendChild(createCard(ex)));
       exerciseListEl.appendChild(fragment);
     }
+    if (window.FitCasaMotion) window.FitCasaMotion.observe(exerciseListEl);
     // Actualizar contador con aria‑live
     resultCountEl.textContent = `${list.length} ejercicio${list.length !== 1 ? 's' : ''} encontrado${list.length !== 1 ? 's' : ''}`;
   };

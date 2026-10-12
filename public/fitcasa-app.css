@@ -73,7 +73,26 @@
   height: 100%;
   background: var(--color-secundario);
   border-radius: inherit;
-  transition: width 180ms ease-in-out;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .progress-value {
+    transition: width var(--duracion-media) var(--curva-suave);
+  }
+
+  .step-panel {
+    transition: opacity var(--duracion-media) var(--curva-suave), transform var(--duracion-media) var(--curva-suave);
+  }
+
+  .step-panel.step-enter {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+
+  .step-panel.step-enter-active {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .step-panel > h2 {
@@ -221,5 +240,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .progress-value { transition: none; }
+  .progress-value,
+  .step-panel { transition: none; }
+  .step-panel.step-enter,
+  .step-panel.step-enter-active { opacity: 1; transform: none; }
 }
