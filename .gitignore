@@ -1,0 +1,16 @@
+# .gitignore for FitCasa project
+# System files
+.DS_Store
+Thumbs.db
+
+# Node modules (if any)
+node_modules/
+
+# VS Code settings
+.vscode/
+
+# Log files
+*.log
+
+# Antigravity local artifact folder (if present in this repo)
+# (none detected, placeholder for future use)

@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+# En GitHub Pages los archivos robots.txt se sirven en la raíz del dominio (ej. https://felipe937.github.io/robots.txt).
+# Los rastradores solo leen robots.txt cuando el sitio está en la raíz de un dominio propio.
+# Por tanto, en un proyecto bajo un subdirectorio (fitcasa) este archivo no tendrá efecto
+# hasta que se migre a un dominio propio o se sirva desde la raíz del sitio.
