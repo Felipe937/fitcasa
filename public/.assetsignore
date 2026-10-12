@@ -1,0 +1,12 @@
+# Archivos y carpetas que Wrangler NO debe subir como assets públicos.
+# Este archivo debe estar dentro del directorio de assets (public/).
+.git
+.github
+.wrangler
+.editorconfig
+contrast_check.py
+*.md
+README.md
+node_modules
+*.log
+*.py

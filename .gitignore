@@ -1,9 +1,10 @@
 # .gitignore for FitCasa project
+
 # System files
 .DS_Store
 Thumbs.db
 
-# Node modules (if any)
+# Node modules
 node_modules/
 
 # VS Code settings
@@ -12,5 +13,5 @@ node_modules/
 # Log files
 *.log
 
-# Antigravity local artifact folder (if present in this repo)
-# (none detected, placeholder for future use)
+# Wrangler (Cloudflare Pages CLI)
+.wrangler/
