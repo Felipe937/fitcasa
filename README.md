@@ -22,6 +22,10 @@ fitcasa/
 ├── .github/
 │   └── dependabot.yml       ← Configuración de Dependabot
 ├── contrast_check.py        ← Script de verificación de contraste WCAG
+├── quiz.html / quiz.js      ← Cuestionario de sugerencias educativas
+├── panel.html / panel.js    ← Panel local de seguimiento
+├── fitcasa-app.css          ← Componentes visuales compartidos
+├── fitcasa-storage.js       ← Persistencia local versionada y tolerante a fallos
 ├── wrangler.jsonc           ← Configuración de Cloudflare Pages / Wrangler
 └── README.md                ← Este archivo
 ```
@@ -39,6 +43,8 @@ python -m http.server 8000
 ```
 
 Acceder a `http://localhost:8000`.
+
+Las rutas nuevas son `/quiz.html` y `/panel.html`. El despliegue de `public/` incluye también las copias publicables de estas páginas, de sus scripts, de la hoja de componentes y de `ejercicios.json`.
 
 > **Nota sobre rutas:** en local la ruta base es `/`; en Cloudflare Pages se sirve desde la raíz del dominio/subdominio asignado. Todas las referencias dentro de `index.html` usan rutas relativas (`./style.css`, `./script.js`) para funcionar en ambos entornos.
 

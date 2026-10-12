@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitCasa – Sugerencias de actividad</title>
+  <meta name="description" content="Cuestionario educativo para organizar sugerencias generales de actividad en FitCasa.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="fitcasa-app.css">
+  <script defer src="script.js"></script>
+  <script defer src="fitcasa-storage.js"></script>
+  <script defer src="quiz.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido principal</a>
+  <header class="site-header">
+    <p class="aviso-superior">FitCasa ofrece contenido informativo y no sustituye la valoración de un profesional de la salud.</p>
+    <nav aria-label="Navegación principal" class="container">
+      <a href="index.html" class="logo">FitCasa</a>
+      <button type="button" class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="menu-principal">Menú</button>
+      <ul id="menu-principal" class="menu">
+        <li><a href="index.html#beneficios">Beneficios</a></li>
+        <li><a href="index.html#programas">Programas</a></li>
+        <li><a href="escoliosis.html">Escoliosis</a></li>
+        <li><a href="ejercicios.html">Ejercicios</a></li>
+        <li><a href="quiz.html" aria-current="page">Sugerencias</a></li>
+        <li><a href="panel.html">Seguimiento</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="contenido" tabindex="-1" class="container app-main">
+    <h1 class="texto-3xl">Sugerencias de actividad</h1>
+    <p class="app-intro">Responde unas preguntas generales para organizar una propuesta educativa a partir de la biblioteca disponible.</p>
+    <div class="notice warning" role="note">
+      <strong>Importante:</strong> la propuesta no es un diagnóstico, tratamiento ni prescripción médica. Una etiqueta de la biblioteca no equivale a autorización clínica individual.
+    </div>
+    <div id="storage-notice" class="notice" role="status" hidden></div>
+
+    <section class="app-card" aria-labelledby="quiz-heading">
+      <h2 id="quiz-heading">Cuestionario</h2>
+      <p id="quiz-progress-text" class="progress-text">Paso 1 de 3: actividad.</p>
+      <div class="progress-track" role="progressbar" aria-labelledby="quiz-progress-text" aria-valuemin="1" aria-valuemax="3" aria-valuenow="1">
+        <span id="quiz-progress-value" class="progress-value" style="width: 33.33%;"></span>
+      </div>
+
+      <form id="quiz-form" novalidate>
+        <section class="step-panel" data-step="1" aria-labelledby="step-one-heading">
+          <h2 id="step-one-heading" tabindex="-1">Paso 1 de 3: actividad disponible</h2>
+          <fieldset aria-describedby="error-objective">
+            <legend>¿Cuál es tu objetivo general de actividad?</legend>
+            <div class="choice-grid">
+              <label><input type="radio" name="objective" value="movilidad" required> Movilidad suave</label>
+              <label><input type="radio" name="objective" value="fuerza"> Fuerza y estabilidad</label>
+              <label><input type="radio" name="objective" value="bienestar"> Actividad general y bienestar</label>
+            </div>
+            <p id="error-objective" class="field-error" hidden></p>
+          </fieldset>
+
+          <fieldset aria-describedby="error-days">
+            <legend>¿Cuántos días por semana tienes disponibles?</legend>
+            <div class="choice-grid">
+              <label><input type="radio" name="days" value="1" required> 1 día</label>
+              <label><input type="radio" name="days" value="2"> 2 días</label>
+              <label><input type="radio" name="days" value="3"> 3 días</label>
+              <label><input type="radio" name="days" value="4"> 4 días</label>
+              <label><input type="radio" name="days" value="5"> 5 días</label>
+              <label><input type="radio" name="days" value="6"> 6 días</label>
+              <label><input type="radio" name="days" value="7"> 7 días</label>
+            </div>
+            <p id="error-days" class="field-error" hidden></p>
+          </fieldset>
+
+          <fieldset aria-describedby="error-time">
+            <legend>¿Cuánto tiempo tienes por sesión?</legend>
+            <div class="choice-grid">
+              <label><input type="radio" name="time" value="10" required> Hasta 10 minutos</label>
+              <label><input type="radio" name="time" value="20"> Entre 10 y 20 minutos</label>
+              <label><input type="radio" name="time" value="30"> Más de 20 minutos</label>
+            </div>
+            <p id="error-time" class="field-error" hidden></p>
+          </fieldset>
+
+          <fieldset aria-describedby="error-level">
+            <legend>¿Cuál es tu nivel de experiencia?</legend>
+            <div class="choice-grid">
+              <label><input type="radio" name="level" value="principiante" required> Principiante</label>
+              <label><input type="radio" name="level" value="intermedio"> Intermedio</label>
+              <label><input type="radio" name="level" value="avanzado"> Avanzado</label>
+            </div>
+            <p id="error-level" class="field-error" hidden></p>
+          </fieldset>
+
+          <fieldset aria-describedby="error-equipment">
+            <legend>¿Qué equipamiento tienes disponible?</legend>
+            <div class="choice-grid">
+              <label><input type="checkbox" name="equipment" value="ninguno"> Ninguno</label>
+              <label><input type="checkbox" name="equipment" value="bandas"> Bandas elásticas</label>
+              <label><input type="checkbox" name="equipment" value="peso"> Pesas o mancuernas</label>
+              <label><input type="checkbox" name="equipment" value="colchoneta"> Colchoneta</label>
+            </div>
+            <p id="error-equipment" class="field-error" hidden></p>
+          </fieldset>
+        </section>
+
+        <section class="step-panel" data-step="2" aria-labelledby="step-two-heading" hidden>
+          <h2 id="step-two-heading" tabindex="-1">Paso 2 de 3: preguntas de seguridad</h2>
+          <p>Estas respuestas determinan si es seguro generar una propuesta automática. No hay una casilla para omitir un bloqueo.</p>
+
+          <fieldset aria-describedby="error-surgeryNoAuthorization">
+            <legend>¿Has tenido una cirugía de columna y todavía no tienes autorización para retomar la actividad?</legend>
+            <div class="choice-grid">
+              <label><input type="radio" name="surgeryNoAuthorization" value="si" required> Sí</label>
+              <label><input type="radio" name="surgeryNoAuthorization" value="no"> No</label>
+            </div>
+            <p id="error-surgeryNoAuthorization" class="field-error" hidden></p>
+          </fieldset>
+
+          <fieldset aria-describedby="error-clinicalRestriction">
+            <legend>¿Tienes restricciones de ejercicio indicadas por tu profesional sanitario?</legend>
+            <div class="choice-grid">
+              <label><input type="radio" name="clinicalRestriction" value="si" required> Sí</label>
+              <label><input type="radio" name="clinicalRestriction" value="no"> No</label>
+            </div>
+            <p id="error-clinicalRestriction" class="field-error" hidden></p>
+          </fieldset>
+
+          <fieldset aria-describedby="error-concerningSymptoms">
+            <legend>¿Presentas dolor nuevo, intenso o creciente, debilidad o entumecimiento?</legend>
+            <div class="choice-grid">
+              <label><input type="radio" name="concerningSymptoms" value="si" required> Sí</label>
+              <label><input type="radio" name="concerningSymptoms" value="no"> No</label>
+            </div>
+            <p id="error-concerningSymptoms" class="field-error" hidden></p>
+          </fieldset>
+        </section>
+
+        <section class="step-panel" data-step="3" aria-labelledby="step-three-heading" hidden>
+          <h2 id="step-three-heading" tabindex="-1">Paso 3 de 3: revisar y generar</h2>
+          <p>Revisa tus respuestas. La propuesta solo se genera cuando no hay respuestas de seguridad que bloqueen la automatización.</p>
+          <div id="answer-summary" class="status-box" aria-live="polite"></div>
+        </section>
+
+        <div id="quiz-error" class="error-box" role="alert" hidden></div>
+        <div class="quiz-actions">
+          <button type="button" id="quiz-back" class="secondary" hidden>Anterior</button>
+          <button type="button" id="quiz-next">Siguiente</button>
+          <button type="submit" id="quiz-submit" hidden>Generar sugerencias</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="quiz-results" class="app-card" aria-labelledby="results-heading" hidden>
+      <h2 id="results-heading" tabindex="-1">Resultado educativo</h2>
+      <div id="results-content"></div>
+    </section>
+
+    <section class="app-card" aria-labelledby="privacy-heading">
+      <h2 id="privacy-heading">Privacidad y datos guardados</h2>
+      <p>Las respuestas permanecen en este navegador y dispositivo, salvo que las borres o cambien las condiciones de almacenamiento. Otros usuarios del mismo dispositivo podrían acceder a ellas. FitCasa no envía estos datos a servidores ni afirma que <code>localStorage</code> los cifre.</p>
+      <button type="button" id="clear-data" class="secondary">Borrar respuestas y registros guardados</button>
+      <p id="clear-status" role="status" class="small-print"></p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p><strong>Aviso de salud y responsabilidad:</strong> La información es educativa y no sustituye la valoración profesional. Ante síntomas repentinos o graves, busca atención urgente.</p>
+    <p>© FitCasa. Todos los derechos reservados.</p>
+  </footer>
+</body>
+</html>

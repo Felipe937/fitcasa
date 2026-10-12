@@ -18,8 +18,8 @@
   const clearBtn = document.getElementById('clear-filters');
   const dialog = document.getElementById('exercise-dialog');
   const dialogTitle = dialog.querySelector('h2');
-  const dialogBody = dialog.querySelector('.dialog-body');
-  const dialogClose = dialog.querySelector('[data-close]');
+  const dialogBody = dialog.querySelector('#dialog-content');
+  const dialogClose = dialog.querySelector('#close-dialog');
 
   let exercises = [];
   let lastFocusedButton = null; // para restaurar foco al cerrar el diálogo
@@ -60,7 +60,7 @@
 
   const render = (list) => {
     // Vaciar contenedor
-    exerciseListEl.innerHTML = '';
+    exerciseListEl.replaceChildren();
     if (list.length === 0) {
       const noResult = document.createElement('p');
       noResult.textContent = 'No se encontraron resultados.';
@@ -82,7 +82,7 @@
     const selectedDifficulty = formData.getAll('difficulty');
     const selectedEquipment = formData.getAll('equipment');
     const selectedZone = formData.getAll('zone');
-    const adaptationNeeded = formData.get('adaptation') === 'on';
+    const adaptationNeeded = formData.get('adaptation') === 'true';
 
     let filtered = exercises.filter((ex) => {
       // Duración
@@ -102,11 +102,11 @@
 
     // Ordenamiento
     const order = orderSelect.value;
-    if (order === 'nombre') {
+    if (order === 'name') {
       filtered.sort((a, b) => a.name.localeCompare(b.name, 'es'));
-    } else if (order === 'dificultad') {
+    } else if (order === 'difficulty') {
       filtered.sort((a, b) => difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty]);
-    } else if (order === 'duracion') {
+    } else if (order === 'duration') {
       const durOrder = { corta: 1, media: 2, larga: 3 };
       filtered.sort((a, b) => durOrder[a.duration] - durOrder[b.duration]);
     }
@@ -157,7 +157,7 @@
     lastFocusedButton = e.currentTarget;
     // Rellenar contenido del diálogo
     dialogTitle.textContent = ex.name;
-    dialogBody.innerHTML = '';
+    dialogBody.replaceChildren();
     const frag = document.createDocumentFragment();
     if (ex.image) {
       const img = document.createElement('img');
@@ -217,7 +217,11 @@
       if (!resp.ok) throw new Error('Error al cargar datos');
       exercises = await resp.json();
     } catch (err) {
-      exerciseListEl.innerHTML = `<p role="alert">${err.message}</p>`;
+      exerciseListEl.replaceChildren();
+      const errorMessage = document.createElement('p');
+      errorMessage.setAttribute('role', 'alert');
+      errorMessage.textContent = err.message;
+      exerciseListEl.appendChild(errorMessage);
       return;
     }
     restoreFromUrl();

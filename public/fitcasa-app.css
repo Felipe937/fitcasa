@@ -1,0 +1,243 @@
+/* Components shared by the quiz and the tracking panel. */
+.app-main {
+  padding-top: var(--espacio-5);
+  padding-bottom: var(--espacio-6);
+}
+
+.app-intro {
+  max-width: var(--ancho-texto);
+}
+
+.app-card {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+  padding: var(--espacio-4);
+  margin: var(--espacio-4) 0;
+}
+
+.notice,
+.status-box,
+.error-box {
+  padding: var(--espacio-3) var(--espacio-4);
+  border-left: 0.35rem solid var(--color-primario);
+  background: var(--color-fondo-azul);
+  margin: var(--espacio-4) 0;
+}
+
+.notice.warning,
+.error-box {
+  border-left-color: #9a6700;
+  background: var(--color-fondo-aviso);
+}
+
+.notice.danger {
+  border-left-color: #a33a2b;
+  background: #fdecea;
+}
+
+.status-box[hidden],
+.error-box[hidden],
+[hidden] {
+  display: none !important;
+}
+
+.progress-text {
+  font-weight: 700;
+  margin-bottom: var(--espacio-2);
+}
+
+.progress-track {
+  height: 0.75rem;
+  background: var(--color-borde);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: var(--espacio-4);
+}
+
+.progress-value {
+  display: block;
+  height: 100%;
+  background: var(--color-secundario);
+  transition: width 0.2s ease-in-out;
+}
+
+.step-panel > h2 {
+  margin-top: 0;
+}
+
+.choice-grid {
+  display: grid;
+  gap: var(--espacio-3);
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+}
+
+.choice-grid label {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espacio-2);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-sm);
+  padding: var(--espacio-3);
+  min-height: var(--alto-objetivo-tactil);
+}
+
+.choice-grid input {
+  flex: 0 0 auto;
+  margin-top: 0.35rem;
+}
+
+.form-field {
+  display: grid;
+  gap: var(--espacio-2);
+  margin: var(--espacio-4) 0;
+  max-width: 42rem;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  width: 100%;
+  min-height: var(--alto-objetivo-tactil);
+  padding: var(--espacio-2);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-sm);
+  font: inherit;
+  color: inherit;
+  background: var(--color-superficie);
+}
+
+.form-field textarea {
+  min-height: 7rem;
+  resize: vertical;
+}
+
+.field-error {
+  color: #8a2418;
+  font-weight: 700;
+  margin: 0;
+}
+
+.quiz-actions,
+.panel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+  margin-top: var(--espacio-4);
+}
+
+.quiz-actions button,
+.panel-actions button,
+.record-actions button {
+  cursor: pointer;
+  border: 2px solid var(--color-primario);
+  border-radius: var(--radio-md);
+  background: var(--color-primario);
+  color: var(--color-sobre-primario);
+  padding: var(--espacio-2) var(--espacio-4);
+  font: inherit;
+}
+
+.quiz-actions .secondary,
+.panel-actions .secondary,
+.record-actions .secondary {
+  background: var(--color-superficie);
+  color: var(--color-primario-oscuro);
+}
+
+.app-card > .secondary {
+  cursor: pointer;
+  border: 2px solid var(--color-primario);
+  border-radius: var(--radio-md);
+  background: var(--color-superficie);
+  color: var(--color-primario-oscuro);
+  padding: var(--espacio-2) var(--espacio-4);
+  font: inherit;
+}
+
+.quiz-actions button:hover,
+.quiz-actions button:focus,
+.panel-actions button:hover,
+.panel-actions button:focus,
+.record-actions button:hover,
+.record-actions button:focus {
+  background: var(--color-primario-oscuro);
+  color: var(--color-sobre-primario);
+}
+
+.quiz-actions .secondary:hover,
+.quiz-actions .secondary:focus,
+.panel-actions .secondary:hover,
+.panel-actions .secondary:focus,
+.record-actions .secondary:hover,
+.record-actions .secondary:focus {
+  background: var(--color-fondo-azul);
+  color: var(--color-texto);
+}
+
+.app-card > .secondary:hover,
+.app-card > .secondary:focus {
+  background: var(--color-fondo-azul);
+  color: var(--color-texto);
+}
+
+.plan-grid {
+  display: grid;
+  gap: var(--espacio-3);
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+}
+
+.plan-day {
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-sm);
+  padding: var(--espacio-3);
+  background: var(--color-fondo-verde);
+}
+
+.plan-day h3 {
+  margin-top: 0;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  min-width: 42rem;
+  border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+  border: 1px solid var(--color-borde);
+  padding: var(--espacio-2) var(--espacio-3);
+  text-align: left;
+  vertical-align: top;
+}
+
+.data-table th {
+  background: var(--color-fondo-azul);
+}
+
+.record-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+}
+
+.record-actions .danger {
+  border-color: #a33a2b;
+  background: #a33a2b;
+}
+
+.small-print {
+  color: var(--color-texto-suave);
+  font-size: var(--texto-xs);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress-value {
+    transition: none;
+  }
+}
