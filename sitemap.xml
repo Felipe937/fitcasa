@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://felipe937.github.io/fitcasa/</loc>
+    <loc>https://fitcasa.fv143962.workers.dev/</loc>
     <lastmod>2026-10-12</lastmod>
   </url>
   <url>
-    <loc>https://felipe937.github.io/fitcasa/escoliosis.html</loc>
+    <loc>https://fitcasa.fv143962.workers.dev/escoliosis</loc>
+    <lastmod>2026-10-12</lastmod>
+  </url>
+  <url>
+    <loc>https://fitcasa.fv143962.workers.dev/ejercicios</loc>
+    <lastmod>2026-10-12</lastmod>
+  </url>
+  <url>
+    <loc>https://fitcasa.fv143962.workers.dev/quiz</loc>
+    <lastmod>2026-10-12</lastmod>
+  </url>
+  <url>
+    <loc>https://fitcasa.fv143962.workers.dev/panel</loc>
     <lastmod>2026-10-12</lastmod>
   </url>
 </urlset>

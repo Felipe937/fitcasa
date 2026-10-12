@@ -1,6 +1,6 @@
 /* Biblioteca: filtros, tarjetas y detalle. */
 .exercise-main {
-  padding-block: var(--espacio-7) var(--espacio-8);
+  padding-block: clamp(var(--espacio-7), 8vw, var(--espacio-9)) var(--espacio-9);
 }
 
 .page-lead {
@@ -10,12 +10,12 @@
 }
 
 .filters-section {
-  padding: var(--espacio-5);
-  margin: var(--espacio-6) 0;
-  background: var(--color-superficie-suave);
+  padding: clamp(var(--espacio-4), 4vw, var(--espacio-6));
+  margin: var(--espacio-7) 0;
+  background: var(--color-superficie);
   border: 1px solid var(--color-borde);
-  border-radius: var(--radio-md);
-  box-shadow: var(--sombra-suave);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-flotante);
 }
 
 .filters-section form {
@@ -25,10 +25,10 @@
 
 .filters-section fieldset {
   min-width: 0;
-  padding: var(--espacio-3);
+  padding: var(--espacio-4);
   margin: 0;
-  border: 1px solid var(--color-borde);
-  border-radius: var(--radio-sm);
+  border: 1px solid #e2e9ec;
+  border-radius: var(--radio-md);
 }
 
 .filters-section legend {
@@ -74,8 +74,10 @@
   font-size: var(--texto-sm);
 }
 
-.filters-section fieldset:not(:first-child) label:hover {
+.filters-section fieldset:not(:first-child) label:hover,
+.filters-section fieldset:not(:first-child) label:focus-within {
   color: var(--color-primario-oscuro);
+  background: var(--color-fondo-azul);
   border-color: var(--color-primario);
 }
 
@@ -112,7 +114,7 @@
 
 .exercise-list {
   display: grid;
-  gap: var(--espacio-4);
+  gap: var(--espacio-5);
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
 }
 
@@ -130,16 +132,26 @@
   flex-direction: column;
   min-width: 0;
   height: 100%;
-  padding: var(--espacio-4);
+  padding: var(--espacio-5);
   background: var(--color-superficie);
   border: 1px solid var(--color-borde);
-  border-radius: var(--radio-md);
+  border-radius: var(--radio-lg);
   box-shadow: var(--sombra-suave);
 }
 
+.exercise-card::before {
+  width: 3rem;
+  height: 0.25rem;
+  margin-bottom: var(--espacio-4);
+  content: "";
+  background: var(--color-secundario);
+  border-radius: var(--radio-pill);
+}
+
 .exercise-card:hover {
-  border-color: rgba(15, 89, 104, 0.45);
+  border-color: rgba(36, 90, 115, 0.4);
   box-shadow: var(--sombra-flotante);
+  transform: translateY(-0.2rem);
 }
 
 .exercise-card img {
@@ -209,4 +221,8 @@
   .filter-actions {
     grid-column: 1 / -1;
   }
+}
+
+@media (min-width: 64rem) {
+  .exercise-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }

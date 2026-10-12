@@ -1,9 +1,11 @@
 /* Componentes compartidos por Sugerencias y Seguimiento. */
 .app-main {
-  padding-block: var(--espacio-7) var(--espacio-8);
+  max-width: var(--ancho-contenedor-estrecho);
+  padding-block: clamp(var(--espacio-7), 8vw, var(--espacio-9)) var(--espacio-9);
 }
 
 .app-main > .texto-3xl {
+  max-width: 18ch;
   margin-bottom: var(--espacio-3);
 }
 
@@ -14,12 +16,12 @@
 }
 
 .app-card {
-  padding: var(--espacio-5);
-  margin: var(--espacio-5) 0;
+  padding: clamp(var(--espacio-5), 4vw, var(--espacio-7));
+  margin: var(--espacio-6) 0;
   background: var(--color-superficie);
   border: 1px solid var(--color-borde);
-  border-radius: var(--radio-md);
-  box-shadow: var(--sombra-suave);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-flotante);
 }
 
 .app-card h2 {
@@ -34,7 +36,8 @@
   color: var(--color-texto);
   background: var(--color-fondo-azul);
   border-left: 0.35rem solid var(--color-primario);
-  border-radius: 0 var(--radio-sm) var(--radio-sm) 0;
+  border-radius: var(--radio-md);
+  box-shadow: 0 0.5rem 1.25rem rgba(23, 62, 80, 0.06);
 }
 
 .notice.warning,
@@ -114,7 +117,7 @@
   color: var(--color-texto-suave);
   background: var(--color-superficie);
   border: 1px solid var(--color-borde);
-  border-radius: var(--radio-sm);
+  border-radius: var(--radio-md);
   cursor: pointer;
 }
 
@@ -153,7 +156,7 @@
   color: var(--color-texto);
   background: var(--color-superficie);
   border: 1px solid var(--color-borde);
-  border-radius: var(--radio-sm);
+  border-radius: var(--radio-md);
 }
 
 .form-field textarea {
@@ -198,7 +201,7 @@
   padding: var(--espacio-4);
   background: var(--color-fondo-verde);
   border: 1px solid var(--color-borde);
-  border-radius: var(--radio-sm);
+  border-radius: var(--radio-md);
 }
 
 .plan-day h3 {
