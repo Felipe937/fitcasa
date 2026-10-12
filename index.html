@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FitCasa | Ejercicio en casa y rutinas guiadas</title>
   <meta name="description" content="Rutinas de ejercicio en casa guiadas y adaptables, con enfoque informativo en movilidad, fuerza del core y cuidado postural para escoliosis.">
-  <meta name="theme-color" content="#1f6f8b">
+  <meta name="theme-color" content="#0f5968">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%231f6f8b'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="style.css">
   <script defer src="script.js"></script>
@@ -15,7 +15,7 @@
 
   <header class="site-header">
     <p class="aviso-superior">FitCasa ofrece contenido informativo y no sustituye la valoración de un profesional de la salud.</p>
-    <nav aria-label="Navegación principal">
+    <nav aria-label="Navegación principal" class="container">
       <a href="#inicio" class="logo">FitCasa</a>
       <button type="button" class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="menu-principal">Menú</button>
       <ul id="menu-principal" class="menu">
@@ -25,19 +25,37 @@
         <li><a href="ejercicios.html">Ejercicios</a></li>
         <li><a href="quiz.html">Sugerencias</a></li>
         <li><a href="panel.html">Seguimiento</a></li>
-        <li><a href="#testimonios">Testimonios</a></li>
+        <li><a href="#como-funciona">Cómo funciona</a></li>
       </ul>
     </nav>
   </header>
 
   <main id="contenido" tabindex="-1">
-    <section id="inicio" aria-labelledby="titulo-inicio" tabindex="-1">
-      <h1 id="titulo-inicio">Ejercicio en casa, a tu ritmo y con seguridad</h1>
-      <p>Rutinas guiadas y adaptables para entrenar en casa con regularidad, conciencia corporal y atención informativa especial a la escoliosis.</p>
-      <p>Cada cuerpo y columna son diferentes. Fomentamos una práctica gradual, respetuosa con tus sensaciones y siempre orientada al autocuidado responsable.</p>
-      <div>
-        <a href="#programas" class="btn">Explorar programas</a>
-        <a href="#escoliosis" class="btn">Enfoque en escoliosis</a>
+    <section id="inicio" class="hero" aria-labelledby="titulo-inicio" tabindex="-1">
+      <div class="container hero-layout">
+        <div class="hero-copy">
+          <span class="eyebrow">Bienestar que cabe en tu rutina</span>
+          <h1 id="titulo-inicio">Muévete mejor desde casa, a tu ritmo</h1>
+          <p class="hero-lead">Explora ejercicios, recibe una orientación educativa y registra cómo te sientes en una experiencia sencilla y responsable.</p>
+          <p>Cada cuerpo y columna son diferentes. FitCasa te acompaña con información clara, progresión gradual y atención especial a la escoliosis.</p>
+          <div class="hero-actions">
+            <a href="ejercicios.html" class="btn">Explorar ejercicios</a>
+            <a href="quiz.html" class="btn secondary">Encontrar sugerencias</a>
+          </div>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <svg viewBox="0 0 520 360" role="img" aria-label="Ilustración abstracta de una persona haciendo movilidad en casa">
+            <rect x="55" y="55" width="410" height="250" rx="36" fill="#dcecea"/>
+            <circle cx="365" cy="118" r="38" fill="#f2b18f"/>
+            <path d="M365 159c-14 28-20 55-18 84l-48 34 15 23 75-42 28 42 28-17-55-79 7-42z" fill="#0f5968"/>
+            <path d="M301 278 221 304l10 22 99-27zM427 282l-22 15 54 43 17-18z" fill="#3f6b58"/>
+            <path d="M329 205c-57-40-103-67-143-59-28 5-47 27-58 65" fill="none" stroke="#0a3f4b" stroke-linecap="round" stroke-width="20"/>
+            <path d="M145 218c-20 4-35 17-42 37" fill="none" stroke="#f2b18f" stroke-linecap="round" stroke-width="18"/>
+            <circle cx="116" cy="270" r="19" fill="#f2b18f"/>
+            <path d="M73 305h164" stroke="#89aa9b" stroke-linecap="round" stroke-width="7"/>
+            <path d="M75 324h115" stroke="#bed5cc" stroke-linecap="round" stroke-width="7"/>
+          </svg>
+        </div>
       </div>
     </section>
 
@@ -72,25 +90,24 @@
     </section>
 
     <section id="programas" aria-labelledby="titulo-programas" tabindex="-1">
-      <h2 id="titulo-programas">Programas de entrenamiento</h2>
+      <h2 id="titulo-programas">Tu recorrido en FitCasa</h2>
       <article>
-        <h3>Movilidad articular</h3>
-        <p>Ejercicios suaves para preservar el rango de movimiento y disminuir tensiones musculares acumuladas.</p>
-        <p class="etiqueta">Próximamente</p>
-        <p>Pauta educativa de apoyo; consulta con tu especialista de referencia antes de comenzar.</p>
+        <span class="card-kicker">Disponible ahora</span>
+        <h3>Biblioteca de ejercicios</h3>
+        <p>Filtra la colección educativa por duración, dificultad, equipamiento y zona corporal.</p>
+        <a class="card-link" href="ejercicios.html">Abrir biblioteca</a>
       </article>
       <article>
-        <h3>Fuerza del core</h3>
-        <p>Fortalecimiento progresivo de la zona central y musculatura profunda que asiste la estabilidad lumbar.</p>
-        <p class="etiqueta">Próximamente</p>
-        <p>Pauta educativa de apoyo; ajusta la intensidad a tus sensaciones y detente ante molestias.</p>
+        <span class="card-kicker">Orientación educativa</span>
+        <h3>Sugerencias de actividad</h3>
+        <p>Responde el cuestionario para organizar una propuesta general basada en la biblioteca disponible.</p>
+        <a class="card-link" href="quiz.html">Responder cuestionario</a>
       </article>
       <article>
-        <h3>Postura y respiración</h3>
-        <p>Técnicas de conciencia corporal, respiración diafragmática y alineación funcional para el día a día.</p>
-        <p class="etiqueta">Próximamente</p>
-        <p>Pauta educativa de apoyo; no reemplaza sesiones de fisioterapia personalizada.</p>
-      </article>
+        <span class="card-kicker">Registro local</span>
+        <h3>Seguimiento personal</h3>
+        <p>Registra actividad, dolor subjetivo y bienestar en este dispositivo, sin enviar datos a FitCasa.</p>
+        <a class="card-link" href="panel.html">Abrir seguimiento</a>
     </section>
 
     <section id="escoliosis" aria-labelledby="titulo-escoliosis" tabindex="-1">
@@ -104,9 +121,27 @@
       </article>
     </section>
 
-    <section id="testimonios" aria-labelledby="titulo-testimonios" tabindex="-1">
-      <h2 id="titulo-testimonios">Testimonios de la comunidad</h2>
-      <p>Espacio reservado: En FitCasa apostamos por la honestidad y la veracidad. No utilizamos testimonios ficticios ni identidades simuladas. Este espacio se habilitará con opiniones y experiencias verificadas de participantes reales cuando concluyan las fases preliminares de nuestros programas.</p>
+    <section id="como-funciona" aria-labelledby="titulo-como-funciona" tabindex="-1">
+      <span class="eyebrow">Sin promesas exageradas</span>
+      <h2 id="titulo-como-funciona">Cómo funciona FitCasa</h2>
+      <p class="section-intro">Una experiencia en tres pasos para informarte, elegir con más contexto y observar tu propia práctica. No sustituye la valoración de un profesional de la salud.</p>
+      <div class="workflow-grid">
+        <article class="workflow-card">
+          <span class="workflow-number" aria-hidden="true">1</span>
+          <h3>Explora</h3>
+          <p>Consulta ejercicios y sus adaptaciones informativas sin asumir que una etiqueta equivale a una autorización clínica.</p>
+        </article>
+        <article class="workflow-card">
+          <span class="workflow-number" aria-hidden="true">2</span>
+          <h3>Orienta</h3>
+          <p>Usa el cuestionario para ordenar una propuesta educativa según tu tiempo, experiencia y equipamiento.</p>
+        </article>
+        <article class="workflow-card">
+          <span class="workflow-number" aria-hidden="true">3</span>
+          <h3>Registra</h3>
+          <p>Observa tu actividad y tus sensaciones en un historial local voluntario, sin crear una cuenta.</p>
+        </article>
+      </div>
     </section>
   </main>
 
@@ -118,7 +153,7 @@
         <li><a href="#beneficios">Beneficios</a></li>
         <li><a href="#programas">Programas</a></li>
         <li><a href="#escoliosis">Escoliosis</a></li>
-        <li><a href="#testimonios">Testimonios</a></li>
+        <li><a href="#como-funciona">Cómo funciona</a></li>
       </ul>
     </nav>
     <p><strong>Aviso de salud y responsabilidad:</strong> FitCasa ofrece recursos informativos sobre ejercicio físico general y ergonomía cotidiana. Este material no reemplaza el criterio médico, el diagnóstico ni la rehabilitación clínica. Dado que ninguna rutina es universalmente adecuada para todas las personas, consulta a tu médico o profesional sanitario cualificado antes de adoptar cualquier programa, especialmente ante condiciones de columna o molestias crónicas.</p>
