@@ -1,0 +1,112 @@
+# CI de validacion para la web estatica FitCasa.
+# Solo valida: no despliega, no modifica nada y no usa secretos.
+# Se publica la carpeta public/ (ver wrangler.jsonc -> assets.directory).
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Permisos minimos: el job solo lee el codigo.
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Comprobar archivos esenciales en public/
+        run: |
+          set -u
+          missing=0
+          for f in index.html escoliosis.html ejercicios.html quiz.html panel.html 404.html \
+                   style.css ejercicios.css fitcasa-app.css \
+                   script.js ejercicios.js quiz.js panel.js fitcasa-storage.js \
+                   ejercicios.json robots.txt sitemap.xml _headers; do
+            if [ ! -f "public/$f" ]; then
+              echo "FALTA: public/$f"
+              missing=1
+            fi
+          done
+          if [ "$missing" -ne 0 ]; then
+            echo "Faltan archivos esenciales en public/."
+            exit 1
+          fi
+          echo "Todos los archivos esenciales existen en public/."
+
+      - name: Validar ejercicios.json (sintaxis y estructura)
+        run: |
+          python3 - <<'EOF'
+          import json
+          import sys
+
+          # Solo sintaxis y estructura. Que el JSON sea valido NO significa
+          # que su contenido sea clinicamente valido o revisado.
+          REQUIRED = {
+              "id": str,
+              "name": str,
+              "description": str,
+              "duration": str,
+              "difficulty": str,
+              "equipment": list,
+              "zone": list,
+          }
+          DURATIONS = {"corta", "media", "larga"}
+          DIFFICULTIES = {"principiante", "intermedio", "avanzado"}
+
+          with open("public/ejercicios.json", encoding="utf-8") as fh:
+              data = json.load(fh)  # falla aqui si la sintaxis es invalida
+
+          assert isinstance(data, list) and data, "ejercicios.json debe ser una lista no vacia"
+          for i, ex in enumerate(data):
+              assert isinstance(ex, dict), "elemento %d no es un objeto" % i
+              for field, kind in REQUIRED.items():
+                  assert field in ex, "elemento %d sin campo %r" % (i, field)
+                  assert isinstance(ex[field], kind), "elemento %d: %r no es %s" % (i, field, kind.__name__)
+              assert ex["duration"] in DURATIONS, "elemento %d: duration no valida" % i
+              assert ex["difficulty"] in DIFFICULTIES, "elemento %d: difficulty no valida" % i
+              assert ex["equipment"], "elemento %d: equipment vacio" % i
+              assert ex["zone"], "elemento %d: zone vacia" % i
+          print("ejercicios.json OK: %d ejercicios con estructura valida." % len(data))
+          EOF
+
+      - name: Comprobar identificadores de ejercicios duplicados
+        run: |
+          python3 - <<'EOF'
+          import json
+          from collections import Counter
+
+          with open("public/ejercicios.json", encoding="utf-8") as fh:
+              data = json.load(fh)
+          counts = Counter(ex["id"] for ex in data)
+          dupes = sorted(i for i, n in counts.items() if n > 1)
+          if dupes:
+              print("IDs duplicados: %s" % ", ".join(dupes))
+              raise SystemExit(1)
+          print("Sin IDs duplicados (%d ejercicios)." % len(data))
+          EOF
+
+      - name: Validar sitemap.xml (XML y espacio de nombres)
+        run: |
+          python3 - <<'EOF'
+          import xml.etree.ElementTree as ET
+
+          NS = "http://www.sitemaps.org/schemas/sitemap/0.9"
+          tree = ET.parse("public/sitemap.xml")  # falla aqui si el XML es invalido
+          root = tree.getroot()
+          assert root.tag == "{%s}urlset" % NS, "espacio de nombres inesperado: %s" % root.tag
+          urls = root.findall("{%s}url" % NS)
+          assert urls, "el sitemap no contiene urls"
+          for u in urls:
+              loc = u.find("{%s}loc" % NS)
+              assert loc is not None and loc.text and loc.text.startswith("http"), "url sin loc valida"
+          print("sitemap.xml OK: %d urls con el espacio de nombres estandar." % len(urls))
+          EOF
+
+      - name: Comprobar contraste WCAG
+        run: python3 contrast_check.py
