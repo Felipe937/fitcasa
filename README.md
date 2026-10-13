@@ -89,6 +89,10 @@ El archivo `public/.assetsignore` indica a Wrangler qué archivos o carpetas **n
 
 FitCasa ofrece contenido informativo y educativo. No sustituye el diagnóstico, tratamiento ni consejo de un médico o fisioterapeuta. Si tienes escoliosis u otra condición, consulta con un profesional antes de hacer cualquier ejercicio y detén la actividad si sientes dolor intenso, entumecimiento u otros síntomas inusuales.
 
+## Código de Conducta
+
+Este proyecto se rige por su [Código de Conducta](CODE_OF_CONDUCT.md), basado en el Contributor Covenant v2.1 y adaptado a un proyecto sobre salud y escoliosis: exige respeto hacia las personas con esta condición y prohíbe dar consejos médicos sin respaldo profesional o difundir información sanitaria sin sustento científico.
+
 ## Pendiente
 
 - `og:image` (meta para redes sociales).
