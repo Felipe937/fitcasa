@@ -78,6 +78,11 @@
     }
   });
 
+  /* Al volver con el botón Atrás (bfcache) la clase debe desaparecer. */
+  window.addEventListener('pageshow', function () {
+    document.body.classList.remove('page-leaving');
+  });
+
   var button = document.getElementById('menu-toggle');
   var menu = document.getElementById('menu-principal');
   if (button && menu) {

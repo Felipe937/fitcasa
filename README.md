@@ -16,6 +16,8 @@ fitcasa/
 │   ├── script.js            ← Gestión del menú móvil
 │   ├── robots.txt           ← Política de rastreo
 │   ├── sitemap.xml          ← Sitemap para buscadores
+│   ├── 404.html             ← Página de error personalizada
+│   ├── _headers             ← Cabeceras HTTP de seguridad
 │   └── .assetsignore        ← Exclusiones para Wrangler
 ├── .editorconfig            ← Configuración de estilo de código
 ├── .gitignore               ← Archivos excluidos del repositorio
@@ -26,11 +28,11 @@ fitcasa/
 ├── panel.html / panel.js    ← Panel local de seguimiento
 ├── fitcasa-app.css          ← Componentes visuales compartidos
 ├── fitcasa-storage.js       ← Persistencia local versionada y tolerante a fallos
-├── wrangler.jsonc           ← Configuración de Cloudflare Pages / Wrangler
+├── wrangler.jsonc           ← Configuración de Workers Static Assets / Wrangler
 └── README.md                ← Este archivo
 ```
 
-**`public/`** contiene únicamente los archivos que se publican en el sitio web. Todo lo demás (configuración, scripts de desarrollo, documentación) queda en la raíz y nunca se sube al servidor.
+**`public/`** es la fuente de verdad del sitio: todo lo que se publica está ahí. La raíz del repositorio conserva una copia heredada e idéntica de esos mismos archivos para poder servir el sitio con GitHub Pages; tras cualquier cambio en `public/`, hay que copiar los archivos a la raíz. Solo la configuración, los scripts de desarrollo y la documentación viven únicamente en la raíz y nunca se suben al servidor.
 
 ## Visualización local
 
@@ -46,9 +48,9 @@ Acceder a `http://localhost:8000`.
 
 Las rutas nuevas son `/quiz.html` y `/panel.html`. El despliegue de `public/` incluye también las copias publicables de estas páginas, de sus scripts, de la hoja de componentes y de `ejercicios.json`.
 
-> **Nota sobre rutas:** en local la ruta base es `/`; en Cloudflare Pages se sirve desde la raíz del dominio/subdominio asignado. Todas las referencias dentro de `index.html` usan rutas relativas (`./style.css`, `./script.js`) para funcionar en ambos entornos.
+> **Nota sobre rutas:** en local la ruta base es `/`; en Workers se sirve desde la raíz del dominio/subdominio asignado. Las páginas usan rutas relativas (por ejemplo `style.css`, `ejercicios.html`) para funcionar en ambos entornos.
 
-## Despliegue en Cloudflare Pages con Wrangler
+## Despliegue en Cloudflare Workers con Wrangler
 
 ### Requisitos previos
 
@@ -59,7 +61,7 @@ Las rutas nuevas son `/quiz.html` y `/panel.html`. El despliegue de `public/` in
 ### Desplegar
 
 ```sh
-wrangler pages deploy ./public --project-name fitcasa
+wrangler deploy
 ```
 
 Wrangler solo subirá los archivos dentro de `public/`, excluyendo los patrones definidos en `public/.assetsignore`.
@@ -75,7 +77,7 @@ El archivo `public/.assetsignore` indica a Wrangler qué archivos o carpetas **n
 
 1. Ir a **Settings → Pages** del repositorio.
 2. Seleccionar **Source: Deploy from a branch**, rama `main`, carpeta `/ (root)`.
-3. Nota: GitHub Pages servirá desde la raíz del repo, no desde `public/`. Si se usa GitHub Pages se necesita ajustar la configuración o mover los archivos.
+3. Nota: GitHub Pages servirá desde la raíz del repo, no desde `public/`. La raíz conserva copias idénticas de los archivos de `public/`, así que no hay que mover nada.
 
 ## Requisitos de calidad
 

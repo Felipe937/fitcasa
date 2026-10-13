@@ -9,6 +9,10 @@
     avanzado: 3,
   };
 
+  // Normaliza texto para comparar sin distinción de acentos ni mayúsculas.
+  const normalizeText = (value) => String(value).toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
   // Referencias a elementos del DOM
   const resultCountEl = document.getElementById('result-count');
   const exerciseListEl = document.getElementById('exercise-list');
@@ -36,12 +40,13 @@
 
     if (exercise.image) {
       const img = document.createElement('img');
+      img.className = 'exercise-image';
       img.src = exercise.image;
-      img.alt = `Imagen de ${exercise.name}`;
+      // Decorativa salvo que el JSON aporte imageAlt; no se inventan descripciones.
+      img.alt = typeof exercise.imageAlt === 'string' ? exercise.imageAlt : '';
       img.loading = 'lazy';
-      // Mantener proporción mediante CSS (aspect-ratio) o atributos de ancho/alto
-      img.width = 400; // valores arbitrarios, se ajustan en CSS
-      img.height = 300;
+      // La carpeta assets/ no existe: si la imagen falla se retira del DOM.
+      img.addEventListener('error', () => img.remove());
       card.appendChild(img);
     }
 
@@ -79,12 +84,14 @@
 
   const applyFilters = () => {
     const formData = new FormData(filterForm);
-    const searchTerm = searchInput.value.trim().toLowerCase();
+    const searchTerm = normalizeText(searchInput.value.trim());
     const selectedDuration = formData.getAll('duration'); // array de strings
     const selectedDifficulty = formData.getAll('difficulty');
     const selectedEquipment = formData.getAll('equipment');
     const selectedZone = formData.getAll('zone');
-    const adaptationNeeded = formData.get('adaptation') === 'true';
+    // Sin filtro de adaptación: los 20 ejercicios tienen nota de adaptación,
+    // así que no discriminaría nada. Se restaurará cuando los datos distingan
+    // entre ejercicios con y sin adaptación.
 
     let filtered = exercises.filter((ex) => {
       // Duración
@@ -95,10 +102,8 @@
       if (selectedEquipment.length && !selectedEquipment.some(eq => ex.equipment.includes(eq))) return false;
       // Zona (ex.zone es array)
       if (selectedZone.length && !selectedZone.some(z => ex.zone.includes(z))) return false;
-      // Adaptación
-      if (adaptationNeeded && (!ex.adaptation || !ex.adaptation.notes)) return false;
-      // Búsqueda
-      if (searchTerm && !ex.name.toLowerCase().includes(searchTerm) && !ex.description.toLowerCase().includes(searchTerm)) return false;
+      // Búsqueda (insensible a acentos: "gluteos" encuentra "Glúteos")
+      if (searchTerm && !normalizeText(ex.name).includes(searchTerm) && !normalizeText(ex.description).includes(searchTerm)) return false;
       return true;
     });
 
@@ -127,28 +132,55 @@
     });
     if (searchInput.value) params.set('search', searchInput.value.trim());
     if (orderSelect.value) params.set('order', orderSelect.value);
-    if (formData.get('adaptation') === 'on') params.set('adaptation', '1');
 
-    const newUrl = `${location.pathname}?${params.toString()}`;
+    const query = params.toString();
+    const newUrl = query ? `${location.pathname}?${query}` : location.pathname;
     history.replaceState(null, '', newUrl);
+  };
+
+  // Oculta las opciones de filtro que ningún ejercicio cumple (atributo hidden
+  // en el label y disabled en el input) y el fieldset entero si le quedan
+  // menos de 2 opciones visibles.
+  const pruneDeadOptions = () => {
+    const present = { duration: new Set(), difficulty: new Set(), equipment: new Set(), zone: new Set() };
+    exercises.forEach((ex) => {
+      if (typeof ex.duration === 'string') present.duration.add(ex.duration);
+      if (typeof ex.difficulty === 'string') present.difficulty.add(ex.difficulty);
+      (Array.isArray(ex.equipment) ? ex.equipment : []).forEach((value) => present.equipment.add(value));
+      (Array.isArray(ex.zone) ? ex.zone : []).forEach((value) => present.zone.add(value));
+    });
+    Object.keys(present).forEach((key) => {
+      const inputs = filterForm.querySelectorAll(`input[name="${key}"]`);
+      inputs.forEach((input) => {
+        const label = input.closest('label');
+        if (!present[key].has(input.value)) {
+          input.disabled = true;
+          if (label) label.hidden = true;
+        }
+      });
+      const fieldset = inputs.length ? inputs[0].closest('fieldset') : null;
+      if (fieldset) {
+        const visible = fieldset.querySelectorAll('label:not([hidden])').length;
+        if (visible < 2) fieldset.hidden = true;
+      }
+    });
   };
 
   const restoreFromUrl = () => {
     const params = new URLSearchParams(location.search);
-    // Restaurar filtros
+    // Restaurar filtros (se ignoran los valores de opciones ocultas)
     ['duration', 'difficulty', 'equipment', 'zone'].forEach((key) => {
       const val = params.get(key);
       if (val) {
         const values = val.split(',');
         values.forEach((v) => {
           const input = filterForm.querySelector(`input[name="${key}"][value="${v}"]`);
-          if (input) input.checked = true;
+          if (input && !input.disabled && !(input.closest('label') && input.closest('label').hidden)) input.checked = true;
         });
       }
     });
     if (params.get('search')) searchInput.value = params.get('search');
     if (params.get('order')) orderSelect.value = params.get('order');
-    if (params.get('adaptation')) filterForm.querySelector('input[name="adaptation"]').checked = true;
   };
 
   const openDialog = (e) => {
@@ -163,9 +195,11 @@
     const frag = document.createDocumentFragment();
     if (ex.image) {
       const img = document.createElement('img');
+      img.className = 'exercise-image';
       img.src = ex.image;
-      img.alt = `Imagen de ${ex.name}`;
+      img.alt = typeof ex.imageAlt === 'string' ? ex.imageAlt : '';
       img.loading = 'lazy';
+      img.addEventListener('error', () => img.remove());
       frag.appendChild(img);
     }
     const pDesc = document.createElement('p');
@@ -173,11 +207,11 @@
     frag.appendChild(pDesc);
     if (ex.adaptation && ex.adaptation.notes) {
       const adapt = document.createElement('p');
-      adapt.textContent = `Adaptación para escoliosis: ${ex.adaptation.notes}`;
+      adapt.textContent = `Nota general de adaptación: ${ex.adaptation.notes}`;
       frag.appendChild(adapt);
     }
     const review = document.createElement('p');
-    review.textContent = `Revisión clínica: ${ex.clinicalReview}`;
+    review.textContent = `Estado de revisión: ${ex.clinicalReview}`;
     frag.appendChild(review);
     dialogBody.appendChild(frag);
     dialog.showModal();
@@ -187,7 +221,6 @@
 
   const closeDialog = () => {
     dialog.close();
-    if (lastFocusedButton) lastFocusedButton.focus();
   };
 
   // ---------- EVENTOS ----------
@@ -204,8 +237,9 @@
     applyFilters();
   });
   dialogClose.addEventListener('click', closeDialog);
-  dialog.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeDialog();
+  // El <dialog> ya cierra con Escape; el foco se restaura en el evento "close".
+  dialog.addEventListener('close', () => {
+    if (lastFocusedButton) lastFocusedButton.focus();
   });
   // Cerrar al hacer click fuera del contenido pero dentro del elemento <dialog>
   dialog.addEventListener('click', (e) => {
@@ -226,6 +260,7 @@
       exerciseListEl.appendChild(errorMessage);
       return;
     }
+    pruneDeadOptions();
     restoreFromUrl();
     applyFilters();
   });

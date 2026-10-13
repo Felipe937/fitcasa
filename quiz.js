@@ -128,7 +128,9 @@
     var zones = objectiveZones[safeAnswers.objective];
     var durations = durationOptions(safeAnswers.time);
     var maxLevel = levelOrder(safeAnswers.level);
-    var equipment = safeAnswers.equipment.indexOf('ninguno') !== -1 ? ['ninguno'] : safeAnswers.equipment;
+    // "Ninguno" está siempre implícitamente disponible: el equipamiento
+    // disponible es "ninguno" más lo marcado, sin duplicados.
+    var equipment = Array.from(new Set(['ninguno'].concat(safeAnswers.equipment)));
     var validExercises = Array.isArray(availableExercises) ? availableExercises.map(normalizeExercise).filter(Boolean) : [];
     var compatible = validExercises.filter(function (exercise) {
       var objectiveMatches = !zones || exercise.zone.some(function (zone) { return zones.indexOf(zone) !== -1; });
