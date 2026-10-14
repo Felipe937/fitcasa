@@ -65,6 +65,7 @@
   --duracion-entrada: 480ms;
   --paso-entrada: 70ms;
   --ancho-max-tarjeta-hero: 20rem;
+  --tamano-icono-beneficio: 2.5rem;
   color-scheme: light;
 }
 
@@ -224,6 +225,10 @@ li + li { margin-top: var(--espacio-2); }
 #beneficios article::before, #programas article::before, .workflow-card::before { position: absolute; top: 0; right: 0; left: 0; height: 0.25rem; content: ""; background: var(--color-secundario); }
 #beneficios article:hover, #programas article:hover, .workflow-card:hover, #escoliosis article:hover, .container > section article:hover { border-color: rgba(36, 90, 115, 0.34); box-shadow: var(--sombra-flotante); transform: translateY(-0.2rem); }
 #beneficios article p, #programas article p, .workflow-card p { margin-bottom: 0; color: var(--color-texto-suave); }
+.benefit-icon { display: block; width: var(--tamano-icono-beneficio); height: var(--tamano-icono-beneficio); margin-bottom: var(--espacio-4); color: var(--color-primario); fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+#beneficios .card-link { margin-top: var(--espacio-4); }
+#beneficios article:active { transform: none; box-shadow: var(--sombra-suave); }
+#beneficios .card-link:active { transform: translateY(0.125rem); }
 .card-kicker { display: block; margin-bottom: var(--espacio-3); color: var(--color-secundario); font-size: var(--texto-xs); font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
 .card-link { display: inline-flex; align-items: center; gap: var(--espacio-2); margin-top: var(--espacio-5); font-weight: 800; }
 .card-link::after { content: "→"; transition: transform 160ms ease; }
