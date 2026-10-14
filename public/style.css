@@ -66,6 +66,8 @@
   --paso-entrada: 70ms;
   --ancho-max-tarjeta-hero: 20rem;
   --tamano-icono-beneficio: 2.5rem;
+  --tamano-insignia-programa: 3rem;
+  --tamano-icono-programa: 1.5rem;
   color-scheme: light;
 }
 
@@ -242,6 +244,25 @@ li + li { margin-top: var(--espacio-2); }
 @media (min-width: 40rem) { #beneficios ul, #programas, .workflow-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (min-width: 64rem) { #beneficios ul { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 @media (min-width: 64rem) { #programas, .workflow-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+#programas .section-intro { max-width: 60ch; margin-top: 0; color: var(--color-texto-suave); grid-column: 1 / -1; }
+#programas .programa-card { display: flex; flex-direction: column; }
+#programas .programa-card .card-link { margin-top: auto; padding-top: var(--espacio-4); }
+#programas .programa-icon { display: inline-flex; align-items: center; justify-content: center; width: var(--tamano-insignia-programa); height: var(--tamano-insignia-programa); margin-bottom: var(--espacio-4); border-radius: 50%; }
+#programas .programa-icon svg { width: var(--tamano-icono-programa); height: var(--tamano-icono-programa); fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+#programas .programa-card--biblioteca .programa-icon { color: var(--color-primario); background: var(--color-fondo-azul); }
+#programas .programa-card--sugerencias .programa-icon { color: var(--color-secundario); background: var(--color-fondo-verde); }
+#programas .programa-card--seguimiento .programa-icon { color: var(--color-primario-oscuro); background: var(--color-fondo-aviso); }
+#programas .programa-card--biblioteca::before { background: var(--color-primario); }
+#programas .programa-card--sugerencias::before { background: var(--color-secundario); }
+#programas .programa-card--seguimiento::before { background: var(--color-primario-oscuro); }
+#programas .programa-estado { color: var(--color-texto-suave); font-size: var(--texto-sm); font-weight: 700; }
+#programas .programa-card:focus-within { border-color: var(--color-primario); }
+#programas .programa-card:active { transform: none; }
+@media (prefers-reduced-motion: no-preference) {
+  #programas .programa-card::before { transform: scaleX(1); transform-origin: left; transition: transform var(--duracion-media) var(--curva-suave); }
+  #programas .programa-card.reveal-ready:not(.is-revealed)::before { transform: scaleX(0); }
+}
 
 .hero--compact { padding: clamp(4rem, 8vw, 7rem) max(1rem, calc((100% - var(--ancho-contenedor)) / 2)); text-align: left; }
 .hero--compact h1 { max-width: 18ch; margin: 0; }

@@ -83,6 +83,44 @@
     document.body.classList.remove('page-leaving');
   });
 
+  /* Insignia de estado del seguimiento en la página de inicio.
+     Solo actúa si existe #seguimiento-badge. El normalizador devuelve
+     un arreglo de identificadores: nunca expone notas, dolor ni otros
+     datos de las entradas. Cualquier error deja un estado neutral sin
+     interrumpir el resto de la página. */
+  function updateFollowUpBadge() {
+    var badge = document.getElementById('seguimiento-badge');
+    if (!badge) return;
+    var neutral = 'Seguimiento local no disponible';
+    try {
+      if (!window.FitCasaStorage) {
+        badge.textContent = neutral;
+        return;
+      }
+      var stored = window.FitCasaStorage.read(window.FitCasaStorage.KEYS.panel, 1, function (data) {
+        if (!Array.isArray(data)) return [];
+        return data
+          .filter(function (item) { return item && typeof item.id === 'string'; })
+          .map(function (item) { return item.id; });
+      });
+      if (!stored.available || !stored.value) {
+        badge.textContent = neutral;
+        return;
+      }
+      if (stored.value.length === 0) badge.textContent = 'Sin registros aún';
+      else if (stored.value.length === 1) badge.textContent = '1 registro guardado';
+      else badge.textContent = stored.value.length + ' registros guardados';
+    } catch (error) {
+      try {
+        badge.textContent = neutral;
+      } catch (ignored) {
+        /* Sin DOM escribible no hay nada que actualizar. */
+      }
+    }
+  }
+
+  updateFollowUpBadge();
+
   var button = document.getElementById('menu-toggle');
   var menu = document.getElementById('menu-principal');
   if (button && menu) {
