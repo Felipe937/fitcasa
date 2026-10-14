@@ -43,6 +43,17 @@
     hombros: 'Hombros',
   };
 
+  // Valores admitidos en la URL. Lo que no esté aquí se ignora al restaurar.
+  const VALID_URL_VALUES = {
+    duration: ['corta', 'media', 'larga'],
+    difficulty: ['principiante', 'intermedio', 'avanzado'],
+    equipment: ['ninguno', 'bandas', 'peso', 'colchoneta'],
+    zone: ['piernas', 'glúteos', 'cadera', 'aductores', 'core', 'lumbar', 'torax', 'hombros'],
+    order: ['name', 'duration', 'difficulty'],
+  };
+
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+
   // Normaliza texto para comparar sin distinción de acentos ni mayúsculas.
   const normalizeText = (value) => String(value).toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -71,7 +82,6 @@
   let exercises = [];
   let currentList = [];
   let currentIndex = -1;
-  let firstRender = true;
   let lastFocusedButton = null; // para restaurar foco al cerrar el diálogo
 
   // ---------- UTILIDADES ----------
@@ -117,9 +127,30 @@
     return img;
   };
 
+  // Glifo decorativo genérico (el mismo para todas las tarjetas: no clasifica
+  // ejercicios). Se crea con DOM seguro, sin innerHTML.
+  const createGlyph = () => {
+    const wrap = document.createElement('span');
+    wrap.className = 'exercise-glyph';
+    wrap.setAttribute('aria-hidden', 'true');
+    const svg = document.createElementNS(SVG_NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('focusable', 'false');
+    const arc = document.createElementNS(SVG_NS, 'path');
+    arc.setAttribute('d', 'M4 14c2.5-5.5 5.5-8 8-8s5.5 2.5 8 8');
+    const base = document.createElementNS(SVG_NS, 'path');
+    base.setAttribute('d', 'M4 19h16');
+    svg.appendChild(arc);
+    svg.appendChild(base);
+    wrap.appendChild(svg);
+    return wrap;
+  };
+
   const createCard = (exercise) => {
     const card = document.createElement('article');
     card.className = 'exercise-card';
+
+    card.appendChild(createGlyph());
 
     const title = document.createElement('h3');
     title.textContent = exercise.name;
@@ -154,7 +185,7 @@
     const input = filterForm.querySelector(`input[name="${inputName}"][value="${inputValue}"]`);
     if (input) {
       input.checked = false;
-      applyFilters();
+      applyFilters({ history: 'push' });
     }
   };
 
@@ -187,7 +218,7 @@
       const text = searchInput.value.trim();
       addChip(`Búsqueda: ${text}`, `Quitar búsqueda: ${text}`, () => {
         searchInput.value = '';
-        applyFilters();
+        applyFilters({ history: 'push' });
       });
     }
 
@@ -199,7 +230,7 @@
       clearAll.addEventListener('click', () => {
         filterForm.reset();
         searchInput.value = '';
-        applyFilters();
+        applyFilters({ history: 'push' });
       });
       activeFiltersEl.appendChild(clearAll);
     }
@@ -219,13 +250,10 @@
     currentList = list;
     exerciseListEl.replaceChildren();
     exerciseListEl.setAttribute('aria-busy', 'false');
-    // La animación de entrada solo se aplica en el primer render.
-    if (firstRender) {
-      exerciseListEl.classList.add('animar-entrada');
-      firstRender = false;
-    } else {
-      exerciseListEl.classList.remove('animar-entrada');
-    }
+    // La animación de entrada se repite en cada render (también al filtrar).
+    // Sin temporizadores: se quita la clase, se pinta y se reañade tras
+    // forzar un reflow. Con movimiento reducido no hay animación que repetir.
+    exerciseListEl.classList.remove('animar-entrada');
     if (list.length === 0) {
       const noResult = document.createElement('p');
       noResult.textContent = 'No se encontraron resultados con los filtros actuales.';
@@ -239,7 +267,7 @@
       clearFiltersBtn.addEventListener('click', () => {
         filterForm.reset();
         searchInput.value = '';
-        applyFilters();
+        applyFilters({ history: 'push' });
       });
       exerciseListEl.appendChild(clearFiltersBtn);
     } else {
@@ -247,13 +275,18 @@
       list.forEach((ex) => fragment.appendChild(createCard(ex)));
       exerciseListEl.appendChild(fragment);
     }
+    // Reflujo síncrono para reiniciar la animación de entrada.
+    void exerciseListEl.offsetWidth;
+    exerciseListEl.classList.add('animar-entrada');
     // Actualizar contador con role="status"
     resultCountEl.textContent = `${list.length} ejercicio${list.length !== 1 ? 's' : ''} encontrado${list.length !== 1 ? 's' : ''}`;
     renderActiveFilters();
     updateFiltersToggle();
   };
 
-  const applyFilters = () => {
+  // history: 'replace' (escritura y carga inicial), 'push' (cambios discretos
+  // que se pueden deshacer) o 'none' (restaurar sin tocar el historial).
+  const applyFilters = (options) => {
     const formData = new FormData(filterForm);
     const searchTerm = normalizeText(searchInput.value.trim());
     const selectedDuration = formData.getAll('duration'); // array de strings
@@ -290,10 +323,10 @@
     }
 
     render(filtered);
-    syncUrl();
+    syncUrl(options && options.history ? options.history : 'replace');
   };
 
-  const syncUrl = () => {
+  const syncUrl = (mode) => {
     const params = new URLSearchParams();
     const formData = new FormData(filterForm);
     // Guardar cada filtro sólo si tiene al menos un valor seleccionado
@@ -306,7 +339,9 @@
 
     const query = params.toString();
     const newUrl = query ? `${location.pathname}?${query}` : location.pathname;
-    history.replaceState(null, '', newUrl);
+    if (mode === 'none') return;
+    if (mode === 'push') history.pushState(null, '', newUrl);
+    else history.replaceState(null, '', newUrl);
   };
 
   // Oculta las opciones de filtro que ningún ejercicio cumple (atributo hidden
@@ -343,19 +378,27 @@
 
   const restoreFromUrl = () => {
     const params = new URLSearchParams(location.search);
-    // Restaurar filtros (se ignoran los valores de opciones ocultas)
+    // Se parte del estado limpio para que Atrás/Adelante también desmarque.
+    filterForm.reset();
+    searchInput.value = '';
+    orderSelect.value = 'name';
+    // Restaurar filtros: se ignoran valores fuera de vocabulario y los de
+    // opciones ocultas (sin ejercicios que los cumplan).
     ['duration', 'difficulty', 'equipment', 'zone'].forEach((key) => {
       const val = params.get(key);
       if (val) {
         const values = val.split(',');
         values.forEach((v) => {
+          if (!VALID_URL_VALUES[key].includes(v)) return;
           const input = filterForm.querySelector(`input[name="${key}"][value="${v}"]`);
           if (input && !input.disabled && !(input.closest('label') && input.closest('label').hidden)) input.checked = true;
         });
       }
     });
-    if (params.get('search')) searchInput.value = params.get('search');
-    if (params.get('order')) orderSelect.value = params.get('order');
+    if (params.get('search')) searchInput.value = params.get('search').trim();
+    if (params.get('order') && VALID_URL_VALUES.order.includes(params.get('order'))) {
+      orderSelect.value = params.get('order');
+    }
   };
 
   const renderSkeletons = () => {
@@ -449,18 +492,25 @@
   };
 
   // ---------- EVENTOS ----------
-  filterForm.addEventListener('change', applyFilters);
+  // Cambios discretos (casillas, orden, limpiezas): pushState para poder
+  // deshacerlos. Escritura frecuente (buscador): replaceState.
+  filterForm.addEventListener('change', () => applyFilters({ history: 'push' }));
   searchInput.addEventListener('input', () => {
     // debounce simple: 300 ms
     clearTimeout(searchInput._debounce);
-    searchInput._debounce = setTimeout(applyFilters, 300);
+    searchInput._debounce = setTimeout(() => applyFilters({ history: 'replace' }), 300);
   });
-  orderSelect.addEventListener('change', applyFilters);
+  orderSelect.addEventListener('change', () => applyFilters({ history: 'push' }));
   clearBtn.addEventListener('click', (e) => {
     e.preventDefault();
     filterForm.reset();
     searchInput.value = '';
-    applyFilters();
+    applyFilters({ history: 'push' });
+  });
+  // Atrás/Adelante: restaura filtros y resultados sin tocar el historial.
+  window.addEventListener('popstate', () => {
+    restoreFromUrl();
+    applyFilters({ history: 'none' });
   });
   filtersToggle.addEventListener('click', () => {
     const open = filtersPanel.classList.toggle('abierto');
