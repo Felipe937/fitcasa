@@ -68,6 +68,15 @@
   --tamano-icono-beneficio: 2.5rem;
   --tamano-insignia-programa: 3rem;
   --tamano-icono-programa: 1.5rem;
+  --guia-hero-min: 2rem;
+  --guia-hero-max: 3rem;
+  --guia-hero-fluido: 2vw;
+  --ancho-titulo-guia: 26ch;
+  --ancho-indice-min: 12rem;
+  --ancho-indice-max: 15rem;
+  --tamano-simbolo-aviso: 1.5rem;
+  --duracion-respuesta: 200ms;
+  --desplazamiento-seccion: 0.5rem;
   color-scheme: light;
 }
 
@@ -293,4 +302,116 @@ li + li { margin-top: var(--espacio-2); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
   .reveal-ready { opacity: 1; transform: none; }
+}
+
+/* Guía de escoliosis: diseño editorial. Todo con prefijo body.page-escoliosis. */
+body.page-escoliosis { --ancho-texto: 68ch; }
+
+body.page-escoliosis .hero--compact { padding-block: clamp(var(--espacio-5), 5vw, var(--espacio-7)); }
+body.page-escoliosis .hero--compact h1 { max-width: var(--ancho-titulo-guia); font-size: clamp(var(--guia-hero-min), var(--guia-hero-min) + var(--guia-hero-fluido), var(--guia-hero-max)); }
+body.page-escoliosis .hero-apertura { max-width: 60ch; margin: var(--espacio-4) 0 0; color: var(--color-texto-suave); font-size: var(--texto-lg); }
+body.page-escoliosis .hero-meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--espacio-3); margin: var(--espacio-4) 0 0; color: var(--color-texto-suave); font-size: var(--texto-sm); }
+
+/* Sin tarjeta: ritmo vertical y línea fina entre secciones. */
+body.page-escoliosis .container > section article,
+body.page-escoliosis .guia-contenido > section article { height: auto; padding: 0; background: transparent; border: 0; border-radius: 0; box-shadow: none; }
+body.page-escoliosis .container > section article:hover,
+body.page-escoliosis .guia-contenido > section article:hover { border-color: transparent; box-shadow: none; transform: none; }
+body.page-escoliosis .guia-contenido > section { padding-block: var(--espacio-6); }
+body.page-escoliosis .guia-contenido > section + section { border-top: 1px solid var(--color-borde); }
+body.page-escoliosis .guia-contenido li + li { margin-top: var(--espacio-3); }
+
+/* Recuadros con borde lateral, título y símbolo; nunca solo color. */
+body.page-escoliosis .notice { padding: var(--espacio-4); margin: var(--espacio-5) 0; background: var(--color-fondo-azul); border-left: 0.25rem solid var(--color-primario); border-radius: var(--radio-md); }
+body.page-escoliosis .notice > :first-child { margin-top: 0; }
+body.page-escoliosis .notice > :last-child { margin-bottom: 0; }
+body.page-escoliosis .notice h2, body.page-escoliosis .notice h3 { display: flex; align-items: center; gap: var(--espacio-2); margin-top: 0; font-size: var(--texto-lg); }
+body.page-escoliosis .notice h2::before, body.page-escoliosis .notice h3::before, body.page-escoliosis .notice-warn > p:first-child::before { display: inline-flex; align-items: center; justify-content: center; width: var(--tamano-simbolo-aviso); height: var(--tamano-simbolo-aviso); flex: none; border-radius: 50%; font-size: var(--texto-sm); font-weight: 800; }
+body.page-escoliosis .notice-info h2::before { content: "i"; background: var(--color-primario); color: var(--color-sobre-primario); }
+body.page-escoliosis .notice-warn { background: var(--color-fondo-aviso); border-color: var(--color-foco); }
+body.page-escoliosis .notice-warn > p:first-child::before { content: "!"; background: var(--color-foco); color: var(--color-sobre-primario); }
+body.page-escoliosis .notice-urgent { background: var(--color-fondo-alerta); border-color: var(--color-peligro); }
+body.page-escoliosis .notice-urgent h3::before { content: "!"; background: var(--color-peligro); color: var(--color-sobre-primario); }
+
+/* Índice de la guía. */
+body.page-escoliosis .toc { margin-top: var(--espacio-6); padding: var(--espacio-4); background: var(--color-superficie); border: 1px solid var(--color-borde); border-radius: var(--radio-md); }
+body.page-escoliosis .toc p { margin: 0 0 var(--espacio-2); font-weight: 800; }
+body.page-escoliosis .toc ul { padding: 0; margin: 0; list-style: none; }
+body.page-escoliosis .toc a { display: flex; align-items: center; min-height: var(--alto-objetivo-tactil); color: var(--color-texto-suave); text-decoration: none; font-weight: 700; }
+body.page-escoliosis .toc a:hover { color: var(--color-primario-oscuro); }
+body.page-escoliosis .toc a[aria-current="location"] { color: var(--color-primario-oscuro); font-weight: 800; box-shadow: inset 0.25rem 0 0 var(--color-primario); padding-left: var(--espacio-2); }
+body.page-escoliosis #toc-toggle { display: none; }
+html.js body.page-escoliosis #toc-toggle { display: inline-flex; margin-top: var(--espacio-5); }
+html.js body.page-escoliosis #toc-list { display: none; }
+html.js body.page-escoliosis #toc-list.abierta { display: block; }
+
+/* Enlaces de ancla junto a cada h2. */
+body.page-escoliosis .anchor-link { display: inline-flex; align-items: center; justify-content: center; min-width: var(--alto-objetivo-tactil); min-height: var(--alto-objetivo-tactil); opacity: 0; text-decoration: none; }
+body.page-escoliosis h2:hover .anchor-link, body.page-escoliosis .anchor-link:focus-visible { opacity: 1; }
+@media (hover: none) { body.page-escoliosis .anchor-link { opacity: 0.65; } }
+
+/* Tabla de evidencia. */
+body.page-escoliosis .tabla-evidencia { width: 100%; margin: var(--espacio-5) 0; border-collapse: collapse; font-size: var(--texto-sm); }
+body.page-escoliosis .tabla-evidencia caption { margin-bottom: var(--espacio-3); color: var(--color-primario-oscuro); font-size: var(--texto-lg); font-weight: 800; text-align: left; }
+body.page-escoliosis .tabla-evidencia th, body.page-escoliosis .tabla-evidencia td { padding: var(--espacio-3); border: 1px solid var(--color-borde); text-align: left; vertical-align: top; }
+body.page-escoliosis .tabla-evidencia thead th { color: var(--color-primario-oscuro); background: var(--color-fondo-azul); }
+
+/* Referencias con sangría francesa. */
+body.page-escoliosis .refs li { padding-left: var(--espacio-3); text-indent: calc(var(--espacio-3) * -1); }
+body.page-escoliosis .refs li:target { background: var(--color-fondo-aviso); }
+
+/* Preguntas frecuentes: indicador por CSS, fila completa clicable. */
+body.page-escoliosis details summary { list-style: none; display: flex; align-items: center; gap: var(--espacio-3); }
+body.page-escoliosis details summary::-webkit-details-marker { display: none; }
+body.page-escoliosis details summary::marker { content: ""; }
+body.page-escoliosis details summary::after { content: "+"; margin-left: auto; flex: none; color: var(--color-primario); font-weight: 800; }
+body.page-escoliosis details[open] summary::after { content: "−"; }
+
+@media (min-width: 64rem) {
+  body.page-escoliosis .guia-layout { display: grid; grid-template-columns: minmax(var(--ancho-indice-min), var(--ancho-indice-max)) minmax(0, 1fr); gap: var(--espacio-6); align-items: start; margin-top: var(--espacio-6); }
+  body.page-escoliosis .toc { position: sticky; top: var(--desplazamiento-ancla); margin-top: 0; }
+  body.page-escoliosis .guia-contenido { max-width: var(--ancho-texto); min-width: 0; }
+  html.js body.page-escoliosis #toc-toggle { display: none; }
+  html.js body.page-escoliosis #toc-list { display: block; }
+}
+
+@media (max-width: 47.99rem) {
+  body.page-escoliosis .tabla-evidencia thead { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+  body.page-escoliosis .tabla-evidencia tr { display: block; margin-bottom: var(--espacio-4); border: 1px solid var(--color-borde); border-radius: var(--radio-md); }
+  body.page-escoliosis .tabla-evidencia td { display: block; border: 0; border-top: 1px solid var(--color-borde); }
+  body.page-escoliosis .tabla-evidencia td:first-child { border-top: 0; }
+  body.page-escoliosis .tabla-evidencia td::before { content: attr(data-label); display: block; margin-bottom: var(--espacio-1); color: var(--color-primario-oscuro); font-weight: 800; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  body.page-escoliosis #toc-list a { transition: color var(--duracion-corta) ease, box-shadow var(--duracion-corta) ease; }
+  body.page-escoliosis details summary::after { transition: transform var(--duracion-corta) ease; }
+  body.page-escoliosis details[open] summary::after { transform: rotate(180deg); }
+}
+
+@supports selector(::details-content) {
+  body.page-escoliosis details::details-content { opacity: 0; transition: opacity var(--duracion-respuesta) ease; }
+  body.page-escoliosis details[open]::details-content { opacity: 1; }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    body.page-escoliosis .guia-contenido > section:not(#alertas):not(#que-es):not(#tipos) > article { animation: seccion-in var(--duracion-media) linear both; animation-timeline: view(); animation-range: entry 0% entry 25%; }
+    @keyframes seccion-in { from { opacity: 0; transform: translateY(var(--desplazamiento-seccion)); } to { opacity: 1; transform: none; } }
+  }
+}
+
+@media print {
+  body.page-escoliosis { color: CanvasText; background: Canvas; }
+  body.page-escoliosis a { color: CanvasText; }
+  body.page-escoliosis .guia-layout { display: block; }
+  body.page-escoliosis .aviso-superior, body.page-escoliosis .site-header, body.page-escoliosis .skip-link, body.page-escoliosis .toc, body.page-escoliosis #toc-toggle, body.page-escoliosis #imprimir-guia, body.page-escoliosis .site-footer nav { display: none; }
+  body.page-escoliosis .guia-contenido > section > article { animation: none; opacity: 1; transform: none; }
+  body.page-escoliosis h2, body.page-escoliosis h3, body.page-escoliosis .notice, body.page-escoliosis .tabla-evidencia tr { break-inside: avoid; }
+  body.page-escoliosis #fuentes a[href^="http"]::after { content: " (" attr(href) ")"; }
+}
+
+@media (forced-colors: active) {
+  body.page-escoliosis .notice, body.page-escoliosis .toc, body.page-escoliosis .tabla-evidencia th, body.page-escoliosis .tabla-evidencia td, body.page-escoliosis details { border: 1px solid CanvasText; }
+  body.page-escoliosis .anchor-link { opacity: 1; }
 }

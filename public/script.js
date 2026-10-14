@@ -162,5 +162,98 @@
     }
   }
 
+  /* Guía de escoliosis: tiempo de lectura, índice plegable, scrollspy e
+     impresión. Solo actúa en body.page-escoliosis y si existe el índice. */
+  if (document.body && document.body.classList.contains('page-escoliosis')) {
+    document.documentElement.classList.add('js');
+
+    (function () {
+      function wordsOf(element) {
+        if (!element || !element.textContent) return 0;
+        return element.textContent.trim().split(/\s+/).filter(Boolean).length;
+      }
+
+      /* Tiempo de lectura sobre el texto de main, sin #fuentes, índice ni .sr-only. */
+      var main = document.getElementById('contenido');
+      var timeEl = document.getElementById('tiempo-lectura');
+      if (main && timeEl) {
+        var total = wordsOf(main);
+        ['fuentes'].forEach(function (id) {
+          var excluded = document.getElementById(id);
+          if (excluded) total -= wordsOf(excluded);
+        });
+        var toc = main.querySelector('.toc');
+        if (toc) total -= wordsOf(toc);
+        var toggle = document.getElementById('toc-toggle');
+        if (toggle) total -= wordsOf(toggle);
+        Array.prototype.forEach.call(main.querySelectorAll('.sr-only'), function (hidden) {
+          total -= wordsOf(hidden);
+        });
+        var minutes = Math.max(1, Math.round(Math.max(total, 0) / 200));
+        timeEl.textContent = 'unos ' + minutes + ' min';
+      }
+
+      /* Botón de impresión: solo existe visualmente con JS. */
+      var printButton = document.getElementById('imprimir-guia');
+      if (printButton) {
+        printButton.removeAttribute('hidden');
+        printButton.addEventListener('click', function () {
+          window.print();
+        });
+      }
+
+      /* Índice plegable en móvil. */
+      var tocToggle = document.getElementById('toc-toggle');
+      var tocList = document.getElementById('toc-list');
+      if (tocToggle && tocList) {
+        tocToggle.addEventListener('click', function () {
+          var open = tocList.classList.toggle('abierta');
+          tocToggle.setAttribute('aria-expanded', String(open));
+        });
+      }
+
+      /* Scrollspy con un solo observador; sin él los enlaces siguen funcionando. */
+      var tocLinks = tocList ? tocList.querySelectorAll('a[href^="#"]') : [];
+      if (tocLinks.length && 'IntersectionObserver' in window) {
+        var spy = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            var id = '#' + entry.target.id;
+            Array.prototype.forEach.call(tocLinks, function (link) {
+              if (link.getAttribute('href') === id) link.setAttribute('aria-current', 'location');
+              else link.removeAttribute('aria-current');
+            });
+          });
+        }, { rootMargin: '-30% 0px -60% 0px' });
+        Array.prototype.forEach.call(tocLinks, function (link) {
+          var target = document.getElementById(link.getAttribute('href').slice(1));
+          if (target) spy.observe(target);
+        });
+      }
+
+      /* Impresión: abre los details y restaura su estado al terminar. */
+      var openedForPrint = [];
+      function openDetailsForPrint() {
+        openedForPrint = [];
+        Array.prototype.forEach.call(document.querySelectorAll('details'), function (detail) {
+          if (!detail.open) {
+            openedForPrint.push(detail);
+            detail.open = true;
+          }
+        });
+      }
+      function restoreDetailsAfterPrint() {
+        Array.prototype.forEach.call(openedForPrint, function (detail) {
+          detail.open = false;
+        });
+        openedForPrint = [];
+      }
+      if (window.addEventListener) {
+        window.addEventListener('beforeprint', openDetailsForPrint);
+        window.addEventListener('afterprint', restoreDetailsAfterPrint);
+      }
+    }());
+  }
+
   window.FitCasaMotion = { observe: observeReveal };
 }());
