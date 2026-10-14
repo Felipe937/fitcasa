@@ -9,6 +9,36 @@
     avanzado: 3,
   };
 
+  const durationLabels = {
+    corta: '≤10 min',
+    media: '10-20 min',
+    larga: '>20 min',
+  };
+
+  const difficultyLabels = {
+    principiante: 'Principiante',
+    intermedio: 'Intermedio',
+    avanzado: 'Avanzado',
+  };
+
+  const equipmentLabels = {
+    ninguno: 'Sin equipamiento',
+    bandas: 'Bandas elásticas',
+    peso: 'Pesas/Mancuernas',
+    colchoneta: 'Colchoneta',
+  };
+
+  const zoneLabels = {
+    piernas: 'Piernas',
+    glúteos: 'Glúteos',
+    cadera: 'Cadera',
+    aductores: 'Aductores',
+    core: 'Core',
+    lumbar: 'Zona lumbar',
+    torax: 'Tórax',
+    hombros: 'Hombros',
+  };
+
   // Normaliza texto para comparar sin distinción de acentos ni mayúsculas.
   const normalizeText = (value) => String(value).toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -16,6 +46,7 @@
   // Referencias a elementos del DOM
   const resultCountEl = document.getElementById('result-count');
   const exerciseListEl = document.getElementById('exercise-list');
+  const activeFiltersEl = document.getElementById('active-filters');
   const filterForm = document.getElementById('filter-form');
   const searchInput = document.getElementById('search-input');
   const orderSelect = document.getElementById('order-select');
@@ -26,9 +57,30 @@
   const dialogClose = dialog.querySelector('#close-dialog');
 
   let exercises = [];
-  let lastFocusedButton = null; // para restaurar foco al cerrar el diálogo
+  let lastFocusedButton = null;
 
   // ---------- UTILIDADES ----------
+  const createPlaceholder = () => {
+    const placeholder = document.createElement('div');
+    placeholder.className = 'exercise-image-placeholder';
+    placeholder.textContent = 'Imagen no disponible';
+    return placeholder;
+  };
+
+  const createMetaItem = (label, value) => {
+    const item = document.createElement('span');
+    item.className = 'exercise-meta-item';
+    item.textContent = `${label}: ${value}`;
+    return item;
+  };
+
+  const createTag = (text) => {
+    const tag = document.createElement('span');
+    tag.className = 'exercise-tag';
+    tag.textContent = text;
+    return tag;
+  };
+
   const createCard = (exercise) => {
     const card = document.createElement('article');
     card.className = 'exercise-card';
@@ -42,21 +94,50 @@
       const img = document.createElement('img');
       img.className = 'exercise-image';
       img.src = exercise.image;
-      // Decorativa salvo que el JSON aporte imageAlt; no se inventan descripciones.
-      img.alt = typeof exercise.imageAlt === 'string' ? exercise.imageAlt : '';
+      img.alt = '';
       img.loading = 'lazy';
-      // La carpeta assets/ no existe: si la imagen falla se retira del DOM.
-      img.addEventListener('error', () => img.remove());
+      img.addEventListener('error', () => {
+        img.replaceWith(createPlaceholder());
+      });
       card.appendChild(img);
+    } else {
+      card.appendChild(createPlaceholder());
     }
 
     const desc = document.createElement('p');
     desc.textContent = exercise.description;
     card.appendChild(desc);
 
+    const meta = document.createElement('div');
+    meta.className = 'exercise-meta';
+    meta.appendChild(createMetaItem('Duración', durationLabels[exercise.duration] || exercise.duration));
+    meta.appendChild(createMetaItem('Dificultad', difficultyLabels[exercise.difficulty] || exercise.difficulty));
+    card.appendChild(meta);
+
+    const tags = document.createElement('div');
+    tags.className = 'exercise-tags';
+    if (Array.isArray(exercise.zone)) {
+      exercise.zone.forEach(z => {
+        tags.appendChild(createTag(zoneLabels[z] || z));
+      });
+    }
+    if (Array.isArray(exercise.equipment)) {
+      exercise.equipment.forEach(eq => {
+        tags.appendChild(createTag(equipmentLabels[eq] || eq));
+      });
+    }
+    card.appendChild(tags);
+
+    if (exercise.adaptation && exercise.adaptation.notes) {
+      const adapt = document.createElement('div');
+      adapt.className = 'exercise-adaptation';
+      adapt.textContent = `Nota general de adaptación: ${exercise.adaptation.notes}`;
+      card.appendChild(adapt);
+    }
+
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.textContent = 'Ver detalle';
+    btn.textContent = 'Ver instrucciones';
     btn.dataset.id = exercise.id;
     btn.addEventListener('click', openDialog);
     card.appendChild(btn);
@@ -64,50 +145,111 @@
     return card;
   };
 
+  const renderActiveFilters = () => {
+    activeFiltersEl.replaceChildren();
+    const formData = new FormData(filterForm);
+    const hasFilters = formData.getAll('duration').length > 0 ||
+                      formData.getAll('difficulty').length > 0 ||
+                      formData.getAll('equipment').length > 0 ||
+                      formData.getAll('zone').length > 0 ||
+                      searchInput.value.trim() !== '';
+
+    if (!hasFilters) return;
+
+    const createFilterTag = (label, value, inputName, inputValue) => {
+      const tag = document.createElement('span');
+      tag.className = 'active-filter-tag';
+      tag.textContent = `${label}: ${value} `;
+
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.setAttribute('aria-label', `Eliminar filtro ${label}: ${value}`);
+      removeBtn.textContent = '×';
+      removeBtn.addEventListener('click', () => {
+        const input = filterForm.querySelector(`input[name="${inputName}"][value="${inputValue}"]`);
+        if (input) {
+          input.checked = false;
+          applyFilters();
+        }
+      });
+      tag.appendChild(removeBtn);
+      return tag;
+    };
+
+    formData.getAll('duration').forEach(v => {
+      activeFiltersEl.appendChild(createFilterTag('Duración', durationLabels[v] || v, 'duration', v));
+    });
+    formData.getAll('difficulty').forEach(v => {
+      activeFiltersEl.appendChild(createFilterTag('Dificultad', difficultyLabels[v] || v, 'difficulty', v));
+    });
+    formData.getAll('equipment').forEach(v => {
+      activeFiltersEl.appendChild(createFilterTag('Equipamiento', equipmentLabels[v] || v, 'equipment', v));
+    });
+    formData.getAll('zone').forEach(v => {
+      activeFiltersEl.appendChild(createFilterTag('Zona', zoneLabels[v] || v, 'zone', v));
+    });
+
+    if (searchInput.value.trim()) {
+      const tag = document.createElement('span');
+      tag.className = 'active-filter-tag';
+      tag.textContent = `Búsqueda: ${searchInput.value.trim()} `;
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.setAttribute('aria-label', 'Eliminar búsqueda');
+      removeBtn.textContent = '×';
+      removeBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        applyFilters();
+      });
+      tag.appendChild(removeBtn);
+      activeFiltersEl.appendChild(tag);
+    }
+  };
+
   const render = (list) => {
-    // Vaciar contenedor
     exerciseListEl.replaceChildren();
     if (list.length === 0) {
       const noResult = document.createElement('p');
-      noResult.textContent = 'No se encontraron resultados.';
+      noResult.textContent = 'No se encontraron resultados con los filtros actuales.';
       noResult.setAttribute('role', 'status');
       exerciseListEl.appendChild(noResult);
+      
+      const clearFiltersBtn = document.createElement('button');
+      clearFiltersBtn.type = 'button';
+      clearFiltersBtn.className = 'btn secondary';
+      clearFiltersBtn.textContent = 'Limpiar filtros';
+      clearFiltersBtn.addEventListener('click', () => {
+        filterForm.reset();
+        applyFilters();
+      });
+      exerciseListEl.appendChild(clearFiltersBtn);
     } else {
       const fragment = document.createDocumentFragment();
       list.forEach((ex) => fragment.appendChild(createCard(ex)));
       exerciseListEl.appendChild(fragment);
     }
     if (window.FitCasaMotion) window.FitCasaMotion.observe(exerciseListEl);
-    // Actualizar contador con aria‑live
     resultCountEl.textContent = `${list.length} ejercicio${list.length !== 1 ? 's' : ''} encontrado${list.length !== 1 ? 's' : ''}`;
+    renderActiveFilters();
   };
 
   const applyFilters = () => {
     const formData = new FormData(filterForm);
     const searchTerm = normalizeText(searchInput.value.trim());
-    const selectedDuration = formData.getAll('duration'); // array de strings
+    const selectedDuration = formData.getAll('duration');
     const selectedDifficulty = formData.getAll('difficulty');
     const selectedEquipment = formData.getAll('equipment');
     const selectedZone = formData.getAll('zone');
-    // Sin filtro de adaptación: los 20 ejercicios tienen nota de adaptación,
-    // así que no discriminaría nada. Se restaurará cuando los datos distingan
-    // entre ejercicios con y sin adaptación.
 
     let filtered = exercises.filter((ex) => {
-      // Duración
       if (selectedDuration.length && !selectedDuration.includes(ex.duration)) return false;
-      // Dificultad
       if (selectedDifficulty.length && !selectedDifficulty.includes(ex.difficulty)) return false;
-      // Equipamiento (ex.equipment es array)
       if (selectedEquipment.length && !selectedEquipment.some(eq => ex.equipment.includes(eq))) return false;
-      // Zona (ex.zone es array)
       if (selectedZone.length && !selectedZone.some(z => ex.zone.includes(z))) return false;
-      // Búsqueda (insensible a acentos: "gluteos" encuentra "Glúteos")
       if (searchTerm && !normalizeText(ex.name).includes(searchTerm) && !normalizeText(ex.description).includes(searchTerm)) return false;
       return true;
     });
 
-    // Ordenamiento
     const order = orderSelect.value;
     if (order === 'name') {
       filtered.sort((a, b) => a.name.localeCompare(b.name, 'es'));
@@ -125,7 +267,6 @@
   const syncUrl = () => {
     const params = new URLSearchParams();
     const formData = new FormData(filterForm);
-    // Guardar cada filtro sólo si tiene al menos un valor seleccionado
     ['duration', 'difficulty', 'equipment', 'zone'].forEach((key) => {
       const values = formData.getAll(key);
       if (values.length) params.set(key, values.join(','));
@@ -138,9 +279,6 @@
     history.replaceState(null, '', newUrl);
   };
 
-  // Oculta las opciones de filtro que ningún ejercicio cumple (atributo hidden
-  // en el label y disabled en el input) y el fieldset entero si le quedan
-  // menos de 2 opciones visibles.
   const pruneDeadOptions = () => {
     const present = { duration: new Set(), difficulty: new Set(), equipment: new Set(), zone: new Set() };
     exercises.forEach((ex) => {
@@ -168,7 +306,6 @@
 
   const restoreFromUrl = () => {
     const params = new URLSearchParams(location.search);
-    // Restaurar filtros (se ignoran los valores de opciones ocultas)
     ['duration', 'difficulty', 'equipment', 'zone'].forEach((key) => {
       const val = params.get(key);
       if (val) {
@@ -183,39 +320,101 @@
     if (params.get('order')) orderSelect.value = params.get('order');
   };
 
+  const loadExercises = async () => {
+    resultCountEl.textContent = 'Cargando ejercicios...';
+    exerciseListEl.replaceChildren();
+    const loadingMsg = document.createElement('p');
+    loadingMsg.textContent = 'Cargando ejercicios...';
+    loadingMsg.setAttribute('role', 'status');
+    exerciseListEl.appendChild(loadingMsg);
+
+    try {
+      const resp = await fetch('ejercicios.json');
+      if (!resp.ok) throw new Error('Error al cargar los datos de ejercicios');
+      exercises = await resp.json();
+    } catch (err) {
+      exerciseListEl.replaceChildren();
+      const errorMessage = document.createElement('p');
+      errorMessage.setAttribute('role', 'alert');
+      errorMessage.textContent = 'No se pudieron cargar los ejercicios. Por favor, intenta de nuevo.';
+      exerciseListEl.appendChild(errorMessage);
+
+      const retryBtn = document.createElement('button');
+      retryBtn.type = 'button';
+      retryBtn.className = 'btn';
+      retryBtn.textContent = 'Reintentar';
+      retryBtn.addEventListener('click', loadExercises);
+      exerciseListEl.appendChild(retryBtn);
+
+      resultCountEl.textContent = 'Error al cargar';
+      return;
+    }
+
+    pruneDeadOptions();
+    restoreFromUrl();
+    applyFilters();
+  };
+
   const openDialog = (e) => {
     const id = e.currentTarget.dataset.id;
     const ex = exercises.find((item) => item.id === id);
     if (!ex) return;
-    // Guardar foco
     lastFocusedButton = e.currentTarget;
-    // Rellenar contenido del diálogo
     dialogTitle.textContent = ex.name;
     dialogBody.replaceChildren();
     const frag = document.createDocumentFragment();
+
     if (ex.image) {
       const img = document.createElement('img');
       img.className = 'exercise-image';
       img.src = ex.image;
-      img.alt = typeof ex.imageAlt === 'string' ? ex.imageAlt : '';
+      img.alt = '';
       img.loading = 'lazy';
-      img.addEventListener('error', () => img.remove());
+      img.addEventListener('error', () => {
+        img.replaceWith(createPlaceholder());
+      });
       frag.appendChild(img);
+    } else {
+      frag.appendChild(createPlaceholder());
     }
+
     const pDesc = document.createElement('p');
     pDesc.textContent = ex.description;
     frag.appendChild(pDesc);
+
+    const meta = document.createElement('div');
+    meta.className = 'exercise-meta';
+    meta.appendChild(createMetaItem('Duración', durationLabels[ex.duration] || ex.duration));
+    meta.appendChild(createMetaItem('Dificultad', difficultyLabels[ex.difficulty] || ex.difficulty));
+    frag.appendChild(meta);
+
+    const tags = document.createElement('div');
+    tags.className = 'exercise-tags';
+    if (Array.isArray(ex.zone)) {
+      ex.zone.forEach(z => {
+        tags.appendChild(createTag(zoneLabels[z] || z));
+      });
+    }
+    if (Array.isArray(ex.equipment)) {
+      ex.equipment.forEach(eq => {
+        tags.appendChild(createTag(equipmentLabels[eq] || eq));
+      });
+    }
+    frag.appendChild(tags);
+
     if (ex.adaptation && ex.adaptation.notes) {
-      const adapt = document.createElement('p');
+      const adapt = document.createElement('div');
+      adapt.className = 'exercise-adaptation';
       adapt.textContent = `Nota general de adaptación: ${ex.adaptation.notes}`;
       frag.appendChild(adapt);
     }
+
     const review = document.createElement('p');
     review.textContent = `Estado de revisión: ${ex.clinicalReview}`;
     frag.appendChild(review);
+
     dialogBody.appendChild(frag);
     dialog.showModal();
-    // Enfocar el diálogo
     dialog.focus();
   };
 
@@ -226,7 +425,6 @@
   // ---------- EVENTOS ----------
   filterForm.addEventListener('change', applyFilters);
   searchInput.addEventListener('input', () => {
-    // debounce simple: 300 ms
     clearTimeout(searchInput._debounce);
     searchInput._debounce = setTimeout(applyFilters, 300);
   });
@@ -237,31 +435,13 @@
     applyFilters();
   });
   dialogClose.addEventListener('click', closeDialog);
-  // El <dialog> ya cierra con Escape; el foco se restaura en el evento "close".
   dialog.addEventListener('close', () => {
     if (lastFocusedButton) lastFocusedButton.focus();
   });
-  // Cerrar al hacer click fuera del contenido pero dentro del elemento <dialog>
   dialog.addEventListener('click', (e) => {
     if (e.target === dialog) closeDialog();
   });
 
   // ---------- INICIALIZACIÓN ----------
-  document.addEventListener('DOMContentLoaded', async () => {
-    try {
-      const resp = await fetch('ejercicios.json');
-      if (!resp.ok) throw new Error('Error al cargar datos');
-      exercises = await resp.json();
-    } catch (err) {
-      exerciseListEl.replaceChildren();
-      const errorMessage = document.createElement('p');
-      errorMessage.setAttribute('role', 'alert');
-      errorMessage.textContent = err.message;
-      exerciseListEl.appendChild(errorMessage);
-      return;
-    }
-    pruneDeadOptions();
-    restoreFromUrl();
-    applyFilters();
-  });
+  document.addEventListener('DOMContentLoaded', loadExercises);
 })();

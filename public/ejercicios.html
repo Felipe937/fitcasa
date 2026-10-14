@@ -45,63 +45,73 @@
     <span class="eyebrow">Biblioteca FitCasa</span>
     <h1 class="texto-3xl" data-reveal>Ejercicios para moverte en casa</h1>
     <p class="page-lead">Busca una actividad por tiempo, dificultad, equipamiento o zona corporal. El contenido es educativo y no sustituye una valoración profesional.</p>
-    <section aria-labelledby="filtros-titulo" class="filters-section" data-reveal>
-      <h2 id="filtros-titulo" class="sr-only">Filtros y búsqueda</h2>
-      <form id="filter-form" aria-describedby="result-count" novalidate>
-        <fieldset>
-          <legend>Búsqueda</legend>
-          <label for="search-input">Buscar por nombre</label>
-          <input type="search" id="search-input" name="search" placeholder="Ejemplo: Sentadilla" />
-        </fieldset>
 
-        <fieldset>
-          <legend>Duración</legend>
-          <label><input type="checkbox" name="duration" value="corta" /> ≤10 min</label>
-          <label><input type="checkbox" name="duration" value="media" /> 10‑20 min</label>
-          <label><input type="checkbox" name="duration" value="larga" /> >20 min</label>
-        </fieldset>
+    <div class="exercise-layout">
+      <aside aria-labelledby="filtros-titulo" class="filters-section" data-reveal>
+        <h2 id="filtros-titulo" class="sr-only">Filtros y búsqueda</h2>
+        <form id="filter-form" novalidate>
+          <fieldset>
+            <legend>Búsqueda</legend>
+            <label for="search-input">Buscar por nombre</label>
+            <input type="search" id="search-input" name="search" placeholder="Ejemplo: Sentadilla" />
+          </fieldset>
 
-        <fieldset>
-          <legend>Dificultad</legend>
-          <label><input type="checkbox" name="difficulty" value="principiante" /> Principiante</label>
-          <label><input type="checkbox" name="difficulty" value="intermedio" /> Intermedio</label>
-          <label><input type="checkbox" name="difficulty" value="avanzado" /> Avanzado</label>
-        </fieldset>
+          <fieldset>
+            <legend>Duración</legend>
+            <label><input type="checkbox" name="duration" value="corta" /> ≤10 min</label>
+            <label><input type="checkbox" name="duration" value="media" /> 10‑20 min</label>
+            <label><input type="checkbox" name="duration" value="larga" /> >20 min</label>
+          </fieldset>
 
-        <fieldset>
-          <legend>Equipamiento</legend>
-          <label><input type="checkbox" name="equipment" value="ninguno" /> Ninguno</label>
-          <label><input type="checkbox" name="equipment" value="bandas" /> Bandas elásticas</label>
-          <label><input type="checkbox" name="equipment" value="peso" /> Pesas / Mancuernas</label>
-          <label><input type="checkbox" name="equipment" value="colchoneta" /> Colchoneta</label>
-        </fieldset>
+          <fieldset>
+            <legend>Dificultad</legend>
+            <label><input type="checkbox" name="difficulty" value="principiante" /> Principiante</label>
+            <label><input type="checkbox" name="difficulty" value="intermedio" /> Intermedio</label>
+            <label><input type="checkbox" name="difficulty" value="avanzado" /> Avanzado</label>
+          </fieldset>
 
-        <fieldset>
-          <legend>Zona corporal</legend>
-          <label><input type="checkbox" name="zone" value="piernas" /> Piernas</label>
-          <label><input type="checkbox" name="zone" value="glúteos" /> Glúteos</label>
-          <label><input type="checkbox" name="zone" value="cadera" /> Cadera</label>
-          <label><input type="checkbox" name="zone" value="aductores" /> Aductores</label>
-          <label><input type="checkbox" name="zone" value="core" /> Core / Abdomen</label>
-          <label><input type="checkbox" name="zone" value="lumbar" /> Zona lumbar</label>
-          <label><input type="checkbox" name="zone" value="torax" /> Tórax</label>
-          <label><input type="checkbox" name="zone" value="hombros" /> Hombros</label>
-        </fieldset>
+          <fieldset>
+            <legend>Equipamiento</legend>
+            <label><input type="checkbox" name="equipment" value="ninguno" /> Ninguno</label>
+            <label><input type="checkbox" name="equipment" value="bandas" /> Bandas elásticas</label>
+            <label><input type="checkbox" name="equipment" value="peso" /> Pesas / Mancuernas</label>
+            <label><input type="checkbox" name="equipment" value="colchoneta" /> Colchoneta</label>
+          </fieldset>
 
-        <div class="filter-actions">
-          <button type="button" id="clear-filters">Limpiar filtros</button>
-          <label for="order-select">Ordenar por</label>
-          <select id="order-select">
-            <option value="name">Nombre</option>
-            <option value="duration">Duración</option>
-            <option value="difficulty">Dificultad</option>
-          </select>
+          <fieldset>
+            <legend>Zona corporal</legend>
+            <label><input type="checkbox" name="zone" value="piernas" /> Piernas</label>
+            <label><input type="checkbox" name="zone" value="glúteos" /> Glúteos</label>
+            <label><input type="checkbox" name="zone" value="cadera" /> Cadera</label>
+            <label><input type="checkbox" name="zone" value="aductores" /> Aductores</label>
+            <label><input type="checkbox" name="zone" value="core" /> Core / Abdomen</label>
+            <label><input type="checkbox" name="zone" value="lumbar" /> Zona lumbar</label>
+            <label><input type="checkbox" name="zone" value="torax" /> Tórax</label>
+            <label><input type="checkbox" name="zone" value="hombros" /> Hombros</label>
+          </fieldset>
+
+          <div class="filter-actions">
+            <button type="button" id="clear-filters">Limpiar filtros</button>
+          </div>
+        </form>
+      </aside>
+
+      <div class="results-wrapper">
+        <div class="results-header">
+          <p id="result-count" role="status" class="result-counter">Cargando ejercicios...</p>
+          <div class="order-wrapper">
+            <label for="order-select">Ordenar por</label>
+            <select id="order-select">
+              <option value="name">Nombre</option>
+              <option value="duration">Duración</option>
+              <option value="difficulty">Dificultad</option>
+            </select>
+          </div>
         </div>
-      </form>
-      <p id="result-count" role="status" class="result-counter">Mostrando 0 resultados.</p>
-    </section>
-
-    <section id="exercise-list" class="exercise-list"></section>
+        <div id="active-filters" class="active-filters" aria-live="polite"></div>
+        <section id="exercise-list" class="exercise-list" aria-label="Resultados de ejercicios"></section>
+      </div>
+    </div>
   </main>
 
   <dialog id="exercise-dialog" aria-labelledby="dialog-title" tabindex="-1">
