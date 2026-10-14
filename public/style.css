@@ -121,6 +121,7 @@ button:disabled, button[aria-disabled="true"] { cursor: not-allowed; opacity: 0.
 .eyebrow::before { width: 0.6rem; height: 0.6rem; content: ""; background: var(--color-secundario); border-radius: 50%; }
 
 .aviso-superior { margin: 0; padding: var(--espacio-2) 1rem; color: var(--color-texto); background: var(--color-fondo-aviso); font-size: var(--texto-xs); line-height: 1.4; text-align: center; width: 100%; }
+.aviso-superior { max-width: none; }
 .site-header { position: sticky; top: 0; z-index: 10; background: rgba(255, 255, 255, 0.96); border-bottom: 1px solid var(--color-borde); box-shadow: 0 0.4rem 1.5rem rgba(23, 62, 80, 0.05); backdrop-filter: blur(0.75rem); }
 nav { display: flex; align-items: center; justify-content: space-between; gap: var(--espacio-4); min-height: 4.5rem; }
 .logo { display: inline-flex; align-items: center; gap: var(--espacio-2); color: var(--color-primario-oscuro); font-size: var(--texto-lg); font-weight: 850; letter-spacing: -0.03em; text-decoration: none; }
