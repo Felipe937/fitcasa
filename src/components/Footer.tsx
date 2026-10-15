@@ -66,6 +66,17 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               Cómo funciona
             </a>
           </li>
+          <li>
+            <a
+              href="#privacidad"
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigate('privacidad');
+              }}
+            >
+              Política de privacidad
+            </a>
+          </li>
         </ul>
       </nav>
       <p>

@@ -980,6 +980,10 @@ export const PanelPage: React.FC = () => {
           herramienta no cifra ese almacenamiento. Si borras los datos del navegador, usas el modo privado o
           compartes el dispositivo, tus entradas pueden desaparecer o quedar accesibles para otras personas.
         </p>
+        <p className="small-print">
+          FitCasa no ofrece exportar tus registros: no hay función de descarga ni copia de seguridad en ningún
+          servidor. <a href="#privacidad">Lee la Política de Privacidad</a> para el detalle completo.
+        </p>
 
         {!confirmClear ? (
           <button

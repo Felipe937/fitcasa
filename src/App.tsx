@@ -7,6 +7,7 @@ import { ExercisesPage } from './pages/ExercisesPage';
 import { QuizPage } from './pages/QuizPage';
 import { PanelPage } from './pages/PanelPage';
 import { ScoliosisPage } from './pages/ScoliosisPage';
+import { PrivacidadPage } from './pages/PrivacidadPage';
 
 function getRouteFromUrl(): { page: PageRoute; sectionId?: string } {
   const hash = window.location.hash.replace('#', '').toLowerCase();
@@ -23,6 +24,9 @@ function getRouteFromUrl(): { page: PageRoute; sectionId?: string } {
   }
   if (hash === 'escoliosis' || path.endsWith('/escoliosis') || path.endsWith('/escoliosis.html')) {
     return { page: 'escoliosis' };
+  }
+  if (hash === 'privacidad' || path.endsWith('/privacidad') || path.endsWith('/privacidad.html')) {
+    return { page: 'privacidad' };
   }
   if (hash === 'beneficios' || hash === 'programas' || hash === 'como-funciona') {
     return { page: 'inicio', sectionId: hash };
@@ -60,6 +64,7 @@ export const App: React.FC = () => {
       quiz: 'FitCasa – Sugerencias de actividad',
       panel: 'FitCasa – Panel de seguimiento',
       escoliosis: 'FitCasa – Información sobre escoliosis y ejercicio',
+      privacidad: 'FitCasa – Política de Privacidad',
     };
     document.title = titles[currentPage] || titles.inicio;
   }, [currentPage]);
@@ -93,6 +98,7 @@ export const App: React.FC = () => {
         {currentPage === 'quiz' && <QuizPage />}
         {currentPage === 'panel' && <PanelPage />}
         {currentPage === 'escoliosis' && <ScoliosisPage onNavigate={handleNavigate} />}
+        {currentPage === 'privacidad' && <PrivacidadPage onNavigate={handleNavigate} />}
       </div>
 
       <Footer onNavigate={handleNavigate} />
