@@ -44,9 +44,11 @@
     <noscript><p class="noscript-aviso">Esta página necesita JavaScript para mostrar la biblioteca de ejercicios. Puedes leer la <a href="escoliosis.html">guía de escoliosis</a>, que funciona sin JavaScript.</p></noscript>
     <span class="eyebrow">Biblioteca FitCasa</span>
     <h1 class="texto-3xl">Ejercicios para moverte en casa</h1>
-    <p class="page-lead">Busca una actividad por tiempo, dificultad, equipamiento o zona corporal. El contenido es educativo y no sustituye una valoración profesional.</p>
-    <p id="equipment-note" class="equipment-note" hidden>Todos los ejercicios se hacen sin equipamiento.</p>
-    <p class="library-note">Información general · sin revisión profesional sanitaria.</p>
+    <p class="page-lead">Busca ejercicios por duración, dificultad o zona corporal.</p>
+    <div class="library-notes">
+      <p id="equipment-note" class="equipment-note" hidden>Todos los ejercicios se hacen sin equipamiento.</p>
+      <p class="library-note">Información general sin revisión profesional sanitaria; no sustituye una valoración profesional.</p>
+    </div>
 
     <div class="toolbar">
       <div class="toolbar-search">
@@ -68,43 +70,43 @@
       <aside id="filters-panel" aria-labelledby="filtros-titulo" class="filters-section">
         <h2 id="filtros-titulo">Filtros</h2>
         <form id="filter-form" novalidate>
+          <div class="filter-actions">
+            <button type="button" id="clear-filters" class="btn secondary">Limpiar filtros</button>
+          </div>
+
           <fieldset>
             <legend>Duración</legend>
-            <label class="chip"><input type="checkbox" name="duration" value="corta" /><span>≤10 min</span></label>
-            <label class="chip"><input type="checkbox" name="duration" value="media" /><span>10–20 min</span></label>
-            <label class="chip"><input type="checkbox" name="duration" value="larga" /><span>&gt;20 min</span></label>
+            <label class="chip"><input type="checkbox" name="duration" value="corta" /><span>≤10 min</span><span class="chip-count" aria-hidden="true"></span></label>
+            <label class="chip"><input type="checkbox" name="duration" value="media" /><span>10–20 min</span><span class="chip-count" aria-hidden="true"></span></label>
+            <label class="chip"><input type="checkbox" name="duration" value="larga" /><span>&gt;20 min</span><span class="chip-count" aria-hidden="true"></span></label>
           </fieldset>
 
           <fieldset>
             <legend>Dificultad</legend>
-            <label class="chip"><input type="checkbox" name="difficulty" value="principiante" /><span>Principiante</span></label>
-            <label class="chip"><input type="checkbox" name="difficulty" value="intermedio" /><span>Intermedio</span></label>
-            <label class="chip"><input type="checkbox" name="difficulty" value="avanzado" /><span>Avanzado</span></label>
+            <label class="chip"><input type="checkbox" name="difficulty" value="principiante" /><span>Principiante</span><span class="chip-count" aria-hidden="true"></span></label>
+            <label class="chip"><input type="checkbox" name="difficulty" value="intermedio" /><span>Intermedio</span><span class="chip-count" aria-hidden="true"></span></label>
+            <label class="chip"><input type="checkbox" name="difficulty" value="avanzado" /><span>Avanzado</span><span class="chip-count" aria-hidden="true"></span></label>
           </fieldset>
 
           <fieldset>
             <legend>Equipamiento</legend>
-            <label class="chip"><input type="checkbox" name="equipment" value="ninguno" /><span>Ninguno</span></label>
-            <label class="chip"><input type="checkbox" name="equipment" value="bandas" /><span>Bandas elásticas</span></label>
-            <label class="chip"><input type="checkbox" name="equipment" value="peso" /><span>Pesas / Mancuernas</span></label>
-            <label class="chip"><input type="checkbox" name="equipment" value="colchoneta" /><span>Colchoneta</span></label>
+            <label class="chip"><input type="checkbox" name="equipment" value="ninguno" /><span>Ninguno</span><span class="chip-count" aria-hidden="true"></span></label>
+            <label class="chip"><input type="checkbox" name="equipment" value="bandas" /><span>Bandas elásticas</span><span class="chip-count" aria-hidden="true"></span></label>
+            <label class="chip"><input type="checkbox" name="equipment" value="peso" /><span>Pesas / Mancuernas</span><span class="chip-count" aria-hidden="true"></span></label>
+            <label class="chip"><input type="checkbox" name="equipment" value="colchoneta" /><span>Colchoneta</span><span class="chip-count" aria-hidden="true"></span></label>
           </fieldset>
 
           <fieldset>
             <legend>Zona corporal</legend>
-            <label class="chip"><input type="checkbox" name="zone" value="piernas" /><span>Piernas</span></label>
-            <label class="chip"><input type="checkbox" name="zone" value="glúteos" /><span>Glúteos</span></label>
-            <label class="chip"><input type="checkbox" name="zone" value="cadera" /><span>Cadera</span></label>
-            <label class="chip"><input type="checkbox" name="zone" value="aductores" /><span>Aductores</span></label>
-            <label class="chip"><input type="checkbox" name="zone" value="core" /><span>Core / Abdomen</span></label>
-            <label class="chip"><input type="checkbox" name="zone" value="lumbar" /><span>Zona lumbar</span></label>
-            <label class="chip"><input type="checkbox" name="zone" value="torax" /><span>Tórax</span></label>
-            <label class="chip"><input type="checkbox" name="zone" value="hombros" /><span>Hombros</span></label>
+            <label class="chip"><input type="checkbox" name="zone" value="piernas" /><span>Piernas</span><span class="chip-count" aria-hidden="true"></span></label>
+            <label class="chip"><input type="checkbox" name="zone" value="glúteos" /><span>Glúteos</span><span class="chip-count" aria-hidden="true"></span></label>
+            <label class="chip"><input type="checkbox" name="zone" value="cadera" /><span>Cadera</span><span class="chip-count" aria-hidden="true"></span></label>
+            <label class="chip"><input type="checkbox" name="zone" value="aductores" /><span>Aductores</span><span class="chip-count" aria-hidden="true"></span></label>
+            <label class="chip"><input type="checkbox" name="zone" value="core" /><span>Core / Abdomen</span><span class="chip-count" aria-hidden="true"></span></label>
+            <label class="chip"><input type="checkbox" name="zone" value="lumbar" /><span>Zona lumbar</span><span class="chip-count" aria-hidden="true"></span></label>
+            <label class="chip"><input type="checkbox" name="zone" value="torax" /><span>Tórax</span><span class="chip-count" aria-hidden="true"></span></label>
+            <label class="chip"><input type="checkbox" name="zone" value="hombros" /><span>Hombros</span><span class="chip-count" aria-hidden="true"></span></label>
           </fieldset>
-
-          <div class="filter-actions">
-            <button type="button" id="clear-filters" class="btn secondary">Limpiar filtros</button>
-          </div>
         </form>
       </aside>
 
@@ -117,7 +119,13 @@
   </main>
 
   <dialog id="exercise-dialog" aria-labelledby="dialog-title" tabindex="-1">
-    <h2 id="dialog-title" tabindex="-1"></h2>
+    <div class="dialog-head">
+      <div>
+        <h2 id="dialog-title" tabindex="-1"></h2>
+        <p id="dialog-counter" class="dialog-counter"></p>
+      </div>
+      <span id="dialog-review" class="dialog-review"></span>
+    </div>
     <div id="dialog-content"></div>
     <div class="dialog-nav">
       <button type="button" id="dialog-prev" class="btn secondary">Anterior</button>

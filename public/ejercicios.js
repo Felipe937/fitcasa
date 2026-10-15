@@ -43,16 +43,11 @@
     hombros: 'Hombros',
   };
 
-  // Valores admitidos en la URL. Lo que no esté aquí se ignora al restaurar.
-  const VALID_URL_VALUES = {
-    duration: ['corta', 'media', 'larga'],
-    difficulty: ['principiante', 'intermedio', 'avanzado'],
-    equipment: ['ninguno', 'bandas', 'peso', 'colchoneta'],
-    zone: ['piernas', 'glúteos', 'cadera', 'aductores', 'core', 'lumbar', 'torax', 'hombros'],
-    order: ['name', 'duration', 'difficulty'],
-  };
-
+  const MAX_SEARCH = 80;
   const SVG_NS = 'http://www.w3.org/2000/svg';
+
+  // Mejora progresiva: sin esta clase el panel de filtros se ve siempre.
+  document.documentElement.classList.add('js');
 
   // Normaliza texto para comparar sin distinción de acentos ni mayúsculas.
   const normalizeText = (value) => String(value).toLowerCase()
@@ -71,20 +66,32 @@
   const equipmentNoteEl = document.getElementById('equipment-note');
   const dialog = document.getElementById('exercise-dialog');
   const dialogTitle = dialog.querySelector('h2');
+  const dialogCounter = dialog.querySelector('#dialog-counter');
+  const dialogReview = dialog.querySelector('#dialog-review');
   const dialogBody = dialog.querySelector('#dialog-content');
   const dialogClose = dialog.querySelector('#close-dialog');
   const dialogPrev = dialog.querySelector('#dialog-prev');
   const dialogNext = dialog.querySelector('#dialog-next');
 
-  // Mejora progresiva: sin esta clase el panel de filtros se ve siempre.
-  document.documentElement.classList.add('js');
-
   let exercises = [];
   let currentList = [];
   let currentIndex = -1;
   let lastFocusedButton = null; // para restaurar foco al cerrar el diálogo
+  let renderFrame = 0; // cancela el movimiento de foco si llega otro cambio
 
   // ---------- UTILIDADES ----------
+  const createSvg = (paths) => {
+    const svg = document.createElementNS(SVG_NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('focusable', 'false');
+    paths.forEach((d) => {
+      const path = document.createElementNS(SVG_NS, 'path');
+      path.setAttribute('d', d);
+      svg.appendChild(path);
+    });
+    return svg;
+  };
+
   const createMetaItem = (label, value) => {
     const item = document.createElement('span');
     item.className = 'exercise-meta-item';
@@ -116,41 +123,56 @@
     return tags;
   };
 
-  const maybeCreateImage = (exercise) => {
-    if (!MOSTRAR_IMAGENES || !exercise.image) return null;
-    const img = document.createElement('img');
-    img.className = 'exercise-image';
-    img.src = exercise.image;
-    img.alt = typeof exercise.imageAlt === 'string' ? exercise.imageAlt : '';
-    img.loading = 'lazy';
-    img.addEventListener('error', () => img.remove());
-    return img;
+  // Fila compacta de metadatos: duración (reloj) y dificultad (tres puntos).
+  const createMeta = (exercise) => {
+    const meta = document.createElement('div');
+    meta.className = 'exercise-meta';
+
+    const duration = document.createElement('span');
+    duration.className = 'meta-cell';
+    const clock = createSvg(['M12 7.5v5', 'M12 16.5h.01', 'M12 3.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17Z']);
+    clock.setAttribute('class', '');
+    clock.removeAttribute('class');
+    clock.classList.add('meta-icon');
+    clock.setAttribute('aria-hidden', 'true');
+    duration.appendChild(clock);
+    duration.appendChild(document.createTextNode(durationLabels[exercise.duration] || exercise.duration));
+    meta.appendChild(duration);
+
+    const difficulty = document.createElement('span');
+    difficulty.className = 'meta-cell';
+    const dots = document.createElement('span');
+    dots.className = 'meta-dots';
+    dots.setAttribute('aria-hidden', 'true');
+    for (let i = 0; i < 3; i += 1) {
+      const dot = document.createElement('span');
+      dot.className = 'meta-dot';
+      dots.appendChild(dot);
+    }
+    dots.dataset.level = String(difficultyOrder[exercise.difficulty] || 0);
+    difficulty.appendChild(dots);
+    difficulty.appendChild(document.createTextNode(difficultyLabels[exercise.difficulty] || exercise.difficulty));
+    meta.appendChild(difficulty);
+
+    return meta;
   };
 
   // Glifo decorativo genérico (el mismo para todas las tarjetas: no clasifica
   // ejercicios). Se crea con DOM seguro, sin innerHTML.
-  const createGlyph = () => {
-    const wrap = document.createElement('span');
-    wrap.className = 'exercise-glyph';
-    wrap.setAttribute('aria-hidden', 'true');
-    const svg = document.createElementNS(SVG_NS, 'svg');
-    svg.setAttribute('viewBox', '0 0 24 24');
-    svg.setAttribute('focusable', 'false');
-    const arc = document.createElementNS(SVG_NS, 'path');
-    arc.setAttribute('d', 'M4 14c2.5-5.5 5.5-8 8-8s5.5 2.5 8 8');
-    const base = document.createElementNS(SVG_NS, 'path');
-    base.setAttribute('d', 'M4 19h16');
-    svg.appendChild(arc);
-    svg.appendChild(base);
-    wrap.appendChild(svg);
-    return wrap;
-  };
-
   const createCard = (exercise) => {
     const card = document.createElement('article');
     card.className = 'exercise-card';
+    // Nombre único para la transición de vista de esta tarjeta.
+    if (document.startViewTransition) card.style.viewTransitionName = `card-${exercise.id}`;
 
-    card.appendChild(createGlyph());
+    const glyph = document.createElement('span');
+    glyph.className = 'exercise-glyph';
+    glyph.setAttribute('aria-hidden', 'true');
+    glyph.appendChild(createSvg([
+      'M4 14c2.5-5.5 5.5-8 8-8s5.5 2.5 8 8',
+      'M4 19h16',
+    ]));
+    card.appendChild(glyph);
 
     const title = document.createElement('h3');
     title.textContent = exercise.name;
@@ -161,12 +183,7 @@
     desc.textContent = exercise.description;
     card.appendChild(desc);
 
-    const meta = document.createElement('div');
-    meta.className = 'exercise-meta';
-    meta.appendChild(createMetaItem('Duración', durationLabels[exercise.duration] || exercise.duration));
-    meta.appendChild(createMetaItem('Dificultad', difficultyLabels[exercise.difficulty] || exercise.difficulty));
-    card.appendChild(meta);
-
+    card.appendChild(createMeta(exercise));
     card.appendChild(createTags(exercise));
 
     // Las notas de adaptación solo aparecen en el diálogo, nunca en la tarjeta.
@@ -181,12 +198,79 @@
     return card;
   };
 
+  // ---------- CONTADORES POR OPCIÓN (mecanismo propio, ajeno a pruneDeadOptions) ----------
+  // Cuenta los ejercicios que cumpliría cada opción given el RESTO de filtros.
+  const matchesFilters = (ex, criteria) => criteria.every(([key, values]) => {
+    const data = ex[key];
+    if (!values.length) return true;
+    return Array.isArray(data) ? values.some((v) => data.includes(v)) : values.includes(data);
+  });
+
+  const buildCriteria = (excludeKey) => {
+    const formData = new FormData(filterForm);
+    const keys = ['duration', 'difficulty', 'equipment', 'zone'];
+    return keys.filter((k) => k !== excludeKey).map((k) => [k, formData.getAll(k)]);
+  };
+
+  const updateChipCounts = () => {
+    filterForm.querySelectorAll('.chip-count').forEach((countEl) => {
+      const input = countEl.closest('label').querySelector('input[type="checkbox"]');
+      if (!input) return;
+      // Ejercicios que daría esa opción con el resto de filtros activos.
+      const total = exercises.filter((ex) => {
+        const value = Array.isArray(ex[input.name]) ? ex[input.name] : [ex[input.name]];
+        if (!value.includes(input.value)) return false;
+        return matchesFilters(ex, buildCriteria(input.name));
+      }).length;
+      countEl.textContent = String(total);
+      // Opción sin resultados y sin marcar: atenuada y desactivada.
+      if (total === 0 && !input.checked) {
+        countEl.closest('label').setAttribute('data-sin-resultados', 'true');
+        input.setAttribute('aria-disabled', 'true');
+        input.disabled = true;
+      } else {
+        countEl.closest('label').removeAttribute('data-sin-resultados');
+        if (input.getAttribute('aria-disabled') === 'true') {
+          input.removeAttribute('aria-disabled');
+          // No se reactiva lo que pruneDeadOptions ya ocultó.
+          if (!input.closest('label').hidden) input.disabled = false;
+        }
+      }
+    });
+  };
+
   const clearActiveFilter = (inputName, inputValue) => {
     const input = filterForm.querySelector(`input[name="${inputName}"][value="${inputValue}"]`);
-    if (input) {
-      input.checked = false;
-      applyFilters({ history: 'push' });
+    if (!input) return;
+    // Posición del chip que se va a quitar, medida antes de re-renderizar.
+    const before = Array.prototype.slice.call(activeFiltersEl.querySelectorAll('.active-filter-tag'));
+    const index = before.findIndex((chip) => chip.dataset.key === inputName && chip.dataset.value === inputValue);
+    const neighbour = index === -1 ? null : (before[index + 1] || before[index - 1]);
+    const neighbourKey = neighbour ? neighbour.dataset.key : null;
+    const neighbourValue = neighbour ? neighbour.dataset.value : null;
+    input.checked = false;
+    applyFilters();
+    // El foco pasa al chip que ocupa su posición tras el re-render.
+    let target = searchInput;
+    if (neighbourKey) {
+      const after = Array.prototype.slice.call(activeFiltersEl.querySelectorAll('.active-filter-tag'));
+      const match = after.find((chip) => chip.dataset.key === neighbourKey && chip.dataset.value === neighbourValue);
+      if (match) target = match;
     }
+    focusLater(target);
+  };
+
+  // Mueve el foco cuando el DOM ya está actualizado (la transición de vista
+  // actualiza el DOM de forma síncrona dentro de su callback).
+  const focusLater = (element) => {
+    renderFrame += 1;
+    const frame = renderFrame;
+    var run = function () {
+      if (frame !== renderFrame) return;
+      if (element && typeof element.focus === 'function') element.focus();
+    };
+    if (typeof Promise === 'function') Promise.resolve().then(run);
+    else run();
   };
 
   const renderActiveFilters = () => {
@@ -194,31 +278,40 @@
     const formData = new FormData(filterForm);
     const chips = [];
 
-    const addChip = (visibleLabel, accessibleLabel, onRemove) => {
+    const addChip = (key, value, visibleLabel, accessibleLabel, onRemove) => {
       const chip = document.createElement('button');
       chip.type = 'button';
       chip.className = 'active-filter-tag';
+      chip.dataset.key = key;
+      chip.dataset.value = value;
       chip.setAttribute('aria-label', accessibleLabel);
       chip.textContent = `${visibleLabel} ×`;
       chip.addEventListener('click', onRemove);
       activeFiltersEl.appendChild(chip);
       chips.push(chip);
+      return chip;
+    };
+
+    const groups = {
+      duration: durationLabels,
+      difficulty: difficultyLabels,
+      equipment: equipmentLabels,
+      zone: zoneLabels,
     };
 
     ['duration', 'difficulty', 'equipment', 'zone'].forEach((key) => {
-      const groupLabel = { duration: 'Duración', difficulty: 'Dificultad', equipment: 'Equipamiento', zone: 'Zona' }[key];
-      const valueLabel = { duration: durationLabels, difficulty: difficultyLabels, equipment: equipmentLabels, zone: zoneLabels }[key];
       formData.getAll(key).forEach((v) => {
-        const text = valueLabel[v] || v;
-        addChip(text, `Quitar filtro: ${text}`, () => clearActiveFilter(key, v));
+        const text = groups[key][v] || v;
+        addChip(key, v, text, `Quitar filtro: ${text}`, () => clearActiveFilter(key, v));
       });
     });
 
     if (searchInput.value.trim()) {
       const text = searchInput.value.trim();
-      addChip(`Búsqueda: ${text}`, `Quitar búsqueda: ${text}`, () => {
+      addChip('search', '', `Búsqueda: ${text}`, `Quitar búsqueda: ${text}`, () => {
         searchInput.value = '';
-        applyFilters({ history: 'push' });
+        applyFilters();
+        focusLater(searchInput);
       });
     }
 
@@ -230,7 +323,8 @@
       clearAll.addEventListener('click', () => {
         filterForm.reset();
         searchInput.value = '';
-        applyFilters({ history: 'push' });
+        applyFilters();
+        focusLater(searchInput);
       });
       activeFiltersEl.appendChild(clearAll);
     }
@@ -246,14 +340,20 @@
     filtersToggle.textContent = count > 0 ? `Filtros (${count})` : 'Filtros';
   };
 
-  const render = (list) => {
+  const render = (list, options) => {
     currentList = list;
+    const animate = !!(options && options.animate);
     exerciseListEl.replaceChildren();
     exerciseListEl.setAttribute('aria-busy', 'false');
-    // La animación de entrada se repite en cada render (también al filtrar).
-    // Sin temporizadores: se quita la clase, se pinta y se reañade tras
-    // forzar un reflow. Con movimiento reducido no hay animación que repetir.
-    exerciseListEl.classList.remove('animar-entrada');
+    // La animación de entrada solo se aplica en el primer render; el resto de
+    // cambios se animan con la transición de vista (clase animar-cambio).
+    if (animate) {
+      exerciseListEl.classList.add('animar-entrada');
+      exerciseListEl.classList.remove('animar-cambio');
+    } else {
+      exerciseListEl.classList.remove('animar-entrada');
+      exerciseListEl.classList.add('animar-cambio');
+    }
     if (list.length === 0) {
       const noResult = document.createElement('p');
       noResult.textContent = 'No se encontraron resultados con los filtros actuales.';
@@ -267,7 +367,8 @@
       clearFiltersBtn.addEventListener('click', () => {
         filterForm.reset();
         searchInput.value = '';
-        applyFilters({ history: 'push' });
+        applyFilters();
+        focusLater(searchInput);
       });
       exerciseListEl.appendChild(clearFiltersBtn);
     } else {
@@ -275,58 +376,38 @@
       list.forEach((ex) => fragment.appendChild(createCard(ex)));
       exerciseListEl.appendChild(fragment);
     }
-    // Reflujo síncrono para reiniciar la animación de entrada.
-    void exerciseListEl.offsetWidth;
-    exerciseListEl.classList.add('animar-entrada');
     // Actualizar contador con role="status"
     resultCountEl.textContent = `${list.length} ejercicio${list.length !== 1 ? 's' : ''} encontrado${list.length !== 1 ? 's' : ''}`;
+    // Primero se refrescan los estados de las opciones (reactiva las que
+    // volvieron a tener resultados) y después se leen para pintar chips.
+    updateChipCounts();
     renderActiveFilters();
     updateFiltersToggle();
   };
 
-  // history: 'replace' (escritura y carga inicial), 'push' (cambios discretos
-  // que se pueden deshacer) o 'none' (restaurar sin tocar el historial).
-  const applyFilters = (options) => {
-    const formData = new FormData(filterForm);
-    const searchTerm = normalizeText(searchInput.value.trim());
-    const selectedDuration = formData.getAll('duration'); // array de strings
-    const selectedDifficulty = formData.getAll('difficulty');
-    const selectedEquipment = formData.getAll('equipment');
-    const selectedZone = formData.getAll('zone');
-    // Sin filtro de adaptación: los 20 ejercicios tienen nota de adaptación,
-    // así que no discriminaría nada. Se restaurará cuando los datos distingan
-    // entre ejercicios con y sin adaptación.
+  const prefersReducedMotion = () => !!(window.matchMedia
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
-    let filtered = exercises.filter((ex) => {
-      // Duración
-      if (selectedDuration.length && !selectedDuration.includes(ex.duration)) return false;
-      // Dificultad
-      if (selectedDifficulty.length && !selectedDifficulty.includes(ex.difficulty)) return false;
-      // Equipamiento (ex.equipment es array)
-      if (selectedEquipment.length && !selectedEquipment.some(eq => ex.equipment.includes(eq))) return false;
-      // Zona (ex.zone es array)
-      if (selectedZone.length && !selectedZone.some(z => ex.zone.includes(z))) return false;
-      // Búsqueda (insensible a acentos: "gluteos" encuentra "Glúteos")
-      if (searchTerm && !normalizeText(ex.name).includes(searchTerm) && !normalizeText(ex.description).includes(searchTerm)) return false;
-      return true;
-    });
+  const supportsViewTransition = () => !!(document.startViewTransition && !prefersReducedMotion());
 
-    // Ordenamiento
-    const order = orderSelect.value;
-    if (order === 'name') {
-      filtered.sort((a, b) => a.name.localeCompare(b.name, 'es'));
-    } else if (order === 'difficulty') {
-      filtered.sort((a, b) => difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty]);
-    } else if (order === 'duration') {
-      const durOrder = { corta: 1, media: 2, larga: 3 };
-      filtered.sort((a, b) => durOrder[a.duration] - durOrder[b.duration]);
+  // Envuelve el render en una transición de vista; sin soporte (o con reduce)
+  // el cambio es instantáneo, como antes.
+  const runRender = (list, options) => {
+    if (!supportsViewTransition()) {
+      render(list, options);
+      return;
     }
-
-    render(filtered);
-    syncUrl(options && options.history ? options.history : 'replace');
+    const transition = document.startViewTransition(() => render(list, options));
+    transition.finished.catch(() => {});
   };
 
-  const syncUrl = (mode) => {
+  const applyFilters = (options) => {
+    const filtered = applyFiltersTo([]);
+    runRender(filtered, options || { animate: false });
+    syncUrl();
+  };
+
+  const syncUrl = () => {
     const params = new URLSearchParams();
     const formData = new FormData(filterForm);
     // Guardar cada filtro sólo si tiene al menos un valor seleccionado
@@ -334,14 +415,12 @@
       const values = formData.getAll(key);
       if (values.length) params.set(key, values.join(','));
     });
-    if (searchInput.value) params.set('search', searchInput.value.trim());
+    if (searchInput.value) params.set('search', searchInput.value.trim().slice(0, MAX_SEARCH));
     if (orderSelect.value) params.set('order', orderSelect.value);
 
     const query = params.toString();
     const newUrl = query ? `${location.pathname}?${query}` : location.pathname;
-    if (mode === 'none') return;
-    if (mode === 'push') history.pushState(null, '', newUrl);
-    else history.replaceState(null, '', newUrl);
+    history.replaceState(null, '', newUrl);
   };
 
   // Oculta las opciones de filtro que ningún ejercicio cumple (atributo hidden
@@ -378,25 +457,25 @@
 
   const restoreFromUrl = () => {
     const params = new URLSearchParams(location.search);
-    // Se parte del estado limpio para que Atrás/Adelante también desmarque.
+    // Se parte del estado limpio: al recargar con filtros no quedan marcas viejas.
     filterForm.reset();
     searchInput.value = '';
-    orderSelect.value = 'name';
-    // Restaurar filtros: se ignoran valores fuera de vocabulario y los de
-    // opciones ocultas (sin ejercicios que los cumplan).
+    // Valores válidos de ordenación: se leen de las propias <option>.
+    const validOrders = Array.prototype.map.call(orderSelect.options, (option) => option.value);
+    orderSelect.value = validOrders[0] || 'name';
+    // Restaurar filtros (se ignoran los valores de opciones ocultas)
     ['duration', 'difficulty', 'equipment', 'zone'].forEach((key) => {
       const val = params.get(key);
       if (val) {
         const values = val.split(',');
         values.forEach((v) => {
-          if (!VALID_URL_VALUES[key].includes(v)) return;
           const input = filterForm.querySelector(`input[name="${key}"][value="${v}"]`);
           if (input && !input.disabled && !(input.closest('label') && input.closest('label').hidden)) input.checked = true;
         });
       }
     });
-    if (params.get('search')) searchInput.value = params.get('search').trim();
-    if (params.get('order') && VALID_URL_VALUES.order.includes(params.get('order'))) {
+    if (params.get('search')) searchInput.value = params.get('search').trim().slice(0, MAX_SEARCH);
+    if (params.get('order') && validOrders.includes(params.get('order'))) {
       orderSelect.value = params.get('order');
     }
   };
@@ -441,38 +520,102 @@
 
     pruneDeadOptions();
     restoreFromUrl();
-    applyFilters();
+    runRender(applyFiltersTo([]), { animate: true });
   };
 
-  const renderDialog = (index) => {
+  // Filtra y ordena la lista indicada (por defecto, todos los ejercicios).
+  const applyFiltersTo = (base) => {
+    const formData = new FormData(filterForm);
+    const searchTerm = normalizeText(searchInput.value.trim());
+    const selectedDuration = formData.getAll('duration');
+    const selectedDifficulty = formData.getAll('difficulty');
+    const selectedEquipment = formData.getAll('equipment');
+    const selectedZone = formData.getAll('zone');
+
+    const filtered = (base.length ? base : exercises).filter((ex) => {
+      if (selectedDuration.length && !selectedDuration.includes(ex.duration)) return false;
+      if (selectedDifficulty.length && !selectedDifficulty.includes(ex.difficulty)) return false;
+      if (selectedEquipment.length && !selectedEquipment.some(eq => ex.equipment.includes(eq))) return false;
+      if (selectedZone.length && !selectedZone.some(z => ex.zone.includes(z))) return false;
+      if (searchTerm && !normalizeText(ex.name).includes(searchTerm) && !normalizeText(ex.description).includes(searchTerm)) return false;
+      return true;
+    });
+
+    const order = orderSelect.value;
+    if (order === 'name') {
+      filtered.sort((a, b) => a.name.localeCompare(b.name, 'es'));
+    } else if (order === 'difficulty') {
+      filtered.sort((a, b) => difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty]);
+    } else if (order === 'duration') {
+      const durOrder = { corta: 1, media: 2, larga: 3 };
+      filtered.sort((a, b) => durOrder[a.duration] - durOrder[b.duration]);
+    }
+    return filtered;
+  };
+
+  const setDialogNavLabels = () => {
+    const prev = currentList[currentIndex - 1];
+    const next = currentList[currentIndex + 1];
+    dialogPrev.textContent = 'Anterior';
+    dialogNext.textContent = 'Siguiente';
+    if (prev) {
+      const label = document.createElement('span');
+      label.className = 'sr-only';
+      label.textContent = `: ${prev.name}`;
+      dialogPrev.appendChild(label);
+    }
+    if (next) {
+      const label = document.createElement('span');
+      label.className = 'sr-only';
+      label.textContent = `: ${next.name}`;
+      dialogNext.appendChild(label);
+    }
+  };
+
+  // Fundido corto al cambiar de ejercicio dentro del diálogo.
+  const animateDialog = (direction) => {
+    if (prefersReducedMotion()) return;
+    dialogBody.classList.remove('dialog-enter-next', 'dialog-enter-prev');
+    void dialogBody.offsetWidth;
+    dialogBody.classList.add(direction === 'prev' ? 'dialog-enter-prev' : 'dialog-enter-next');
+  };
+
+  const renderDialog = (index, direction) => {
     const ex = currentList[index];
     if (!ex) return;
     currentIndex = index;
     dialogTitle.textContent = ex.name;
     dialogBody.replaceChildren();
     const frag = document.createDocumentFragment();
-    const img = maybeCreateImage(ex);
-    if (img) frag.appendChild(img);
+    if (MOSTRAR_IMAGENES && ex.image) {
+      const image = document.createElement('img');
+      image.className = 'exercise-image';
+      image.src = ex.image;
+      image.alt = typeof ex.imageAlt === 'string' ? ex.imageAlt : '';
+      image.loading = 'lazy';
+      image.addEventListener('error', () => image.remove());
+      frag.appendChild(image);
+    }
     const pDesc = document.createElement('p');
     pDesc.textContent = ex.description;
     frag.appendChild(pDesc);
-    const meta = document.createElement('div');
-    meta.className = 'exercise-meta';
-    meta.appendChild(createMetaItem('Duración', durationLabels[ex.duration] || ex.duration));
-    meta.appendChild(createMetaItem('Dificultad', difficultyLabels[ex.difficulty] || ex.difficulty));
-    frag.appendChild(meta);
+    frag.appendChild(createMeta(ex));
     frag.appendChild(createTags(ex));
     if (ex.adaptation && ex.adaptation.notes) {
+      const hAdapt = document.createElement('h3');
+      hAdapt.textContent = 'Nota general de adaptación';
+      frag.appendChild(hAdapt);
       const adapt = document.createElement('p');
-      adapt.textContent = `Nota general de adaptación: ${ex.adaptation.notes}`;
+      adapt.textContent = ex.adaptation.notes;
       frag.appendChild(adapt);
     }
-    const review = document.createElement('p');
-    review.textContent = `Estado de revisión: ${ex.clinicalReview}`;
-    frag.appendChild(review);
     dialogBody.appendChild(frag);
+    dialogCounter.textContent = `${currentIndex + 1} de ${currentList.length}`;
+    dialogReview.textContent = `Estado de revisión: ${ex.clinicalReview}`;
     dialogPrev.disabled = currentIndex <= 0;
     dialogNext.disabled = currentIndex >= currentList.length - 1;
+    setDialogNavLabels();
+    if (direction) animateDialog(direction);
   };
 
   const openDialog = (e) => {
@@ -492,25 +635,21 @@
   };
 
   // ---------- EVENTOS ----------
-  // Cambios discretos (casillas, orden, limpiezas): pushState para poder
-  // deshacerlos. Escritura frecuente (buscador): replaceState.
-  filterForm.addEventListener('change', () => applyFilters({ history: 'push' }));
+  // Cambios discretos (casillas, orden, limpiezas) y escritura frecuente
+  // (buscador, debounce corto): ambos con replaceState.
+  filterForm.addEventListener('change', applyFilters);
   searchInput.addEventListener('input', () => {
-    // debounce simple: 300 ms
+    // debounce simple: 150 ms
     clearTimeout(searchInput._debounce);
-    searchInput._debounce = setTimeout(() => applyFilters({ history: 'replace' }), 300);
+    searchInput._debounce = setTimeout(applyFilters, 150);
   });
-  orderSelect.addEventListener('change', () => applyFilters({ history: 'push' }));
+  orderSelect.addEventListener('change', applyFilters);
   clearBtn.addEventListener('click', (e) => {
     e.preventDefault();
     filterForm.reset();
     searchInput.value = '';
-    applyFilters({ history: 'push' });
-  });
-  // Atrás/Adelante: restaura filtros y resultados sin tocar el historial.
-  window.addEventListener('popstate', () => {
-    restoreFromUrl();
-    applyFilters({ history: 'none' });
+    applyFilters();
+    focusLater(searchInput);
   });
   filtersToggle.addEventListener('click', () => {
     const open = filtersPanel.classList.toggle('abierto');
@@ -519,19 +658,29 @@
   dialogClose.addEventListener('click', closeDialog);
   dialogPrev.addEventListener('click', () => {
     if (currentIndex > 0) {
-      renderDialog(currentIndex - 1);
+      renderDialog(currentIndex - 1, 'prev');
       dialogTitle.focus();
     }
   });
   dialogNext.addEventListener('click', () => {
     if (currentIndex >= 0 && currentIndex < currentList.length - 1) {
-      renderDialog(currentIndex + 1);
+      renderDialog(currentIndex + 1, 'next');
       dialogTitle.focus();
     }
   });
-  // El <dialog> ya cierra con Escape; el foco se restaura en el evento "close".
+  // El <dialog> ya cierra con Escape; el foco se restaura en el evento "close"
+  // a la tarjeta del ejercicio que se estaba viendo.
   dialog.addEventListener('close', () => {
-    if (lastFocusedButton) lastFocusedButton.focus();
+    const current = currentList[currentIndex];
+    let target = null;
+    if (current) {
+      const buttons = exerciseListEl.querySelectorAll('button[data-id]');
+      for (let i = 0; i < buttons.length; i += 1) {
+        if (buttons[i].dataset.id === current.id) { target = buttons[i]; break; }
+      }
+    }
+    if (!target) target = lastFocusedButton;
+    if (target) target.focus();
   });
   // Cerrar al hacer click fuera del contenido pero dentro del elemento <dialog>
   dialog.addEventListener('click', (e) => {
