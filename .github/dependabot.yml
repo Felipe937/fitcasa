@@ -33,8 +33,7 @@ updates:
           - "react-dom"
           - "@types/react*"
     ignore:
-      # Mantener Vite y su plugin React dentro de sus ramas mayores/menores actuales.
-      # Se permiten actualizaciones patch; los saltos mayor/menor requieren decisión manual.
+      # Vite y el plugin deben actualizarse juntos; cambios mayores/menores requieren revisión manual.
       - dependency-name: "vite"
         update-types:
           - "version-update:semver-major"
@@ -43,6 +42,27 @@ updates:
         update-types:
           - "version-update:semver-major"
           - "version-update:semver-minor"
+      # React 19 y cambios de tipos quedan pendientes de una migración explícita.
+      - dependency-name: "react"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+      - dependency-name: "react-dom"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+      - dependency-name: "@types/react"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+      - dependency-name: "@types/react-dom"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+      # TypeScript 7 es un salto mayor; requiere una tarea de migración separada.
+      - dependency-name: "typescript"
+        update-types:
+          - "version-update:semver-major"
     labels:
       - "dependencies"
       - "npm"
