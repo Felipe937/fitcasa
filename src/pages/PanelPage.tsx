@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { PanelRecord } from '../types';
 import { EXERCISES_DATA } from '../data/exercisesData';
 import {
@@ -8,6 +8,36 @@ import {
   STORAGE_KEYS,
   PANEL_STORAGE_VERSION,
 } from '../utils/storage';
+import '../styles/panel-page.css';
+
+const PAIN_MIN = 0;
+const PAIN_MAX = 10;
+const PAIN_ALERT_FROM = 7;
+const ACTIVITY_MAX = 120;
+const NOTE_MAX = 500;
+
+const AVAILABILITY_TEXT =
+  'La persistencia no está disponible en este navegador. Puedes usar el panel durante esta sesión, pero el registro se perderá al recargar la página.';
+const WRITE_FAILURE_TEXT =
+  'La persistencia no está disponible. El panel sigue funcionando durante esta sesión, pero no conservará los cambios al recargar.';
+const RECOVERY_FAILURE_TEXT =
+  'No se pudo recuperar el historial guardado. Puedes continuar y volver a guardarlo.';
+const SAVED_TEXT = 'Registro guardado en este dispositivo';
+const SAVED_EDIT_TEXT = 'Cambios guardados en este dispositivo';
+const DELETED_TEXT = 'Entrada eliminada del historial';
+
+type RangeFilter = 'todos' | 'ultimos-7-dias' | 'este-mes';
+type PainTone = 'bajo' | 'medio' | 'alto';
+type FieldErrors = Record<string, string>;
+
+const FIELD_ORDER = ['date', 'activity', 'pain', 'note'] as const;
+type FieldName = (typeof FIELD_ORDER)[number];
+
+const RANGE_OPTIONS: { value: RangeFilter; label: string }[] = [
+  { value: 'todos', label: 'Todos' },
+  { value: 'ultimos-7-dias', label: 'Últimos 7 días' },
+  { value: 'este-mes', label: 'Este mes' },
+];
 
 function localDateString(date: Date): string {
   const year = date.getFullYear();
@@ -28,14 +58,67 @@ function formatDate(value: string): string {
   return `${parts[2]}/${parts[1]}/${parts[0]}`;
 }
 
+function formatDateLong(value: string): string {
+  const date = new Date(`${value}T00:00:00`);
+  if (Number.isNaN(date.getTime())) return formatDate(value);
+  return new Intl.DateTimeFormat('es-ES', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(date);
+}
+
+/** Desplaza una fecha ISO un número de días sin depender de la zona horaria. */
+function shiftDays(iso: string, days: number): string {
+  const date = new Date(`${iso}T00:00:00`);
+  date.setDate(date.getDate() + days);
+  return localDateString(date);
+}
+
+function painLabel(value: number): string {
+  if (value === PAIN_MIN) return 'Sin molestia';
+  if (value <= 3) return 'Molestia leve';
+  if (value <= 6) return 'Molestia moderada';
+  if (value <= 9) return 'Dolor intenso';
+  return 'Dolor muy intenso';
+}
+
+function painTone(value: number): PainTone {
+  if (value <= 3) return 'bajo';
+  if (value <= 6) return 'medio';
+  return 'alto';
+}
+
+function withoutKey(errors: FieldErrors, key: string): FieldErrors {
+  if (!(key in errors)) return errors;
+  const next = { ...errors };
+  delete next[key];
+  return next;
+}
+
+/** Consulta de medios con lectura inicial sincrónica, sin destello en el primer render. */
+function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = useState<boolean>(() => window.matchMedia(query).matches);
+
+  useEffect(() => {
+    const list = window.matchMedia(query);
+    const onChange = (event: MediaQueryListEvent) => setMatches(event.matches);
+    setMatches(list.matches);
+    list.addEventListener('change', onChange);
+    return () => list.removeEventListener('change', onChange);
+  }, [query]);
+
+  return matches;
+}
+
 function normalizeRecord(item: unknown): PanelRecord | null {
   if (!item || typeof item !== 'object') return null;
   const it = item as Partial<PanelRecord>;
   if (typeof it.id !== 'string' || !isValidDate(it.date || '')) return null;
   const pain = Number(it.pain);
   if (!Number.isInteger(pain) || pain < 0 || pain > 10) return null;
-  const activity = typeof it.activity === 'string' ? it.activity.trim().slice(0, 120) : '';
-  const note = typeof it.note === 'string' ? it.note.trim().slice(0, 500) : '';
+  const activity = typeof it.activity === 'string' ? it.activity.trim().slice(0, ACTIVITY_MAX) : '';
+  const note = typeof it.note === 'string' ? it.note.trim().slice(0, NOTE_MAX) : '';
   const exerciseId = typeof it.exerciseId === 'string' ? it.exerciseId : undefined;
   return { id: it.id.slice(0, 80), date: it.date!, activity, pain, note, exerciseId };
 }
@@ -45,23 +128,43 @@ function normalizeRecords(data: unknown): PanelRecord[] {
   return data.map(normalizeRecord).filter((r): r is PanelRecord => r !== null).slice(0, 1000);
 }
 
+function joinIds(...ids: (string | false | undefined)[]): string | undefined {
+  const list = ids.filter((id): id is string => typeof id === 'string');
+  return list.length > 0 ? list.join(' ') : undefined;
+}
+
 export const PanelPage: React.FC = () => {
   const today = localDateString(new Date());
+  const isWide = useMediaQuery('(min-width: 48rem)');
 
   const [records, setRecords] = useState<PanelRecord[]>([]);
   const [date, setDate] = useState<string>(today);
   const [activity, setActivity] = useState<string>('');
-  const [pain, setPain] = useState<string>('0');
+  const [pain, setPain] = useState<number | null>(null);
   const [note, setNote] = useState<string>('');
   const [exerciseId, setExerciseId] = useState<string>('');
+  const [autoActivity, setAutoActivity] = useState<string | null>(null);
+  const [unlinkNotice, setUnlinkNotice] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string>('');
   const [storageNotice, setStorageNotice] = useState<string>('');
+  const [statusMessage, setStatusMessage] = useState<string>('');
   const [clearStatus, setClearStatus] = useState<string>('');
+  const [confirmClear, setConfirmClear] = useState(false);
 
-  // Load records on mount
+  const [range, setRange] = useState<RangeFilter>('todos');
+  const [search, setSearch] = useState<string>('');
+
+  const dateRef = useRef<HTMLInputElement>(null);
+  const activityRef = useRef<HTMLInputElement>(null);
+  const painRef = useRef<HTMLInputElement>(null);
+  const noteRef = useRef<HTMLTextAreaElement>(null);
+  const confirmRef = useRef<HTMLDivElement>(null);
+  const clearTriggerRef = useRef<HTMLButtonElement>(null);
+  const statusTimer = useRef<number | null>(null);
+
   useEffect(() => {
     const res = readStorage<PanelRecord[]>(
       STORAGE_KEYS.panel,
@@ -70,13 +173,9 @@ export const PanelPage: React.FC = () => {
     );
 
     if (!res.available) {
-      setStorageNotice(
-        'La persistencia no está disponible en este navegador. Puedes usar el panel durante esta sesión.'
-      );
+      setStorageNotice(AVAILABILITY_TEXT);
     } else if (res.reason === 'corrupt' || res.reason === 'unknown-version') {
-      setStorageNotice(
-        'No se pudo recuperar el historial guardado. Puedes continuar y guardarlo de nuevo.'
-      );
+      setStorageNotice(RECOVERY_FAILURE_TEXT);
     }
 
     if (res.value) {
@@ -84,54 +183,139 @@ export const PanelPage: React.FC = () => {
     }
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (statusTimer.current !== null) window.clearTimeout(statusTimer.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (confirmClear) confirmRef.current?.focus();
+  }, [confirmClear]);
+
+  // El botón disparador se desmonta mientras la confirmación está abierta, así que
+  // el foco se devuelve en un efecto, no de forma síncrona al cerrar.
+  const confirmWasOpen = useRef(false);
+  useEffect(() => {
+    if (confirmWasOpen.current && !confirmClear) clearTriggerRef.current?.focus();
+    confirmWasOpen.current = confirmClear;
+  }, [confirmClear]);
+
+  const announce = (text: string) => {
+    if (statusTimer.current !== null) window.clearTimeout(statusTimer.current);
+    setStatusMessage(text);
+    statusTimer.current = window.setTimeout(() => {
+      setStatusMessage('');
+      statusTimer.current = null;
+    }, 9000);
+  };
+
   const saveUpdatedRecords = (newRecords: PanelRecord[]) => {
     setRecords(newRecords);
     const writeRes = writeStorage(STORAGE_KEYS.panel, PANEL_STORAGE_VERSION, newRecords);
     if (!writeRes.saved) {
-      setStorageNotice(
-        'La persistencia no está disponible. El panel seguirá funcionando durante esta sesión, pero no conservará los cambios al recargar.'
-      );
+      setStorageNotice(WRITE_FAILURE_TEXT);
     }
   };
 
   const resetForm = () => {
     setDate(today);
     setActivity('');
-    setPain('0');
+    setPain(null);
     setNote('');
     setExerciseId('');
+    setAutoActivity(null);
+    setUnlinkNotice(false);
     setEditingId(null);
     setFieldErrors({});
     setFormError('');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const errors: Record<string, string> = {};
+  const clearFieldError = (key: FieldName) => {
+    setFieldErrors((prev) => withoutKey(prev, key));
+  };
+
+  const handleActivityChange = (value: string) => {
+    // Editar a mano el texto autocompletado corta el vínculo con el ejercicio
+    // para no guardar una asociación que ya no describe lo que se hizo.
+    if (exerciseId && autoActivity !== value) {
+      setExerciseId('');
+      setAutoActivity(null);
+      setUnlinkNotice(true);
+    }
+    setActivity(value);
+    clearFieldError('activity');
+  };
+
+  const handleSelectExercise = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedId = event.target.value;
+    setExerciseId(selectedId);
+    setUnlinkNotice(false);
+    if (!selectedId) {
+      setAutoActivity(null);
+      return;
+    }
+    const found = EXERCISES_DATA.find((ex) => ex.id === selectedId);
+    if (found) {
+      setAutoActivity(found.name);
+      setActivity(found.name);
+      clearFieldError('activity');
+    }
+  };
+
+  const handlePainChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const next = Number(event.target.value);
+    if (Number.isInteger(next) && next >= PAIN_MIN && next <= PAIN_MAX) {
+      setPain(next);
+      clearFieldError('pain');
+    }
+  };
+
+  const validate = (): FieldErrors => {
+    const errors: FieldErrors = {};
 
     if (!isValidDate(date) || date > today) {
-      errors.date = 'Selecciona una fecha válida que no sea futura.';
+      errors.date = 'Selecciona una fecha válida que no sea posterior a hoy.';
+    }
+    if (activity.length > ACTIVITY_MAX) {
+      errors.activity = `La actividad debe tener ${ACTIVITY_MAX} caracteres o menos.`;
+    }
+    if (pain === null) {
+      errors.pain =
+        'Indica tu dolor percibido desplazando el control o con las flechas del teclado. El 0 es una respuesta válida: significa “sin molestia”.';
+    }
+    if (note.length > NOTE_MAX) {
+      errors.note = `La nota debe tener ${NOTE_MAX} caracteres o menos.`;
     }
 
-    if (activity.length > 120) {
-      errors.activity = 'La actividad debe tener 120 caracteres o menos.';
-    }
+    return errors;
+  };
 
-    const painNum = Number(pain);
-    if (!Number.isInteger(painNum) || painNum < 0 || painNum > 10) {
-      errors.pain = 'Indica un número entero entre 0 y 10.';
-    }
+  const focusFirstError = (errors: FieldErrors) => {
+    const refs: Record<FieldName, React.RefObject<HTMLInputElement | HTMLTextAreaElement>> = {
+      date: dateRef,
+      activity: activityRef,
+      pain: painRef,
+      note: noteRef,
+    };
+    const first = FIELD_ORDER.find((key) => key in errors);
+    if (first) refs[first].current?.focus();
+  };
 
-    if (note.length > 500) {
-      errors.note = 'La nota debe tener 500 caracteres o menos.';
-    }
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    const errors = validate();
 
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0) {
       setFormError('Revisa los campos señalados antes de guardar.');
+      focusFirstError(errors);
       return;
     }
     setFormError('');
+
+    const savedPain = pain as number;
+    const linkedId = exerciseId || undefined;
 
     if (editingId) {
       const updated = records.map((rec) =>
@@ -140,13 +324,14 @@ export const PanelPage: React.FC = () => {
               id: editingId,
               date,
               activity: activity.trim(),
-              pain: painNum,
+              pain: savedPain,
               note: note.trim(),
-              exerciseId: exerciseId || undefined,
+              exerciseId: linkedId,
             }
           : rec
       );
       saveUpdatedRecords(updated);
+      announce(SAVED_EDIT_TEXT);
     } else {
       const newId =
         window.crypto && typeof window.crypto.randomUUID === 'function'
@@ -157,23 +342,32 @@ export const PanelPage: React.FC = () => {
         id: newId,
         date,
         activity: activity.trim(),
-        pain: painNum,
+        pain: savedPain,
         note: note.trim(),
-        exerciseId: exerciseId || undefined,
+        exerciseId: linkedId,
       };
       saveUpdatedRecords([...records, newRec]);
+      announce(SAVED_TEXT);
     }
 
     resetForm();
   };
 
   const handleStartEdit = (record: PanelRecord) => {
+    const linkedName =
+      record.exerciseId !== undefined
+        ? EXERCISES_DATA.find((ex) => ex.id === record.exerciseId)?.name
+        : undefined;
+    const stillMatches = linkedName !== undefined && linkedName === record.activity;
+
     setEditingId(record.id);
     setDate(record.date);
     setActivity(record.activity);
-    setPain(String(record.pain));
+    setPain(record.pain);
     setNote(record.note);
-    setExerciseId(record.exerciseId || '');
+    setExerciseId(stillMatches ? record.exerciseId! : '');
+    setAutoActivity(stillMatches ? record.activity : null);
+    setUnlinkNotice(false);
     setFieldErrors({});
     setFormError('');
 
@@ -182,293 +376,663 @@ export const PanelPage: React.FC = () => {
   };
 
   const handleDelete = (id: string) => {
-    if (!window.confirm('¿Eliminar esta entrada del historial?')) return;
+    if (!window.confirm('¿Eliminar esta entrada del historial? Esta acción no se puede deshacer.')) return;
     const filtered = records.filter((rec) => rec.id !== id);
     saveUpdatedRecords(filtered);
     if (editingId === id) {
       resetForm();
     }
+    announce(DELETED_TEXT);
   };
 
   const handleClearAll = () => {
-    if (!window.confirm('¿Borrar las respuestas y todos los registros guardados en este navegador?')) return;
     const res = removeAllStorage();
+    if (statusTimer.current !== null) window.clearTimeout(statusTimer.current);
+    setStatusMessage('');
+    statusTimer.current = null;
     setRecords([]);
     resetForm();
+    setConfirmClear(false);
     setClearStatus(
       res.removed
-        ? 'Se borraron las respuestas y los registros guardados.'
+        ? 'Se borraron las respuestas y todos los registros guardados en este dispositivo.'
         : 'No fue posible borrar los datos guardados.'
     );
   };
 
-  const handleSelectExercise = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedId = e.target.value;
-    setExerciseId(selectedId);
-    if (selectedId) {
-      const found = EXERCISES_DATA.find((ex) => ex.id === selectedId);
-      if (found) {
-        setActivity(found.name);
-      }
-    }
-  };
+  const cancelClear = () => setConfirmClear(false);
 
-  const sortedRecords = [...records].sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
+  const sortedRecords = useMemo(
+    () => [...records].sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id)),
+    [records]
+  );
+
+  const filteredRecords = useMemo(() => {
+    const weekStart = shiftDays(today, -6);
+    const currentMonth = today.slice(0, 7);
+    const query = search.trim().toLowerCase();
+
+    return sortedRecords.filter((record) => {
+      if (range === 'ultimos-7-dias' && record.date < weekStart) return false;
+      if (range === 'este-mes' && !record.date.startsWith(currentMonth)) return false;
+      if (query !== '' && !record.activity.toLowerCase().includes(query)) return false;
+      return true;
+    });
+  }, [sortedRecords, range, search, today]);
+
+  const latest = sortedRecords[0];
+  const linkedName = exerciseId
+    ? EXERCISES_DATA.find((ex) => ex.id === exerciseId)?.name ?? ''
+    : '';
+  const painValue = pain ?? PAIN_MIN;
+  const showPainAlert = pain !== null && pain >= PAIN_ALERT_FROM;
+
+  const linkStatusText = exerciseId
+    ? `Actividad vinculada a “${linkedName}” de la biblioteca. Si editas el texto, se guardará sin esta asociación.`
+    : unlinkNotice
+      ? 'Has editado el texto: la actividad se guardará sin vincular a un ejercicio de la biblioteca.'
+      : 'Este campo es opcional: puedes escribir una actividad libre sin vincularla a la biblioteca.';
+
+  const painStyle = {
+    '--panel-relleno': `${(painValue / PAIN_MAX) * 100}%`,
+  } as React.CSSProperties;
+
+  const painClasses = [
+    'panel-dolor',
+    pain === null ? 'panel-dolor--sin-indicar' : '',
+    showPainAlert ? 'panel-dolor--alto' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  const readoutClasses = [
+    'panel-dolor__lectura',
+    pain === null ? 'panel-dolor__lectura--pendiente' : '',
+    showPainAlert ? 'panel-dolor__lectura--alto' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
-    <main id="contenido" tabIndex={-1} className="container app-main">
-      <h1 className="texto-3xl">Panel de seguimiento</h1>
-      <p className="app-intro">
-        Registra voluntariamente cómo te sentiste. No necesitas introducir tu nombre, datos de contacto ni información identificable.
-      </p>
+    <main id="contenido" tabIndex={-1} className="container app-main panel-page">
+      <header className="panel-page__cabecera">
+        <p className="panel-page__eyebrow">Seguimiento personal</p>
+        <h1 className="panel-page__titulo">Tu registro de bienestar</h1>
+        <p className="panel-page__pildora">
+          <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+            <ellipse cx="12" cy="5.5" rx="7" ry="2.75" />
+            <path d="M5 5.5v6c0 1.52 3.13 2.75 7 2.75s7-1.23 7-2.75v-6" />
+            <path d="M5 11.5v6c0 1.52 3.13 2.75 7 2.75s7-1.23 7-2.75v-6" />
+          </svg>
+          Guardado en este dispositivo (local)
+        </p>
+        <p className="panel-page__intro">
+          Este es tu diario privado de actividad y sensación personal. No necesitas introducir tu nombre, datos de
+          contacto ni información identificable: cada entrada se guarda solo en el navegador de este dispositivo.
+        </p>
+      </header>
 
-      {/* Recordatorio de Seguridad de Salud */}
-      <div className="notice warning" role="note">
-        <strong>Recordatorio esencial de seguridad:</strong> Si notas aumento persistente del dolor o síntomas neurológicos (adormecimiento, pérdida de fuerza o mareo), suspende de inmediato la actividad y consulta a tu equipo médico.
+      <div className="panel-alerta" role="note">
+        <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+          <path d="M12 3.6 2.6 20h18.8L12 3.6Z" />
+          <path d="M12 10v4.5" />
+          <path d="M12 17.6h.01" />
+        </svg>
+        <div>
+          <p className="panel-estado-fuerte">Recordatorio esencial de seguridad</p>
+          <p>
+            Si notas un aumento persistente del dolor o síntomas neurológicos (adormecimiento, pérdida de fuerza o
+            mareo), suspende de inmediato la actividad y consulta a tu equipo médico.
+          </p>
+        </div>
       </div>
 
-      {storageNotice && (
-        <div id="storage-notice" className="notice warning" role="status">
-          {storageNotice}
-        </div>
-      )}
+      <p className="panel-page__slot" role="status" aria-live="polite">
+        {storageNotice && (
+          <span className="panel-estado">
+            <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 11v5" />
+              <path d="M12 7.6h.01" />
+            </svg>
+            <span>{storageNotice}</span>
+          </span>
+        )}
+      </p>
 
-      {/* Formulario de registro */}
+      <section className="panel-page__resumen" aria-labelledby="resumen-heading">
+        <h2 id="resumen-heading" className="panel-page__seccion-titulo">
+          Resumen
+        </h2>
+        <p className="panel-page__seccion-nota">
+          Un vistazo a lo que has anotado hasta ahora. Es un resumen informativo de tus propias anotaciones, no una
+          evaluación de progreso ni una medida de resultado clínico.
+        </p>
+        <dl className="panel-metricas">
+          <div className="panel-metrica">
+            <dt>Registros guardados</dt>
+            <dd>{records.length}</dd>
+          </div>
+          <div className="panel-metrica">
+            <dt>Fecha del último registro</dt>
+            <dd>{latest ? formatDateLong(latest.date) : 'Sin registros'}</dd>
+          </div>
+          <div className="panel-metrica">
+            <dt>Última actividad</dt>
+            <dd>{latest ? latest.activity || 'Sin indicar' : 'Ninguna registrada'}</dd>
+          </div>
+        </dl>
+      </section>
+
       <section className="app-card" aria-labelledby="entry-heading">
         <h2 id="entry-heading" tabIndex={-1}>
           {editingId ? 'Editar entrada' : 'Registrar una entrada'}
         </h2>
+        <p className="app-intro">
+          Anota la actividad que hayas hecho y cómo te sentiste. Todos los campos son opcionales salvo el dolor
+          percibido, que debes elegir de forma consciente para poder guardar.
+        </p>
 
-        <form id="panel-form" noValidate onSubmit={handleSubmit}>
-          <div className="form-field">
-            <label htmlFor="entry-date">Fecha</label>
+        <form id="panel-form" className="panel-form" noValidate onSubmit={handleSubmit}>
+          <div className="panel-form__campo">
+            <label className="panel-form__etiqueta" htmlFor="entry-date">
+              Fecha
+            </label>
             <input
+              ref={dateRef}
               type="date"
               id="entry-date"
               name="date"
+              className="panel-campo"
               required
               max={today}
               value={date}
-              onChange={(e) => setDate(e.target.value)}
-              aria-describedby={fieldErrors.date ? 'error-date' : undefined}
+              onChange={(e) => {
+                setDate(e.target.value);
+                clearFieldError('date');
+              }}
+              aria-invalid={fieldErrors.date ? true : undefined}
+              aria-describedby={joinIds('date-help', fieldErrors.date && 'error-date')}
             />
+            <p id="date-help" className="panel-pista">
+              No se admiten fechas futuras.
+            </p>
             {fieldErrors.date && (
-              <p id="error-date" className="field-error">
-                {fieldErrors.date}
+              <p id="error-date" className="panel-error">
+                <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 7.5v5" />
+                  <path d="M12 16h.01" />
+                </svg>
+                <span>{fieldErrors.date}</span>
               </p>
             )}
           </div>
 
-          <div className="form-field">
-            <label htmlFor="exercise-quick-select">
+          <div className="panel-form__campo">
+            <label className="panel-form__etiqueta" htmlFor="exercise-quick-select">
               Vincular ejercicio de la biblioteca <span className="small-print">(opcional)</span>
             </label>
             <select
               id="exercise-quick-select"
+              className="panel-campo"
               value={exerciseId}
               onChange={handleSelectExercise}
-              className="w-full min-h-[var(--alto-objetivo-tactil)] p-2 rounded-[var(--radio-sm)] border border-[var(--color-borde)] bg-[var(--color-superficie)]"
+              aria-describedby="exercise-link-status"
             >
-              <option value="">Selecciona un ejercicio de la biblioteca...</option>
+              <option value="">Selecciona un ejercicio de la biblioteca…</option>
               {EXERCISES_DATA.map((ex) => (
                 <option key={ex.id} value={ex.id}>
                   {ex.name} ({ex.category === 'cuidado_postural' ? 'Postural' : 'General'})
                 </option>
               ))}
             </select>
+            <p id="exercise-link-status" className="panel-pista">
+              {linkStatusText}
+            </p>
           </div>
 
-          <div className="form-field">
-            <label htmlFor="entry-activity">
+          <div className="panel-form__campo panel-form__campo--ancho">
+            <label className="panel-form__etiqueta" htmlFor="entry-activity">
               Actividad realizada <span className="small-print">(opcional o personalizada)</span>
             </label>
             <input
+              ref={activityRef}
               type="text"
               id="entry-activity"
               name="activity"
-              maxLength={120}
+              className="panel-campo"
+              maxLength={ACTIVITY_MAX}
               autoComplete="off"
               value={activity}
-              onChange={(e) => setActivity(e.target.value)}
-              placeholder="Ej. Sentadilla con peso corporal, caminata suave, estiramiento..."
-              aria-describedby={fieldErrors.activity ? 'error-activity' : undefined}
+              onChange={(e) => handleActivityChange(e.target.value)}
+              placeholder="Ej. Sentadilla con peso corporal, caminata suave, estiramiento…"
+              aria-invalid={fieldErrors.activity ? true : undefined}
+              aria-describedby={joinIds('activity-help', fieldErrors.activity && 'error-activity')}
             />
-            {fieldErrors.activity && (
-              <p id="error-activity" className="field-error">
-                {fieldErrors.activity}
-              </p>
-            )}
-          </div>
-
-          <div className="form-field">
-            <label htmlFor="entry-pain">Percepción subjetiva del dolor, de 0 a 10</label>
-            <input
-              type="number"
-              id="entry-pain"
-              name="pain"
-              min={0}
-              max={10}
-              step={1}
-              required
-              inputMode="numeric"
-              value={pain}
-              onChange={(e) => setPain(e.target.value)}
-              aria-describedby="pain-help error-pain"
-            />
-            <p id="pain-help" className="small-print">
-              0 significa “sin dolor percibido” y 10 significa “el máximo dolor percibido”. No es una medición diagnóstica.
+            <p id="activity-help" className="panel-pista">
+              Si eliges un ejercicio de la biblioteca, el nombre se rellena solo.
+              <span className="panel-contador" aria-hidden="true">
+                {' '}
+                · {activity.length}/{ACTIVITY_MAX}
+              </span>
             </p>
-            {fieldErrors.pain && (
-              <p id="error-pain" className="field-error">
-                {fieldErrors.pain}
+            {fieldErrors.activity && (
+              <p id="error-activity" className="panel-error">
+                <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 7.5v5" />
+                  <path d="M12 16h.01" />
+                </svg>
+                <span>{fieldErrors.activity}</span>
               </p>
             )}
           </div>
 
-          <div className="form-field">
-            <label htmlFor="entry-note">
+          <div className="panel-form__campo panel-form__campo--ancho">
+            <div className={painClasses} role="group" aria-labelledby="pain-label">
+              <span className="panel-form__etiqueta" id="pain-label">
+                Dolor percibido, de 0 a 10
+              </span>
+              <div className="panel-dolor__cabecera">
+                <span className="panel-pista">
+                  Es tu percepción subjetiva del dolor, no una medición diagnóstica.
+                </span>
+                <span className={readoutClasses}>
+                  {pain === null ? 'Sin indicar' : `${pain} / ${PAIN_MAX} · ${painLabel(pain)}`}
+                </span>
+              </div>
+              <input
+                ref={painRef}
+                type="range"
+                id="entry-pain"
+                name="pain"
+                className="panel-dolor__rango"
+                min={PAIN_MIN}
+                max={PAIN_MAX}
+                step={1}
+                required
+                value={painValue}
+                onChange={handlePainChange}
+                style={painStyle}
+                aria-required="true"
+                aria-valuemin={PAIN_MIN}
+                aria-valuemax={PAIN_MAX}
+                aria-valuenow={painValue}
+                aria-valuetext={`Dolor percibido: ${painValue} de ${PAIN_MAX}${
+                  pain === null ? ', sin indicar' : `, ${painLabel(painValue)}`
+                }`}
+                aria-invalid={fieldErrors.pain ? true : undefined}
+                aria-describedby={joinIds('pain-help', fieldErrors.pain && 'error-pain')}
+              />
+              <div className="panel-dolor__marcas" aria-hidden="true" />
+              <div className="panel-dolor__escala" aria-hidden="true">
+                <span>0 · Sin molestia</span>
+                <span>5 · Molestia moderada</span>
+                <span>10 · Dolor muy intenso</span>
+              </div>
+              <p id="pain-help" className="panel-pista">
+                Usa las flechas ← → del teclado, las teclas Inicio y Fin, o desliza el control. Elige un valor aunque
+                sea 0: el 0 significa “sin molestia” y es una respuesta válida.
+              </p>
+              {fieldErrors.pain && (
+                <p id="error-pain" className="panel-error">
+                  <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M12 7.5v5" />
+                    <path d="M12 16h.01" />
+                  </svg>
+                  <span>{fieldErrors.pain}</span>
+                </p>
+              )}
+            </div>
+
+            {showPainAlert && (
+              <div className="panel-alerta" role="note" aria-live="polite">
+                <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                  <path d="M12 3.6 2.6 20h18.8L12 3.6Z" />
+                  <path d="M12 10v4.5" />
+                  <path d="M12 17.6h.01" />
+                </svg>
+                <div>
+                  <p className="panel-estado-fuerte">Aviso de precaución</p>
+                  <p>
+                    Ante dolor intenso, persistente, que empeora o que se acompaña de síntomas neurológicos
+                    (hormigueo, debilidad o pérdida de sensibilidad), detén la actividad y consulta a un profesional
+                    sanitario.
+                  </p>
+                  <p>El dolor que registras es una percepción subjetiva y no sustituye una valoración médica.</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="panel-form__campo panel-form__campo--ancho">
+            <label className="panel-form__etiqueta" htmlFor="entry-note">
               Nota de bienestar <span className="small-print">(opcional, sensaciones o evolución)</span>
             </label>
             <textarea
+              ref={noteRef}
               id="entry-note"
               name="note"
-              maxLength={500}
+              className="panel-campo panel-campo--area"
+              maxLength={NOTE_MAX}
               rows={3}
               value={note}
-              onChange={(e) => setNote(e.target.value)}
+              onChange={(e) => {
+                setNote(e.target.value);
+                clearFieldError('note');
+              }}
               placeholder="¿Cómo te sentiste durante o después de moverte?"
-              aria-describedby={fieldErrors.note ? 'error-note' : undefined}
+              aria-invalid={fieldErrors.note ? true : undefined}
+              aria-describedby={joinIds('note-help', fieldErrors.note && 'error-note')}
             ></textarea>
+            <p id="note-help" className="panel-pista">
+              Sensaciones, evolución o contexto que quieras recordar.
+              <span className="panel-contador" aria-hidden="true">
+                {' '}
+                · {note.length}/{NOTE_MAX}
+              </span>
+            </p>
             {fieldErrors.note && (
-              <p id="error-note" className="field-error">
-                {fieldErrors.note}
+              <p id="error-note" className="panel-error">
+                <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 7.5v5" />
+                  <path d="M12 16h.01" />
+                </svg>
+                <span>{fieldErrors.note}</span>
               </p>
             )}
           </div>
 
-          <div className="panel-actions" style={{ display: 'flex', gap: '1rem', marginTop: '1.25rem' }}>
-            <button type="submit" id="save-entry" className="btn">
+          <div className="panel-form__acciones">
+            <button type="submit" id="save-entry" className="btn panel-boton">
               {editingId ? 'Guardar cambios' : 'Guardar entrada'}
             </button>
             {editingId && (
-              <button
-                type="button"
-                id="cancel-edit"
-                className="btn secondary"
-                onClick={resetForm}
-              >
+              <button type="button" id="cancel-edit" className="btn secondary panel-boton" onClick={resetForm}>
                 Cancelar edición
               </button>
             )}
           </div>
 
-          {formError && (
-            <div id="panel-error" className="error-box" role="alert">
-              {formError}
-            </div>
-          )}
+          <p className="panel-page__slot panel-form__error-slot" role="alert">
+            {formError && (
+              <span className="panel-estado panel-estado--error">
+                <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 7.5v5" />
+                  <path d="M12 16h.01" />
+                </svg>
+                <span>{formError}</span>
+              </span>
+            )}
+          </p>
         </form>
+
+        <p className="panel-page__slot" role="status" aria-live="polite">
+          {statusMessage && (
+            <span className="panel-estado">
+              <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                <circle cx="12" cy="12" r="9" />
+                <path d="m8.2 12.4 2.6 2.6 5-5.6" />
+              </svg>
+              <span className="panel-estado-fuerte">{statusMessage}</span>
+            </span>
+          )}
+        </p>
       </section>
 
-      {/* Historial */}
       <section className="app-card" aria-labelledby="history-heading">
         <h2 id="history-heading" tabIndex={-1}>
           Historial de actividad y bienestar
         </h2>
 
-        {sortedRecords.length === 0 ? (
-          <p id="empty-history" className="status-box" role="status">
-            Todavía no hay registros. Completa una sesión o ejercicio para comenzar tu seguimiento.
-          </p>
-        ) : (
-          <div id="history-table-container" className="table-wrapper overflow-x-auto">
-            <table className="data-table w-full">
-              <caption className="sr-only">
-                Registros cronológicos de actividad, dolor subjetivo y bienestar
-              </caption>
-              <thead>
-                <tr>
-                  <th scope="col">Fecha</th>
-                  <th scope="col">Actividad</th>
-                  <th scope="col">Dolor percibido</th>
-                  <th scope="col">Bienestar / Notas</th>
-                  <th scope="col">
-                    <span className="sr-only">Acciones</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody id="history-body">
-                {sortedRecords.map((record) => {
-                  const painScore = record.pain;
-                  const painBadgeColor =
-                    painScore <= 3
-                      ? 'text-emerald-800 bg-emerald-50 border-emerald-200'
-                      : painScore <= 6
-                      ? 'text-amber-800 bg-amber-50 border-amber-200'
-                      : 'text-red-800 bg-red-50 border-red-200';
+        {sortedRecords.length > 0 && (
+          <div className="panel-filtros">
+            <fieldset className="panel-filtros__grupo">
+              <legend className="panel-filtros__leyenda">Mostrar</legend>
+              <div className="panel-filtros__opciones">
+                {RANGE_OPTIONS.map((option) => (
+                  <label className="panel-chip" key={option.value}>
+                    <input
+                      type="radio"
+                      name="panel-range"
+                      value={option.value}
+                      checked={range === option.value}
+                      onChange={() => setRange(option.value)}
+                    />
+                    <span>{option.label}</span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
 
-                  return (
-                    <tr key={record.id}>
-                      <td className="whitespace-nowrap font-medium">{formatDate(record.date)}</td>
-                      <td>
-                        <span className="font-semibold">{record.activity || 'No indicada'}</span>
-                      </td>
-                      <td>
-                        <span className={`inline-block px-2 py-0.5 rounded text-xs font-bold border ${painBadgeColor}`}>
-                          {record.pain} / 10
-                        </span>
-                      </td>
-                      <td>{record.note || 'Sin nota'}</td>
-                      <td className="record-actions" style={{ display: 'flex', gap: '0.5rem' }}>
-                        <button
-                          type="button"
-                          className="btn secondary"
-                          style={{ padding: '0.35rem 0.75rem', fontSize: '0.875rem' }}
-                          onClick={() => handleStartEdit(record)}
-                        >
-                          Editar
-                        </button>
-                        <button
-                          type="button"
-                          className="btn secondary"
-                          style={{
-                            padding: '0.35rem 0.75rem',
-                            fontSize: '0.875rem',
-                            color: 'var(--color-peligro)',
-                          }}
-                          onClick={() => handleDelete(record.id)}
-                        >
-                          Eliminar
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+            <div className="panel-busqueda">
+              <label htmlFor="panel-search">Buscar por actividad</label>
+              <input
+                type="search"
+                id="panel-search"
+                className="panel-campo"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Escribe parte del nombre de la actividad"
+                aria-describedby="panel-search-help"
+              />
+              <p id="panel-search-help" className="panel-pista">
+                El filtrado solo cambia lo que ves aquí: no modifica ni borra los registros guardados.
+              </p>
+            </div>
           </div>
+        )}
+
+        <p className="panel-resultados" role="status" aria-live="polite">
+          {sortedRecords.length > 0 &&
+            `Mostrando ${filteredRecords.length} de ${sortedRecords.length} ${
+              sortedRecords.length === 1 ? 'registro' : 'registros'
+            }.`}
+        </p>
+
+        {sortedRecords.length === 0 ? (
+          <div className="panel-vacio">
+            <svg aria-hidden="true" viewBox="0 0 64 64" focusable="false">
+              <path d="M14 8h24a8 8 0 0 1 8 8v40H22a8 8 0 0 1-8-8V8Z" />
+              <path d="M38 8v10h8" />
+              <path d="M22 30h16M22 38h16M22 46h10" />
+              <path d="M46 20h8a6 6 0 0 1 6 6v22a6 6 0 0 1-6 6h-4" />
+            </svg>
+            <p>
+              Tu historial está vacío. Cuando quieras, registra tu primera entrada: con una fecha, la actividad que
+              hayas hecho y cómo te has sentido. Todo se quedará aquí, en este dispositivo.
+            </p>
+            <a className="card-link" href="#panel-form">
+              Ir al formulario
+            </a>
+          </div>
+        ) : filteredRecords.length === 0 ? (
+          <div className="panel-vacio">
+            <svg aria-hidden="true" viewBox="0 0 64 64" focusable="false">
+              <circle cx="27" cy="27" r="16" />
+              <path d="M39 39 52 52" />
+            </svg>
+            <p>
+              Ningún registro coincide con estos filtros. Prueba con otras fechas o borra la búsqueda para volver a ver
+              todo tu historial.
+            </p>
+            <button
+              type="button"
+              className="btn secondary panel-boton"
+              onClick={() => {
+                setRange('todos');
+                setSearch('');
+              }}
+            >
+              Quitar filtros
+            </button>
+          </div>
+        ) : isWide ? (
+          <table className="panel-tabla" id="history-table">
+            <caption className="sr-only">
+              Registros de actividad, dolor subjetivo y bienestar, del más reciente al más antiguo
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">Fecha</th>
+                <th scope="col">Actividad</th>
+                <th scope="col">Dolor percibido</th>
+                <th scope="col">Bienestar / Notas</th>
+                <th scope="col">
+                  <span className="sr-only">Acciones</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody id="history-body">
+              {filteredRecords.map((record) => (
+                <tr key={record.id}>
+                  <td className="panel-tabla__fecha">
+                    <time dateTime={record.date}>{formatDate(record.date)}</time>
+                  </td>
+                  <td className="panel-tabla__actividad">{record.activity || 'No indicada'}</td>
+                  <td>
+                    <span className={`panel-dolor-chip panel-dolor-chip--${painTone(record.pain)}`}>
+                      {record.pain} / {PAIN_MAX} · {painLabel(record.pain)}
+                    </span>
+                  </td>
+                  <td>{record.note || 'Sin nota'}</td>
+                  <td className="panel-tabla__acciones">
+                    <div className="panel-acciones">
+                      <button
+                        type="button"
+                        className="btn secondary panel-boton"
+                        onClick={() => handleStartEdit(record)}
+                      >
+                        Editar
+                        <span className="sr-only">
+                          {' '}
+                          el registro del {formatDate(record.date)}
+                          {record.activity ? `: ${record.activity}` : ''}
+                        </span>
+                      </button>
+                      <button
+                        type="button"
+                        className="btn secondary panel-boton panel-boton--peligro"
+                        onClick={() => handleDelete(record.id)}
+                      >
+                        Eliminar
+                        <span className="sr-only">
+                          {' '}
+                          el registro del {formatDate(record.date)}
+                          {record.activity ? `: ${record.activity}` : ''}
+                        </span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <ul className="panel-tarjetas" id="history-cards">
+            {filteredRecords.map((record) => (
+              <li className="panel-tarjeta" key={record.id}>
+                <div className="panel-tarjeta__cabecera">
+                  <time className="panel-tarjeta__fecha" dateTime={record.date}>
+                    {formatDateLong(record.date)}
+                  </time>
+                  <span className={`panel-dolor-chip panel-dolor-chip--${painTone(record.pain)}`}>
+                    {record.pain} / {PAIN_MAX} · {painLabel(record.pain)}
+                  </span>
+                </div>
+                <p className="panel-tarjeta__actividad">{record.activity || 'Actividad no indicada'}</p>
+                <p className="panel-tarjeta__nota">
+                  <strong>Nota:</strong> {record.note || 'Sin nota'}
+                </p>
+                <div className="panel-acciones panel-tarjeta__acciones">
+                  <button
+                    type="button"
+                    className="btn secondary panel-boton"
+                    onClick={() => handleStartEdit(record)}
+                  >
+                    Editar
+                    <span className="sr-only"> el registro del {formatDateLong(record.date)}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="btn secondary panel-boton panel-boton--peligro"
+                    onClick={() => handleDelete(record.id)}
+                  >
+                    Eliminar
+                    <span className="sr-only"> el registro del {formatDateLong(record.date)}</span>
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
         )}
       </section>
 
-      {/* Privacidad y borrado */}
       <section className="app-card" aria-labelledby="privacy-heading">
         <h2 id="privacy-heading">Privacidad y borrado</h2>
         <p>
-          Los registros permanecen en este navegador y dispositivo, salvo que los borres o cambien las condiciones de almacenamiento. Otros usuarios del mismo dispositivo podrían acceder a ellos. FitCasa no envía estos registros a servidores ni afirma que <code>localStorage</code> los cifre.
+          Los registros permanecen en este navegador y en este dispositivo, en el almacenamiento local del navegador
+          (<code>localStorage</code>). FitCasa no los envía a ningún servidor, no existe una cuenta asociada y esta
+          herramienta no cifra ese almacenamiento. Si borras los datos del navegador, usas el modo privado o
+          compartes el dispositivo, tus entradas pueden desaparecer o quedar accesibles para otras personas.
         </p>
-        <button
-          type="button"
-          id="clear-data"
-          className="btn secondary"
-          onClick={handleClearAll}
-        >
-          Borrar respuestas y registros guardados
-        </button>
-        {clearStatus && (
-          <p id="clear-status" role="status" className="small-print mt-2">
-            {clearStatus}
-          </p>
+
+        {!confirmClear ? (
+          <button
+            type="button"
+            id="clear-data"
+            ref={clearTriggerRef}
+            className="btn secondary panel-boton"
+            onClick={() => setConfirmClear(true)}
+          >
+            Borrar respuestas y registros guardados
+          </button>
+        ) : (
+          <div
+            className="panel-confirmacion"
+            role="alertdialog"
+            aria-labelledby="clear-confirm-heading"
+            aria-describedby="clear-confirm-body"
+            tabIndex={-1}
+            ref={confirmRef}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') {
+                e.stopPropagation();
+                cancelClear();
+              }
+            }}
+          >
+            <h3 id="clear-confirm-heading">¿Confirmas el borrado?</h3>
+            <p id="clear-confirm-body">
+              Esto borrará todo tu historial de actividad y las respuestas guardadas en este dispositivo. No se puede
+              deshacer y no existe ninguna copia en un servidor.
+            </p>
+            <div className="panel-confirmacion__acciones">
+              <button type="button" className="panel-peligro panel-boton" onClick={handleClearAll}>
+                Sí, borrar todo
+              </button>
+              <button type="button" className="btn secondary panel-boton" onClick={cancelClear}>
+                Cancelar y conservar mis datos
+              </button>
+            </div>
+          </div>
         )}
+
+        <p className="panel-page__slot" role="status" aria-live="polite">
+          {clearStatus && (
+            <span className="panel-estado">
+              <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                <circle cx="12" cy="12" r="9" />
+                <path d="m8.2 12.4 2.6 2.6 5-5.6" />
+              </svg>
+              <span>{clearStatus}</span>
+            </span>
+          )}
+        </p>
       </section>
     </main>
   );
