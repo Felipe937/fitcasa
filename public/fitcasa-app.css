@@ -248,3 +248,271 @@
   .step-panel.step-enter,
   .step-panel.step-enter-active { opacity: 1; transform: none; }
 }
+
+/* ---------- Cuestionario de sugerencias (body.page-quiz) ---------- */
+body.page-quiz {
+  --tamano-bullet-stepper: 2.25rem;
+  --tamano-check-stepper: 1.125rem;
+  --ancho-acento-seguridad: 0.25rem;
+  --tamano-icono-seguridad: 1.5rem;
+}
+
+/* Stepper de tres fases. */
+body.page-quiz .stepper {
+  display: grid;
+  gap: var(--espacio-3);
+  padding: 0;
+  margin: 0 0 var(--espacio-5);
+  list-style: none;
+  grid-template-columns: 1fr;
+}
+
+body.page-quiz .stepper-step {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-3);
+  min-height: var(--alto-objetivo-tactil);
+  padding: var(--espacio-2) var(--espacio-3);
+  color: var(--color-texto-suave);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+  font-size: var(--texto-sm);
+}
+
+body.page-quiz .stepper-bullet {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tamano-bullet-stepper);
+  height: var(--tamano-bullet-stepper);
+  flex: none;
+  color: var(--color-sobre-primario);
+  background: var(--color-primario);
+  border-radius: 50%;
+  font-weight: 800;
+}
+
+body.page-quiz .stepper-check {
+  display: none;
+  width: var(--tamano-check-stepper);
+  height: var(--tamano-check-stepper);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+body.page-quiz .stepper-step.is-active {
+  color: var(--color-primario-oscuro);
+  border-color: var(--color-primario);
+  font-weight: 800;
+}
+
+body.page-quiz .stepper-step.is-done {
+  color: var(--color-primario-oscuro);
+}
+
+body.page-quiz .stepper-step.is-done .stepper-number {
+  display: none;
+}
+
+body.page-quiz .stepper-step.is-done .stepper-check {
+  display: block;
+}
+
+body.page-quiz .stepper-step.is-future {
+  opacity: 0.7;
+}
+
+body.page-quiz .stepper-step.is-future .stepper-bullet {
+  color: var(--color-texto-suave);
+  background: var(--color-superficie-suave);
+}
+
+@media (min-width: 40rem) {
+  body.page-quiz .stepper { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* Tarjetas de opción. */
+body.page-quiz .choice-grid label {
+  align-items: center;
+  min-height: var(--alto-objetivo-tactil);
+}
+
+body.page-quiz .choice-grid label:has(input:checked) {
+  color: var(--color-primario-oscuro);
+  background: var(--color-fondo-azul);
+  border-color: var(--color-primario);
+  border-width: 2px;
+  font-weight: 700;
+}
+
+/* Indicador de confirmación sin depender solo del color. */
+body.page-quiz .choice-grid label:has(input:checked)::after {
+  content: "✓";
+  margin-left: auto;
+  flex: none;
+  color: var(--color-primario);
+  font-weight: 800;
+}
+
+body.page-quiz .choice-grid label:has(input:focus-visible) {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 2px;
+}
+
+/* Paso de seguridad: contexto cálido y reflexivo. */
+body.page-quiz .step-panel[data-step="2"] {
+  padding: var(--espacio-4);
+  background: var(--color-fondo-aviso);
+  border-left: var(--ancho-acento-seguridad) solid var(--color-foco);
+  border-radius: var(--radio-md);
+}
+
+body.page-quiz .step-panel[data-step="2"] > h2 {
+  color: var(--color-texto);
+}
+
+body.page-quiz .safety-note {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--espacio-2) var(--espacio-3);
+  align-items: start;
+  margin: var(--espacio-4) 0;
+  padding: var(--espacio-4);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-foco);
+  border-radius: var(--radio-md);
+}
+
+body.page-quiz .safety-icon {
+  width: var(--tamano-icono-seguridad);
+  height: var(--tamano-icono-seguridad);
+  grid-row: span 2;
+  margin-top: 0.125rem;
+  fill: none;
+  stroke: var(--color-foco);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+body.page-quiz .safety-note p {
+  margin: 0;
+  font-size: var(--texto-sm);
+}
+
+/* Aviso de respuestas recuperadas. */
+body.page-quiz .recovered {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espacio-3);
+  padding: var(--espacio-3) var(--espacio-4);
+  margin: var(--espacio-4) 0;
+  color: var(--color-texto);
+  background: var(--color-fondo-azul);
+  border-left: 0.25rem solid var(--color-primario);
+  border-radius: var(--radio-md);
+}
+
+body.page-quiz .recovered p {
+  margin: 0;
+}
+
+body.page-quiz .recovered .btn {
+  flex: 0 0 auto;
+}
+
+body.page-quiz .recovered[hidden] {
+  display: none;
+}
+
+/* Resultados. */
+body.page-quiz .plan-date {
+  margin: calc(var(--espacio-4) * -1) 0 var(--espacio-5);
+  color: var(--color-texto-suave);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+}
+
+body.page-quiz .plan-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-3);
+  margin: var(--espacio-5) 0;
+}
+
+body.page-quiz .plan-day .btn {
+  margin-top: var(--espacio-3);
+}
+
+body.page-quiz .plan-name {
+  font-weight: 800;
+}
+
+body.page-quiz .plan-day h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  body.page-quiz .choice-grid label {
+    transition: background-color var(--duracion-corta) ease, color var(--duracion-corta) ease, border-color var(--duracion-corta) ease;
+  }
+
+  body.page-quiz .stepper-bullet {
+    transition: background-color var(--duracion-corta) ease, color var(--duracion-corta) ease;
+  }
+
+  body.page-quiz .stepper-check {
+    animation: check-entrada var(--duracion-corta) var(--curva-suave);
+  }
+
+  @keyframes check-entrada {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: none; }
+  }
+}
+
+/* Impresión: solo la propuesta. */
+@media print {
+  body.page-quiz .site-header,
+  body.page-quiz .skip-link,
+  body.page-quiz .aviso-superior,
+  body.page-quiz .stepper,
+  body.page-quiz .progress-track,
+  body.page-quiz .quiz-actions,
+  body.page-quiz .plan-actions,
+  body.page-quiz .recovered,
+  body.page-quiz #storage-notice,
+  body.page-quiz .site-footer,
+  body.page-quiz .app-intro,
+  body.page-quiz .safety-note,
+  body.page-quiz .step-panel,
+  body.page-quiz #quiz-results .plan-day .btn,
+  body.page-quiz noscript {
+    display: none;
+  }
+
+  body.page-quiz {
+    color: CanvasText;
+    background: Canvas;
+  }
+
+  body.page-quiz .app-card,
+  body.page-quiz .plan-day,
+  body.page-quiz .notice {
+    border: 1px solid CanvasText;
+    box-shadow: none;
+    background: Canvas;
+    break-inside: avoid;
+  }
+
+  body.page-quiz .plan-day {
+    border-radius: 0;
+  }
+}

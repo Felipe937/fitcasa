@@ -20,6 +20,8 @@
   var resultsSection = document.getElementById('quiz-results');
   var resultsContent = document.getElementById('results-content');
   var storageNotice = document.getElementById('storage-notice');
+  var recoveredNotice = document.getElementById('recovered-notice');
+  var stepper = document.getElementById('quiz-stepper');
   var clearDataButton = document.getElementById('clear-data');
   var clearStatus = document.getElementById('clear-status');
 
@@ -241,6 +243,51 @@
     answerSummary.appendChild(list);
   }
 
+  // Enlace a la biblioteca con la búsqueda preconfigurada.
+  var libraryLink = function (name) {
+    var url = new URL('ejercicios.html', window.location.href);
+    url.searchParams.set('search', name);
+    var link = document.createElement('a');
+    link.className = 'btn secondary';
+    link.href = url.pathname + url.search;
+    link.textContent = 'Ver en biblioteca';
+    link.setAttribute('aria-label', 'Ver ' + name + ' en la biblioteca');
+    return link;
+  };
+
+  var formatDate = function () {
+    var date = new Date();
+    var day = String(date.getDate()).padStart(2, '0');
+    var month = String(date.getMonth() + 1).padStart(2, '0');
+    return day + '/' + month + '/' + date.getFullYear();
+  };
+
+  // Barra de acciones del plan: ajustar e imprimir (imprimir solo con plan válido).
+  var planActions = function (result) {
+    var actions = document.createElement('div');
+    actions.className = 'plan-actions';
+
+    var adjust = document.createElement('button');
+    adjust.type = 'button';
+    adjust.className = 'btn secondary';
+    adjust.textContent = 'Ajustar propuesta';
+    adjust.addEventListener('click', function () {
+      resultsSection.hidden = true;
+      goToStep(1);
+    });
+    actions.appendChild(adjust);
+
+    var print = document.createElement('button');
+    print.type = 'button';
+    print.className = 'btn';
+    print.textContent = 'Imprimir propuesta';
+    print.addEventListener('click', function () { window.print(); });
+    // Solo ante un plan válido generado, nunca en bloqueos ni resultados insuficientes.
+    actions.appendChild(print);
+    print.hidden = !(result && result.days && result.days.length);
+    return actions;
+  };
+
   function renderResults(result) {
     resultsContent.replaceChildren();
     if (result.blocked) {
@@ -253,7 +300,7 @@
       text.textContent = result.reasons ? 'La generación está bloqueada por: ' + result.reasons.join('; ') + '.' : result.reason;
       block.appendChild(text);
       var recommendation = document.createElement('p');
-      recommendation.textContent = 'Consulta con tu equipo sanitario antes de retomar o elegir actividad. Ante síntomas repentinos o graves, busca atención urgente.';
+      recommendation.textContent = 'Consulta con tu equipo sanitario antes de retomar o elegir actividad. Ante síntomas repentinos o graves, busca atención urgencia.';
       block.appendChild(recommendation);
       resultsContent.appendChild(block);
     } else if (result.insufficient) {
@@ -261,19 +308,25 @@
       insufficient.className = 'notice warning';
       insufficient.textContent = 'No hay suficientes ejercicios compatibles para organizar ' + result.requested + ' días con estas respuestas. No se muestra una propuesta incompleta. Puedes volver atrás y ajustar solo las preferencias de actividad, sin cambiar respuestas de seguridad para evitar un bloqueo.';
       resultsContent.appendChild(insufficient);
+      resultsContent.appendChild(planActions(result));
     } else {
       var intro = document.createElement('p');
       intro.textContent = 'Esta propuesta usa ' + result.available + ' opciones compatibles de la biblioteca y no repite ejercicios dentro de ella.';
       resultsContent.appendChild(intro);
+      var date = document.createElement('p');
+      date.className = 'plan-date';
+      date.textContent = 'Propuesta generada el ' + formatDate() + '.';
+      resultsContent.appendChild(date);
       var grid = document.createElement('div');
       grid.className = 'plan-grid';
       result.days.forEach(function (day) {
         var card = document.createElement('article');
         card.className = 'plan-day';
-        var title = document.createElement('h3');
-        title.textContent = 'Día ' + day.number;
-        card.appendChild(title);
+        var head = document.createElement('h3');
+        head.textContent = 'Día ' + day.number;
+        card.appendChild(head);
         var name = document.createElement('p');
+        name.className = 'plan-name';
         name.textContent = day.exercise.name;
         card.appendChild(name);
         var description = document.createElement('p');
@@ -283,9 +336,11 @@
         meta.className = 'small-print';
         meta.textContent = 'Duración: ' + day.exercise.duration + '. Nivel de la biblioteca: ' + day.exercise.difficulty + '.';
         card.appendChild(meta);
+        card.appendChild(libraryLink(day.exercise.name));
         grid.appendChild(card);
       });
       resultsContent.appendChild(grid);
+      resultsContent.appendChild(planActions(result));
       var safety = document.createElement('p');
       safety.className = 'notice warning';
       safety.textContent = 'Detén la actividad si aparece dolor intenso, debilidad, entumecimiento u otros síntomas inusuales y consulta con un profesional. La etiqueta de la biblioteca no sustituye una valoración individual.';
@@ -294,6 +349,19 @@
     resultsSection.hidden = false;
     document.getElementById('results-heading').focus();
   }
+
+  // Sincroniza el stepper visual con el paso en curso.
+  var updateStepper = function () {
+    if (!stepper) return;
+    Array.prototype.slice.call(stepper.querySelectorAll('.stepper-step')).forEach(function (item) {
+      var step = Number(item.dataset.step);
+      var isCurrent = step === currentStep;
+      item.classList.toggle('is-active', isCurrent);
+      item.classList.toggle('is-done', step < currentStep);
+      if (isCurrent) item.setAttribute('aria-current', 'step');
+      else item.removeAttribute('aria-current');
+    });
+  };
 
   function updateStep() {
     steps.forEach(function (step) { step.hidden = Number(step.dataset.step) !== currentStep; });
@@ -304,6 +372,7 @@
     backButton.hidden = currentStep === 1;
     nextButton.hidden = currentStep === TOTAL_STEPS;
     submitButton.hidden = currentStep !== TOTAL_STEPS;
+    updateStepper();
   }
 
   function animateStep(stepPanel) {
@@ -327,6 +396,25 @@
     if (heading) heading.focus();
   }
 
+  // Aviso no intrusivo al recuperar respuestas guardadas.
+  var showRecoveredNotice = function () {
+    if (!recoveredNotice) return;
+    recoveredNotice.replaceChildren();
+    var text = document.createElement('p');
+    text.textContent = 'Se recuperaron tus respuestas anteriores.';
+    recoveredNotice.appendChild(text);
+    var review = document.createElement('button');
+    review.type = 'button';
+    review.className = 'btn secondary';
+    review.textContent = 'Revisar respuestas';
+    review.addEventListener('click', function () {
+      recoveredNotice.hidden = true;
+      goToStep(1);
+    });
+    recoveredNotice.appendChild(review);
+    recoveredNotice.hidden = false;
+  };
+
   function restoreAnswers() {
     var stored = window.FitCasaStorage.read(window.FitCasaStorage.KEYS.quiz, QUIZ_VERSION, normalizeAnswers);
     if (!stored.available) {
@@ -344,6 +432,7 @@
         if (input) input.checked = true;
       });
     });
+    showRecoveredNotice();
   }
 
   function saveAnswers(answers) {
