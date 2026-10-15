@@ -7,9 +7,26 @@
     "difficulty": "principiante",
     "equipment": ["ninguno"],
     "zone": ["piernas", "glúteos"],
+    "category": "actividad_general",
     "image": "assets/sentadilla.jpg",
     "adaptation": { "notes": "Mantenga la espalda recta y evite flexionar excesivamente la columna durante la bajada." },
-    "clinicalReview": "pendiente"
+    "clinicalReview": "pendiente",
+    "clinicalMetadata": {
+      "reviewStatus": "en_revision",
+      "targetPopulation": ["adultos_asintomaticos", "escoliosis_leve_estable"],
+      "precautions": [
+        "No arquear la columna lumbar ni redondear la zona dorsal.",
+        "Si existe dismetría pélvica, mantener apoyos simétricos de ambos pies sin desplazar el peso a un solo lado."
+      ],
+      "contraindications": ["Dolor articular agudo en rodilla o cadera", "Radiculopatía lumbar activa"],
+      "evidenceReferences": [
+        {
+          "title": "General physical activity guidelines for spinal health",
+          "source": "NHS Choices - Exercise and Back Pain (2023)",
+          "url": "https://www.nhs.uk/conditions/scoliosis/treatment-in-adults/"
+        }
+      ]
+    }
   },
   {
     "id": "e02",
@@ -19,9 +36,28 @@
     "difficulty": "principiante",
     "equipment": ["ninguno"],
     "zone": ["glúteos", "lumbar"],
+    "category": "cuidado_postural",
     "image": "assets/puente.jpg",
     "adaptation": { "notes": "Controlar el movimiento para no hiperextender la columna." },
-    "clinicalReview": "revisado"
+    "clinicalReview": "revisado",
+    "clinicalMetadata": {
+      "reviewStatus": "revisado_profesional",
+      "reviewedBy": "Revisión documental en fisioterapia de columna",
+      "reviewDate": "2026-01-15",
+      "targetPopulation": ["adultos_asintomaticos", "escoliosis_leve_estable", "escoliosis_moderada_estable"],
+      "precautions": [
+        "Evitar la hiperextensión lumbar al alcanzar el punto máximo de elevación.",
+        "Activar la musculatura del suelo pélvico y abdomen transverso antes de despegar la pelvis."
+      ],
+      "contraindications": ["Espondilolistesis activa inestable con dolor a la extensión"],
+      "evidenceReferences": [
+        {
+          "title": "SOSORT 2016 Guidelines: Core stabilization and gluteal activation",
+          "source": "Scoliosis and Spinal Disorders (Negrini et al., 2018)",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5795289/"
+        }
+      ]
+    }
   },
   {
     "id": "e03",
@@ -31,9 +67,25 @@
     "difficulty": "intermedio",
     "equipment": ["ninguno"],
     "zone": ["core"],
+    "category": "actividad_general",
     "image": "assets/plancha.jpg",
     "adaptation": { "notes": "Puede apoyar las rodillas para reducir la carga lumbar." },
-    "clinicalReview": "pendiente"
+    "clinicalReview": "pendiente",
+    "clinicalMetadata": {
+      "reviewStatus": "en_revision",
+      "targetPopulation": ["adultos_con_buen_control_motor"],
+      "precautions": [
+        "No permitir que la pelvis caiga hacia el suelo ni elevar los glúteos en exceso.",
+        "Progresar desde apoyo de rodillas antes de realizar la versión completa si hay fatiga postural."
+      ],
+      "contraindications": ["Dolor lumbar agudo al mantenimiento isométrico"],
+      "evidenceReferences": [
+        {
+          "title": "Isometric trunk endurance and spine mechanics",
+          "source": "McGill SM. Low Back Disorders (3rd ed.)"
+        }
+      ]
+    }
   },
   {
     "id": "e04",
@@ -43,9 +95,16 @@
     "difficulty": "principiante",
     "equipment": ["ninguno"],
     "zone": ["piernas", "cadera"],
+    "category": "cuidado_postural",
     "image": "assets/elevacion_lateral.jpg",
     "adaptation": { "notes": "Evite inclinar el tronco; mantenga pelvis neutra." },
-    "clinicalReview": "pendiente"
+    "clinicalReview": "pendiente",
+    "clinicalMetadata": {
+      "reviewStatus": "en_revision",
+      "targetPopulation": ["adultos_asintomaticos", "asimetria_pelvica_leve"],
+      "precautions": ["Mantener la pelvis alineada perpendicular al suelo, sin rotación anterior."],
+      "contraindications": ["Bursitis trocantérea aguda"]
+    }
   },
   {
     "id": "e05",
@@ -55,9 +114,27 @@
     "difficulty": "principiante",
     "equipment": ["ninguno"],
     "zone": ["lumbar", "glúteos"],
+    "category": "cuidado_postural",
     "image": "assets/superman.jpg",
     "adaptation": { "notes": "Elevar sólo ligeramente los brazos y piernas si hay dolor lumbar." },
-    "clinicalReview": "revisado"
+    "clinicalReview": "revisado",
+    "clinicalMetadata": {
+      "reviewStatus": "revisado_profesional",
+      "reviewedBy": "Revisión documental en fisioterapia de columna",
+      "reviewDate": "2026-01-15",
+      "targetPopulation": ["escoliosis_estable_sin_hiperlordosis"],
+      "precautions": [
+        "Mantener la cabeza neutra mirando hacia el suelo para evitar hiperextensión cervical.",
+        "Elevaciones cortas y controladas: la intención es activación suave, no máxima extensión."
+      ],
+      "contraindications": ["Estenosis de canal lumbar", "Espondilolisis sintomática"],
+      "evidenceReferences": [
+        {
+          "title": "Paraspinal muscle activation in trunk extension exercises",
+          "source": "Journal of Orthopaedic & Sports Physical Therapy"
+        }
+      ]
+    }
   },
   {
     "id": "e06",
@@ -67,9 +144,18 @@
     "difficulty": "intermedio",
     "equipment": ["ninguno"],
     "zone": ["torax"],
+    "category": "cuidado_postural",
     "image": "assets/rotacion_toracica.jpg",
     "adaptation": { "notes": "No forzar el rango de movimiento; detener ante cualquier molestia." },
-    "clinicalReview": "pendiente"
+    "clinicalReview": "pendiente",
+    "clinicalMetadata": {
+      "reviewStatus": "en_revision",
+      "targetPopulation": ["escoliosis_toracica_con_rigidez_leve"],
+      "precautions": [
+        "Mover despacio dentro de la zona indolora; la rotación en escoliosis tiene asimetría anatómica y nunca debe forzarse contra resistencia."
+      ],
+      "contraindications": ["Dolor punzante costal o paravertebral", "Osteopenia u osteoporosis severa"]
+    }
   },
   {
     "id": "e07",
@@ -79,9 +165,21 @@
     "difficulty": "principiante",
     "equipment": ["ninguno"],
     "zone": ["torax", "hombros"],
+    "category": "cuidado_postural",
     "image": "assets/estiramiento_pectoral.jpg",
     "adaptation": { "notes": "Mantener los brazos a la altura de los hombros y no exceder la presión contra la pared." },
-    "clinicalReview": "revisado"
+    "clinicalReview": "revisado",
+    "clinicalMetadata": {
+      "reviewStatus": "revisado_profesional",
+      "reviewedBy": "Revisión documental en fisioterapia de columna",
+      "reviewDate": "2026-01-15",
+      "targetPopulation": ["adultos_asintomaticos", "hipercifosis_asociada", "escoliosis_estable"],
+      "precautions": [
+        "Respirar con naturalidad sin contener el aire.",
+        "No rotar bruscamente el tronco lejos del brazo apoyado."
+      ],
+      "contraindications": ["Inestabilidad glenohumeral anterior aguda"]
+    }
   },
   {
     "id": "e08",
@@ -91,9 +189,19 @@
     "difficulty": "intermedio",
     "equipment": ["ninguno"],
     "zone": ["lumbar", "glúteos", "hombros"],
+    "category": "cuidado_postural",
     "image": "assets/bird_dog.jpg",
     "adaptation": { "notes": "Puede mantener la rodilla y mano en el suelo si la extensión completa genera incomodidad." },
-    "clinicalReview": "pendiente"
+    "clinicalReview": "pendiente",
+    "clinicalMetadata": {
+      "reviewStatus": "en_revision",
+      "targetPopulation": ["escoliosis_estable", "adultos_asintomaticos"],
+      "precautions": [
+        "Extender el brazo y la pierna paralelos al suelo sin balanceo pélvico ni torsión del tronco.",
+        "Mantener cuello largo y coronilla proyectada hacia adelante."
+      ],
+      "contraindications": ["Vértigo posicional en cuadrupedia"]
+    }
   },
   {
     "id": "e09",
@@ -103,9 +211,15 @@
     "difficulty": "principiante",
     "equipment": ["ninguno"],
     "zone": ["piernas", "lumbar"],
+    "category": "cuidado_postural",
     "image": "assets/estiramiento_cadena.jpg",
     "adaptation": { "notes": "No forzar la flexión; mantener la espalda recta." },
-    "clinicalReview": "pendiente"
+    "clinicalReview": "pendiente",
+    "clinicalMetadata": {
+      "reviewStatus": "en_revision",
+      "targetPopulation": ["acortamiento_isquiotibial_con_rigidez_pelvica"],
+      "precautions": ["Flexionar desde las caderas, no desde la curvatura dorsal."]
+    }
   },
   {
     "id": "e10",
@@ -115,9 +229,14 @@
     "difficulty": "principiante",
     "equipment": ["ninguno"],
     "zone": ["torax", "lumbar"],
+    "category": "cuidado_postural",
     "image": "assets/twist_pe.jpg",
     "adaptation": { "notes": "Realizar sin torsión excesiva; detener si aparece dolor." },
-    "clinicalReview": "pendiente"
+    "clinicalReview": "pendiente",
+    "clinicalMetadata": {
+      "reviewStatus": "en_revision",
+      "precautions": ["Mantener las rodillas desbloqueadas y no rotar bruscamente."]
+    }
   },
   {
     "id": "e11",
@@ -127,6 +246,7 @@
     "difficulty": "principiante",
     "equipment": ["ninguno"],
     "zone": ["piernas", "glúteos"],
+    "category": "actividad_general",
     "image": "assets/lunge.jpg",
     "adaptation": { "notes": "Mantenga la rodilla alineada con el tobillo; evite avanzar demasiado." },
     "clinicalReview": "pendiente"
@@ -139,9 +259,17 @@
     "difficulty": "principiante",
     "equipment": ["ninguno"],
     "zone": ["piernas"],
+    "category": "actividad_general",
     "image": "assets/elevacion_talones.jpg",
     "adaptation": { "notes": "Puede realizarse cerca de una pared para soporte si es necesario." },
-    "clinicalReview": "revisado"
+    "clinicalReview": "revisado",
+    "clinicalMetadata": {
+      "reviewStatus": "revisado_profesional",
+      "reviewedBy": "Revisión documental en fisioterapia",
+      "reviewDate": "2026-01-15",
+      "targetPopulation": ["toda_poblacion_general"],
+      "precautions": ["Apoyarse en pared o silla estable si existen problemas de equilibrio."]
+    }
   },
   {
     "id": "e13",
@@ -151,6 +279,7 @@
     "difficulty": "principiante",
     "equipment": ["ninguno"],
     "zone": ["hombros"],
+    "category": "cuidado_postural",
     "image": "assets/circulos_brazos.jpg",
     "adaptation": { "notes": "Realizar movimientos suaves; evitar amplitud que cause dolor." },
     "clinicalReview": "pendiente"
@@ -163,6 +292,7 @@
     "difficulty": "intermedio",
     "equipment": ["ninguno"],
     "zone": ["core", "piernas"],
+    "category": "actividad_general",
     "image": "assets/escalador.jpg",
     "adaptation": { "notes": "Puede reducir la velocidad o apoyar las rodillas si hay molestias en la zona lumbar." },
     "clinicalReview": "pendiente"
@@ -175,9 +305,17 @@
     "difficulty": "intermedio",
     "equipment": ["ninguno"],
     "zone": ["core"],
+    "category": "cuidado_postural",
     "image": "assets/plancha_lateral.jpg",
     "adaptation": { "notes": "Puede apoyar la rodilla inferior para disminuir la carga si es necesario." },
-    "clinicalReview": "pendiente"
+    "clinicalReview": "pendiente",
+    "clinicalMetadata": {
+      "reviewStatus": "en_revision",
+      "precautions": [
+        "En escoliosis con curva toracolumbar, realizar ambos lados sin hiperextensión del cuello.",
+        "Si un lado resulta sensible o doloroso, suspender dicho lado y consultar con el fisioterapeuta."
+      ]
+    }
   },
   {
     "id": "e16",
@@ -187,6 +325,7 @@
     "difficulty": "avanzado",
     "equipment": ["ninguno"],
     "zone": ["glúteos", "lumbar"],
+    "category": "actividad_general",
     "image": "assets/puente_un_pierna.jpg",
     "adaptation": { "notes": "Mantenga la pelvis alineada y no compense con exceso de hiperextensión." },
     "clinicalReview": "pendiente"
@@ -199,6 +338,7 @@
     "difficulty": "intermedio",
     "equipment": ["ninguno"],
     "zone": ["piernas", "aductores"],
+    "category": "actividad_general",
     "image": "assets/sentadilla_sumo.jpg",
     "adaptation": { "notes": "Mantenga la espalda recta; la amplitud de los pies puede ajustarse según comodidad." },
     "clinicalReview": "pendiente"
@@ -211,9 +351,20 @@
     "difficulty": "principiante",
     "equipment": ["ninguno"],
     "zone": ["lumbar", "torax"],
+    "category": "cuidado_postural",
     "image": "assets/gato_vaca.jpg",
     "adaptation": { "notes": "Mantenga los movimientos dentro de su rango de comodidad; evitar hiperextensión." },
-    "clinicalReview": "revisado"
+    "clinicalReview": "revisado",
+    "clinicalMetadata": {
+      "reviewStatus": "revisado_profesional",
+      "reviewedBy": "Revisión documental en fisioterapia de columna",
+      "reviewDate": "2026-01-15",
+      "targetPopulation": ["escoliosis_estable", "movilidad_espinal_general"],
+      "precautions": [
+        "Mover sincrónico con la respiración (inhalar en extensión suave, exhalar en flexión).",
+        "Evitar hundir el cuello o forzar la lordosis lumbar baja."
+      ]
+    }
   },
   {
     "id": "e19",
@@ -223,6 +374,7 @@
     "difficulty": "principiante",
     "equipment": ["ninguno"],
     "zone": ["piernas"],
+    "category": "actividad_general",
     "image": "assets/elevacion_talones_sentado.jpg",
     "adaptation": { "notes": "Realizar con una silla firme; levantar los talones sin forzar la planta del pie." },
     "clinicalReview": "pendiente"
@@ -235,8 +387,26 @@
     "difficulty": "principiante",
     "equipment": ["ninguno"],
     "zone": ["torax"],
+    "category": "cuidado_postural",
     "image": "assets/respiracion.jpg",
     "adaptation": { "notes": "Practicar en posición sentada o de pie, con la espalda recta." },
-    "clinicalReview": "revisado"
+    "clinicalReview": "revisado",
+    "clinicalMetadata": {
+      "reviewStatus": "revisado_profesional",
+      "reviewedBy": "Revisión documental en fisioterapia de columna",
+      "reviewDate": "2026-01-15",
+      "targetPopulation": ["toda_poblacion_general", "escoliosis_en_cualquier_grado"],
+      "precautions": [
+        "Respirar a ritmo pausado sin hiperventilar.",
+        "Ideal como inicio y cierre de cualquier sesión para disminuir tensión paravertebral."
+      ],
+      "evidenceReferences": [
+        {
+          "title": "Breathing techniques and chest expansion in scoliosis care",
+          "source": "SOSORT Guidelines 2016",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5795289/"
+        }
+      ]
+    }
   }
 ]

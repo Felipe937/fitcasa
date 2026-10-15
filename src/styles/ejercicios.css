@@ -5,8 +5,6 @@
   --ancho-panel-max: 20rem;
   --ancho-columna-resultado: 17rem;
   --lineas-descripcion: 3;
-  --lineas-descripcion-movil: 2;
-  --duracion-lista: 250ms;
   --alto-esqueleto: 12rem;
   --duracion-entrada-tarjeta: 350ms;
   --paso-entrada-tarjeta: 40ms;
@@ -18,11 +16,6 @@
   --elevacion-tarjeta: 0.125rem;
   --tamano-glifo: 2.5rem;
   --tamano-glifo-interior: 1.5rem;
-  --tamano-glifo-movil: 2.25rem;
-  --tamano-icono-meta: 1rem;
-  --tamano-punto-meta: 0.375rem;
-  --relleno-tarjeta-movil: clamp(var(--espacio-4), 4vw, var(--espacio-5));
-  --alto-panel-plegado: 0fr;
 }
 
 .exercise-main {
@@ -42,31 +35,9 @@
   font-size: var(--texto-sm);
 }
 
-/* Notas agrupadas en una sola línea de texto pequeño. */
-.library-notes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--espacio-1) var(--espacio-4);
-  margin: var(--espacio-2) 0 0;
-}
-
-.library-notes p {
-  margin: 0;
-  max-width: none;
-  color: var(--color-texto-suave);
-  font-size: var(--texto-xs);
-}
-
 .equipment-note {
   color: var(--color-primario-oscuro);
   font-weight: 800;
-}
-
-/* El eyebrow estorba en la primera pantalla del móvil. */
-@media (max-width: 39.99rem) {
-  .exercise-main .eyebrow {
-    display: none;
-  }
 }
 
 /* Barra de herramientas: siempre visible en todos los anchos. */
@@ -149,52 +120,25 @@ html.js #filters-panel.abierto {
   font-size: var(--texto-lg);
 }
 
-/* Panel de filtros aplastado: sin cajas dentro de cajas. */
 .filters-section form {
   display: flex;
   flex-direction: column;
-  gap: var(--espacio-5);
+  gap: var(--espacio-4);
 }
 
 .filters-section fieldset {
   min-width: 0;
-  padding: 0;
+  padding: var(--espacio-4);
   margin: 0;
-  border: 0;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
 }
 
 .filters-section legend {
-  display: block;
-  width: 100%;
-  padding: 0 0 var(--espacio-2);
-  margin-bottom: var(--espacio-2);
+  padding-inline: var(--espacio-2);
   color: var(--color-primario-oscuro);
-  border-bottom: 1px solid var(--color-borde);
   font-size: var(--texto-sm);
   font-weight: 800;
-}
-
-/* Contadores por opción. */
-.chip-count {
-  color: var(--color-texto-suave);
-  font-size: var(--texto-xs);
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-
-.chip:has(input[type="checkbox"]:checked) .chip-count {
-  color: var(--color-sobre-primario);
-}
-
-/* Sin resultados y sin marcar: atenuado (mecanismo propio). */
-.chip[data-sin-resultados] {
-  opacity: 0.55;
-}
-
-.chip[data-sin-resultados]:hover {
-  color: var(--color-texto-suave);
-  background: var(--color-superficie);
-  border-color: var(--color-borde);
 }
 
 /* El atributo hidden siempre gana dentro de la sección de filtros. */
@@ -390,46 +334,6 @@ html.js #filters-panel.abierto {
   font-size: var(--texto-lg);
 }
 
-/* Fila compacta de metadatos: reloj + duración, puntos + dificultad. */
-.meta-cell {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--espacio-1);
-  color: var(--color-texto-suave);
-  font-size: var(--texto-xs);
-  font-weight: 700;
-}
-
-.meta-icon {
-  width: var(--tamano-icono-meta);
-  height: var(--tamano-icono-meta);
-  flex: none;
-}
-
-.meta-dots {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.125rem;
-}
-
-.meta-dot {
-  width: var(--tamano-punto-meta);
-  height: var(--tamano-punto-meta);
-  border-radius: 50%;
-  background: var(--color-texto-suave);
-}
-
-.meta-dot:nth-child(2),
-.meta-dot:nth-child(3) {
-  opacity: 0.25;
-}
-
-.meta-dots[data-level="2"] .meta-dot:nth-child(2),
-.meta-dots[data-level="3"] .meta-dot:nth-child(2),
-.meta-dots[data-level="3"] .meta-dot:nth-child(3) {
-  opacity: 1;
-}
-
 .exercise-desc {
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -444,8 +348,7 @@ html.js #filters-panel.abierto {
 .exercise-meta {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: var(--espacio-1) var(--espacio-3);
+  gap: var(--espacio-2);
   margin-top: var(--espacio-3);
 }
 
@@ -478,59 +381,6 @@ html.js #filters-panel.abierto {
   font-weight: 700;
 }
 
-/* Categoría del ejercicio: descriptiva, no clínica. */
-.category-tag {
-  display: block;
-  width: fit-content;
-  margin: var(--espacio-3) 0 var(--espacio-2);
-  padding: var(--espacio-1) var(--espacio-2);
-  color: var(--color-texto-suave);
-  background: transparent;
-  border: 1px solid var(--color-borde);
-  border-radius: var(--radio-sm);
-  font-size: var(--texto-xs);
-  font-weight: 700;
-}
-
-.category-tag--psse {
-  color: var(--color-primario-oscuro);
-  background: var(--color-fondo-aviso);
-  border-color: var(--color-foco);
-}
-
-.category-note {
-  display: block;
-  color: var(--color-texto-suave);
-  font-weight: 700;
-}
-
-#exercise-dialog .category-tag {
-  display: block;
-  width: fit-content;
-  margin: var(--espacio-3) 0 var(--espacio-2);
-}
-
-#exercise-dialog .category-tag .category-note {
-  display: block;
-}
-
-.dialog-psse {
-  padding: var(--espacio-3);
-  margin-top: var(--espacio-4);
-  color: var(--color-texto);
-  background: var(--color-fondo-aviso);
-  border-left: 0.25rem solid var(--color-foco);
-  border-radius: var(--radio-sm);
-  font-size: var(--texto-sm);
-}
-
-/* Zonas y equipamiento, más tenues que los metadatos. */
-.exercise-tags .exercise-tag {
-  color: var(--color-texto-suave);
-  background: transparent;
-  border: 1px solid var(--color-borde);
-}
-
 .exercise-card .btn {
   align-self: flex-start;
   margin-top: auto;
@@ -556,38 +406,6 @@ html.js #filters-panel.abierto {
   margin-top: 0;
 }
 
-/* Cabecera del diálogo: título, metadatos, contador y estado. */
-.dialog-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--espacio-3);
-}
-
-.dialog-counter,
-.dialog-review {
-  margin: var(--espacio-1) 0 0;
-  color: var(--color-texto-suave);
-  font-size: var(--texto-xs);
-  font-weight: 700;
-}
-
-.dialog-review {
-  padding: var(--espacio-1) var(--espacio-2);
-  background: var(--color-fondo-azul);
-  border-radius: var(--radio-sm);
-}
-
-#exercise-dialog h3 {
-  margin: var(--espacio-4) 0 var(--espacio-2);
-  font-size: var(--texto-base);
-}
-
-#exercise-dialog p {
-  margin-top: 0;
-}
-
 #exercise-dialog .exercise-tags {
   margin-bottom: 0;
 }
@@ -604,31 +422,9 @@ html.js #filters-panel.abierto {
   opacity: 0.55;
 }
 
-@media (max-width: 63.99rem) {
-  /* Apertura del panel por altura (cerrado no es enfocable). */
+@media (max-width: 39.99rem) {
   #filters-toggle {
     flex: 1 1 100%;
-  }
-
-  html.js #filters-panel {
-    display: grid;
-    grid-template-rows: var(--alto-panel-plegado);
-    visibility: hidden;
-  }
-
-  html.js #filters-panel.abierto {
-    grid-template-rows: 1fr;
-    visibility: visible;
-  }
-
-  html.js #filters-panel > * {
-    overflow: hidden;
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    html.js #filters-panel {
-      transition: grid-template-rows var(--duracion-media) var(--curva-suave), visibility var(--duracion-corta) ease;
-    }
   }
 }
 
@@ -719,40 +515,6 @@ html.js #filters-panel.abierto {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.55; }
   }
-
-  /* Transición de vista al filtrar: solo se animan las tarjetas. */
-  #exercise-list.animar-cambio .exercise-card {
-    view-transition-class: card-lista;
-  }
-
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation: none;
-  }
-
-  ::view-transition-group(card-lista) {
-    animation-duration: var(--duracion-lista);
-    animation-timing-function: var(--curva-suave);
-  }
-
-  /* Fundido del contenido del diálogo al cambiar de ejercicio. */
-  #dialog-content.dialog-enter-next {
-    animation: dialogo-siguiente var(--duracion-dialogo) var(--curva-suave);
-  }
-
-  #dialog-content.dialog-enter-prev {
-    animation: dialogo-anterior var(--duracion-dialogo) var(--curva-suave);
-  }
-
-  @keyframes dialogo-siguiente {
-    from { opacity: 0; transform: translateX(calc(var(--desplazamiento-dialogo) * -1)); }
-    to { opacity: 1; transform: none; }
-  }
-
-  @keyframes dialogo-anterior {
-    from { opacity: 0; transform: translateX(var(--desplazamiento-dialogo)); }
-    to { opacity: 1; transform: none; }
-  }
 }
 
 @media (forced-colors: active) {
@@ -763,31 +525,5 @@ html.js #filters-panel.abierto {
   .toolbar-search input,
   .toolbar-order select {
     border: 1px solid CanvasText;
-  }
-}
-
-/* Móvil: tarjetas más compactas. */
-@media (max-width: 39.99rem) {
-  .exercise-card {
-    padding: var(--relleno-tarjeta-movil);
-  }
-
-  .exercise-card .exercise-glyph {
-    width: var(--tamano-glifo-movil);
-    height: var(--tamano-glifo-movil);
-    margin-bottom: var(--espacio-2);
-  }
-
-  .exercise-card .exercise-desc {
-    -webkit-line-clamp: var(--lineas-descripcion-movil);
-    line-clamp: var(--lineas-descripcion-movil);
-  }
-
-  .exercise-card .exercise-tags {
-    margin-bottom: var(--espacio-3);
-  }
-
-  .exercise-list {
-    gap: var(--espacio-4);
   }
 }

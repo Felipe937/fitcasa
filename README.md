@@ -1,100 +1,37 @@
-# FitCasa
+# FitCasa (React + Vite + TypeScript)
 
-Página web profesional de ejercicio en casa con rutinas adaptadas para personas con escoliosis.
+Aplicación web interactiva y accesible de ejercicio en casa con biblioteca de ejercicios, sugerencias de actividad deterministas, guía educativa sobre escoliosis y panel de seguimiento personal.
 
-## Propósito
+Reescrita como Single Page Application (SPA) en React con TypeScript y Vite a partir del proyecto original de FitCasa, preservando toda la identidad visual, contenido clínico, algoritmos y almacenamiento local.
 
-Crear una web estática que ofrezca rutinas de ejercicio adaptadas a personas con escoliosis, con énfasis en información segura y progresiva. Sin frameworks ni dependencias externas.
+## Características principales
 
-## Estructura del proyecto
+- **Página de Inicio**: Navegación responsive, valores de la plataforma, beneficios del ejercicio en casa, resumen de programas y flujo de trabajo en 3 pasos (Explora, Orienta, Registra).
+- **Biblioteca de Ejercicios**: Colección de 20 ejercicios ejecutados con peso corporal. Incluye buscador por texto (insensible a acentos), filtros combinados (duración, dificultad, equipamiento, zona corporal), ordenación, etiquetas activas y modal de detalle accesible con notas de adaptación y revisión clínica.
+- **Sugerencias de Actividad (Cuestionario)**: Motor determinista en 3 pasos que evalúa objetivos, disponibilidad y preguntas de seguridad clínica para organizar propuestas educativas sin diagnósticos erróneos ni duplicados.
+- **Panel de Seguimiento Personal**: Registro voluntario de actividad diaria, nivel subjetivo de dolor (escala 0-10) y notas de bienestar. Historial cronológico editable y eliminable, guardado exclusivamente en el navegador (`localStorage`) sin envío de datos a servidores.
+- **Guía Educativa de Escoliosis**: Información con base en evidencia médica (SOSORT, NHS, OMS, Zhu et al. 2025, Lee & Tak 2026), tabla comparativa de estudios, señales de alarma (ordinaria vs urgencia médica), preguntas frecuentes y referencias bibliográficas.
 
-```
-fitcasa/
-├── public/                  ← Directorio de assets publicables
-│   ├── index.html           ← Página principal
-│   ├── style.css            ← Estilos globales y variables
-│   ├── script.js            ← Gestión del menú móvil
-│   ├── robots.txt           ← Política de rastreo
-│   ├── sitemap.xml          ← Sitemap para buscadores
-│   ├── 404.html             ← Página de error personalizada
-│   ├── _headers             ← Cabeceras HTTP de seguridad
-│   └── .assetsignore        ← Exclusiones para Wrangler
-├── .editorconfig            ← Configuración de estilo de código
-├── .gitignore               ← Archivos excluidos del repositorio
-├── .github/
-│   └── dependabot.yml       ← Configuración de Dependabot
-├── contrast_check.py        ← Script de verificación de contraste WCAG
-├── quiz.html / quiz.js      ← Cuestionario de sugerencias educativas
-├── panel.html / panel.js    ← Panel local de seguimiento
-├── fitcasa-app.css          ← Componentes visuales compartidos
-├── fitcasa-storage.js       ← Persistencia local versionada y tolerante a fallos
-├── wrangler.jsonc           ← Configuración de Workers Static Assets / Wrangler
-└── README.md                ← Este archivo
+## Pila Tecnológica
+
+- **Framework**: React 18
+- **Lenguaje**: TypeScript
+- **Entorno de desarrollo y empaquetador**: Vite
+- **Estilos**: Sistema CSS nativo de FitCasa con variables de diseño, tipografía fluida y respeto estricto a accesibilidad WCAG y movimiento reducido (`prefers-reduced-motion`).
+
+## Desarrollo local
+
+```bash
+npm install
+npm run dev
 ```
 
-**`public/`** es la fuente de verdad del sitio: todo lo que se publica está ahí. La raíz del repositorio conserva una copia heredada e idéntica de esos mismos archivos para poder servir el sitio con GitHub Pages; tras cualquier cambio en `public/`, hay que copiar los archivos a la raíz. Solo la configuración, los scripts de desarrollo y la documentación viven únicamente en la raíz y nunca se suben al servidor.
+La aplicación se ejecutará en `http://localhost:3000`.
 
-## Visualización local
+## Compilación para producción
 
-Abrir `public/index.html` directamente en el navegador, o servir con un servidor estático:
-
-```sh
-# Opción 1: servidor Python desde la carpeta public
-cd public
-python -m http.server 8000
+```bash
+npm run build
 ```
 
-Acceder a `http://localhost:8000`.
-
-Las rutas nuevas son `/quiz.html` y `/panel.html`. El despliegue de `public/` incluye también las copias publicables de estas páginas, de sus scripts, de la hoja de componentes y de `ejercicios.json`.
-
-> **Nota sobre rutas:** en local la ruta base es `/`; en Workers se sirve desde la raíz del dominio/subdominio asignado. Las páginas usan rutas relativas (por ejemplo `style.css`, `ejercicios.html`) para funcionar en ambos entornos.
-
-## Despliegue en Cloudflare Workers con Wrangler
-
-### Requisitos previos
-
-- [Node.js](https://nodejs.org/) (v18+)
-- Wrangler instalado: `npm install -g wrangler`
-- Autenticación: `wrangler login`
-
-### Desplegar
-
-```sh
-wrangler deploy
-```
-
-Wrangler solo subirá los archivos dentro de `public/`, excluyendo los patrones definidos en `public/.assetsignore`.
-
-### Archivo `.assetsignore`
-
-El archivo `public/.assetsignore` indica a Wrangler qué archivos o carpetas **no** debe incluir en el despliegue. Existe para evitar:
-
-- **Riesgo de seguridad**: sin él, Wrangler subía la carpeta `.git` completa al sitio público, exponiendo el historial del repositorio.
-- **Timeouts (504)**: el exceso de archivos innecesarios causaba que la API de Cloudflare agotara el tiempo de respuesta.
-
-## Despliegue alternativo en GitHub Pages
-
-1. Ir a **Settings → Pages** del repositorio.
-2. Seleccionar **Source: Deploy from a branch**, rama `main`, carpeta `/ (root)`.
-3. Nota: GitHub Pages servirá desde la raíz del repo, no desde `public/`. La raíz conserva copias idénticas de los archivos de `public/`, así que no hay que mover nada.
-
-## Requisitos de calidad
-
-- **Accesibilidad**: WCAG 2.1 AA (contraste ≥ 4.5:1, foco visible, navegación por teclado).
-- **Rendimiento**: Core Web Vitals — LCP < 2.5 s, INP < 200 ms, CLS < 0.1.
-- Sin dependencias externas, sin imágenes ni fuentes externas.
-
-## Aviso legal
-
-FitCasa ofrece contenido informativo y educativo. No sustituye el diagnóstico, tratamiento ni consejo de un médico o fisioterapeuta. Si tienes escoliosis u otra condición, consulta con un profesional antes de hacer cualquier ejercicio y detén la actividad si sientes dolor intenso, entumecimiento u otros síntomas inusuales.
-
-## Código de Conducta
-
-Este proyecto se rige por su [Código de Conducta](CODE_OF_CONDUCT.md), basado en el Contributor Covenant v2.1 y adaptado a un proyecto sobre salud y escoliosis: exige respeto hacia las personas con esta condición y prohíbe dar consejos médicos sin respaldo profesional o difundir información sanitaria sin sustento científico.
-
-## Pendiente
-
-- `og:image` (meta para redes sociales).
-- Licencia (código y contenido pueden requerir licencias distintas; decisión del autor).
-- Revisión clínica por un fisioterapeuta antes de publicar contenido específico sobre escoliosis.
+Genera la versión optimizada en la carpeta `dist/`.

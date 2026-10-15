@@ -1,0 +1,7 @@
+{
+  "name": "FitCasa",
+  "description": "Rutinas de ejercicio en casa guiadas y adaptables, biblioteca de ejercicios, sugerencias deterministas, guía educativa sobre escoliosis y seguimiento personal.",
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

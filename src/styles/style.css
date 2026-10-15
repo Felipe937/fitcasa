@@ -48,8 +48,7 @@
   --ancho-texto: 65ch;
   --alto-objetivo-tactil: 2.75rem;
   --desplazamiento-ancla: 6rem;
-  --bp-menu: 56rem;
-  --alto-barra-movil: 3.5rem;
+  --bp-menu: 52rem;
   --duracion-corta: 160ms;
   --duracion-media: 240ms;
   --curva-suave: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -69,8 +68,6 @@
   --tamano-icono-beneficio: 2.5rem;
   --tamano-insignia-programa: 3rem;
   --tamano-icono-programa: 1.5rem;
-  --texto-enlace-menu: clamp(var(--texto-xs), 0.55rem + 0.55vw, var(--texto-sm));
-  --relleno-enlace-menu: clamp(var(--espacio-1), 0.6vw, var(--espacio-2));
   --guia-hero-min: 2rem;
   --guia-hero-max: 3rem;
   --guia-hero-fluido: 2vw;
@@ -144,15 +141,13 @@ nav { display: flex; align-items: center; justify-content: space-between; gap: v
 .menu li { margin: 0; }
 .menu a { display: flex; align-items: center; min-height: var(--alto-objetivo-tactil); padding: var(--espacio-2) clamp(var(--espacio-2), 1.5vw, var(--espacio-3)); color: var(--color-texto-suave); border-radius: var(--radio-sm); font-size: var(--texto-sm); font-weight: 700; text-decoration: none; white-space: nowrap; }
 .menu a:hover, .menu a[aria-current="page"] { color: var(--color-primario-oscuro); background: var(--color-fondo-azul); }
-@media (max-width: 55.99rem) {
-  .site-header nav { flex-wrap: wrap; min-height: var(--alto-barra-movil); }
-  /* Plegado no ocupa espacio: sin padding, sin gap y sin hueco entre filas. */
-  html.has-js .menu { max-height: 0; overflow: hidden; opacity: 0; pointer-events: none; visibility: hidden; transform: translateY(-0.25rem); padding-block: 0; gap: 0; }
-  html.has-js .menu.is-open { max-height: 32rem; opacity: 1; pointer-events: auto; visibility: visible; transform: none; padding-block: var(--espacio-3) var(--espacio-4); gap: var(--espacio-1); }
+@media (max-width: 51.99rem) {
+  .site-header nav { flex-wrap: wrap; }
+  html.has-js .menu { max-height: 0; overflow: hidden; opacity: 0; pointer-events: none; visibility: hidden; transform: translateY(-0.25rem); }
+  html.has-js .menu.is-open { max-height: 32rem; opacity: 1; pointer-events: auto; visibility: visible; transform: none; }
   html.has-js .menu.is-open { order: 3; }
-  html.has-js .site-header nav:has(> .menu:not(.is-open)) { row-gap: 0; }
 }
-@media (min-width: 56rem) { .menu-toggle { display: none; } .menu, .menu.is-open { display: flex; flex-direction: row; justify-content: flex-end; width: auto; padding: 0; gap: var(--espacio-1); font-size: var(--texto-enlace-menu); } .menu a { padding-inline: var(--relleno-enlace-menu); } }
+@media (min-width: 52rem) { .menu-toggle { display: none; } .menu, .menu.is-open { display: flex; flex-direction: row; justify-content: flex-end; width: auto; padding: 0; } }
 
 @media (prefers-reduced-motion: no-preference) {
   a,
