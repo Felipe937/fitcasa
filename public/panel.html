@@ -49,6 +49,11 @@
     </div>
     <div id="storage-notice" class="notice" role="status" hidden></div>
 
+    <aside id="safety-reminder" class="notice warning safety-reminder" role="note">
+      <h2 class="sr-only">Recordatorio de seguridad</h2>
+      <p>Si notas aumento persistente del dolor o síntomas neurológicos (adormecimiento, pérdida de fuerza), suspende la actividad y consulta a tu equipo médico.</p>
+    </aside>
+
     <section class="app-card" aria-labelledby="entry-heading" data-reveal>
       <h2 id="entry-heading">Registrar una entrada</h2>
       <form id="panel-form" novalidate>
@@ -59,7 +64,9 @@
         </div>
         <div class="form-field">
           <label for="entry-activity">Actividad realizada <span class="small-print">(opcional)</span></label>
-          <input type="text" id="entry-activity" name="activity" maxlength="120" autocomplete="off" aria-describedby="error-activity">
+          <input type="text" id="entry-activity" name="activity" maxlength="120" autocomplete="off" list="activity-options" aria-describedby="error-activity activity-help">
+          <datalist id="activity-options"></datalist>
+          <p id="activity-help" class="small-print">Puedes escribir la actividad libremente o elegir un ejercicio de la biblioteca para vincular tu registro.</p>
           <p id="error-activity" class="field-error" hidden></p>
         </div>
         <div class="form-field">

@@ -129,6 +129,17 @@
             </div>
             <p id="error-equipment" class="field-error" hidden></p>
           </fieldset>
+
+          <fieldset class="optional-field" aria-describedby="escoliosis-ayuda">
+            <legend>Contexto de escoliosis <span class="optional-tag">(opcional)</span></legend>
+            <p id="escoliosis-ayuda" class="optional-help">Puedes dejarlo sin responder. No usamos esta información para prohibir ejercicios: solo sirve para mostrarte información de contexto.</p>
+            <div class="choice-grid">
+              <label><input type="radio" name="scoliosisContext" value="desconocido"> No lo sé o no tengo diagnóstico</label>
+              <label><input type="radio" name="scoliosisContext" value="leve_moderada"> Curva leve o moderada, sin seguimiento activo</label>
+              <label><input type="radio" name="scoliosisContext" value="severa"> Curva severa (más de 45º)</label>
+              <label><input type="radio" name="scoliosisContext" value="seguimiento_activo"> Estoy en seguimiento médico o fisioterapéutico activo</label>
+            </div>
+          </fieldset>
         </section>
 
         <section class="step-panel" data-step="2" aria-labelledby="step-two-heading" hidden>
@@ -186,6 +197,11 @@
     <section id="quiz-results" class="app-card" aria-labelledby="results-heading" hidden>
       <h2 id="results-heading" tabindex="-1">Resultado educativo</h2>
       <div id="results-content"></div>
+    </section>
+
+    <!-- Resumen imprimible para llevar a la consulta. Oculto en pantalla. -->
+    <section id="consulta-resumen" class="app-card consulta-resumen" aria-labelledby="consulta-titulo" hidden>
+      <h2 id="consulta-titulo">Resumen para consulta</h2>
     </section>
 
     <section class="app-card" aria-labelledby="privacy-heading" data-reveal>

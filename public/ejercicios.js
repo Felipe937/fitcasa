@@ -159,6 +159,30 @@
 
   // Glifo decorativo genérico (el mismo para todas las tarjetas: no clasifica
   // ejercicios). Se crea con DOM seguro, sin innerHTML.
+  // Categorías del catálogo. Clasificación descriptiva, no clínica.
+  const CATEGORY_LABELS = {
+    actividad_general: 'Actividad física general',
+    cuidado_postural: 'Cuidado postural y movilidad',
+    psse_supervisado: 'Ejercicios específicos supervisados (PSSE)',
+  };
+
+  const categoryLabel = (exercise) => CATEGORY_LABELS[exercise.category] || '';
+
+  const createCategoryTag = (exercise) => {
+    const tag = document.createElement('span');
+    tag.className = 'category-tag';
+    tag.textContent = categoryLabel(exercise) || 'Sin clasificar';
+    // Los PSSE se señalan explícitamente como de prescripción presencial.
+    if (exercise.category === 'psse_supervisado') {
+      tag.className = 'category-tag category-tag--psse';
+      const note = document.createElement('span');
+      note.className = 'category-note';
+      note.textContent = 'Requiere prescripción y supervisión presencial';
+      tag.appendChild(note);
+    }
+    return tag;
+  };
+
   const createCard = (exercise) => {
     const card = document.createElement('article');
     card.className = 'exercise-card';
@@ -184,6 +208,7 @@
     card.appendChild(desc);
 
     card.appendChild(createMeta(exercise));
+    card.appendChild(createCategoryTag(exercise));
     card.appendChild(createTags(exercise));
 
     // Las notas de adaptación solo aparecen en el diálogo, nunca en la tarjeta.
@@ -600,6 +625,7 @@
     pDesc.textContent = ex.description;
     frag.appendChild(pDesc);
     frag.appendChild(createMeta(ex));
+    frag.appendChild(createCategoryTag(ex));
     frag.appendChild(createTags(ex));
     if (ex.adaptation && ex.adaptation.notes) {
       const hAdapt = document.createElement('h3');
@@ -612,6 +638,11 @@
     dialogBody.appendChild(frag);
     dialogCounter.textContent = `${currentIndex + 1} de ${currentList.length}`;
     dialogReview.textContent = `Estado de revisión: ${ex.clinicalReview}`;
+    const psseNote = document.createElement('p');
+    psseNote.className = 'dialog-psse';
+    psseNote.hidden = ex.category !== 'psse_supervisado';
+    psseNote.textContent = 'Este tipo de ejercicio requiere valoración y enseñanza por un fisioterapeuta formado.';
+    dialogBody.appendChild(psseNote);
     dialogPrev.disabled = currentIndex <= 0;
     dialogNext.disabled = currentIndex >= currentList.length - 1;
     setDialogNavLabels();

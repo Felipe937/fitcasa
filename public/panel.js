@@ -16,6 +16,8 @@
   var historyTable = document.getElementById('history-table-container');
   var emptyHistory = document.getElementById('empty-history');
   var storageNotice = document.getElementById('storage-notice');
+  var safetyReminder = document.getElementById('safety-reminder');
+  var activityOptions = document.getElementById('activity-options');
   var clearDataButton = document.getElementById('clear-data');
   var clearStatus = document.getElementById('clear-status');
   var records = [];
@@ -141,6 +143,7 @@
     var sorted = sortRecords(records);
     emptyHistory.hidden = sorted.length !== 0;
     historyTable.hidden = sorted.length === 0;
+    updateSafetyReminder();
     sorted.forEach(function (record) {
       var row = document.createElement('tr');
       var date = document.createElement('td');
@@ -202,6 +205,7 @@
     resetForm();
     render();
     clearStatus.textContent = result.removed ? 'Se borraron las respuestas y los registros guardados.' : 'No fue posible borrar los datos guardados.';
+    updateSafetyReminder();
   }
 
   function loadRecords() {
@@ -242,6 +246,45 @@
     });
     cancelButton.addEventListener('click', resetForm);
     clearDataButton.addEventListener('click', clearSavedData);
+    loadActivityOptions();
+  }
+
+  /* Sugerencias de actividad desde la biblioteca, para vincular el registro
+     con el ejercicio realizado. Si la biblioteca no carga, el campo sigue
+     aceptando texto libre. */
+  function loadActivityOptions() {
+    if (!activityOptions || !window.fetch) return;
+    fetch('ejercicios.json').then(function (response) {
+      if (!response.ok) throw new Error('sin biblioteca');
+      return response.json();
+    }).then(function (data) {
+      if (!Array.isArray(data)) return;
+      var names = data
+        .filter(function (item) { return item && typeof item.name === 'string'; })
+        .map(function (item) { return item.name; });
+      names.forEach(function (name) {
+        var option = document.createElement('option');
+        option.value = name;
+        activityOptions.appendChild(option);
+      });
+    }).catch(function () {
+      /* Sin biblioteca el campo sigue siendo de texto libre. */
+    });
+  }
+
+  /* Recordatorio de seguridad: se enfatiza (sin animación) cuando el registro
+     muestra dolor alto o un aumento respecto al anterior. */
+  function updateSafetyReminder() {
+    if (!safetyReminder) return;
+    var sorted = sortRecords(records);
+    if (!sorted.length) {
+      safetyReminder.classList.remove('destacado');
+      return;
+    }
+    var latest = sorted[0];
+    var previous = sorted[1];
+    var emphasis = latest.pain >= 7 || (previous && latest.pain > previous.pain);
+    safetyReminder.classList.toggle('destacado', !!emphasis);
   }
 
   init();

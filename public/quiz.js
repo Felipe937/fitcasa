@@ -31,7 +31,23 @@
     time: ['10', '20', '30'],
     level: ['principiante', 'intermedio', 'avanzado'],
     equipment: ['ninguno', 'bandas', 'peso', 'colchoneta'],
-    safety: ['si', 'no']
+    safety: ['si', 'no'],
+    // Contexto de escoliosis: opcional y NO usada para seleccionar ejercicios.
+    scoliosisContext: ['desconocido', 'leve_moderada', 'severa', 'seguimiento_activo']
+  };
+
+  /* Categorías del catálogo. Clasificación descriptiva, no clínica:
+     ninguna implica indicación ni contraindicación. */
+  var CATEGORIES = {
+    actividad_general: 'Actividad física general',
+    cuidado_postural: 'Cuidado postural y movilidad',
+    psse_supervisado: 'Ejercicios específicos supervisados (PSSE)'
+  };
+
+  var REVIEW_STATUS = {
+    no_revisado: 'Sin revisión profesional',
+    en_revision: 'En revisión profesional',
+    revisado_profesional: 'Revisado por profesional'
   };
 
   var objectiveZones = {
@@ -44,6 +60,14 @@
     return typeof value === 'string' && list.indexOf(value) !== -1;
   }
 
+  /**
+   * Normaliza un ejercicio conservando de forma íntegra y tipada el estado de
+   * revisión clínica, las notas de adaptación y los metadatos verificables.
+   * No inventa valores: lo que no exista queda como cadena vacía o null.
+   *
+   * @param {*} item dato crudo de ejercicios.json
+   * @returns {Exercise|null}
+   */
   function normalizeExercise(item) {
     if (!item || typeof item !== 'object') return null;
     if (typeof item.id !== 'string' || typeof item.name !== 'string' || typeof item.description !== 'string') return null;
@@ -53,6 +77,10 @@
     var equipment = item.equipment.filter(function (value) { return typeof value === 'string'; });
     var zone = item.zone.filter(function (value) { return typeof value === 'string'; });
     if (!equipment.length || !zone.length) return null;
+    var reviews = ['no_revisado', 'en_revision', 'revisado_profesional'];
+    var metadata = item.clinicalMetadata && typeof item.clinicalMetadata === 'object'
+      ? item.clinicalMetadata
+      : {};
     return {
       id: item.id,
       name: item.name,
@@ -61,7 +89,19 @@
       difficulty: item.difficulty,
       equipment: equipment,
       zone: zone,
-      adaptation: item.adaptation && typeof item.adaptation.notes === 'string' ? item.adaptation.notes : ''
+      adaptation: item.adaptation && typeof item.adaptation.notes === 'string' ? item.adaptation.notes : '',
+      // Estado editorial existente, sin reinterpretar.
+      clinicalReview: typeof item.clinicalReview === 'string' ? item.clinicalReview : '',
+      // Categoría descriptiva del catálogo.
+      category: CATEGORIES[item.category] ? item.category : 'actividad_general',
+      categoryLabel: CATEGORIES[item.category] || CATEGORIES.actividad_general,
+      clinicalMetadata: {
+        reviewStatus: reviews.indexOf(metadata.reviewStatus) !== -1 ? metadata.reviewStatus : 'no_revisado',
+        precautions: Array.isArray(metadata.precautions)
+          ? metadata.precautions.filter(function (v) { return typeof v === 'string'; }) : [],
+        contraindications: Array.isArray(metadata.contraindications)
+          ? metadata.contraindications.filter(function (v) { return typeof v === 'string'; }) : []
+      }
     };
   }
 
@@ -78,7 +118,11 @@
       equipment: Array.from(new Set(equipment)),
       surgeryNoAuthorization: data.surgeryNoAuthorization,
       clinicalRestriction: data.clinicalRestriction,
-      concerningSymptoms: data.concerningSymptoms
+      concerningSymptoms: data.concerningSymptoms,
+      // Opcional: su ausencia es válida y no altera la selección.
+      scoliosisContext: isAllowed(data.scoliosisContext, allowed.scoliosisContext)
+        ? data.scoliosisContext
+        : 'desconocido'
     };
     if (!isAllowed(answers.objective, allowed.objective) || !isAllowed(answers.days, allowed.days) || !isAllowed(answers.time, allowed.time) || !isAllowed(answers.level, allowed.level)) return null;
     if (!answers.equipment.length || !isAllowed(answers.surgeryNoAuthorization, allowed.safety) || !isAllowed(answers.clinicalRestriction, allowed.safety) || !isAllowed(answers.concerningSymptoms, allowed.safety)) return null;
@@ -95,7 +139,8 @@
       equipment: data.getAll('equipment'),
       surgeryNoAuthorization: data.get('surgeryNoAuthorization'),
       clinicalRestriction: data.get('clinicalRestriction'),
-      concerningSymptoms: data.get('concerningSymptoms')
+      concerningSymptoms: data.get('concerningSymptoms'),
+      scoliosisContext: data.get('scoliosisContext')
     });
   }
 
@@ -115,6 +160,36 @@
 
   function levelOrder(level) {
     return { principiante: 1, intermedio: 2, avanzado: 3 }[level] || 0;
+  }
+
+  /* Contexto educativo (NO prescriptivo): solo informa y jamás restringe la
+     propuesta. Función pura: no lee el DOM. Los grados de Cobb NO se usan
+     para indexar ejercicios permitidos o prohibidos. */
+  function buildContextNotice(answers) {
+    var safe = normalizeAnswers(answers);
+    if (!safe) return null;
+    if (safe.scoliosisContext === 'severa') {
+      return {
+        tone: 'warning',
+        title: 'Contexto para curvas severas o en seguimiento',
+        text: 'Has indicado que tu curva es severa (más de 45º). Esto no impide caminar, respirar ni moverte: la actividad general sigue siendo segura en la gran mayoría de los casos. Lo que cambia es la conveniencia de coordinar las cargas, la intensidad y la progresión con tu especialista de columna antes de añadir ejercicios con carga, rotación o extensión.'
+      };
+    }
+    if (safe.scoliosisContext === 'seguimiento_activo') {
+      return {
+        tone: 'warning',
+        title: 'Contexto para seguimiento activo',
+        text: 'Has indicado que estás en seguimiento médico o fisioterapéutico activo. conviene que cualquier rutina que añadas se la comentes con tu equipo de referencia, para que pueda indicarte qué ejercicios mantener, adaptar o evitar según tu caso.'
+      };
+    }
+    if (safe.scoliosisContext === 'leve_moderada') {
+      return {
+        tone: 'info',
+        title: 'Contexto para curva leve o moderada',
+        text: 'Has indicado una curva leve o moderada sin seguimiento activo. La propuesta siguiente es educativa y general; si tu especialista te ha indicado pautas específicas, prevalecen esas pautas sobre esta propuesta.'
+      };
+    }
+    return null;
   }
 
   /* Función pura: no lee el DOM, no escribe almacenamiento y no usa aleatoriedad. */
@@ -233,7 +308,8 @@
       ['Equipamiento', answers.equipment.map(function (value) { return labelFor('equipment', value); }).join(', ')],
       ['Cirugía sin autorización', labelFor('surgeryNoAuthorization', answers.surgeryNoAuthorization)],
       ['Restricción clínica', labelFor('clinicalRestriction', answers.clinicalRestriction)],
-      ['Síntomas preocupantes', labelFor('concerningSymptoms', answers.concerningSymptoms)]
+      ['Síntomas preocupantes', labelFor('concerningSymptoms', answers.concerningSymptoms)],
+      ['Contexto de escoliosis (opcional)', labelFor('scoliosisContext', answers.scoliosisContext)]
     ];
     entries.forEach(function (entry) {
       var item = document.createElement('li');
@@ -262,8 +338,9 @@
     return day + '/' + month + '/' + date.getFullYear();
   };
 
-  // Barra de acciones del plan: ajustar e imprimir (imprimir solo con plan válido).
-  var planActions = function (result) {
+  // Barra de acciones del plan: ajustar, exportar e imprimir.
+  // Exportar e imprimir solo aparecen con un plan válido generado.
+  var planActions = function (result, answers) {
     var actions = document.createElement('div');
     actions.className = 'plan-actions';
 
@@ -277,19 +354,121 @@
     });
     actions.appendChild(adjust);
 
+    var valid = !!(result && result.days && result.days.length);
+
     var print = document.createElement('button');
     print.type = 'button';
     print.className = 'btn';
     print.textContent = 'Imprimir propuesta';
     print.addEventListener('click', function () { window.print(); });
-    // Solo ante un plan válido generado, nunca en bloqueos ni resultados insuficientes.
     actions.appendChild(print);
-    print.hidden = !(result && result.days && result.days.length);
+    print.hidden = !valid;
+
+    // Exportar resumen para consulta médica / fisioterapia.
+    var exportBtn = document.createElement('button');
+    exportBtn.type = 'button';
+    exportBtn.className = 'btn';
+    exportBtn.textContent = 'Exportar resumen para consulta';
+    exportBtn.setAttribute('aria-label', 'Exportar resumen para consulta médica o fisioterapia');
+    exportBtn.addEventListener('click', function () {
+      renderConsultaSummary(result, answers);
+      document.body.classList.add('imprimir-consulta');
+      window.print();
+    });
+    actions.appendChild(exportBtn);
+    exportBtn.hidden = !valid;
     return actions;
   };
 
-  function renderResults(result) {
+  // Bloque de contexto educativo (informativo, nunca restrictivo).
+  var renderContextNotice = function (answers) {
+    var notice = buildContextNotice(answers);
+    if (!notice) return;
+    var block = document.createElement('aside');
+    block.className = 'notice context-note';
+    var heading = document.createElement('h3');
+    heading.textContent = notice.title;
+    block.appendChild(heading);
+    var text = document.createElement('p');
+    text.textContent = notice.text;
+    block.appendChild(text);
+    resultsContent.appendChild(block);
+  };
+
+  /* Resumen imprimible para llevar a la consulta. Contiene preferencias,
+     ejercicios propuestos con sus notas de adaptación y el aviso expreso de
+     que se trata de una propuesta educativa pendiente de validación. */
+  var renderConsultaSummary = function (result, answers) {
+    var container = document.getElementById('consulta-resumen');
+    if (!container) return;
+    container.replaceChildren();
+
+    var title = document.createElement('h2');
+    title.textContent = 'Resumen para consulta médica o fisioterapia';
+    container.appendChild(title);
+
+    var date = document.createElement('p');
+    date.className = 'consulta-fecha';
+    date.textContent = 'Generado el ' + formatDate() + ' desde FitCasa.';
+    container.appendChild(date);
+
+    var prefs = document.createElement('h3');
+    prefs.textContent = 'Preferencias seleccionadas';
+    container.appendChild(prefs);
+    var list = document.createElement('ul');
+    [
+      ['Objetivo', labelFor('objective', answers.objective)],
+      ['Días por semana', labelFor('days', answers.days)],
+      ['Tiempo por sesión', labelFor('time', answers.time)],
+      ['Nivel', labelFor('level', answers.level)],
+      ['Equipamiento', answers.equipment.map(function (v) { return labelFor('equipment', v); }).join(', ')],
+      ['Contexto de escoliosis declarado', labelFor('scoliosisContext', answers.scoliosisContext)]
+    ].forEach(function (entry) {
+      var item = document.createElement('li');
+      item.textContent = entry[0] + ': ' + entry[1];
+      list.appendChild(item);
+    });
+    container.appendChild(list);
+
+    var exercises = document.createElement('h3');
+    exercises.textContent = 'Ejercicios propuestos y notas de adaptación';
+    container.appendChild(exercises);
+    if (result && result.days && result.days.length) {
+      var plan = document.createElement('ol');
+      result.days.forEach(function (day) {
+        var item = document.createElement('li');
+        var name = document.createElement('strong');
+        name.textContent = day.exercise.name;
+        item.appendChild(name);
+        var detail = document.createElement('span');
+        detail.textContent = ' — ' + day.exercise.description
+          + ' (Duración: ' + day.exercise.duration
+          + '. Nivel de la biblioteca: ' + day.exercise.difficulty + '.)';
+        item.appendChild(detail);
+        var note = document.createElement('span');
+        note.className = 'consulta-nota';
+        note.textContent = day.exercise.adaptation
+          ? ' Nota de adaptación: ' + day.exercise.adaptation
+          : ' Nota de adaptación: no documentada.';
+        item.appendChild(note);
+        var status = document.createElement('span');
+        status.className = 'consulta-estado';
+        status.textContent = ' Estado de revisión: ' + (day.exercise.clinicalReview || 'pendiente') + '.';
+        item.appendChild(status);
+        plan.appendChild(item);
+      });
+      container.appendChild(plan);
+    }
+
+    var disclaimer = document.createElement('p');
+    disclaimer.className = 'consulta-aviso';
+    disclaimer.textContent = 'Aviso: este documento es una propuesta educativa generada automáticamente por FitCasa a partir de preferencias personales. No es un diagnóstico, tratamiento ni prescripción. Requiere validación por parte de su fisioterapeuta o médico tratante antes de realizar cualquier ejercicio.';
+    container.appendChild(disclaimer);
+  };
+
+  function renderResults(result, answers) {
     resultsContent.replaceChildren();
+    renderContextNotice(answers);
     if (result.blocked) {
       var block = document.createElement('div');
       block.className = 'notice danger';
@@ -308,7 +487,7 @@
       insufficient.className = 'notice warning';
       insufficient.textContent = 'No hay suficientes ejercicios compatibles para organizar ' + result.requested + ' días con estas respuestas. No se muestra una propuesta incompleta. Puedes volver atrás y ajustar solo las preferencias de actividad, sin cambiar respuestas de seguridad para evitar un bloqueo.';
       resultsContent.appendChild(insufficient);
-      resultsContent.appendChild(planActions(result));
+      resultsContent.appendChild(planActions(result, answers));
     } else {
       var intro = document.createElement('p');
       intro.textContent = 'Esta propuesta usa ' + result.available + ' opciones compatibles de la biblioteca y no repite ejercicios dentro de ella.';
@@ -340,7 +519,7 @@
         grid.appendChild(card);
       });
       resultsContent.appendChild(grid);
-      resultsContent.appendChild(planActions(result));
+      resultsContent.appendChild(planActions(result, answers));
       var safety = document.createElement('p');
       safety.className = 'notice warning';
       safety.textContent = 'Detén la actividad si aparece dolor intenso, debilidad, entumecimiento u otros síntomas inusuales y consulta con un profesional. La etiqueta de la biblioteca no sustituye una valoración individual.';
@@ -478,9 +657,13 @@
         return;
       }
       saveAnswers(answers);
-      renderResults(generateSuggestions(answers, exercises));
+      renderResults(generateSuggestions(answers, exercises), answers);
     });
     clearDataButton.addEventListener('click', clearSavedData);
+    // Tras imprimir el resumen de consulta se vuelve a la vista normal.
+    window.addEventListener('afterprint', function () {
+      document.body.classList.remove('imprimir-consulta');
+    });
     loadExercises().catch(function (error) {
       setStatus(quizError, error.message, 'danger');
       nextButton.disabled = true;
@@ -488,6 +671,12 @@
     });
   }
 
-  window.FitCasaQuiz = { generateSuggestions: generateSuggestions, normalizeExercise: normalizeExercise };
+  window.FitCasaQuiz = {
+    generateSuggestions: generateSuggestions,
+    normalizeExercise: normalizeExercise,
+    buildContextNotice: buildContextNotice,
+    CATEGORIES: CATEGORIES,
+    REVIEW_STATUS: REVIEW_STATUS
+  };
   init();
 }());

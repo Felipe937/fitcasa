@@ -183,6 +183,17 @@
   font-weight: 800;
 }
 
+/* Recordatorio de seguridad del panel: siempre visible, sin animación. */
+.safety-reminder p {
+  margin: 0;
+}
+
+.safety-reminder.destacado {
+  background: var(--color-fondo-alerta);
+  border-left-color: var(--color-peligro);
+  font-weight: 700;
+}
+
 .quiz-actions,
 .panel-actions {
   display: flex;
@@ -249,8 +260,7 @@
   .step-panel.step-enter-active { opacity: 1; transform: none; }
 }
 
-/* ---------- Cuestionario de sugerencias (body.page-quiz) ---------- */
-body.page-quiz {
+/* ---------- Cuestionario de sugerencias (body.page-quiz) ---------- */body.page-quiz {
   --tamano-bullet-stepper: 2.25rem;
   --tamano-check-stepper: 1.125rem;
   --ancho-acento-seguridad: 0.25rem;
@@ -478,6 +488,71 @@ body.page-quiz .plan-day h3 {
   }
 }
 
+/* Campo opcional del cuestionario. */
+body.page-quiz .optional-field {
+  padding: var(--espacio-4);
+  background: var(--color-superficie-suave);
+  border: 1px dashed var(--color-borde);
+  border-radius: var(--radio-md);
+}
+
+body.page-quiz .optional-tag {
+  color: var(--color-texto-suave);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+}
+
+body.page-quiz .optional-help {
+  margin: 0 0 var(--espacio-3);
+  color: var(--color-texto-suave);
+  font-size: var(--texto-sm);
+}
+
+/* Nota de contexto: informativa, nunca restrictiva ni animada. */
+body.page-quiz .context-note {
+  background: var(--color-fondo-aviso);
+  border-left-color: var(--color-foco);
+}
+
+body.page-quiz .context-note.info {
+  background: var(--color-fondo-azul);
+  border-left-color: var(--color-primario);
+}
+
+/* Resumen para consulta: oculto en pantalla, visible al imprimir. */
+body.page-quiz .consulta-resumen {
+  display: none;
+}
+
+body.page-quiz.imprimir-consulta .consulta-resumen {
+  display: block;
+}
+
+@media print {
+  body.page-quiz .consulta-resumen {
+    display: block;
+  }
+
+  body.page-quiz .consulta-fecha {
+    margin: calc(var(--espacio-4) * -1) 0 var(--espacio-4);
+    color: var(--color-texto-suave);
+    font-size: var(--texto-xs);
+    font-weight: 700;
+  }
+
+  body.page-quiz .consulta-nota,
+  body.page-quiz .consulta-estado {
+    display: block;
+  }
+
+  body.page-quiz .consulta-aviso {
+    margin-top: var(--espacio-5);
+    padding: var(--espacio-4);
+    border: 1px solid CanvasText;
+    break-inside: avoid;
+  }
+}
+
 /* Impresión: solo la propuesta. */
 @media print {
   body.page-quiz .site-header,
@@ -514,5 +589,27 @@ body.page-quiz .plan-day h3 {
 
   body.page-quiz .plan-day {
     border-radius: 0;
+  }
+
+  /* Modo "exportar resumen para consulta": solo se imprime el resumen. */
+  body.page-quiz.imprimir-consulta #quiz-results,
+  body.page-quiz.imprimir-consulta #consulta-resumen {
+    display: block;
+  }
+
+  body.page-quiz.imprimir-consulta #quiz-results {
+    display: none;
+  }
+
+  body.page-quiz.imprimir-consulta .consulta-fecha,
+  body.page-quiz.imprimir-consulta .consulta-nota,
+  body.page-quiz.imprimir-consulta .consulta-estado {
+    display: block;
+  }
+
+  body.page-quiz .consulta-aviso {
+    margin-top: var(--espacio-5);
+    padding: var(--espacio-4);
+    border: 1px solid CanvasText;
   }
 }

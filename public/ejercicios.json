@@ -1,6 +1,12 @@
 [
   {
     "id": "e01",
+    "category": "actividad_general",
+    "clinicalMetadata": {
+      "reviewStatus": "no_revisado",
+      "precautions": [],
+      "contraindications": []
+    },
     "name": "Sentadilla con peso corporal",
     "description": "Ejercicio básico de fuerza para piernas y glúteos, ejecutado con el propio peso corporal.",
     "duration": "corta",
@@ -13,6 +19,12 @@
   },
   {
     "id": "e02",
+    "category": "actividad_general",
+    "clinicalMetadata": {
+      "reviewStatus": "no_revisado",
+      "precautions": [],
+      "contraindications": []
+    },
     "name": "Puente de glúteos",
     "description": "Fortalece el glúteo mayor y la zona lumbar mediante elevación de la pelvis.",
     "duration": "corta",
@@ -25,6 +37,12 @@
   },
   {
     "id": "e03",
+    "category": "actividad_general",
+    "clinicalMetadata": {
+      "reviewStatus": "no_revisado",
+      "precautions": [],
+      "contraindications": []
+    },
     "name": "Plancha frontal",
     "description": "Ejercicio isométrico para el core, manteniendo el cuerpo en línea recta.",
     "duration": "media",
@@ -37,6 +55,12 @@
   },
   {
     "id": "e04",
+    "category": "actividad_general",
+    "clinicalMetadata": {
+      "reviewStatus": "no_revisado",
+      "precautions": [],
+      "contraindications": []
+    },
     "name": "Elevación lateral de pierna",
     "description": "Trabaja abductores y glúteos, ideal para equilibrar la musculatura de la cadera.",
     "duration": "corta",
@@ -49,6 +73,12 @@
   },
   {
     "id": "e05",
+    "category": "actividad_general",
+    "clinicalMetadata": {
+      "reviewStatus": "no_revisado",
+      "precautions": [],
+      "contraindications": []
+    },
     "name": "Superman",
     "description": "Fortalece extensores de la columna y glúteos en posición prona.",
     "duration": "corta",
@@ -61,6 +91,12 @@
   },
   {
     "id": "e06",
+    "category": "cuidado_postural",
+    "clinicalMetadata": {
+      "reviewStatus": "no_revisado",
+      "precautions": [],
+      "contraindications": []
+    },
     "name": "Rotación torácica en cuatro puntos",
     "description": "Mejora la movilidad torácica, fundamental para la postura en escoliosis.",
     "duration": "media",
@@ -73,6 +109,12 @@
   },
   {
     "id": "e07",
+    "category": "cuidado_postural",
+    "clinicalMetadata": {
+      "reviewStatus": "no_revisado",
+      "precautions": [],
+      "contraindications": []
+    },
     "name": "Estiramiento de pectorales contra la pared",
     "description": "Abre el pecho y favorece una mejor alineación de la columna superior.",
     "duration": "corta",
@@ -85,6 +127,12 @@
   },
   {
     "id": "e08",
+    "category": "actividad_general",
+    "clinicalMetadata": {
+      "reviewStatus": "no_revisado",
+      "precautions": [],
+      "contraindications": []
+    },
     "name": "Bird‑Dog",
     "description": "Ejercicio de estabilidad que activa la zona lumbar y glúteos en diagonal.",
     "duration": "corta",
@@ -97,6 +145,12 @@
   },
   {
     "id": "e09",
+    "category": "cuidado_postural",
+    "clinicalMetadata": {
+      "reviewStatus": "no_revisado",
+      "precautions": [],
+      "contraindications": []
+    },
     "name": "Estiramiento de cadena posterior sentado",
     "description": "Alarga isquiotibiales y zona lumbar, favoreciendo la flexibilidad espinal.",
     "duration": "media",
@@ -109,6 +163,12 @@
   },
   {
     "id": "e10",
+    "category": "cuidado_postural",
+    "clinicalMetadata": {
+      "reviewStatus": "no_revisado",
+      "precautions": [],
+      "contraindications": []
+    },
     "name": "Twist espinal de pie",
     "description": "Rotación de la columna en posición de pie, mejora movilidad y control postural.",
     "duration": "corta",
@@ -121,6 +181,12 @@
   },
   {
     "id": "e11",
+    "category": "actividad_general",
+    "clinicalMetadata": {
+      "reviewStatus": "no_revisado",
+      "precautions": [],
+      "contraindications": []
+    },
     "name": "Lunge estático",
     "description": "Ejercicio de fuerza para cuádriceps y glúteos, con gran estabilidad.",
     "duration": "corta",
@@ -133,6 +199,12 @@
   },
   {
     "id": "e12",
+    "category": "actividad_general",
+    "clinicalMetadata": {
+      "reviewStatus": "no_revisado",
+      "precautions": [],
+      "contraindications": []
+    },
     "name": "Elevación de talones (gemelo)",
     "description": "Fortalece los músculos gastrocnemio y sóleo, útil para la estabilidad del tobillo.",
     "duration": "corta",
@@ -145,6 +217,12 @@
   },
   {
     "id": "e13",
+    "category": "cuidado_postural",
+    "clinicalMetadata": {
+      "reviewStatus": "no_revisado",
+      "precautions": [],
+      "contraindications": []
+    },
     "name": "Círculos de brazos",
     "description": "Movilidad de la articulación del hombro, ayuda a la postura de la zona superior.",
     "duration": "corta",
@@ -157,6 +235,12 @@
   },
   {
     "id": "e14",
+    "category": "actividad_general",
+    "clinicalMetadata": {
+      "reviewStatus": "no_revisado",
+      "precautions": [],
+      "contraindications": []
+    },
     "name": "Escalador (Mountain climber)",
     "description": "Ejercicio cardiovascular y de core, aumenta la frecuencia cardiaca.",
     "duration": "media",
@@ -169,6 +253,12 @@
   },
   {
     "id": "e15",
+    "category": "actividad_general",
+    "clinicalMetadata": {
+      "reviewStatus": "no_revisado",
+      "precautions": [],
+      "contraindications": []
+    },
     "name": "Side plank (plancha lateral)",
     "description": "Fortalece oblicuos y mejora la estabilidad lateral de la columna.",
     "duration": "corta",
@@ -181,6 +271,12 @@
   },
   {
     "id": "e16",
+    "category": "actividad_general",
+    "clinicalMetadata": {
+      "reviewStatus": "no_revisado",
+      "precautions": [],
+      "contraindications": []
+    },
     "name": "Puente con una pierna",
     "description": "Versión avanzada del puente, incrementa la carga en glúteos y zona lumbar.",
     "duration": "media",
@@ -193,6 +289,12 @@
   },
   {
     "id": "e17",
+    "category": "actividad_general",
+    "clinicalMetadata": {
+      "reviewStatus": "no_revisado",
+      "precautions": [],
+      "contraindications": []
+    },
     "name": "Sentadilla sumo",
     "description": "Variación de la sentadilla que enfatiza aductores y zona interior de muslos.",
     "duration": "corta",
@@ -205,6 +307,12 @@
   },
   {
     "id": "e18",
+    "category": "cuidado_postural",
+    "clinicalMetadata": {
+      "reviewStatus": "no_revisado",
+      "precautions": [],
+      "contraindications": []
+    },
     "name": "Estiramiento de gato‑vaca",
     "description": "Movilidad de la columna vertebral, mejora la flexión y extensión suaves.",
     "duration": "corta",
@@ -217,6 +325,12 @@
   },
   {
     "id": "e19",
+    "category": "actividad_general",
+    "clinicalMetadata": {
+      "reviewStatus": "no_revisado",
+      "precautions": [],
+      "contraindications": []
+    },
     "name": "Elevación de talones sentado",
     "description": "Ejercicio de bajo impacto para los gemelos, ideal para personas con limitaciones de equilibrio.",
     "duration": "corta",
@@ -229,6 +343,12 @@
   },
   {
     "id": "e20",
+    "category": "cuidado_postural",
+    "clinicalMetadata": {
+      "reviewStatus": "no_revisado",
+      "precautions": [],
+      "contraindications": []
+    },
     "name": "Respiración diafragmática",
     "description": "Técnica de respiración que favorece la relajación y la activación del core.",
     "duration": "corta",
