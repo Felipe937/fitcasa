@@ -32,6 +32,17 @@ updates:
           - "react"
           - "react-dom"
           - "@types/react*"
+    ignore:
+      # Mantener Vite y su plugin React dentro de sus ramas mayores/menores actuales.
+      # Se permiten actualizaciones patch; los saltos mayor/menor requieren decisión manual.
+      - dependency-name: "vite"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+      - dependency-name: "@vitejs/plugin-react"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
     labels:
       - "dependencies"
       - "npm"
