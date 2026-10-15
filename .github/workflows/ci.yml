@@ -1,6 +1,5 @@
-# CI de validacion para la web estatica FitCasa.
-# Solo valida: no despliega, no modifica nada y no usa secretos.
-# Se publica la carpeta public/ (ver wrangler.jsonc -> assets.directory).
+# CI de validación para FitCasa (React + Vite + TypeScript).
+# Solo valida y audita: no despliega, no modifica nada y no usa secretos.
 name: ci
 
 on:
@@ -9,7 +8,7 @@ on:
   pull_request:
     branches: [main]
 
-# Permisos minimos: el job solo lee el codigo.
+# Permisos mínimos: el job solo lee el código.
 permissions:
   contents: read
 
@@ -20,33 +19,34 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Comprobar archivos esenciales en public/
+      - name: Configurar Node.js 22
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Instalar dependencias reproducibles
+        run: npm ci
+
+      - name: Verificación de TypeScript
+        run: npm run lint
+
+      - name: Compilar aplicación React + Vite
+        run: npm run build
+
+      - name: Comprobar que dist/index.html existe y no está vacío
         run: |
-          set -u
-          missing=0
-          for f in index.html escoliosis.html ejercicios.html quiz.html panel.html 404.html \
-                   style.css ejercicios.css fitcasa-app.css \
-                   script.js ejercicios.js quiz.js panel.js fitcasa-storage.js \
-                   ejercicios.json robots.txt sitemap.xml _headers; do
-            if [ ! -f "public/$f" ]; then
-              echo "FALTA: public/$f"
-              missing=1
-            fi
-          done
-          if [ "$missing" -ne 0 ]; then
-            echo "Faltan archivos esenciales en public/."
+          if [ ! -s "dist/index.html" ]; then
+            echo "ERROR: dist/index.html no existe o está vacío."
             exit 1
           fi
-          echo "Todos los archivos esenciales existen en public/."
+          echo "OK: dist/index.html existe y tiene contenido válido."
 
       - name: Validar ejercicios.json (sintaxis y estructura)
         run: |
           python3 - <<'EOF'
           import json
-          import sys
 
-          # Solo sintaxis y estructura. Que el JSON sea valido NO significa
-          # que su contenido sea clinicamente valido o revisado.
           REQUIRED = {
               "id": str,
               "name": str,
@@ -60,19 +60,19 @@ jobs:
           DIFFICULTIES = {"principiante", "intermedio", "avanzado"}
 
           with open("public/ejercicios.json", encoding="utf-8") as fh:
-              data = json.load(fh)  # falla aqui si la sintaxis es invalida
+              data = json.load(fh)
 
-          assert isinstance(data, list) and data, "ejercicios.json debe ser una lista no vacia"
+          assert isinstance(data, list) and data, "ejercicios.json debe ser una lista no vacía"
           for i, ex in enumerate(data):
-              assert isinstance(ex, dict), "elemento %d no es un objeto" % i
+              assert isinstance(ex, dict), f"elemento {i} no es un objeto"
               for field, kind in REQUIRED.items():
-                  assert field in ex, "elemento %d sin campo %r" % (i, field)
-                  assert isinstance(ex[field], kind), "elemento %d: %r no es %s" % (i, field, kind.__name__)
-              assert ex["duration"] in DURATIONS, "elemento %d: duration no valida" % i
-              assert ex["difficulty"] in DIFFICULTIES, "elemento %d: difficulty no valida" % i
-              assert ex["equipment"], "elemento %d: equipment vacio" % i
-              assert ex["zone"], "elemento %d: zone vacia" % i
-          print("ejercicios.json OK: %d ejercicios con estructura valida." % len(data))
+                  assert field in ex, f"elemento {i} sin campo {field!r}"
+                  assert isinstance(ex[field], kind), f"elemento {i}: {field!r} no es {kind.__name__}"
+              assert ex["duration"] in DURATIONS, f"elemento {i}: duration no válida"
+              assert ex["difficulty"] in DIFFICULTIES, f"elemento {i}: difficulty no válida"
+              assert ex["equipment"], f"elemento {i}: equipment vacío"
+              assert ex["zone"], f"elemento {i}: zone vacía"
+          print(f"ejercicios.json OK: {len(data)} ejercicios con estructura válida.")
           EOF
 
       - name: Comprobar identificadores de ejercicios duplicados
@@ -86,9 +86,9 @@ jobs:
           counts = Counter(ex["id"] for ex in data)
           dupes = sorted(i for i, n in counts.items() if n > 1)
           if dupes:
-              print("IDs duplicados: %s" % ", ".join(dupes))
+              print(f"IDs duplicados: {', '.join(dupes)}")
               raise SystemExit(1)
-          print("Sin IDs duplicados (%d ejercicios)." % len(data))
+          print(f"Sin IDs duplicados ({len(data)} ejercicios).")
           EOF
 
       - name: Validar sitemap.xml (XML y espacio de nombres)
@@ -97,16 +97,16 @@ jobs:
           import xml.etree.ElementTree as ET
 
           NS = "http://www.sitemaps.org/schemas/sitemap/0.9"
-          tree = ET.parse("public/sitemap.xml")  # falla aqui si el XML es invalido
+          tree = ET.parse("public/sitemap.xml")
           root = tree.getroot()
-          assert root.tag == "{%s}urlset" % NS, "espacio de nombres inesperado: %s" % root.tag
-          urls = root.findall("{%s}url" % NS)
+          assert root.tag == f"{{{NS}}}urlset", f"espacio de nombres inesperado: {root.tag}"
+          urls = root.findall(f"{{{NS}}}url")
           assert urls, "el sitemap no contiene urls"
           for u in urls:
-              loc = u.find("{%s}loc" % NS)
-              assert loc is not None and loc.text and loc.text.startswith("http"), "url sin loc valida"
-          print("sitemap.xml OK: %d urls con el espacio de nombres estandar." % len(urls))
+              loc = u.find(f"{{{NS}}}loc")
+              assert loc is not None and loc.text and loc.text.startswith("http"), "url sin loc válida"
+          print(f"sitemap.xml OK: {len(urls)} urls con el espacio de nombres estándar.")
           EOF
 
-      - name: Comprobar contraste WCAG
+      - name: Comprobar contraste WCAG 2.1 AA
         run: python3 contrast_check.py
