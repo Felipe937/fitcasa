@@ -96,16 +96,20 @@ jobs:
           python3 - <<'EOF'
           import xml.etree.ElementTree as ET
 
-          NS = "http://www.sitemaps.org/schemas/sitemap/0.9"
           tree = ET.parse("public/sitemap.xml")
           root = tree.getroot()
-          assert root.tag == f"{{{NS}}}urlset", f"espacio de nombres inesperado: {root.tag}"
-          urls = root.findall(f"{{{NS}}}url")
+          valid_tags = {
+              "{http://www.sitemaps.org/schemas/sitemap/0.9}urlset",
+              "{https://www.sitemaps.org/schemas/sitemap/0.9}urlset",
+          }
+          assert root.tag in valid_tags, f"espacio de nombres inesperado: {root.tag}"
+          ns = root.tag[1:].split("}")[0]
+          urls = root.findall(f"{{{ns}}}url")
           assert urls, "el sitemap no contiene urls"
           for u in urls:
-              loc = u.find(f"{{{NS}}}loc")
+              loc = u.find(f"{{{ns}}}loc")
               assert loc is not None and loc.text and loc.text.startswith("http"), "url sin loc válida"
-          print(f"sitemap.xml OK: {len(urls)} urls con el espacio de nombres estándar.")
+          print(f"sitemap.xml OK: {len(urls)} urls con espacio de nombres válido ({ns}).")
           EOF
 
       - name: Comprobar contraste WCAG 2.1 AA

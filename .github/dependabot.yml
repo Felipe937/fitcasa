@@ -1,6 +1,5 @@
 version: 2
 updates:
-  # Mantiene actualizadas las GitHub Actions (útil si usas workflows)
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -14,3 +13,27 @@ updates:
       - "github-actions"
     commit-message:
       prefix: "chore"
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "America/Bogota"
+    open-pull-requests-limit: 5
+    groups:
+      vite-ecosystem:
+        patterns:
+          - "vite"
+          - "@vitejs/*"
+      react-ecosystem:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react*"
+    labels:
+      - "dependencies"
+      - "npm"
+    commit-message:
+      prefix: "chore(deps)"
