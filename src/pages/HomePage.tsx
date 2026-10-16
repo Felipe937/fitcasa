@@ -1,7 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { PageRoute } from '../components/Header';
 import { readStorage, STORAGE_KEYS, PANEL_STORAGE_VERSION } from '../utils/storage';
 import { PanelRecord } from '../types';
+import { EXERCISES_DATA } from '../data/exercisesData';
+import {
+  durationLabels,
+  difficultyLabels,
+  equipmentLabels,
+  zoneLabels,
+} from '../data/exerciseLabels';
 
 interface HomePageProps {
   onNavigate: (page: PageRoute, sectionId?: string) => void;
@@ -21,128 +28,182 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
     }
   }, []);
 
+  /**
+   * Cifras de la biblioteca calculadas desde los datos reales, no escritas a
+   * mano: si la colección cambia, estas tarjetas dejan de mentir solas.
+   */
+  const biblioteca = useMemo(() => {
+    const total = EXERCISES_DATA.length;
+    const sinEquipamiento = EXERCISES_DATA.filter(
+      (e) => e.equipment.length > 0 && e.equipment.every((eq) => eq === 'ninguno')
+    ).length;
+    const zonas = new Set(EXERCISES_DATA.flatMap((e) => e.zone)).size;
+    const postural = EXERCISES_DATA.filter((e) => e.category === 'cuidado_postural').length;
+    // El primer ejercicio de cuidado postural es el que Illustramos: encaja con
+    // el encuadre de la portada en lugar de ser un ejercicio cualquiera.
+    const destacado =
+      EXERCISES_DATA.find((e) => e.category === 'cuidado_postural') ?? EXERCISES_DATA[0];
+    return { total, sinEquipamiento, zonas, postural, destacado };
+  }, []);
+
+  const ir = (page: PageRoute) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    onNavigate(page);
+  };
+
   return (
     <>
       {/* Hero */}
       <section id="inicio" className="hero" aria-labelledby="titulo-inicio" tabIndex={-1}>
         <div className="container hero-layout">
           <div className="hero-copy">
-            <span className="eyebrow">Proyecto educativo · ejercicio en casa</span>
-            <h1 id="titulo-inicio">Muévete mejor desde casa, a tu ritmo</h1>
+            <p className="hero-insignia">
+              <span className="hero-insignia__punto" aria-hidden="true" />
+              Movimiento guiado y consciente en casa
+            </p>
+            <h1 id="titulo-inicio" className="hero-titular">
+              Muévete mejor <em>desde casa</em>, a tu ritmo
+            </h1>
             <p className="hero-lead">
-              Explora ejercicios generales, organiza tu actividad y registra cómo te sientes en una experiencia sencilla y responsable.
+              Explora ejercicios generales, organiza tu actividad y registra cómo te sientes. Sin
+              cuenta, sin equipamiento y sin enviar tus datos a ningún servidor.
             </p>
             <div className="hero-actions">
-              <a
-                href="#ejercicios"
-                className="btn"
-                onClick={(e) => {
-                  e.preventDefault();
-                  onNavigate('ejercicios');
-                }}
-              >
+              <a href="#ejercicios" className="btn hero-cta" onClick={ir('ejercicios')}>
                 Explorar ejercicios
               </a>
-              <a
-                href="#quiz"
-                className="btn secondary"
-                onClick={(e) => {
-                  e.preventDefault();
-                  onNavigate('quiz');
-                }}
-              >
+              <a href="#quiz" className="btn secondary hero-cta" onClick={ir('quiz')}>
                 Organizar mi actividad
               </a>
             </div>
-            <a
-              href="#escoliosis"
-              className="card-link"
-              onClick={(e) => {
-                e.preventDefault();
-                onNavigate('escoliosis');
-              }}
-            >
-              Guía sobre escoliosis
+            <a href="#escoliosis" className="hero-enlace" onClick={ir('escoliosis')}>
+              ¿Buscas información sobre escoliosis? Leer la guía completa
+              <span aria-hidden="true"> →</span>
             </a>
-            <ul className="hero-chips" aria-label="Características de FitCasa">
+            <ul className="hero-datos" aria-label="Cómo funciona FitCasa con tus datos">
               <li>Sin cuenta</li>
-              <li>Sin equipamiento</li>
+              <li>{biblioteca.sinEquipamiento === biblioteca.total ? 'Sin equipamiento' : `${biblioteca.sinEquipamiento} de ${biblioteca.total} sin equipamiento`}</li>
               <li>Tus datos se quedan en tu navegador</li>
             </ul>
           </div>
 
-          <aside className="hero-card" aria-label="Ejemplo de la biblioteca">
-            <p className="font-bold">Sentadilla con peso corporal</p>
-            <p>Ejercicio básico de fuerza para piernas y glúteos, ejecutado con el propio peso corporal.</p>
-            <p>Duración: corta</p>
-            <p>Dificultad: principiante</p>
-            <p>Equipamiento: Sin equipamiento</p>
-            <p>Información general · sin revisión profesional</p>
-            <a
-              href="#ejercicios"
-              className="card-link"
-              onClick={(e) => {
-                e.preventDefault();
-                onNavigate('ejercicios');
-              }}
-            >
-              Ver todos los ejercicios
-            </a>
-          </aside>
+          {/* Composición visual: lámina ilustrada en el cabeza de la ficha real
+              de la biblioteca, con dos datos reales flotando en las esquinas. */}
+          <div className="hero-visual">
+            <figure className="hero-ficha" data-ui>
+              <svg
+                className="hero-forma"
+                viewBox="0 0 400 180"
+                preserveAspectRatio="xMidYMid slice"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <rect width="400" height="180" fill="var(--color-fondo-verde)" />
+                <ellipse cx="200" cy="154" rx="112" ry="17" fill="var(--color-secundario)" opacity="0.22" />
+                <g
+                  fill="none"
+                  stroke="var(--color-primario)"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  opacity="0.34"
+                >
+                  {/* Columna en curva suave: la figura sentada, en reposo. */}
+                  <path d="M200 46c-4 24 4 42 0 64" />
+                  <path d="M200 110c-30 12-46 24-50 38" />
+                  <path d="M200 110c30 12 46 24 50 38" />
+                  <path d="M198 64c-28 10-42 26-46 42" />
+                </g>
+                <circle cx="200" cy="26" r="19" fill="var(--color-primario)" opacity="0.3" />
+              </svg>
+              <figcaption className="hero-ficha__cabecera">
+                <span className="hero-ficha__zona">
+                  {zoneLabels[biblioteca.destacado.zone[0]] ?? biblioteca.destacado.zone[0]}
+                </span>
+                <span className="hero-ficha__aviso">Contenido educativo</span>
+              </figcaption>
+              <p className="hero-ficha__nombre">{biblioteca.destacado.name}</p>
+              <p className="hero-ficha__descripcion">{biblioteca.destacado.description}</p>
+              <dl className="hero-ficha__datos">
+                <div>
+                  <dt>Duración</dt>
+                  <dd>{durationLabels[biblioteca.destacado.duration]}</dd>
+                </div>
+                <div>
+                  <dt>Nivel</dt>
+                  <dd>{difficultyLabels[biblioteca.destacado.difficulty]}</dd>
+                </div>
+                <div>
+                  <dt>Equipamiento</dt>
+                  <dd>
+                    {equipmentLabels[biblioteca.destacado.equipment[0]] ??
+                      biblioteca.destacado.equipment[0]}
+                  </dd>
+                </div>
+              </dl>
+              <a
+                href="#ejercicios"
+                className="hero-ficha__enlace"
+                onClick={ir('ejercicios')}
+              >
+                Ver la biblioteca completa
+                <span aria-hidden="true"> →</span>
+              </a>
+            </figure>
+
+            <p className="hero-mini hero-mini--a">
+              <strong>{biblioteca.total}</strong>
+              <span>ejercicios en la biblioteca</span>
+            </p>
+            <p className="hero-mini hero-mini--b">
+              <strong>{biblioteca.postural}</strong>
+              <span>de {biblioteca.total} son de cuidado postural</span>
+            </p>
+          </div>
         </div>
       </section>
 
       {/* Beneficios */}
-      <section id="beneficios" aria-labelledby="titulo-beneficios" tabIndex={-1} className="container py-12">
+      <section id="beneficios" aria-labelledby="titulo-beneficios" tabIndex={-1} className="container seccion">
         <h2 id="titulo-beneficios">Beneficios del ejercicio en casa</h2>
-        <ul className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 list-none p-0">
-          <li>
+        <ul className="beneficios-grid">
+          <li className="beneficio beneficio--destacado">
             <article>
-              <svg className="benefit-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <svg className="beneficio__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M12 3.5 19 6v5c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6Z" fill="none" stroke="currentColor" strokeWidth="2" />
+                <path d="m9.5 12 1.8 1.8 3.4-3.6" fill="none" stroke="currentColor" strokeWidth="2" />
+              </svg>
+              <h3>Seguridad ante todo</h3>
+              <p>
+                FitCasa es un recurso educativo y no sustituye la valoración de un profesional de
+                la salud. Cada ejercicio declara su duración y su nivel para que elijas con
+                criterio, y conviene detener la actividad ante dolor o síntomas inusuales.
+              </p>
+              <a className="card-link" href="#escoliosis" onClick={ir('escoliosis')}>
+                Leer la guía de escoliosis
+              </a>
+            </article>
+          </li>
+
+          <li className="beneficio">
+            <article>
+              <svg className="beneficio__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                 <path d="M4 11.5 12 4l8 7.5" fill="none" stroke="currentColor" strokeWidth="2" />
                 <path d="M6.5 10v9.5h4.5v-5h2v5h4.5V10" fill="none" stroke="currentColor" strokeWidth="2" />
               </svg>
               <h3>Comodidad sin desplazamientos</h3>
-              <p>Entrena en tu hogar con horarios flexibles. La biblioteca incluye ejercicios sin equipamiento, solo con tu propio cuerpo.</p>
-              <a
-                className="card-link"
-                href="#ejercicios"
-                onClick={(e) => {
-                  e.preventDefault();
-                  onNavigate('ejercicios');
-                }}
-              >
+              <p>
+                Entrena en tu hogar con horarios flexibles. Los {biblioteca.total} ejercicios de la
+                biblioteca se hacen con tu propio cuerpo, sin material ni desplazamientos.
+              </p>
+              <a className="card-link" href="#ejercicios" onClick={ir('ejercicios')}>
                 Explorar la biblioteca
               </a>
             </article>
           </li>
 
-          <li>
+          <li className="beneficio">
             <article>
-              <svg className="benefit-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path d="M4 20h16" fill="none" stroke="currentColor" strokeWidth="2" />
-                <path d="M7 20v-5" fill="none" stroke="currentColor" strokeWidth="2" />
-                <path d="M12 20V9" fill="none" stroke="currentColor" strokeWidth="2" />
-                <path d="M17 20V6" fill="none" stroke="currentColor" strokeWidth="2" />
-              </svg>
-              <h3>Progresión controlada y gradual</h3>
-              <p>Cada ejercicio indica su duración y su nivel de dificultad, para que elijas por dónde empezar y avances a tu ritmo.</p>
-              <a
-                className="card-link"
-                href="#ejercicios"
-                onClick={(e) => {
-                  e.preventDefault();
-                  onNavigate('ejercicios');
-                }}
-              >
-                Ver duraciones y niveles
-              </a>
-            </article>
-          </li>
-
-          <li>
-            <article>
-              <svg className="benefit-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <svg className="beneficio__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                 <path d="M4 8h9" fill="none" stroke="currentColor" strokeWidth="2" />
                 <path d="M17 8h3" fill="none" stroke="currentColor" strokeWidth="2" />
                 <path d="M4 16h3" fill="none" stroke="currentColor" strokeWidth="2" />
@@ -151,37 +212,12 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                 <circle cx="9" cy="16" r="2" fill="none" stroke="currentColor" strokeWidth="2" />
               </svg>
               <h3>Adaptabilidad a tu nivel</h3>
-              <p>Filtra por zona corporal o responde el cuestionario para recibir una orientación educativa. No es un plan clínico personalizado.</p>
-              <a
-                className="card-link"
-                href="#quiz"
-                onClick={(e) => {
-                  e.preventDefault();
-                  onNavigate('quiz');
-                }}
-              >
+              <p>
+                Filtra por zona corporal o responde el cuestionario para recibir una orientación
+                educativa. No es un plan clínico personalizado.
+              </p>
+              <a className="card-link" href="#quiz" onClick={ir('quiz')}>
                 Obtener orientación
-              </a>
-            </article>
-          </li>
-
-          <li>
-            <article>
-              <svg className="benefit-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path d="M12 3.5 19 6v5c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6Z" fill="none" stroke="currentColor" strokeWidth="2" />
-                <path d="m9.5 12 1.8 1.8 3.4-3.6" fill="none" stroke="currentColor" strokeWidth="2" />
-              </svg>
-              <h3>Seguridad ante todo</h3>
-              <p>FitCasa es un recurso educativo y no sustituye la valoración de un profesional de la salud. Detén la actividad ante dolor o síntomas inusuales.</p>
-              <a
-                className="card-link"
-                href="#escoliosis"
-                onClick={(e) => {
-                  e.preventDefault();
-                  onNavigate('escoliosis');
-                }}
-              >
-                Leer la guía de escoliosis
               </a>
             </article>
           </li>
@@ -189,89 +225,82 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
       </section>
 
       {/* Programas */}
-      <section id="programas" aria-labelledby="titulo-programas" tabIndex={-1} className="container py-12">
+      <section id="programas" aria-labelledby="titulo-programas" tabIndex={-1} className="container seccion">
         <h2 id="titulo-programas">Elige tu siguiente paso</h2>
-        <p className="section-intro">
-          Tres caminos para moverte con información clara: explora, orienta tu actividad o registra cómo te sientes.
+        <p className="seccion-intro">
+          Tres caminos para moverte con información clara: explora, orienta tu actividad o registra
+          cómo te sientes.
         </p>
 
-        <div className="grid gap-6 md:grid-cols-3">
-          <article className="programa-card programa-card--biblioteca">
-            <span className="programa-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <path d="M4 19V5" fill="none" stroke="currentColor" strokeWidth="2" />
-                <path d="M4 19h16" fill="none" stroke="currentColor" strokeWidth="2" />
-                <path d="M8 19v-4" fill="none" stroke="currentColor" strokeWidth="2" />
-                <path d="M12 19V9" fill="none" stroke="currentColor" strokeWidth="2" />
-                <path d="M16 19v-6" fill="none" stroke="currentColor" strokeWidth="2" />
-              </svg>
-            </span>
-            <span className="card-kicker">Colección educativa</span>
+        <div className="programas-grid">
+          <article className="programa">
+            <p className="programa__foco">Autonomía y consulta abierta</p>
             <h3>Biblioteca de ejercicios</h3>
-            <p>Filtra la colección educativa por duración, dificultad, equipamiento y zona corporal.</p>
-            <a
-              className="card-link"
-              href="#ejercicios"
-              onClick={(e) => {
-                e.preventDefault();
-                onNavigate('ejercicios');
-              }}
-            >
+            <p>
+              Filtra la colección educativa por duración, dificultad, equipamiento y zona
+              corporal, y abre cada ficha con su adaptación.
+            </p>
+            <ul className="programa__filtros" aria-label="Filtros de la biblioteca">
+              <li>Duración</li>
+              <li>Dificultad</li>
+              <li>Zona corporal</li>
+            </ul>
+            <a className="card-link" href="#ejercicios" onClick={ir('ejercicios')}>
               Abrir biblioteca
             </a>
           </article>
 
-          <article className="programa-card programa-card--sugerencias">
-            <span className="programa-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" strokeWidth="2" />
-                <path d="M12 7.5v5" fill="none" stroke="currentColor" strokeWidth="2" />
-                <circle cx="12" cy="16" r="0.5" fill="currentColor" />
-              </svg>
-            </span>
-            <span className="card-kicker">Orientación educativa</span>
+          <article className="programa">
+            <p className="programa__foco">Propuesta guiada según tu tiempo</p>
             <h3>Sugerencias de actividad</h3>
             <p>
-              Responde el cuestionario para organizar una propuesta educativa general basada en la biblioteca disponible. No es un diagnóstico ni un tratamiento personalizado.
+              Responde el cuestionario para ordenar una propuesta educativa general basada en la
+              biblioteca disponible. No es un diagnóstico ni un tratamiento personalizado.
             </p>
-            <a
-              className="card-link"
-              href="#quiz"
-              onClick={(e) => {
-                e.preventDefault();
-                onNavigate('quiz');
-              }}
-            >
+            <p className="programa__insignia">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path
+                  d="M12 3.5 19 6v5c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6Z"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinejoin="round"
+                />
+                <path d="m9.5 12 1.8 1.8 3.4-3.6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Orientación personalizada, calculada en tu navegador
+            </p>
+            <a className="card-link" href="#quiz" onClick={ir('quiz')}>
               Responder cuestionario
             </a>
           </article>
 
-          <article className="programa-card programa-card--seguimiento">
-            <span className="programa-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <path d="M6 3.5h9L19 7.5V20.5H6Z" fill="none" stroke="currentColor" strokeWidth="2" />
-                <path d="M14.5 3.5v4.5H19" fill="none" stroke="currentColor" strokeWidth="2" />
-                <path d="M9 13h6" fill="none" stroke="currentColor" strokeWidth="2" />
-                <path d="M9 16.5h6" fill="none" stroke="currentColor" strokeWidth="2" />
-              </svg>
-            </span>
-            <span className="card-kicker">Registro local</span>
+          <article className="programa">
+            <p className="programa__foco">Tu diario de sensaciones</p>
             <h3>Seguimiento personal</h3>
-            <p>Registra actividad, dolor subjetivo y bienestar en este dispositivo, sin enviar datos a FitCasa.</p>
-            <p className="programa-estado">
-              Estado:{' '}
-              <span id="seguimiento-badge" role="status">
-                {recordCount > 0 ? `${recordCount} entradas guardadas` : 'Seguimiento local'}
+            <p>
+              Registra actividad, dolor subjetivo y bienestar en este dispositivo, sin enviar datos
+              a FitCasa.
+            </p>
+            <p className="programa__insignia">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path
+                  d="M6.5 10.5h11V20a1 1 0 0 1-1 1h-9a1 1 0 0 1-1-1v-9.5Z"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinejoin="round"
+                />
+                <path d="M9 10.5V7.75a3 3 0 1 1 6 0v2.75" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+              <span>
+                Estado:{' '}
+                <span id="seguimiento-badge" role="status">
+                  {recordCount > 0 ? `${recordCount} entradas guardadas` : 'Seguimiento local'}
+                </span>
               </span>
             </p>
-            <a
-              className="card-link"
-              href="#panel"
-              onClick={(e) => {
-                e.preventDefault();
-                onNavigate('panel');
-              }}
-            >
+            <a className="card-link" href="#panel" onClick={ir('panel')}>
               Abrir seguimiento
             </a>
           </article>
@@ -279,28 +308,26 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
       </section>
 
       {/* Escoliosis Preview */}
-      <section id="escoliosis" aria-labelledby="titulo-escoliosis" tabIndex={-1} className="container py-12">
+      <section id="escoliosis" aria-labelledby="titulo-escoliosis" tabIndex={-1} className="container seccion">
         <h2 id="titulo-escoliosis">Cuidado postural y enfoque en escoliosis</h2>
-        <article className="app-card">
+        <article className="escoliosis-nota">
           <h3>Comprensión y respeto hacia cada columna vertebral</h3>
           <p>
-            La escoliosis implica curvas y rotaciones tridimensionales que varían en cada persona. No existen rutinas universales ni ejercicios estándar válidos para todas las curvaturas.
+            La escoliosis implica curvas y rotaciones tridimensionales que varían en cada persona.
+            No existen rutinas universales ni ejercicios estándar válidos para todas las curvaturas.
           </p>
           <p>
-            En FitCasa brindamos pautas divulgativas sobre higiene postural, estiramientos suaves y activación muscular equilibrada, diseñadas para acompañar tu bienestar cotidiano.
+            En FitCasa brindamos pautas divulgativas sobre higiene postural, estiramientos suaves y
+            activación muscular equilibrada, diseñadas para acompañar tu bienestar cotidiano.
+          </p>
+          <p className="escoliosis-nota__aviso">
+            <strong>Aviso esencial de salud:</strong> Nuestros contenidos tienen un propósito
+            exclusivamente formativo y no constituyen tratamiento médico ni correctivo. Consulta
+            siempre con tu traumatólogo o fisioterapeuta antes de comenzar, y suspende de inmediato
+            la actividad si experimentas dolor punzante, adormecimiento o mareos.
           </p>
           <p>
-            <strong>Aviso esencial de salud:</strong> Nuestros contenidos tienen un propósito exclusivamente formativo y no constituyen tratamiento médico ni correctivo. Consulta siempre con tu traumatólogo o fisioterapeuta antes de comenzar, y suspende de inmediato la actividad si experimentas dolor punzante, adormecimiento o mareos.
-          </p>
-          <p>
-            <a
-              href="#escoliosis"
-              className="btn"
-              onClick={(e) => {
-                e.preventDefault();
-                onNavigate('escoliosis');
-              }}
-            >
+            <a href="#escoliosis" className="btn" onClick={ir('escoliosis')}>
               Leer guía completa de escoliosis
             </a>
           </p>
@@ -308,29 +335,35 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
       </section>
 
       {/* Cómo funciona */}
-      <section id="como-funciona" aria-labelledby="titulo-como-funciona" tabIndex={-1} className="container py-12">
-        <span className="eyebrow">Sin promesas exageradas</span>
+      <section id="como-funciona" aria-labelledby="titulo-como-funciona" tabIndex={-1} className="container seccion">
         <h2 id="titulo-como-funciona">Cómo funciona FitCasa</h2>
-        <p className="section-intro">
-          Una experiencia en tres pasos para informarte, elegir con más contexto y observar tu propia práctica. No sustituye la valoración de un profesional de la salud.
+        <p className="seccion-intro">
+          Una experiencia en tres pasos para informarte, elegir con más contexto y observar tu
+          propia práctica. No sustituye la valoración de un profesional de la salud.
         </p>
-        <div className="workflow-grid">
-          <article className="workflow-card">
-            <span className="workflow-number" aria-hidden="true">1</span>
+        <ol className="pasos">
+          <li>
             <h3>Explora</h3>
-            <p>Consulta ejercicios y sus adaptaciones informativas sin asumir que una etiqueta equivale a una autorización clínica.</p>
-          </article>
-          <article className="workflow-card">
-            <span className="workflow-number" aria-hidden="true">2</span>
+            <p>
+              Consulta ejercicios y sus adaptaciones informativas sin asumir que una etiqueta
+              equivale a una autorización clínica.
+            </p>
+          </li>
+          <li>
             <h3>Orienta</h3>
-            <p>Usa el cuestionario para ordenar una propuesta educativa según tu tiempo, experiencia y equipamiento.</p>
-          </article>
-          <article className="workflow-card">
-            <span className="workflow-number" aria-hidden="true">3</span>
+            <p>
+              Usa el cuestionario para ordenar una propuesta educativa según tu tiempo, experiencia
+              y equipamiento.
+            </p>
+          </li>
+          <li>
             <h3>Registra</h3>
-            <p>Observa tu actividad y tus sensaciones en un historial local voluntario, sin crear una cuenta.</p>
-          </article>
-        </div>
+            <p>
+              Observa tu actividad y tus sensaciones en un historial local voluntario, sin crear
+              una cuenta.
+            </p>
+          </li>
+        </ol>
       </section>
     </>
   );

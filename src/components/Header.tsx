@@ -49,8 +49,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, onNavigate }) => {
 
         <ul
           id="menu-principal"
-          className={`menu ${menuOpen ? 'menu--open' : ''}`}
-          style={menuOpen ? { display: 'flex' } : undefined}
+          className={`menu${menuOpen ? ' menu--open' : ''}`}
         >
           <li>
             <a

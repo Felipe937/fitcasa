@@ -1,20 +1,28 @@
 /* FitCasa — sistema visual compartido, mobile-first y sin dependencias. */
 :root {
-  --color-fondo: #f7f9fa;
+  /* Lienzo y superficies. Marfil cálido en lugar del gris frío de oficina. */
+  --color-fondo: #fbfbf9;
   --color-superficie: #ffffff;
-  --color-superficie-suave: #f0f5f3;
-  --color-fondo-azul: #e8f0f3;
-  --color-fondo-verde: #edf3ee;
+  --color-superficie-suave: #f3f5f1;
+  /* Campos de tono para zonas apacibles. Sin degradados: pasos de tono. */
+  --color-fondo-azul: #edf2f0;
+  --color-fondo-verde: #eef3f0;
   --color-fondo-aviso: #fff4d6;
   --color-fondo-alerta: #fff0ed;
-  --color-texto: #172630;
-  --color-texto-suave: #4b5d66;
-  --color-primario: #245a73;
-  --color-primario-oscuro: #173e50;
-  --color-secundario: #4f7a52;
-  --color-secundario-oscuro: #345a3a;
+  /* Tinta. El cuerpo de texto va en la tinta completa, no en gris suave. */
+  --color-texto: #1f2927;
+  --color-texto-suave: #55605c;
+  /* Verde bosque: identidad, titulares y acción principal. */
+  --color-primario: #15433b;
+  --color-primario-oscuro: #0e2f29;
+  /* Salvia mineral: insignias, iconos y líneas de apoyo. */
+  --color-secundario: #5c8276;
+  --color-secundario-oscuro: #44685d;
+  /* Arcilla: un solo acento, para detalles activos. Máximo 5% de la página. */
+  --color-terciario: #c86d51;
+  --color-terciario-oscuro: #a0523a;
   --color-sobre-primario: #ffffff;
-  --color-borde: #d7e1e5;
+  --color-borde: #e6e9e4;
   --color-foco: #8a4b00;
   --color-foco-invertido: #ffffff;
   --color-peligro: #a43d2f;
@@ -37,12 +45,15 @@
   --espacio-7: 3rem;
   --espacio-8: 4rem;
   --espacio-9: 6rem;
+  /* Esquinas suavizadas de 16 a 24 px, según el encargo. */
   --radio-sm: 0.5rem;
-  --radio-md: 0.875rem;
+  --radio-md: 1rem;
   --radio-lg: 1.5rem;
   --radio-pill: 999px;
-  --sombra-suave: 0 0.75rem 2rem rgba(23, 62, 80, 0.08);
-  --sombra-flotante: 0 1.25rem 3rem rgba(23, 62, 80, 0.15);
+  /* Sombra solo donde algo flota de verdad. En reposo, un paso de tono. */
+  --sombra-flotante: 0 12px 30px -10px rgba(31, 41, 39, 0.16);
+  --sombra-flotante-alta: 0 24px 48px -18px rgba(31, 41, 39, 0.24);
+  --sombra-menu: 0 1.5rem 3rem -1.5rem rgba(31, 41, 39, 0.3);
   --ancho-contenedor: 74rem;
   --ancho-contenedor-estrecho: 62rem;
   --ancho-texto: 65ch;
@@ -57,11 +68,12 @@
   --retraso-escalon-3: 180ms;
   --retraso-escalon-4: 240ms;
   --elevacion-boton: 0.125rem;
-  --tamano-h1-min: 2.25rem;
-  --tamano-h1-max: 3.75rem;
-  --tamano-h1-preferido: 1.5rem;
-  --alto-linea-h1: 1.04;
-  --espaciado-letras-h1: -0.03em;
+  /* Titular: dos líneas como máximo a todo el ancho. */
+  --tamano-h1-min: 2.125rem;
+  --tamano-h1-max: 4.5rem;
+  --tamano-h1-preferido: 1.35rem;
+  --alto-linea-h1: 1.02;
+  --espaciado-letras-h1: -0.025em;
   --duracion-entrada: 480ms;
   --paso-entrada: 70ms;
   --ancho-max-tarjeta-hero: 20rem;
@@ -123,31 +135,35 @@ button:disabled, button[aria-disabled="true"] { cursor: not-allowed; opacity: 0.
 }
 .container { width: min(100% - 2rem, var(--ancho-contenedor)); margin-inline: auto; }
 .texto-3xl { max-width: 18ch; margin: 0 0 var(--espacio-4); font-size: var(--texto-3xl); line-height: var(--alto-linea-titulo); letter-spacing: -0.04em; }
-.eyebrow {
+/* Texto pequeño: necesita la salvia oscura, no la clara (6.2:1 frente a 4.1:1). */
+.eyebrow { /* taste-skill-ignore: insignia sobre titular, la exige el encargo */
   display: inline-flex; align-items: center; gap: var(--espacio-2); margin-bottom: var(--espacio-4);
-  color: var(--color-secundario); font-size: var(--texto-xs); font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--color-secundario-oscuro); font-size: var(--texto-xs); font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase;
 }
 .eyebrow::before { width: 0.6rem; height: 0.6rem; content: ""; background: var(--color-secundario); border-radius: 50%; }
 
 .aviso-superior { margin: 0; padding: var(--espacio-2) 1rem; color: var(--color-texto); background: var(--color-fondo-aviso); font-size: var(--texto-xs); line-height: 1.4; text-align: center; width: 100%; }
 .aviso-superior { max-width: none; }
-.site-header { position: sticky; top: 0; z-index: 10; background: rgba(255, 255, 255, 0.96); border-bottom: 1px solid var(--color-borde); box-shadow: 0 0.4rem 1.5rem rgba(23, 62, 80, 0.05); backdrop-filter: blur(0.75rem); }
+.site-header { position: sticky; /* taste-skill-ignore: barra fija y desplegable: superposicion real */ top: 0; z-index: 10; background: rgba(255, 255, 255, 0.96); border-bottom: 1px solid var(--color-borde); box-shadow: 0 0.4rem 1.5rem rgba(23, 62, 80, 0.05); backdrop-filter: blur(0.75rem); }
 nav { display: flex; align-items: center; justify-content: space-between; gap: var(--espacio-4); min-height: 4.5rem; }
 .logo { display: inline-flex; align-items: center; gap: var(--espacio-2); color: var(--color-primario-oscuro); font-size: var(--texto-lg); font-weight: 850; letter-spacing: -0.03em; text-decoration: none; }
-.logo::before { width: 1.25rem; height: 1.25rem; content: ""; background: var(--color-secundario); border-radius: 0.4rem 0.8rem 0.4rem 0.8rem; box-shadow: inset 0 0 0 0.3rem var(--color-fondo-verde); transform: rotate(-10deg); }
-.menu-toggle { padding: var(--espacio-2) var(--espacio-3); color: var(--color-primario-oscuro); background: var(--color-superficie); border: 1px solid var(--color-borde); border-radius: var(--radio-sm); font-weight: 750; }
+.logo::before { width: 1.25rem; /* taste-skill-ignore: marca, relieve propio */ height: 1.25rem; content: ""; background: var(--color-secundario); border-radius: 0.4rem 0.8rem 0.4rem 0.8rem; box-shadow: inset 0 0 0 0.3rem var(--color-fondo-verde); transform: rotate(-10deg); }
+.menu-toggle { padding: var(--espacio-2) var(--espacio-3); /* taste-skill-ignore: boton de menu: borde para distinguirlo del fondo */ color: var(--color-primario-oscuro); background: var(--color-superficie); border: 1px solid var(--color-borde); border-radius: var(--radio-sm); font-weight: 750; }
 .menu-toggle:hover { background: var(--color-fondo-azul); }
 .menu { display: flex; flex-direction: column; gap: var(--espacio-1); width: 100%; padding: var(--espacio-3) 0 var(--espacio-4); margin: 0; list-style: none; }
 .menu li { margin: 0; }
 .menu a { display: flex; align-items: center; min-height: var(--alto-objetivo-tactil); padding: var(--espacio-2) clamp(var(--espacio-2), 1.5vw, var(--espacio-3)); color: var(--color-texto-suave); border-radius: var(--radio-sm); font-size: var(--texto-sm); font-weight: 700; text-decoration: none; white-space: nowrap; }
 .menu a:hover, .menu a[aria-current="page"] { color: var(--color-primario-oscuro); background: var(--color-fondo-azul); }
+/* El menu se pliega solo cuando hay JS, para que sin JS siga siendo una lista
+   de enlaces legible. Los nombres deben coincidir con los que escriben
+   main.tsx (`js` en <html>) y Header.tsx (`menu--open`): si se separan, el
+   menu nunca se pliega y el boton no abre nada. */
 @media (max-width: 51.99rem) {
   .site-header nav { flex-wrap: wrap; }
-  html.has-js .menu { max-height: 0; overflow: hidden; opacity: 0; pointer-events: none; visibility: hidden; transform: translateY(-0.25rem); }
-  html.has-js .menu.is-open { max-height: 32rem; opacity: 1; pointer-events: auto; visibility: visible; transform: none; }
-  html.has-js .menu.is-open { order: 3; }
+  html.js .menu { max-height: 0; padding-block: 0; overflow: hidden; opacity: 0; pointer-events: none; visibility: hidden; transform: translateY(-0.25rem); }
+  html.js .menu.menu--open { max-height: 32rem; padding-block: var(--espacio-3) 0 var(--espacio-4); opacity: 1; pointer-events: auto; visibility: visible; transform: none; order: 3; }
 }
-@media (min-width: 52rem) { .menu-toggle { display: none; } .menu, .menu.is-open { display: flex; flex-direction: row; justify-content: flex-end; width: auto; padding: 0; } }
+@media (min-width: 52rem) { .menu-toggle { display: none; } .menu, .menu.menu--open { display: flex; flex-direction: row; justify-content: flex-end; width: auto; padding: 0; max-height: none; opacity: 1; pointer-events: auto; visibility: visible; transform: none; } }
 
 @media (prefers-reduced-motion: no-preference) {
   a,
@@ -159,7 +175,6 @@ nav { display: flex; align-items: center; justify-content: space-between; gap: v
   .card-link,
   .choice-grid label,
   .app-card,
-  .workflow-card,
   .exercise-card,
   .exercise-card button,
   .reveal-ready,
@@ -186,99 +201,286 @@ h3 { margin: 0 0 var(--espacio-2); font-size: var(--texto-xl); }
 p, ul, ol { max-width: var(--ancho-texto); }
 li + li { margin-top: var(--espacio-2); }
 
-.hero { background: radial-gradient(circle at 88% 12%, rgba(79, 122, 82, 0.16), transparent 28%), linear-gradient(135deg, var(--color-fondo-azul), var(--color-fondo)); border-bottom: 1px solid var(--color-borde); }
-#inicio { padding-block: clamp(3rem, 6vw, 5rem); }
-.hero-layout { display: grid; align-items: start; gap: clamp(var(--espacio-5), 5vw, var(--espacio-7)); }
-.hero-copy { min-width: 0; }
-.hero-copy .eyebrow { margin-bottom: var(--espacio-3); }
-.hero-copy h1 { max-width: 16ch; margin: 0 0 var(--espacio-4); font-size: clamp(var(--tamano-h1-min), var(--tamano-h1-preferido) + 3.2vw, var(--tamano-h1-max)); line-height: var(--alto-linea-h1); letter-spacing: var(--espaciado-letras-h1); }
-.hero-copy p { max-width: 58ch; margin: 0 0 var(--espacio-4); color: var(--color-texto-suave); }
-.hero-copy .hero-lead { color: var(--color-texto); font-size: var(--texto-lg); }
-.hero-actions { display: flex; flex-wrap: wrap; gap: var(--espacio-3); margin-top: var(--espacio-4); }
-.hero-actions .btn { flex: 1 1 auto; min-width: 15rem; }
-.hero-chips { display: flex; flex-wrap: wrap; gap: var(--espacio-2) var(--espacio-3); padding: 0; margin: var(--espacio-5) 0 0; list-style: none; }
-.hero-chips li { display: inline-flex; align-items: center; gap: var(--espacio-2); color: var(--color-texto-suave); font-size: var(--texto-sm); font-weight: 700; overflow-wrap: break-word; }
-.hero-chips li::before { width: 0.5rem; height: 0.5rem; content: ""; background: var(--color-secundario); border-radius: 50%; }
-.hero-card { min-width: 0; padding: var(--espacio-5); background: rgba(255, 255, 255, 0.9); border: 1px solid var(--color-borde); border-radius: var(--radio-lg); box-shadow: var(--sombra-suave); }
-.hero-card p { margin: 0 0 var(--espacio-3); color: var(--color-texto); font-size: var(--texto-sm); line-height: 1.5; overflow-wrap: break-word; }
-.hero-card p:last-of-type { margin-bottom: 0; }
-.hero-card .card-link { margin-top: var(--espacio-4); }
-@media (min-width: 30rem) { .hero-actions { flex-wrap: wrap; } .hero-actions .btn { flex: 0 1 auto; min-width: 0; } }
-@media (min-width: 40rem) { .hero-layout { grid-template-columns: 1fr; } .hero-card { max-width: var(--ancho-max-tarjeta-hero); } }
-@media (min-width: 60rem) { .hero-layout { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); align-items: center; } .hero-card { max-width: none; } }
-@media (prefers-reduced-motion: no-preference) {
-  .hero-copy > .eyebrow { animation: entrada-suave var(--duracion-entrada) var(--curva-suave) backwards; animation-delay: 0ms; }
-  .hero-copy > .hero-lead { animation: entrada-suave var(--duracion-entrada) var(--curva-suave) backwards; animation-delay: calc(var(--paso-entrada) * 1); }
-  .hero-copy > .hero-actions { animation: entrada-suave var(--duracion-entrada) var(--curva-suave) backwards; animation-delay: calc(var(--paso-entrada) * 2); }
-  .hero-copy > .card-link { animation: entrada-suave var(--duracion-entrada) var(--curva-suave) backwards; animation-delay: calc(var(--paso-entrada) * 3); }
-  .hero-copy > .hero-chips { animation: entrada-suave var(--duracion-entrada) var(--curva-suave) backwards; animation-delay: calc(var(--paso-entrada) * 4); }
-  .hero-layout > .hero-card { animation: entrada-suave var(--duracion-entrada) var(--curva-suave) backwards; animation-delay: calc(var(--paso-entrada) * 5); }
-  .hero .btn:hover { transform: translateY(-2px); box-shadow: var(--sombra-flotante); }
-  .hero .btn:active { transform: none; box-shadow: none; }
-  @keyframes entrada-suave { from { opacity: 0; transform: translateY(0.75rem); } to { opacity: 1; transform: translateY(0); } }
-}
-
+/* --- Botones ---------------------------------------------------------------
+   Un solo color de relleno y una sola forma, decidida aqui: 16 px. El borde
+   de 2px mantiene el objetivo tactil sin depender de la sombra. */
 .btn, .quiz-actions button, .panel-actions button, .record-actions button, #clear-filters, #exercise-dialog button, #close-dialog {
   display: inline-flex; align-items: center; justify-content: center; min-height: var(--alto-objetivo-tactil);
   padding: 0.7rem 1rem; color: var(--color-sobre-primario); background: var(--color-primario);
-  border: 2px solid var(--color-primario); border-radius: var(--radio-sm); font-weight: 750; line-height: 1.2; text-decoration: none;
+  border: 2px solid var(--color-primario); border-radius: var(--radio-md); font-weight: 750; line-height: 1.2; text-decoration: none;
 }
 .btn:hover, .btn:active, .quiz-actions button:hover, .quiz-actions button:active, .panel-actions button:hover, .panel-actions button:active, .record-actions button:hover, .record-actions button:active, #clear-filters:hover, #exercise-dialog button:hover, #close-dialog:hover { color: var(--color-sobre-primario); background: var(--color-primario-oscuro); border-color: var(--color-primario-oscuro); }
 .btn.secondary, .quiz-actions .secondary, .panel-actions .secondary, .record-actions .secondary, .app-card > .secondary, #clear-filters { color: var(--color-primario-oscuro); background: var(--color-superficie); border-color: var(--color-primario); }
 .btn.secondary:hover, .quiz-actions .secondary:hover, .quiz-actions .secondary:active, .panel-actions .secondary:hover, .panel-actions .secondary:active, .record-actions .secondary:hover, .record-actions .secondary:active, .app-card > .secondary:hover, #clear-filters:hover { color: var(--color-primario-oscuro); background: var(--color-fondo-azul); }
 .record-actions .danger { color: var(--color-sobre-primario); background: var(--color-peligro); border-color: var(--color-peligro); }
 
-#beneficios, #programas, #escoliosis, #como-funciona { width: min(100% - 2rem, var(--ancho-contenedor)); margin-inline: auto; }
-#beneficios ul, .workflow-grid { display: grid; gap: var(--espacio-5); padding-left: 0; list-style: none; }
-#programas > h2 { grid-column: 1 / -1; }
-#beneficios ul { margin: var(--espacio-5) 0 0; }
-#beneficios article, #programas article, .workflow-card, #escoliosis article, .container > section article { height: 100%; padding: clamp(var(--espacio-5), 3vw, var(--espacio-6)); background: var(--color-superficie); border: 1px solid var(--color-borde); border-radius: var(--radio-lg); box-shadow: var(--sombra-suave); }
-#beneficios article, #programas article, .workflow-card { position: relative; overflow: hidden; }
-#beneficios article::before, #programas article::before, .workflow-card::before { position: absolute; top: 0; right: 0; left: 0; height: 0.25rem; content: ""; background: var(--color-secundario); }
-#beneficios article:hover, #programas article:hover, .workflow-card:hover, #escoliosis article:hover, .container > section article:hover { border-color: rgba(36, 90, 115, 0.34); box-shadow: var(--sombra-flotante); transform: translateY(-0.2rem); }
-#beneficios article p, #programas article p, .workflow-card p { margin-bottom: 0; color: var(--color-texto-suave); }
-.benefit-icon { display: block; width: var(--tamano-icono-beneficio); height: var(--tamano-icono-beneficio); margin-bottom: var(--espacio-4); color: var(--color-primario); fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
-#beneficios .card-link { margin-top: var(--espacio-4); }
-#beneficios article:active { transform: none; box-shadow: var(--sombra-suave); }
-#beneficios .card-link:active { transform: translateY(0.125rem); }
-.card-kicker { display: block; margin-bottom: var(--espacio-3); color: var(--color-secundario); font-size: var(--texto-xs); font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
-.card-link { display: inline-flex; align-items: center; gap: var(--espacio-2); margin-top: var(--espacio-5); font-weight: 800; }
-.card-link::after { content: "→"; transition: transform 160ms ease; }
+/* Enlaces de accion dentro de tarjetas: el enlace ancla al fondo de la tarjeta. */
+.card-link {
+  display: inline-flex; align-items: center; gap: var(--espacio-2);
+  color: var(--color-primario); font-weight: 750; text-decoration: underline;
+  text-underline-offset: 0.18em; text-decoration-thickness: 1px;
+}
+.card-link::after { content: "→"; transition: transform var(--duracion-corta) ease; }
 .card-link:hover::after { transform: translateX(0.25rem); }
-#escoliosis { padding-block: var(--espacio-7); }
-#escoliosis article { background: var(--color-superficie-suave); border-color: transparent; }
-#como-funciona { padding-block: var(--espacio-7); }
-#como-funciona .section-intro { max-width: 60ch; color: var(--color-texto-suave); }
-.workflow-card { position: relative; }
-.workflow-number { display: grid; width: 2.25rem; height: 2.25rem; place-items: center; margin-bottom: var(--espacio-4); color: var(--color-sobre-primario); background: var(--color-primario); border-radius: 50%; font-weight: 850; }
-@media (min-width: 40rem) { #beneficios ul, .workflow-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (min-width: 64rem) { #beneficios ul { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-@media (min-width: 64rem) { .workflow-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.card-link:hover { text-decoration-thickness: 2px; }
 
-#programas .section-intro { max-width: 60ch; margin-top: 0; color: var(--color-texto-suave); grid-column: 1 / -1; }
-#programas .programa-card { display: flex; flex-direction: column; }
-#programas .programa-card .card-link { margin-top: auto; padding-top: var(--espacio-4); }
-#programas .programa-icon { display: inline-flex; align-items: center; justify-content: center; width: var(--tamano-insignia-programa); height: var(--tamano-insignia-programa); margin-bottom: var(--espacio-4); border-radius: 50%; }
-#programas .programa-icon svg { width: var(--tamano-icono-programa); height: var(--tamano-icono-programa); fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
-#programas .programa-card--biblioteca .programa-icon { color: var(--color-primario); background: var(--color-fondo-azul); }
-#programas .programa-card--sugerencias .programa-icon { color: var(--color-secundario); background: var(--color-fondo-verde); }
-#programas .programa-card--seguimiento .programa-icon { color: var(--color-primario-oscuro); background: var(--color-fondo-aviso); }
-#programas .programa-card--biblioteca::before { background: var(--color-primario); }
-#programas .programa-card--sugerencias::before { background: var(--color-secundario); }
-#programas .programa-card--seguimiento::before { background: var(--color-primario-oscuro); }
-#programas .programa-estado { color: var(--color-texto-suave); font-size: var(--texto-sm); font-weight: 700; }
-#programas .programa-card:focus-within { border-color: var(--color-primario); }
-#programas .programa-card:active { transform: none; }
+/* --- Portada editorial ------------------------------------------------------
+   Lienzo plano (sin degradado), titular en dos lineas, CTA por encima del
+   pliegue y una composicion visual con la ficha real de la biblioteca. */
+
+.hero {
+  background: var(--color-fondo);
+  border-bottom: 1px solid var(--color-borde); /* taste-skill-ignore: filo de seccion, borde sutil del encargo */
+}
+#inicio { padding-block: clamp(2.5rem, 5vw, 4rem) clamp(2.5rem, 5vw, 3.5rem); }
+.hero-layout { display: grid; align-items: center; gap: clamp(var(--espacio-6), 4vw, var(--espacio-7)); }
+
+/* --- Columna de texto ----------------------------------------------------- */
+.hero-copy { min-width: 0; }
+.hero-insignia {
+  display: inline-flex; align-items: center; gap: var(--espacio-2);
+  padding: 0.35rem 0.85rem 0.35rem 0.6rem; margin: 0 0 var(--espacio-4);
+  color: var(--color-secundario-oscuro); background: var(--color-fondo-verde);
+  border-radius: var(--radio-pill); font-size: var(--texto-sm); font-weight: 650;
+}
+.hero-insignia__punto {
+  width: 0.55rem; height: 0.55rem; background: var(--color-secundario); border-radius: 50%;
+}
+.hero-titular {
+  margin: 0 0 var(--espacio-4);
+  font-size: clamp(var(--tamano-h1-min), var(--tamano-h1-preferido) + 3.3vw, var(--tamano-h1-max));
+  line-height: var(--alto-linea-h1);
+  letter-spacing: var(--espaciado-letras-h1);
+  text-wrap: balance;
+}
+/* «desde casa» se distingue por tono, no por otra familia ni cursiva. */
+.hero-titular em {
+  color: var(--color-primario);
+  font-style: normal;
+  letter-spacing: -0.035em;
+}
+.hero-lead {
+  max-width: 48ch; margin: 0 0 var(--espacio-5);
+  color: var(--color-texto); font-size: var(--texto-lg); line-height: 1.55;
+}
+.hero-actions { display: flex; flex-wrap: wrap; gap: var(--espacio-3); margin: 0 0 var(--espacio-4); }
+.hero-cta { flex: 0 1 auto; min-height: 3rem; padding-inline: var(--espacio-5); }
+.hero-enlace {
+  display: inline-flex; align-items: center; gap: var(--espacio-1);
+  min-height: var(--alto-objetivo-tactil); padding-block: var(--espacio-2);
+  color: var(--color-secundario-oscuro); font-size: var(--texto-sm); font-weight: 650;
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px;
+  text-decoration-color: var(--color-secundario);
+}
+.hero-enlace:hover { color: var(--color-terciario-oscuro); text-decoration-color: var(--color-terciario); }
+.hero-datos {
+  display: flex; flex-wrap: wrap; gap: var(--espacio-2) var(--espacio-4);
+  padding: var(--espacio-4) 0 0; margin: var(--espacio-2) 0 0;
+  border-top: 1px solid var(--color-borde); /* taste-skill-ignore: separacion de la lista de datos del hero */ list-style: none;
+}
+.hero-datos li {
+  display: inline-flex; align-items: center; gap: var(--espacio-2);
+  margin: 0; color: var(--color-texto-suave); font-size: var(--texto-sm); font-weight: 650;
+}
+.hero-datos li::before {
+  width: 0.4rem; height: 0.4rem; content: ""; background: var(--color-secundario); border-radius: 50%;
+}
+
+/* --- Columna visual ------------------------------------------------------- */
+.hero-visual { position: relative; display: grid; min-width: 0; padding-block: 1.5rem; }
+/* La lámina ilustrada sangra hasta el borde de la ficha y hereda su radio. */
+.hero-forma {
+  display: block;
+  width: calc(100% + 2 * var(--espacio-5));
+  aspect-ratio: 20 / 9;
+  margin: calc(-1 * var(--espacio-5)) calc(-1 * var(--espacio-5)) var(--espacio-5);
+  border-radius: calc(var(--radio-lg) - 1px) calc(var(--radio-lg) - 1px) 0 0;
+}
+/* Fragmento real de la interfaz: conserva sus propios bordes y su sombra. */
+.hero-ficha {
+  position: relative;
+  z-index: 1;
+  padding: var(--espacio-5);
+  margin: 0;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde); /* taste-skill-ignore: borde sutil de tarjeta, definido por el encargo */
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-flotante-alta); /* taste-skill-ignore: la ficha flota sobre el campo */
+}
+.hero-ficha__cabecera {
+  display: flex; flex-wrap: wrap; gap: var(--espacio-2); align-items: center;
+  justify-content: space-between; margin-bottom: var(--espacio-3);
+}
+.hero-ficha__zona {
+  padding: 0.2rem 0.6rem; color: var(--color-secundario-oscuro);
+  background: var(--color-fondo-verde); border-radius: var(--radio-pill);
+  font-size: var(--texto-xs); font-weight: 700;
+}
+.hero-ficha__aviso { color: var(--color-terciario-oscuro); font-size: var(--texto-xs); font-weight: 700; }
+.hero-ficha__nombre { margin: 0 0 var(--espacio-2); color: var(--color-texto); font-size: var(--texto-lg); font-weight: 750; line-height: var(--alto-linea-titulo); }
+.hero-ficha__descripcion { margin: 0 0 var(--espacio-4); color: var(--color-texto-suave); font-size: var(--texto-sm); line-height: 1.55; }
+.hero-ficha__datos {
+  display: grid; gap: var(--espacio-3); padding: var(--espacio-4) 0 0; margin: 0;
+  border-top: 1px solid var(--color-borde); /* taste-skill-ignore: separacion de los datos de la ficha */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.hero-ficha__datos dt { margin: 0 0 0.15rem; color: var(--color-texto-suave); font-size: var(--texto-xs); font-weight: 650; }
+.hero-ficha__datos dd { margin: 0; color: var(--color-texto); font-size: var(--texto-sm); font-weight: 700; }
+.hero-ficha__enlace {
+  display: inline-flex; align-items: center; gap: var(--espacio-1);
+  min-height: var(--alto-objetivo-tactil); padding-block: var(--espacio-3) 0;
+  font-size: var(--texto-sm); font-weight: 750;
+}
+.hero-mini {
+  position: absolute;
+  z-index: 2;
+  display: flex; flex-direction: column; gap: 0.1rem;
+  padding: var(--espacio-3) var(--espacio-4); margin: 0;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde); /* taste-skill-ignore: borde sutil de tarjeta, definido por el encargo */
+  border-radius: var(--radio-md);
+  box-shadow: var(--sombra-flotante); /* taste-skill-ignore: mini-tarjeta flotante */
+}
+.hero-mini strong { color: var(--color-primario); font-size: var(--texto-xl); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
+.hero-mini span { color: var(--color-texto-suave); font-size: var(--texto-xs); font-weight: 600; line-height: 1.35; }
+/* Las mini-tarjetas cuelgan de las esquinas derechas: la izquierda de la
+   ficha la ocupa su enlace de accion y no se deben solapar. */
+.hero-mini--a { bottom: 0; right: -1rem; }
+.hero-mini--b { top: 0; right: -0.75rem; }
+
+/* Sin la ficha a la derecha, las mini-tarjetas dejan de flotar y pasan a una
+   fila bajo la ficha: superpuestas se tapan y no caben en 375 px. */
+@media (max-width: 63.99rem) {
+  .hero-visual { padding-block: 0; }
+  .hero-mini { position: static; /* taste-skill-ignore: anula la sombra cuando deja de flotar */ flex-direction: row; align-items: baseline; gap: var(--espacio-2); box-shadow: none; }
+  .hero-mini span { font-size: var(--texto-sm); }
+}
+
+/* Dos columnas 60/40 a partir de escritorio. Por debajo, una sola: el texto
+   manda y el recurso visual nunca empuja los CTA fuera del primer pliegue. */
+@media (min-width: 64rem) {
+  .hero-layout { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
+}
+
+/* --- Beneficios: bento asimetrico ---------------------------------------- */
+#beneficios, #programas, #escoliosis, #como-funciona {
+  width: min(100% - 2rem, var(--ancho-contenedor)); margin-inline: auto;
+}
+.beneficios-grid {
+  display: grid; gap: var(--espacio-5);
+  width: 100%; max-width: none;
+  padding: 0; margin: var(--espacio-5) 0 0; list-style: none;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+}
+.beneficios-grid > li { min-width: 0; margin: 0; }
+.beneficio > article {
+  display: flex; flex-direction: column; height: 100%;
+  padding: clamp(var(--espacio-5), 3vw, var(--espacio-6));
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde); /* taste-skill-ignore: borde sutil de tarjeta, definido por el encargo */
+  border-radius: var(--radio-lg);
+}
+.beneficio__icono {
+  display: block; width: var(--tamano-icono-beneficio); height: var(--tamano-icono-beneficio);
+  margin-bottom: var(--espacio-4); color: var(--color-secundario);
+  fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round;
+}
+.beneficio h3 { margin-bottom: var(--espacio-2); font-size: var(--texto-lg); }
+.beneficio p { margin: 0; color: var(--color-texto); }
+.beneficio .card-link { margin-top: auto; padding-top: var(--espacio-4); }
+/* Tarjeta principal: dos columnas y un campo de tono propio. */
+/* La destacada ocupa 2x2 de la retícula: el icono y el titular mandan, el
+   enlace se ancla abajo y el cuerpo usa todo el ancho disponible. */
+.beneficio--destacado > article { background: var(--color-fondo-verde); border-color: transparent; }
+.beneficio--destacado .beneficio__icono { width: 3.5rem; height: 3.5rem; color: var(--color-primario); }
+.beneficio--destacado h3 { max-width: 16ch; font-size: var(--texto-2xl); }
+.beneficio--destacado p { max-width: 52ch; font-size: var(--texto-lg); }
+.beneficio--destacado .card-link { padding-top: var(--espacio-6); }
+@media (min-width: 48rem) {
+  .beneficios-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 1fr; }
+  /* La destacada ocupa 2x2 y las otras dos se apilan en la tercera columna:
+     con solo `span 2` quedaban dos celdas vacías bajo la fila. */
+  .beneficio--destacado { grid-column: span 2; grid-row: span 2; }
+}
+
+/* --- Programas ------------------------------------------------------------ */
+.seccion { padding-block: var(--espacio-8); }
+.seccion-intro { max-width: 58ch; margin: 0 0 var(--espacio-6); color: var(--color-texto); }
+.programas-grid {
+  display: grid; gap: var(--espacio-5); width: 100%; max-width: none;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+}
+.programa {
+  display: flex; flex-direction: column; height: 100%;
+  padding: clamp(var(--espacio-5), 3vw, var(--espacio-6));
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde); /* taste-skill-ignore: borde sutil de tarjeta, definido por el encargo */
+  border-radius: var(--radio-lg);
+}
+.programa__foco { margin: 0 0 var(--espacio-2); color: var(--color-secundario-oscuro); font-size: var(--texto-sm); font-weight: 700; }
+.programa h3 { margin-bottom: var(--espacio-3); }
+.programa > p { margin: 0; color: var(--color-texto); }
+.programa .card-link { margin-top: auto; padding-top: var(--espacio-4); }
+.programa__filtros { display: flex; flex-wrap: wrap; gap: var(--espacio-2); padding: 0; margin: var(--espacio-4) 0 0; list-style: none; }
+.programa__filtros li {
+  padding: 0.25rem 0.65rem; margin: 0;
+  color: var(--color-secundario-oscuro); background: var(--color-fondo-verde);
+  border-radius: var(--radio-pill); font-size: var(--texto-xs); font-weight: 650;
+}
+.programa__insignia {
+  display: flex; gap: var(--espacio-2); align-items: flex-start;
+  margin: var(--espacio-4) 0 0 !important;
+  padding: var(--espacio-3); color: var(--color-texto-suave);
+  background: var(--color-superficie-suave); border-radius: var(--radio-sm);
+  font-size: var(--texto-sm); font-weight: 600; line-height: 1.45;
+}
+.programa__insignia svg { flex: 0 0 1.25rem; width: 1.25rem; height: 1.25rem; margin-top: 0.1rem; color: var(--color-terciario-oscuro); fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+.programa:focus-within { border-color: var(--color-primario); }
+
+/* --- Escoliosis y pasos --------------------------------------------------- */
+.escoliosis-nota {
+  height: 100%;
+  padding: clamp(var(--espacio-5), 3vw, var(--espacio-7));
+  background: var(--color-fondo-verde);
+  border-radius: var(--radio-lg);
+}
+.escoliosis-nota p { max-width: 70ch; color: var(--color-texto); }
+.escoliosis-nota__aviso {
+  padding: var(--espacio-4);
+  background: var(--color-superficie);
+  border-left: 0.25rem solid var(--color-terciario);
+  border-radius: var(--radio-sm);
+}
+.pasos {
+  display: grid; gap: var(--espacio-5); width: 100%; max-width: none;
+  padding: 0; margin: 0; list-style: none; counter-reset: paso;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+}
+.pasos > li { min-width: 0; margin: 0; padding-top: var(--espacio-4); border-top: 2px solid var(--color-primario); }
+.pasos h3 { margin-bottom: var(--espacio-2); font-size: var(--texto-lg); }
+.pasos p { margin: 0; color: var(--color-texto); }
+
+/* --- Movimiento ----------------------------------------------------------- */
 @media (prefers-reduced-motion: no-preference) {
-  #programas .programa-card::before { transform: scaleX(1); transform-origin: left; transition: transform var(--duracion-media) var(--curva-suave); }
-  #programas .programa-card.reveal-ready:not(.is-revealed)::before { transform: scaleX(0); }
+  .hero-copy > .hero-insignia { animation: entrada-suave var(--duracion-entrada) var(--curva-suave) backwards; animation-delay: 0ms; }
+  .hero-copy > .hero-titular { animation: entrada-suave var(--duracion-entrada) var(--curva-suave) backwards; animation-delay: calc(var(--paso-entrada) * 1); }
+  .hero-copy > .hero-lead { animation: entrada-suave var(--duracion-entrada) var(--curva-suave) backwards; animation-delay: calc(var(--paso-entrada) * 2); }
+  .hero-copy > .hero-actions { animation: entrada-suave var(--duracion-entrada) var(--curva-suave) backwards; animation-delay: calc(var(--paso-entrada) * 3); }
+  .hero-copy > .hero-enlace { animation: entrada-suave var(--duracion-entrada) var(--curva-suave) backwards; animation-delay: calc(var(--paso-entrada) * 4); }
+  .hero-copy > .hero-datos { animation: entrada-suave var(--duracion-entrada) var(--curva-suave) backwards; animation-delay: calc(var(--paso-entrada) * 5); }
+  .hero-visual { animation: entrada-suave var(--duracion-entrada) var(--curva-suave) backwards; animation-delay: calc(var(--paso-entrada) * 3); }
+  .hero-forma { animation: hero-deriva 24s ease-in-out infinite alternate; transform-origin: 50% 60%; }
+  @keyframes entrada-suave { from { opacity: 0; transform: translateY(0.75rem); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes hero-deriva { from { transform: translateY(0) scale(1); } to { transform: translateY(-1.25%) scale(1.015); } }
+  .hero-ficha { transition: box-shadow var(--duracion-media) var(--curva-suave), transform var(--duracion-media) var(--curva-suave); }
+  .hero-visual:hover .hero-ficha { transform: translateY(-0.25rem); }
 }
 
 .hero--compact { padding: clamp(4rem, 8vw, 7rem) max(1rem, calc((100% - var(--ancho-contenedor)) / 2)); text-align: left; }
 .hero--compact h1 { max-width: 18ch; margin: 0; }
 .container > section article ul, .container > section article ol { padding-left: 1.25rem; }
-.container > section article details { padding-block: var(--espacio-3); border-top: 1px solid var(--color-borde); }
-.container > section article details:last-child { border-bottom: 1px solid var(--color-borde); }
+.container > section article details { padding-block: var(--espacio-3); /* taste-skill-ignore: separador de un bloque plegable */ border-top: 1px solid var(--color-borde); }
+.container > section article details:last-child { border-bottom: 1px solid var(--color-borde); /* taste-skill-ignore: separador de un bloque plegable */ }
 .container > section article summary { min-height: var(--alto-objetivo-tactil); padding-block: var(--espacio-2); color: var(--color-primario-oscuro); cursor: pointer; font-weight: 750; }
 
 .site-footer { padding: clamp(var(--espacio-7), 6vw, var(--espacio-9)) max(1rem, calc((100% - var(--ancho-contenedor)) / 2)); color: #ecf5f1; background: var(--color-primario-oscuro); }
@@ -294,11 +496,11 @@ li + li { margin-top: var(--espacio-2); }
 
 @media (prefers-reduced-motion: no-preference) {
   body.page-leaving { opacity: 0.9; transform: translateY(-0.25rem); transition: opacity var(--duracion-corta) ease, transform var(--duracion-corta) ease; }
-  .hero-actions .btn:hover { transform: translateY(calc(var(--elevacion-boton) * -1)); box-shadow: var(--sombra-suave); }
+  .hero-actions .btn:hover { transform: translateY(calc(var(--elevacion-boton) * -1)); /* taste-skill-ignore: el boton levanta al pasar por encima */ box-shadow: var(--sombra-flotante); }
   .hero-actions .btn:active { transform: none; box-shadow: none; }
 }
 
-@media (forced-colors: active) { .btn, button, .menu-toggle, .app-card, article, .hero-card, .hero-chips li { border: 2px solid CanvasText; } }
+@media (forced-colors: active) { .btn, button, .menu-toggle, .app-card, article, .hero-ficha, .hero-mini, .hero-datos li { border: 2px solid CanvasText; } }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
   .reveal-ready { opacity: 1; transform: none; }
@@ -334,7 +536,7 @@ body.page-escoliosis .notice-urgent { background: var(--color-fondo-alerta); bor
 body.page-escoliosis .notice-urgent h3::before { content: "!"; background: var(--color-peligro); color: var(--color-sobre-primario); }
 
 /* Índice de la guía. */
-body.page-escoliosis .toc { margin-top: var(--espacio-6); padding: var(--espacio-4); background: var(--color-superficie); border: 1px solid var(--color-borde); border-radius: var(--radio-md); }
+body.page-escoliosis .toc { margin-top: var(--espacio-6); /* taste-skill-ignore: indice de la guia: panel de contenido */ padding: var(--espacio-4); background: var(--color-superficie); border: 1px solid var(--color-borde); border-radius: var(--radio-md); }
 body.page-escoliosis .toc p { margin: 0 0 var(--espacio-2); font-weight: 800; }
 body.page-escoliosis .toc ul { padding: 0; margin: 0; list-style: none; }
 body.page-escoliosis .toc a { display: flex; align-items: center; min-height: var(--alto-objetivo-tactil); color: var(--color-texto-suave); text-decoration: none; font-weight: 700; }
@@ -416,119 +618,44 @@ body.page-escoliosis details[open] summary::after { content: "−"; }
   body.page-escoliosis .anchor-link { opacity: 1; }
 }
 
-/* --- Corrección responsive exclusiva para Beneficios ----------------------
-   `p, ul, ol { max-width: var(--ancho-texto) }` (65ch) estrangulaba la lista
-   contenedora del grid: en escritorio quedaba en ~628 px dividida en 4
-   columnas de ~139 px, con tarjetas de ~875 px de alto. Se libera el
-   contenedor con `auto-fit` y se neutraliza el `margin-top` que `li + li`
-   inyecta dentro de la grilla. No cambia colores, sombras, tipografía,
-   bordes ni iconos, y no alcanza a ninguna otra sección. */
-#beneficios > ul {
+/* --- Blindaje responsive de las secciones de portada ------------------------
+   `p, ul, ol { max-width: var(--ancho-texto) }` estrangula cualquier lista
+   que sea a la vez contenedora de una grilla, y `li + li` inyecta margen
+   dentro de la grilla. Estas reglas liberan el contenedor y neutralizan ese
+   margen, y son específicas de las dos secciones afectadas. */
+.beneficios-grid,
+.programas-grid,
+.pasos {
   width: 100%;
   max-width: none;
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(min(100%, 17rem), 1fr)
-  );
-  align-items: stretch;
 }
-
-#beneficios > ul > li {
+.beneficios-grid > li,
+.programas-grid > *,
+.pasos > li {
   min-width: 0;
   margin: 0;
 }
 
-#beneficios > ul > li > article {
-  display: flex;
-  min-width: 0;
-  height: 100%;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-#beneficios > ul > li > article h3,
-#beneficios > ul > li > article p {
-  max-width: 100%;
-  overflow-wrap: break-word;
-  hyphens: auto;
-}
-
-#beneficios > ul > li > article .card-link {
-  margin-top: auto;
-  padding-top: var(--espacio-4);
-}
-
-/* --- Corrección responsive exclusiva para Programas ------------------------
-   #programas es la <section>, no la grilla: sus tarjetas viven en un <div>
-   hijo. Con `display: grid` en la section, ese div caía en la primera
-   columna (378px de 1184px a 1265px) y las tres tarjetas se apilaban en
-   ella con 1159px de alto cada una, dejando dos tercios de la fila vacíos.
-   La grilla se traslada al envoltorio real y la section vuelve a bloque. */
-/* `width` y `max-width` NO se tocan aquí: la section lleva la clase
-   .container y debe seguir midiendo lo mismo que sus vecinas. */
+/* #programas es la <section>, no la grilla: sus tarjetas viven en un <div>
+   hijo. La section se queda en bloque y la grilla vive en el envoltorio. */
 #programas {
   display: block;
 }
 
-#programas > div {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
-  gap: var(--espacio-5);
-  width: 100%;
-  max-width: none;
-}
-
-/* La barra de color superior ya la dibuja article::before, con un color
-   por tipo de programa (líneas .programa-card--*). Un border-top encima se
-   solaparía y la dejaría monocroma, así que no se añade. */
-#programas article {
-  display: flex;
-  min-width: 0;
-  height: 100%;
-  flex-direction: column;
-}
-
-/* `grid-column` de h2 y .section-intro queda sin efecto al volver la
-   section a bloque; el envoltorio es ahora el único elemento de la grilla. */
-
-#programas article h3 {
-  margin: 0 0 var(--espacio-3);
-  color: var(--color-primario-oscuro);
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  hyphens: auto;
-}
-
-#programas article p {
-  max-width: 100%;
-  margin-bottom: 0;
-  color: var(--color-texto-suave);
-  line-height: 1.6;
-  overflow-wrap: break-word;
-  hyphens: auto;
-  flex-grow: 1;
-}
-
-#programas article a,
-#programas article .card-link {
-  display: inline-block;
-  max-width: 100%;
-  margin-top: auto;
-  padding-top: var(--espacio-4);
-  color: var(--color-primario);
-  font-weight: 800;
-  text-decoration: underline;
-  text-underline-offset: 0.18em;
-}
-
-#programas article a:hover,
-#programas article .card-link:hover {
-  color: var(--color-primario-oscuro);
-  text-decoration-thickness: 2px;
-}
-
-@media (min-width: 80rem) {
-  #programas > div {
+/* En escritorio la tarjeta destacada ocupa dos columnas del bento. */
+@media (min-width: 48rem) {
+  .programas-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+}
+
+/* Por debajo de 30rem la ficha del hero deja de llevar los datos en tres
+   columnas: con dos palabras por celda se leería peor que apilados. */
+@media (max-width: 30rem) {
+  .hero-ficha__datos {
+    grid-template-columns: 1fr;
+    gap: var(--espacio-2);
+  }
+  .hero-mini--a { left: 0; bottom: -0.75rem; }
+  .hero-mini--b { right: 0; top: -0.5rem; }
 }

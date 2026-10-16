@@ -1,47 +1,18 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { EXERCISES_DATA } from '../data/exercisesData';
+import {
+  durationLabels,
+  difficultyLabels,
+  equipmentLabels,
+  zoneLabels,
+  categoryLabels,
+} from '../data/exerciseLabels';
 import { Exercise, Duration, Difficulty, ExerciseCategory } from '../types';
 
 const difficultyOrder: Record<Difficulty, number> = {
   principiante: 1,
   intermedio: 2,
   avanzado: 3,
-};
-
-const durationLabels: Record<Duration, string> = {
-  corta: '≤10 min',
-  media: '10–20 min',
-  larga: '>20 min',
-};
-
-const difficultyLabels: Record<Difficulty, string> = {
-  principiante: 'Principiante',
-  intermedio: 'Intermedio',
-  avanzado: 'Avanzado',
-};
-
-const equipmentLabels: Record<string, string> = {
-  ninguno: 'Sin equipamiento',
-  bandas: 'Bandas elásticas',
-  peso: 'Pesas/Mancuernas',
-  colchoneta: 'Colchoneta',
-};
-
-const zoneLabels: Record<string, string> = {
-  piernas: 'Piernas',
-  glúteos: 'Glúteos',
-  cadera: 'Cadera',
-  aductores: 'Aductores',
-  core: 'Core',
-  lumbar: 'Zona lumbar',
-  torax: 'Tórax',
-  hombros: 'Hombros',
-};
-
-const categoryLabels: Record<ExerciseCategory, string> = {
-  actividad_general: 'Actividad física general',
-  cuidado_postural: 'Cuidado postural y movilidad',
-  psse_supervisado: 'Específico supervisado (PSSE)',
 };
 
 const normalizeText = (value: string) =>

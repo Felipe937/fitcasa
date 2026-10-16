@@ -7,6 +7,13 @@ Thumbs.db
 # Node modules
 node_modules/
 
+# Build output. `npm run build` lo regenera desde cero; versionarlo solo
+# anade ruido al diff y termina desincronizandose del fuente.
+dist/
+
+# Informes y capturas de herramientas de diseno locales
+.taste-skill/
+
 # VS Code settings
 .vscode/
 
