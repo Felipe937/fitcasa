@@ -370,37 +370,87 @@ li + li { margin-top: var(--espacio-2); }
   display: grid; gap: var(--espacio-5);
   width: 100%; max-width: none;
   padding: 0; margin: var(--espacio-5) 0 0; list-style: none;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  grid-template-columns: 1fr;
 }
 .beneficios-grid > li { min-width: 0; margin: 0; }
 .beneficio > article {
-  display: flex; flex-direction: column; height: 100%;
+  display: flex; flex-direction: column; height: 100%; min-width: 0;
   padding: clamp(var(--espacio-5), 3vw, var(--espacio-6));
   background: var(--color-superficie);
   border: 1px solid var(--color-borde); /* taste-skill-ignore: borde sutil de tarjeta, definido por el encargo */
   border-radius: var(--radio-lg);
+  box-shadow: 0 4px 20px -4px rgb(31 41 39 / 0.05); /* taste-skill-ignore: sombra suave de tarjeta */
 }
+/* Salvia clara solo para el icono: como texto se queda en 4.3:1 y no alcanza
+   para lectura normal. El rotulo lo usa en su variante oscura (6.2:1). */
 .beneficio__icono {
   display: block; width: var(--tamano-icono-beneficio); height: var(--tamano-icono-beneficio);
   margin-bottom: var(--espacio-4); color: var(--color-secundario);
   fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round;
 }
-.beneficio h3 { margin-bottom: var(--espacio-2); font-size: var(--texto-lg); }
+.beneficio h3 { margin-bottom: var(--espacio-2); color: var(--color-texto); font-size: var(--texto-lg); }
 .beneficio p { margin: 0; color: var(--color-texto); }
 .beneficio .card-link { margin-top: auto; padding-top: var(--espacio-4); }
-/* Tarjeta principal: dos columnas y un campo de tono propio. */
-/* La destacada ocupa 2x2 de la retícula: el icono y el titular mandan, el
-   enlace se ancla abajo y el cuerpo usa todo el ancho disponible. */
+
+/* Tarjeta protagonista: campo de tono propio, titular grande y cuerpo ancho.
+   Dos margenes `auto` reparten la holgura por igual entre el cuerpo y el
+   enlace: el espacio queda como decision editorial y no como un hueco. */
 .beneficio--destacado > article { background: var(--color-fondo-verde); border-color: transparent; }
-.beneficio--destacado .beneficio__icono { width: 3.5rem; height: 3.5rem; color: var(--color-primario); }
+.beneficio--destacado .beneficio__icono { width: 3.25rem; height: 3.25rem; color: var(--color-primario); }
 .beneficio--destacado h3 { max-width: 16ch; font-size: var(--texto-2xl); }
-.beneficio--destacado p { max-width: 52ch; font-size: var(--texto-lg); }
-.beneficio--destacado .card-link { padding-top: var(--espacio-6); }
+.beneficio--destacado p { max-width: 52ch; margin-top: auto; font-size: var(--texto-lg); line-height: 1.7; }
+.beneficio--destacado .card-link { padding-top: var(--espacio-5); }
+
+/* Fila apaisada: solo en escritorio cabe icono, texto y CTA en una linea.
+   Por debajo vuelve a la columna normal: con tres columnas a 320 px el
+   titular se quedaba en cero de ancho. */
+.beneficio--ancho .beneficio__icono { margin-bottom: var(--espacio-4); }
+.beneficio--ancho h3 { margin-bottom: var(--espacio-2); }
+.beneficio--ancho p { font-size: var(--texto-sm); }
+.beneficio--ancho .card-link { margin-top: auto; padding-top: var(--espacio-4); white-space: normal; }
+
+/* Tablet (768px a 1023px): dos columnas, la protagonista ocupa las dos. */
 @media (min-width: 48rem) {
-  .beneficios-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 1fr; }
-  /* La destacada ocupa 2x2 y las otras dos se apilan en la tercera columna:
-     con solo `span 2` quedaban dos celdas vacías bajo la fila. */
+  .beneficios-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 1fr; }
+  .beneficio--destacado { grid-column: 1 / -1; grid-row: auto; }
+}
+
+/* Escritorio (desde 1024px): rectangulo bento cerrado, sin celdas vacias.
+   Col 1-2 y filas 1-2 = Seguridad; col 3 fila 1 = Comodidad;
+   col 3 fila 2 = Progresion; fila 3 completa = Adaptabilidad. */
+@media (min-width: 64rem) {
+  .beneficios-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .beneficio--destacado { grid-column: span 2; grid-row: span 2; }
+  .beneficio--ancho { grid-column: 1 / -1; }
+  /* Aqui si cabe en una linea: icono, titular y cuerpo a la izquierda,
+     CTA a la derecha. */
+  .beneficio--ancho > article {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--espacio-4) var(--espacio-5);
+    padding-block: var(--espacio-5);
+  }
+  .beneficio--ancho .beneficio__icono { margin-bottom: 0; }
+  .beneficio--ancho h3 { margin: 0; font-size: var(--texto-lg); }
+  .beneficio--ancho p { max-width: 62ch; font-size: var(--texto-sm); }
+  .beneficio--ancho .card-link { margin: 0; padding-top: 0; white-space: nowrap; }
+}
+
+/* Elevacion al pasar por encima. Transform y box-shadow, nunca `all`. */
+@media (prefers-reduced-motion: no-preference) {
+  .beneficio > article {
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  }
+  .beneficio > article:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px -6px rgb(31 41 39 / 0.1); /* taste-skill-ignore: sombra al elevar la tarjeta */
+    border-color: var(--color-secundario);
+  }
+  .beneficio--destacado > article:hover { border-color: transparent; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .beneficio > article:hover { transform: none; box-shadow: 0 4px 20px -4px rgb(31 41 39 / 0.05); }
 }
 
 /* --- Programas ------------------------------------------------------------ */

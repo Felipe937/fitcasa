@@ -166,6 +166,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
       <section id="beneficios" aria-labelledby="titulo-beneficios" tabIndex={-1} className="container seccion">
         <h2 id="titulo-beneficios">Beneficios del ejercicio en casa</h2>
         <ul className="beneficios-grid">
+          {/* Protagonista: ocupa 2x2 de la retícula en escritorio. */}
           <li className="beneficio beneficio--destacado">
             <article>
               <svg className="beneficio__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -184,6 +185,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
             </article>
           </li>
 
+          {/* Tercera columna, fila 1. */}
           <li className="beneficio">
             <article>
               <svg className="beneficio__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -201,7 +203,28 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
             </article>
           </li>
 
+          {/* Tercera columna, fila 2. */}
           <li className="beneficio">
+            <article>
+              <svg className="beneficio__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M4 20h16" fill="none" stroke="currentColor" strokeWidth="2" />
+                <path d="M7 20v-5" fill="none" stroke="currentColor" strokeWidth="2" />
+                <path d="M12 20V9" fill="none" stroke="currentColor" strokeWidth="2" />
+                <path d="M17 20V6" fill="none" stroke="currentColor" strokeWidth="2" />
+              </svg>
+              <h3>Progresión controlada y gradual</h3>
+              <p>
+                Cada ejercicio indica su duración y su nivel de exigencia para que comieces
+                desde tu punto de partida real y avances con serenidad.
+              </p>
+              <a className="card-link" href="#ejercicios" onClick={ir('ejercicios')}>
+                Ver duraciones y niveles
+              </a>
+            </article>
+          </li>
+
+          {/* Fila 3 apaisada, ancho completo. */}
+          <li className="beneficio beneficio--ancho">
             <article>
               <svg className="beneficio__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                 <path d="M4 8h9" fill="none" stroke="currentColor" strokeWidth="2" />
@@ -213,8 +236,9 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
               </svg>
               <h3>Adaptabilidad a tu nivel</h3>
               <p>
-                Filtra por zona corporal o responde el cuestionario para recibir una orientación
-                educativa. No es un plan clínico personalizado.
+                Filtra por zona corporal o responde el cuestionario para recibir una propuesta
+                adaptada a tus tiempos y preferencias. Es una orientación educativa, no un plan
+                clínico.
               </p>
               <a className="card-link" href="#quiz" onClick={ir('quiz')}>
                 Obtener orientación
