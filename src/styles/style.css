@@ -641,6 +641,45 @@ body.page-escoliosis details[open] summary::after { content: "−"; }
   }
 }
 
+/* Recuadro del registro de aceptación legal: superficie propia para que el
+   bloque se lea como un documento, no como otro campo del formulario. */
+.legal-consent-box {
+  background: var(--color-superficie);
+  border-color: var(--color-borde);
+  border-left: 0.35rem solid var(--color-primario);
+  border-radius: var(--radio-md);
+}
+
+.legal-consent__autorizacion {
+  margin: 0 0 var(--espacio-3);
+  padding: var(--espacio-2) var(--espacio-3);
+  color: var(--color-texto);
+  background: var(--color-fondo-azul);
+  border-left: 0.25rem solid var(--color-primario);
+  border-radius: var(--radio-sm);
+  font-size: var(--texto-sm);
+  font-weight: 700;
+}
+
+.legal-consent__alcance {
+  margin: var(--espacio-3) 0 0;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-xs);
+}
+
+#consent-status {
+  padding: var(--espacio-3);
+  margin: var(--espacio-4) 0 0;
+  background: var(--color-superficie-suave);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-sm);
+  max-width: none;
+}
+
+#consent-version-warning {
+  margin: var(--espacio-3) 0 0;
+}
+
 @media print {
   .legal-consent {
     display: none;

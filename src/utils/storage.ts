@@ -3,10 +3,14 @@ import { StorageResult } from '../types';
 export const STORAGE_KEYS = {
   quiz: 'fitcasa.quiz.v1',
   panel: 'fitcasa.panel.v1',
-};
+  // Registro local de aceptación de los documentos legales. Clave propia y
+  // versionada para poder evolucionarla sin tocar el esquema del panel.
+  consent: 'fitcasa.consent.v1',
+} as const;
 
 export const QUIZ_STORAGE_VERSION = 1;
 export const PANEL_STORAGE_VERSION = 1;
+export const CONSENT_STORAGE_VERSION = 1;
 
 function getStorage(): Storage | null {
   try {
@@ -59,6 +63,19 @@ export function removeAllStorage(): { available: boolean; removed: boolean } {
   try {
     storage.removeItem(STORAGE_KEYS.quiz);
     storage.removeItem(STORAGE_KEYS.panel);
+    storage.removeItem(STORAGE_KEYS.consent);
+    return { available: true, removed: true };
+  } catch {
+    return { available: true, removed: false };
+  }
+}
+
+/** Borra solo el registro de aceptación legal, sin tocar quiz ni panel. */
+export function removeConsentStorage(): { available: boolean; removed: boolean } {
+  const storage = getStorage();
+  if (!storage) return { available: false, removed: false };
+  try {
+    storage.removeItem(STORAGE_KEYS.consent);
     return { available: true, removed: true };
   } catch {
     return { available: true, removed: false };

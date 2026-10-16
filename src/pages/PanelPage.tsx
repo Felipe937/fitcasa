@@ -1,13 +1,15 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
-import { PanelRecord, LegalConsentState, LegalConsentRecord } from '../types';
+import { PanelRecord, ConsentRecord } from '../types';
 import { EXERCISES_DATA } from '../data/exercisesData';
-import { LegalConsent } from '../components/LegalConsent';
+import { LegalConsent, isValidConsentRecord, CONSENT_DOCS_VERSION } from '../components/LegalConsent';
 import {
   readStorage,
   writeStorage,
   removeAllStorage,
+  removeConsentStorage,
   STORAGE_KEYS,
   PANEL_STORAGE_VERSION,
+  CONSENT_STORAGE_VERSION,
 } from '../utils/storage';
 import '../styles/panel-page.css';
 
@@ -112,14 +114,6 @@ function useMediaQuery(query: string): boolean {
   return matches;
 }
 
-function normalizeConsent(value: unknown): LegalConsentRecord | undefined {
-  if (!value || typeof value !== 'object') return undefined;
-  const c = value as Partial<LegalConsentRecord>;
-  if (c.terms !== true || c.privacy !== true) return undefined;
-  const at = typeof c.at === 'string' && !Number.isNaN(Date.parse(c.at)) ? c.at : new Date().toISOString();
-  return { terms: true, privacy: true, at };
-}
-
 function normalizeRecord(item: unknown): PanelRecord | null {
   if (!item || typeof item !== 'object') return null;
   const it = item as Partial<PanelRecord>;
@@ -129,12 +123,17 @@ function normalizeRecord(item: unknown): PanelRecord | null {
   const activity = typeof it.activity === 'string' ? it.activity.trim().slice(0, ACTIVITY_MAX) : '';
   const note = typeof it.note === 'string' ? it.note.trim().slice(0, NOTE_MAX) : '';
   const exerciseId = typeof it.exerciseId === 'string' ? it.exerciseId : undefined;
-  // Sin esta línea el snapshot de consentimiento se perdería en cada recarga:
-  // el objeto se reconstruye y solo sobreviven los campos de arriba.
-  const consent = normalizeConsent(it.consent);
-  const record: PanelRecord = { id: it.id.slice(0, 80), date: it.date!, activity, pain, note, exerciseId };
-  if (consent) record.consent = consent;
-  return record;
+  return { id: it.id.slice(0, 80), date: it.date!, activity, pain, note, exerciseId };
+}
+
+/** Lee el registro de aceptación legal solo si está completo y es válido. */
+function readConsentRecord(): ConsentRecord | null {
+  const res = readStorage<ConsentRecord>(
+    STORAGE_KEYS.consent,
+    CONSENT_STORAGE_VERSION,
+    (data) => (isValidConsentRecord(data) ? data : null)
+  );
+  return res.value;
 }
 
 function normalizeRecords(data: unknown): PanelRecord[] {
@@ -170,8 +169,9 @@ export const PanelPage: React.FC = () => {
 
   const [range, setRange] = useState<RangeFilter>('todos');
   const [search, setSearch] = useState<string>('');
-  const [consent, setConsent] = useState<LegalConsentState>({ terms: false, privacy: false });
+  const [consent, setConsent] = useState<ConsentRecord | null>(null);
   const [consentError, setConsentError] = useState<string>('');
+  const [consentResetStatus, setConsentResetStatus] = useState<string>('');
 
   const dateRef = useRef<HTMLInputElement>(null);
   const activityRef = useRef<HTMLInputElement>(null);
@@ -197,6 +197,9 @@ export const PanelPage: React.FC = () => {
     if (res.value) {
       setRecords(res.value);
     }
+
+    // Registro de aceptación legal ya guardado, si lo hay.
+    setConsent(readConsentRecord());
   }, []);
 
   useEffect(() => {
@@ -252,7 +255,11 @@ export const PanelPage: React.FC = () => {
     setFieldErrors({});
     setFormError('');
     setConsentError('');
-    if (options?.clearConsent) setConsent({ terms: false, privacy: false });
+    if (options?.clearConsent) {
+      removeConsentStorage();
+      setConsent(null);
+      setConsentResetStatus('Se borró tu registro local de aceptación de los documentos legales.');
+    }
   };
 
   const cancelEdit = () => resetForm({ clearConsent: true });
@@ -342,23 +349,39 @@ export const PanelPage: React.FC = () => {
     setFieldErrors({});
     setFormError('');
 
-    // El acuse legal se valida después de los campos: un formulario vacío
-    // muestra primero sus propios errores, no los del acuse.
-    const faltan: string[] = [];
-    if (!consent.terms) faltan.push('los Términos y Condiciones de Uso');
-    if (!consent.privacy) faltan.push('la Política de Privacidad');
-    if (faltan.length > 0) {
+    // La aceptación legal se valida después de los campos del formulario: un
+    // formulario vacío muestra primero sus propios errores.
+    if (!isValidConsentRecord(consent)) {
       setConsentError(
-        `Para guardar este registro necesitas marcar las dos casillas: has aceptado ${faltan.join(' y ')}. Cada documento se abre en una pestaña nueva para que no pierdas lo que ya escribiste.`
+        'Para guardar este registro necesitas marcar las dos casillas: los Términos y Condiciones de Uso y la Política de Privacidad. Cada documento se abre en una pestaña nueva para que no pierdas lo que ya escribiste.'
       );
-      (consent.terms ? document.getElementById('panel-legal-privacy') : document.getElementById('panel-legal-terms'))?.focus();
+      // El padre solo conoce el registro, no cada casilla, así que se busca
+      // el DOM para enfocar la primera que falte de verdad.
+      const termsBox = document.getElementById('panel-legal-terms') as HTMLInputElement | null;
+      const privacyBox = document.getElementById('panel-legal-privacy') as HTMLInputElement | null;
+      const target =
+        termsBox && !termsBox.checked ? termsBox : privacyBox && !privacyBox.checked ? privacyBox : termsBox;
+      target?.focus();
       return;
     }
     setConsentError('');
 
+    // Primero el registro de aceptación, después el registro de salud: si el
+    // panel se escribiera y el consentimiento fallara, quedaría un dato de
+    // salud sin aceptación registrada.
+    const consentWrite = writeStorage(STORAGE_KEYS.consent, CONSENT_STORAGE_VERSION, consent);
+    if (!consentWrite.saved) {
+      setStorageNotice(WRITE_FAILURE_TEXT);
+      setConsentError(
+        'No se pudo guardar tu aceptación en este navegador, así que el registro no se ha creado. Revisa si el almacenamiento local está bloqueado.'
+      );
+      document.getElementById('panel-legal-terms')?.focus();
+      return;
+    }
+    setConsent(consent);
+
     const savedPain = pain as number;
     const linkedId = exerciseId || undefined;
-    const consentSnapshot: LegalConsentRecord = { terms: true, privacy: true, at: new Date().toISOString() };
 
     if (editingId) {
       const updated = records.map((rec) =>
@@ -370,7 +393,6 @@ export const PanelPage: React.FC = () => {
               pain: savedPain,
               note: note.trim(),
               exerciseId: linkedId,
-              consent: consentSnapshot,
             }
           : rec
       );
@@ -389,7 +411,6 @@ export const PanelPage: React.FC = () => {
         pain: savedPain,
         note: note.trim(),
         exerciseId: linkedId,
-        consent: consentSnapshot,
       };
       saveUpdatedRecords([...records, newRec]);
       announce(SAVED_TEXT);
@@ -416,11 +437,9 @@ export const PanelPage: React.FC = () => {
     setFieldErrors({});
     setFormError('');
     setConsentError('');
-    // El acuse se refleja como quedó en el registro: si ese registro no lo
-    // tenía, editarlo obliga a volver a marcarlo.
-    setConsent(
-      record.consent ? { terms: record.consent.terms, privacy: record.consent.privacy } : { terms: false, privacy: false }
-    );
+    // La aceptación vive en su propia clave, no en el registro: se refleja la
+    // que hay guardada, sea cual sea.
+    setConsent(readConsentRecord());
 
     const entryHeading = document.getElementById('entry-heading');
     if (entryHeading) entryHeading.focus();
@@ -803,10 +822,10 @@ export const PanelPage: React.FC = () => {
 
           <LegalConsent
             idPrefix="panel-legal"
-            value={consent}
-            onConsentChange={(next) => {
-              setConsent(next);
-              if (next.terms && next.privacy) setConsentError('');
+            initialConsent={consent}
+            onConsentRecordReady={(record) => {
+              setConsent(record);
+              if (record) setConsentError('');
             }}
             required
           />
@@ -1050,6 +1069,54 @@ export const PanelPage: React.FC = () => {
           servidor. <a href="#privacidad">Lee la Política de Privacidad</a> para el detalle completo, y{' '}
           <a href="#terminos">los Términos y Condiciones</a> para las condiciones de uso y el tratamiento de tus
           datos de bienestar según la Ley 1581 de 2012.
+        </p>
+
+        <p className="small-print" id="consent-status">
+          {consent ? (
+            <>
+              <strong>Consentimiento registrado localmente</strong> el{' '}
+              <time dateTime={consent.timestamp}>{formatDateLong(consent.timestamp.slice(0, 10))}</time>, a las{' '}
+              {new Date(consent.timestamp).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })} (
+              versión de documentos {consent.version}, método {consent.method}). Se guarda solo en este dispositivo.
+            </>
+          ) : (
+            <>
+              <strong>No hay consentimiento registrado.</strong> Tendrás que marcar las dos casillas antes de
+              guardar un registro.
+            </>
+          )}
+        </p>
+
+        {consent && consent.version !== CONSENT_DOCS_VERSION && (
+          <p className="panel-error" id="consent-version-warning" role="alert">
+            Aceptaste la versión {consent.version} de los documentos y la versión actual es {CONSENT_DOCS_VERSION}.
+            Vuelve a marcar las casillas para registrar la aceptación vigente.
+          </p>
+        )}
+
+        {consent && (
+          <p className="small-print">
+            <button
+              type="button"
+              id="reset-consent"
+              className="btn secondary panel-boton panel-boton--peligro"
+              onClick={() => resetForm({ clearConsent: true })}
+            >
+              Borrar mi consentimiento
+            </button>
+          </p>
+        )}
+
+        <p className="panel-page__slot" role="status" aria-live="polite">
+          {consentResetStatus && (
+            <span className="panel-estado">
+              <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                <circle cx="12" cy="12" r="9" />
+                <path d="m8.2 12.4 2.6 2.6 5-5.6" />
+              </svg>
+              <span>{consentResetStatus}</span>
+            </span>
+          )}
         </p>
 
         {!confirmClear ? (

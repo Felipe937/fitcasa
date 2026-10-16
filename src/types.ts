@@ -93,20 +93,33 @@ export interface QuizResult {
 }
 
 /**
- * Estado de las casillas de acuse legal. No representa una autorización bajo
- * la Ley 1581 de 2012: ese régimen excluye las bases de datos mantenidas en un
- * ámbito personal o doméstico (art. 2 literal a; y art. 2 del Decreto 1377 de
- * 2013), que es exactamente el caso de FitCasa. Véase TERMINOS.md, cláusula 3.2.
+ * Estado de las dos casillas de aceptación legal.
+ *
+ * Aviso sobre el alcance: este registro acredita que **la persona usuaria
+ * marcó las casillas en su propio navegador**. No es una prueba fehaciente
+ * frente a un tercero, porque reside en el `localStorage` que la propia persona
+ * controla y puede editar o borrar en cualquier momento. Sirve para trazabilidad
+ * propia, no para acreditar ante la Superintendencia.
+ *
+ * Sobre la regulación del art. 2 literal a de la Ley 1581 de 2012, y el art. 2
+ * del Decreto 1377 de 2013, el almacenamiento estrictamente local de FitCasa
+ * queda probablemente fuera del ámbito de ambos. Véase TERMINOS.md, cláusula 3.2.
  */
 export interface LegalConsentState {
   terms: boolean;
   privacy: boolean;
 }
 
-/** Snapshot del acuse en el momento de guardar un registro. */
-export interface LegalConsentRecord extends LegalConsentState {
-  /** Fecha y hora en ISO 8601 del momento del acuse. */
-  at: string;
+/** Registro de aceptación de los documentos legales, persistido en local. */
+export interface ConsentRecord {
+  terms: true;
+  privacy: true;
+  /** Fecha y hora del acuse en ISO 8601. */
+  timestamp: string;
+  /** Versión de los documentos legales aceptados. */
+  version: string;
+  /** Cómo se obtuvo el acuse. */
+  method: string;
 }
 
 export interface PanelRecord {
@@ -116,7 +129,6 @@ export interface PanelRecord {
   pain: number; // 0-10
   note: string;
   exerciseId?: string;
-  consent?: LegalConsentRecord;
 }
 
 export interface StorageResult<T> {
