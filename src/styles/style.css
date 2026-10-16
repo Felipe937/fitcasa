@@ -415,3 +415,45 @@ body.page-escoliosis details[open] summary::after { content: "−"; }
   body.page-escoliosis .notice, body.page-escoliosis .toc, body.page-escoliosis .tabla-evidencia th, body.page-escoliosis .tabla-evidencia td, body.page-escoliosis details { border: 1px solid CanvasText; }
   body.page-escoliosis .anchor-link { opacity: 1; }
 }
+
+/* --- Corrección responsive exclusiva para Beneficios ----------------------
+   `p, ul, ol { max-width: var(--ancho-texto) }` (65ch) estrangulaba la lista
+   contenedora del grid: en escritorio quedaba en ~628 px dividida en 4
+   columnas de ~139 px, con tarjetas de ~875 px de alto. Se libera el
+   contenedor con `auto-fit` y se neutraliza el `margin-top` que `li + li`
+   inyecta dentro de la grilla. No cambia colores, sombras, tipografía,
+   bordes ni iconos, y no alcanza a ninguna otra sección. */
+#beneficios > ul {
+  width: 100%;
+  max-width: none;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, 17rem), 1fr)
+  );
+  align-items: stretch;
+}
+
+#beneficios > ul > li {
+  min-width: 0;
+  margin: 0;
+}
+
+#beneficios > ul > li > article {
+  display: flex;
+  min-width: 0;
+  height: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+#beneficios > ul > li > article h3,
+#beneficios > ul > li > article p {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+#beneficios > ul > li > article .card-link {
+  margin-top: auto;
+  padding-top: var(--espacio-4);
+}
