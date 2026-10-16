@@ -1,6 +1,7 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { PanelRecord } from '../types';
+import React, { useRef, useState, useEffect, useMemo } from 'react';
+import { PanelRecord, LegalConsentState, LegalConsentRecord } from '../types';
 import { EXERCISES_DATA } from '../data/exercisesData';
+import { LegalConsent } from '../components/LegalConsent';
 import {
   readStorage,
   writeStorage,
@@ -111,6 +112,14 @@ function useMediaQuery(query: string): boolean {
   return matches;
 }
 
+function normalizeConsent(value: unknown): LegalConsentRecord | undefined {
+  if (!value || typeof value !== 'object') return undefined;
+  const c = value as Partial<LegalConsentRecord>;
+  if (c.terms !== true || c.privacy !== true) return undefined;
+  const at = typeof c.at === 'string' && !Number.isNaN(Date.parse(c.at)) ? c.at : new Date().toISOString();
+  return { terms: true, privacy: true, at };
+}
+
 function normalizeRecord(item: unknown): PanelRecord | null {
   if (!item || typeof item !== 'object') return null;
   const it = item as Partial<PanelRecord>;
@@ -120,7 +129,12 @@ function normalizeRecord(item: unknown): PanelRecord | null {
   const activity = typeof it.activity === 'string' ? it.activity.trim().slice(0, ACTIVITY_MAX) : '';
   const note = typeof it.note === 'string' ? it.note.trim().slice(0, NOTE_MAX) : '';
   const exerciseId = typeof it.exerciseId === 'string' ? it.exerciseId : undefined;
-  return { id: it.id.slice(0, 80), date: it.date!, activity, pain, note, exerciseId };
+  // Sin esta línea el snapshot de consentimiento se perdería en cada recarga:
+  // el objeto se reconstruye y solo sobreviven los campos de arriba.
+  const consent = normalizeConsent(it.consent);
+  const record: PanelRecord = { id: it.id.slice(0, 80), date: it.date!, activity, pain, note, exerciseId };
+  if (consent) record.consent = consent;
+  return record;
 }
 
 function normalizeRecords(data: unknown): PanelRecord[] {
@@ -156,6 +170,8 @@ export const PanelPage: React.FC = () => {
 
   const [range, setRange] = useState<RangeFilter>('todos');
   const [search, setSearch] = useState<string>('');
+  const [consent, setConsent] = useState<LegalConsentState>({ terms: false, privacy: false });
+  const [consentError, setConsentError] = useState<string>('');
 
   const dateRef = useRef<HTMLInputElement>(null);
   const activityRef = useRef<HTMLInputElement>(null);
@@ -218,7 +234,13 @@ export const PanelPage: React.FC = () => {
     }
   };
 
-  const resetForm = () => {
+  /**
+   * Vacía los campos del formulario. Por defecto NO toca el acuse legal: tras
+   * guardar, quien ya lo marcó no debería tener que volver a marcarlo para el
+   * registro siguiente dentro de la misma visita. `cancelEdit` sí lo reinicia,
+   * porque entonces el formulario cambia de propósito.
+   */
+  const resetForm = (options?: { clearConsent?: boolean }) => {
     setDate(today);
     setActivity('');
     setPain(null);
@@ -229,7 +251,11 @@ export const PanelPage: React.FC = () => {
     setEditingId(null);
     setFieldErrors({});
     setFormError('');
+    setConsentError('');
+    if (options?.clearConsent) setConsent({ terms: false, privacy: false });
   };
+
+  const cancelEdit = () => resetForm({ clearConsent: true });
 
   const clearFieldError = (key: FieldName) => {
     setFieldErrors((prev) => withoutKey(prev, key));
@@ -306,16 +332,33 @@ export const PanelPage: React.FC = () => {
     event.preventDefault();
     const errors = validate();
 
-    setFieldErrors(errors);
     if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
       setFormError('Revisa los campos señalados antes de guardar.');
+      setConsentError('');
       focusFirstError(errors);
       return;
     }
+    setFieldErrors({});
     setFormError('');
+
+    // El acuse legal se valida después de los campos: un formulario vacío
+    // muestra primero sus propios errores, no los del acuse.
+    const faltan: string[] = [];
+    if (!consent.terms) faltan.push('los Términos y Condiciones de Uso');
+    if (!consent.privacy) faltan.push('la Política de Privacidad');
+    if (faltan.length > 0) {
+      setConsentError(
+        `Para guardar este registro necesitas marcar las dos casillas: has aceptado ${faltan.join(' y ')}. Cada documento se abre en una pestaña nueva para que no pierdas lo que ya escribiste.`
+      );
+      (consent.terms ? document.getElementById('panel-legal-privacy') : document.getElementById('panel-legal-terms'))?.focus();
+      return;
+    }
+    setConsentError('');
 
     const savedPain = pain as number;
     const linkedId = exerciseId || undefined;
+    const consentSnapshot: LegalConsentRecord = { terms: true, privacy: true, at: new Date().toISOString() };
 
     if (editingId) {
       const updated = records.map((rec) =>
@@ -327,6 +370,7 @@ export const PanelPage: React.FC = () => {
               pain: savedPain,
               note: note.trim(),
               exerciseId: linkedId,
+              consent: consentSnapshot,
             }
           : rec
       );
@@ -345,6 +389,7 @@ export const PanelPage: React.FC = () => {
         pain: savedPain,
         note: note.trim(),
         exerciseId: linkedId,
+        consent: consentSnapshot,
       };
       saveUpdatedRecords([...records, newRec]);
       announce(SAVED_TEXT);
@@ -370,6 +415,12 @@ export const PanelPage: React.FC = () => {
     setUnlinkNotice(false);
     setFieldErrors({});
     setFormError('');
+    setConsentError('');
+    // El acuse se refleja como quedó en el registro: si ese registro no lo
+    // tenía, editarlo obliga a volver a marcarlo.
+    setConsent(
+      record.consent ? { terms: record.consent.terms, privacy: record.consent.privacy } : { terms: false, privacy: false }
+    );
 
     const entryHeading = document.getElementById('entry-heading');
     if (entryHeading) entryHeading.focus();
@@ -746,12 +797,26 @@ export const PanelPage: React.FC = () => {
             )}
           </div>
 
+          <p className="legal-consent__error" id="panel-legal-error" role="alert">
+            {consentError}
+          </p>
+
+          <LegalConsent
+            idPrefix="panel-legal"
+            value={consent}
+            onConsentChange={(next) => {
+              setConsent(next);
+              if (next.terms && next.privacy) setConsentError('');
+            }}
+            required
+          />
+
           <div className="panel-form__acciones">
             <button type="submit" id="save-entry" className="btn panel-boton">
               {editingId ? 'Guardar cambios' : 'Guardar entrada'}
             </button>
             {editingId && (
-              <button type="button" id="cancel-edit" className="btn secondary panel-boton" onClick={resetForm}>
+              <button type="button" id="cancel-edit" className="btn secondary panel-boton" onClick={cancelEdit}>
                 Cancelar edición
               </button>
             )}
