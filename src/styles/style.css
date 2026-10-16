@@ -229,7 +229,7 @@ li + li { margin-top: var(--espacio-2); }
 .record-actions .danger { color: var(--color-sobre-primario); background: var(--color-peligro); border-color: var(--color-peligro); }
 
 #beneficios, #programas, #escoliosis, #como-funciona { width: min(100% - 2rem, var(--ancho-contenedor)); margin-inline: auto; }
-#beneficios ul, #programas, .workflow-grid { display: grid; gap: var(--espacio-5); padding-left: 0; list-style: none; }
+#beneficios ul, .workflow-grid { display: grid; gap: var(--espacio-5); padding-left: 0; list-style: none; }
 #programas > h2 { grid-column: 1 / -1; }
 #beneficios ul { margin: var(--espacio-5) 0 0; }
 #beneficios article, #programas article, .workflow-card, #escoliosis article, .container > section article { height: 100%; padding: clamp(var(--espacio-5), 3vw, var(--espacio-6)); background: var(--color-superficie); border: 1px solid var(--color-borde); border-radius: var(--radio-lg); box-shadow: var(--sombra-suave); }
@@ -251,9 +251,9 @@ li + li { margin-top: var(--espacio-2); }
 #como-funciona .section-intro { max-width: 60ch; color: var(--color-texto-suave); }
 .workflow-card { position: relative; }
 .workflow-number { display: grid; width: 2.25rem; height: 2.25rem; place-items: center; margin-bottom: var(--espacio-4); color: var(--color-sobre-primario); background: var(--color-primario); border-radius: 50%; font-weight: 850; }
-@media (min-width: 40rem) { #beneficios ul, #programas, .workflow-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 40rem) { #beneficios ul, .workflow-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (min-width: 64rem) { #beneficios ul { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-@media (min-width: 64rem) { #programas, .workflow-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 64rem) { .workflow-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 
 #programas .section-intro { max-width: 60ch; margin-top: 0; color: var(--color-texto-suave); grid-column: 1 / -1; }
 #programas .programa-card { display: flex; flex-direction: column; }
@@ -456,4 +456,79 @@ body.page-escoliosis details[open] summary::after { content: "−"; }
 #beneficios > ul > li > article .card-link {
   margin-top: auto;
   padding-top: var(--espacio-4);
+}
+
+/* --- Corrección responsive exclusiva para Programas ------------------------
+   #programas es la <section>, no la grilla: sus tarjetas viven en un <div>
+   hijo. Con `display: grid` en la section, ese div caía en la primera
+   columna (378px de 1184px a 1265px) y las tres tarjetas se apilaban en
+   ella con 1159px de alto cada una, dejando dos tercios de la fila vacíos.
+   La grilla se traslada al envoltorio real y la section vuelve a bloque. */
+/* `width` y `max-width` NO se tocan aquí: la section lleva la clase
+   .container y debe seguir midiendo lo mismo que sus vecinas. */
+#programas {
+  display: block;
+}
+
+#programas > div {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: var(--espacio-5);
+  width: 100%;
+  max-width: none;
+}
+
+/* La barra de color superior ya la dibuja article::before, con un color
+   por tipo de programa (líneas .programa-card--*). Un border-top encima se
+   solaparía y la dejaría monocroma, así que no se añade. */
+#programas article {
+  display: flex;
+  min-width: 0;
+  height: 100%;
+  flex-direction: column;
+}
+
+/* `grid-column` de h2 y .section-intro queda sin efecto al volver la
+   section a bloque; el envoltorio es ahora el único elemento de la grilla. */
+
+#programas article h3 {
+  margin: 0 0 var(--espacio-3);
+  color: var(--color-primario-oscuro);
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+#programas article p {
+  max-width: 100%;
+  margin-bottom: 0;
+  color: var(--color-texto-suave);
+  line-height: 1.6;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  flex-grow: 1;
+}
+
+#programas article a,
+#programas article .card-link {
+  display: inline-block;
+  max-width: 100%;
+  margin-top: auto;
+  padding-top: var(--espacio-4);
+  color: var(--color-primario);
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+#programas article a:hover,
+#programas article .card-link:hover {
+  color: var(--color-primario-oscuro);
+  text-decoration-thickness: 2px;
+}
+
+@media (min-width: 80rem) {
+  #programas > div {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
