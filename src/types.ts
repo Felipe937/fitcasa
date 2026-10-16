@@ -93,33 +93,45 @@ export interface QuizResult {
 }
 
 /**
- * Estado de las dos casillas de aceptación legal.
+ * Registro de decisiones sobre los documentos legales.
  *
- * Aviso sobre el alcance: este registro acredita que **la persona usuaria
- * marcó las casillas en su propio navegador**. No es una prueba fehaciente
- * frente a un tercero, porque reside en el `localStorage` que la propia persona
- * controla y puede editar o borrar en cualquier momento. Sirve para trazabilidad
- * propia, no para acreditar ante la Superintendencia.
+ * Cada documento lleva su propia versión, para pedir una decisión nueva solo
+ * cuando cambie el fondo del texto y no por retoques de maquetación.
  *
- * Sobre la regulación del art. 2 literal a de la Ley 1581 de 2012, y el art. 2
- * del Decreto 1377 de 2013, el almacenamiento estrictamente local de FitCasa
- * queda probablemente fuera del ámbito de ambos. Véase TERMINOS.md, cláusula 3.2.
+ * Sobre el valor probatorio: el registro vive en el `localStorage` que la
+ * propia persona controla, así que puede editarlo o borrarlo cuando quiera.
+ * Acredita una trazabilidad personal; no es un documento firmado ni una
+ * prueba fehaciente frente a un tercero, y el almacenamiento local no está
+ * cifrado. La clasificación normativa de estos datos —datos sensibles de
+ * salud bajo la Ley 1581 de 2012— requiere revisión jurídica: véase
+ * TERMINOS.md, cláusula 3.2.
  */
-export interface LegalConsentState {
-  terms: boolean;
-  privacy: boolean;
+
+/** Versión del contenido de cada documento. Cambia solo con cambios de fondo. */
+export const DOC_VERSIONS = {
+  terminos: '2026-10-16',
+  privacidad: '2026-10-16',
+} as const;
+
+/** Finalidad declarada de la autorización sobre datos de salud. */
+export const HEALTH_DATA_PURPOSE =
+  'Guardar en este dispositivo el dolor percibido, la nota de bienestar y la actividad que anotas, para que puedas consultarlos y editarlos tú mismo.';
+
+export interface Decision<TVersion extends string = string> {
+  accepted: true;
+  /** Fecha y hora de la decisión en ISO 8601. */
+  at: string;
+  /** Versión del documento en el momento de decidir. */
+  docVersion: TVersion;
 }
 
-/** Registro de aceptación de los documentos legales, persistido en local. */
-export interface ConsentRecord {
-  terms: true;
-  privacy: true;
-  /** Fecha y hora del acuse en ISO 8601. */
-  timestamp: string;
-  /** Versión de los documentos legales aceptados. */
-  version: string;
-  /** Cómo se obtuvo el acuse. */
-  method: string;
+export interface ConsentRegistry {
+  terms: Decision<(typeof DOC_VERSIONS)['terminos']>;
+  privacy: Decision<(typeof DOC_VERSIONS)['privacidad']>;
+  /** Autorización separada para los datos de salud, con su finalidad. */
+  health: Decision & { purpose: string };
+  /** Última modificación del registro. */
+  updatedAt: string;
 }
 
 export interface PanelRecord {

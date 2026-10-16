@@ -1,7 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Header, PageRoute } from './components/Header';
 import { Footer } from './components/Footer';
 import { TopDisclaimer } from './components/TopDisclaimer';
+import {
+  ConsentGuard,
+  ProtectedRoute,
+  loadRegistry,
+} from './components/ConsentGuard';
+import { ConsentRegistry } from './types';
 import { HomePage } from './pages/HomePage';
 import { ExercisesPage } from './pages/ExercisesPage';
 import { QuizPage } from './pages/QuizPage';
@@ -9,6 +15,12 @@ import { PanelPage } from './pages/PanelPage';
 import { ScoliosisPage } from './pages/ScoliosisPage';
 import { PrivacidadPage } from './pages/PrivacidadPage';
 import { TerminosPage } from './pages/TerminosPage';
+
+/**
+ * Rutas cuyo uso guarda datos introducidos por la persona. Requieren una
+ * decisión registrada y vigente; el resto del sitio es público.
+ */
+const PROTECTED_ROUTES: ProtectedRoute[] = ['panel', 'quiz'];
 
 function getRouteFromUrl(): { page: PageRoute; sectionId?: string } {
   const hash = window.location.hash.replace('#', '').toLowerCase();
@@ -41,11 +53,18 @@ function getRouteFromUrl(): { page: PageRoute; sectionId?: string } {
 export const App: React.FC = () => {
   const initial = getRouteFromUrl();
   const [currentPage, setCurrentPage] = useState<PageRoute>(initial.page);
+  // Registro vigente, o `null` si no hay decisión, está corrupto o quedó
+  // desactualizado respecto a la versión actual de los documentos.
+  const [registry, setRegistry] = useState<ConsentRegistry | null>(() => loadRegistry());
+
+  /** Vuelve a leer el registro: por ejemplo tras borrar los datos del sitio. */
+  const refreshConsent = useCallback(() => setRegistry(loadRegistry()), []);
 
   useEffect(() => {
     const handlePopState = () => {
       const next = getRouteFromUrl();
       setCurrentPage(next.page);
+      refreshConsent();
       if (next.sectionId) {
         setTimeout(() => {
           const el = document.getElementById(next.sectionId!);
@@ -61,7 +80,7 @@ export const App: React.FC = () => {
       window.removeEventListener('popstate', handlePopState);
       window.removeEventListener('hashchange', handlePopState);
     };
-  }, []);
+  }, [refreshConsent]);
 
   useEffect(() => {
     const titles: Record<PageRoute, string> = {
@@ -78,6 +97,7 @@ export const App: React.FC = () => {
 
   const handleNavigate = (page: PageRoute, sectionId?: string) => {
     setCurrentPage(page);
+    refreshConsent();
     if (page === 'inicio') {
       window.history.pushState(null, '', sectionId ? `#${sectionId}` : '#inicio');
       if (sectionId) {
@@ -94,6 +114,12 @@ export const App: React.FC = () => {
     }
   };
 
+  const isProtected = PROTECTED_ROUTES.includes(currentPage as ProtectedRoute);
+  const showGuard = isProtected && registry === null;
+
+  /** Rechazar no escribe ni borra nada: solo devuelve al contenido público. */
+  const handleDecline = () => handleNavigate('inicio');
+
   return (
     <div className="fitcasa-app min-h-screen flex flex-col">
       <TopDisclaimer />
@@ -102,11 +128,22 @@ export const App: React.FC = () => {
       <div className="flex-1">
         {currentPage === 'inicio' && <HomePage onNavigate={handleNavigate} />}
         {currentPage === 'ejercicios' && <ExercisesPage />}
-        {currentPage === 'quiz' && <QuizPage />}
-        {currentPage === 'panel' && <PanelPage />}
         {currentPage === 'escoliosis' && <ScoliosisPage onNavigate={handleNavigate} />}
         {currentPage === 'privacidad' && <PrivacidadPage onNavigate={handleNavigate} />}
         {currentPage === 'terminos' && <TerminosPage onNavigate={handleNavigate} />}
+        {currentPage === 'quiz' && !showGuard && (
+          <QuizPage onStorageCleared={refreshConsent} />
+        )}
+        {currentPage === 'panel' && !showGuard && (
+          <PanelPage onStorageCleared={refreshConsent} />
+        )}
+        {showGuard && (
+          <ConsentGuard
+            route={currentPage as ProtectedRoute}
+            onAccept={setRegistry}
+            onDecline={handleDecline}
+          />
+        )}
       </div>
 
       <Footer onNavigate={handleNavigate} />

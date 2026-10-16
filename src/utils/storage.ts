@@ -3,14 +3,19 @@ import { StorageResult } from '../types';
 export const STORAGE_KEYS = {
   quiz: 'fitcasa.quiz.v1',
   panel: 'fitcasa.panel.v1',
-  // Registro local de aceptación de los documentos legales. Clave propia y
-  // versionada para poder evolucionarla sin tocar el esquema del panel.
-  consent: 'fitcasa.consent.v1',
+  /**
+   * Registro de decisiones sobre los documentos legales. Clave propia y
+   * versionada: el esquema cambió en v2 para poder guardar una decisión por
+   * documento, con su versión de contenido y su fecha.
+   */
+  consent: 'fitcasa.consent.v2',
+  /** Clave del esquema anterior, solo se limpia para no dejar restos. */
+  consentLegacy: 'fitcasa.consent.v1',
 } as const;
 
 export const QUIZ_STORAGE_VERSION = 1;
 export const PANEL_STORAGE_VERSION = 1;
-export const CONSENT_STORAGE_VERSION = 1;
+export const CONSENT_STORAGE_VERSION = 2;
 
 function getStorage(): Storage | null {
   try {
@@ -64,18 +69,24 @@ export function removeAllStorage(): { available: boolean; removed: boolean } {
     storage.removeItem(STORAGE_KEYS.quiz);
     storage.removeItem(STORAGE_KEYS.panel);
     storage.removeItem(STORAGE_KEYS.consent);
+    storage.removeItem(STORAGE_KEYS.consentLegacy);
     return { available: true, removed: true };
   } catch {
     return { available: true, removed: false };
   }
 }
 
-/** Borra solo el registro de aceptación legal, sin tocar quiz ni panel. */
+/**
+ * Borra solo el registro de decisiones legales, sin tocar el historial del
+ * panel ni las respuestas del cuestionario. Rechazar una nueva versión no debe
+ * borrar datos: solo dejar de conceder acceso a las funciones protegidas.
+ */
 export function removeConsentStorage(): { available: boolean; removed: boolean } {
   const storage = getStorage();
   if (!storage) return { available: false, removed: false };
   try {
     storage.removeItem(STORAGE_KEYS.consent);
+    storage.removeItem(STORAGE_KEYS.consentLegacy);
     return { available: true, removed: true };
   } catch {
     return { available: true, removed: false };

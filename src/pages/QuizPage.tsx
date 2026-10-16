@@ -20,7 +20,9 @@ import {
   QUIZ_STORAGE_VERSION,
 } from '../utils/storage';
 
-export const QuizPage: React.FC = () => {
+export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
+  onStorageCleared,
+}) => {
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [objective, setObjective] = useState<QuizObjective | ''>('');
   const [days, setDays] = useState<QuizDays | ''>('');
@@ -157,6 +159,9 @@ export const QuizPage: React.FC = () => {
   const handleClearData = () => {
     if (!window.confirm('¿Borrar las respuestas y todos los registros guardados en este navegador?')) return;
     const res = removeAllStorage();
+    // Borrar los datos del sitio incluye la aceptación: hay que avisar a la
+    // capa superior para que vuelva a proteger estas rutas.
+    onStorageCleared?.();
     if (res.removed) {
       setObjective('');
       setDays('');

@@ -1,0 +1,251 @@
+/* --- Consent Guard --------------------------------------------------------
+   Pantalla que sustituye a la ruta protegida mientras no exista una decisión
+   registrada y vigente. Usa las variables del tema; no introduce colores ni
+   escalas propias. Reemplaza el bloque de acuse que vivía dentro del panel. */
+
+.consent-guard {
+  padding-block: var(--espacio-7) var(--espacio-8);
+}
+
+.consent-guard__titulo {
+  margin: 0 0 var(--espacio-4);
+  font-size: var(--texto-2xl);
+  line-height: var(--alto-linea-h1);
+}
+
+/* El encabezado recibe el foco al entrar: se hace visible solo al navegarlo por
+   teclado, para no dibujar un anillo de foco en la carga normal. */
+.consent-guard__titulo:focus {
+  outline: none;
+}
+.consent-guard__titulo:focus-visible {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 4px;
+}
+
+.consent-guard__intro {
+  max-width: 52ch;
+  margin: 0 0 var(--espacio-5);
+  color: var(--color-texto-suave);
+  font-size: var(--texto-lg);
+}
+
+.consent-guard__aviso {
+  display: flex;
+  gap: var(--espacio-3);
+  max-width: 60ch;
+  padding: var(--espacio-4);
+  margin-bottom: var(--espacio-5);
+  background: var(--color-fondo-aviso);
+  border: 1px solid var(--color-primario);
+  border-left-width: 4px;
+  border-radius: var(--radio-md);
+}
+.consent-guard__aviso p {
+  margin: 0;
+  line-height: var(--alto-linea);
+}
+.consent-guard__aviso svg {
+  flex: 0 0 1.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-top: 0.15rem;
+  fill: none;
+  stroke: var(--color-primario-oscuro);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.consent-guard__form {
+  display: grid;
+  gap: var(--espacio-4);
+  max-width: 62ch;
+  padding: var(--espacio-6) var(--espacio-5) var(--espacio-5);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-lg);
+  box-shadow: 0 1.5rem 3rem rgb(23 38 48 / 0.07);
+}
+
+.consent-guard__bloque {
+  padding-bottom: var(--espacio-4);
+  border-bottom: 1px solid var(--color-borde);
+}
+
+/* Casilla + texto en la misma fila, con el input y su etiqueta enlazados. La
+   fila completa es el objetivo táctil: se estira con padding. */
+.consent-guard__casilla {
+  display: grid;
+  grid-template-columns: 1.5rem 1fr;
+  gap: var(--espacio-3);
+  align-items: start;
+  padding: var(--espacio-2);
+  margin: calc(-1 * var(--espacio-2));
+  border-radius: var(--radio-sm);
+  cursor: pointer;
+}
+.consent-guard__casilla:hover {
+  background: var(--color-superficie-suave);
+}
+.consent-guard__casilla input {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 0.2rem 0 0;
+  accent-color: var(--color-primario);
+  cursor: pointer;
+}
+.consent-guard__casilla span {
+  line-height: var(--alto-linea);
+}
+
+.consent-guard__nota {
+  max-width: 56ch;
+  padding-left: 2.5rem;
+  margin: var(--espacio-1) 0 0;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-sm);
+  line-height: var(--alto-linea);
+}
+
+.consent-guard__bloque--autorizacion {
+  padding: var(--espacio-4);
+  background: var(--color-fondo-azul);
+  border: 1px solid var(--color-primario);
+  border-radius: var(--radio-md);
+}
+.consent-guard__autorizacion-titulo {
+  display: flex;
+  gap: var(--espacio-2);
+  align-items: center;
+  margin: 0 0 var(--espacio-2);
+  color: var(--color-primario-oscuro);
+  font-size: var(--texto-lg);
+  font-weight: 750;
+  line-height: var(--alto-linea-titulo);
+}
+.consent-guard__autorizacion-titulo svg {
+  flex: 0 0 1.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  fill: none;
+  stroke: var(--color-primario-oscuro);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.consent-guard__proposito {
+  margin: 0 0 var(--espacio-3);
+  font-size: var(--texto-sm);
+  line-height: var(--alto-linea);
+}
+
+.consent-guard__datos {
+  display: flex;
+  gap: var(--espacio-3);
+  padding: var(--espacio-3) var(--espacio-4);
+  background: var(--color-fondo-verde);
+  border-radius: var(--radio-md);
+}
+.consent-guard__datos p {
+  margin: 0;
+  font-size: var(--texto-sm);
+  line-height: var(--alto-linea);
+}
+.consent-guard__datos svg {
+  flex: 0 0 1.25rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.2rem;
+  fill: none;
+  stroke: var(--color-secundario-oscuro);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.consent-guard__alcance,
+.consent-guard__nota-fondo {
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-sm);
+  line-height: var(--alto-linea);
+}
+.consent-guard__nota-fondo {
+  padding-top: var(--espacio-4);
+  border-top: 1px solid var(--color-borde);
+}
+
+.consent-guard__error {
+  min-height: 1.5rem;
+  margin: 0;
+  color: var(--color-peligro);
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  line-height: var(--alto-linea);
+}
+.consent-guard__error:empty {
+  min-height: 0;
+}
+
+.consent-guard__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-3);
+}
+.consent-guard__aceptar {
+  flex: 1 1 15rem;
+  min-height: var(--alto-objetivo-tactil);
+}
+.consent-guard__volver {
+  flex: 1 1 15rem;
+  min-height: var(--alto-objetivo-tactil);
+}
+/* El botón deshabilitado no debe animarse al recibir el foco ni al pulsarse. */
+.consent-guard__aceptar:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* Enlaces a los documentos: 44 px de alto mínimo, objetivo táctil cómodo. */
+.consent-guard__casilla a {
+  display: inline-block;
+  min-height: var(--alto-objetivo-tactil);
+  padding-block: 0.6rem;
+  color: var(--color-primario-oscuro);
+  font-weight: 700;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+.consent-guard__obligatorio {
+  color: var(--color-peligro);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 34rem) {
+  .consent-guard__form {
+    padding: var(--espacio-5) var(--espacio-4);
+  }
+  .consent-guard__nota {
+    padding-left: 0;
+  }
+  .consent-guard__acciones {
+    flex-direction: column;
+  }
+  .consent-guard__aceptar,
+  .consent-guard__volver {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+}
+
+@media print {
+  /* La pantalla de acceso no aporta nada en una impression. */
+  .consent-guard__acciones {
+    display: none;
+  }
+}
