@@ -982,7 +982,9 @@ export const PanelPage: React.FC = () => {
         </p>
         <p className="small-print">
           FitCasa no ofrece exportar tus registros: no hay función de descarga ni copia de seguridad en ningún
-          servidor. <a href="#privacidad">Lee la Política de Privacidad</a> para el detalle completo.
+          servidor. <a href="#privacidad">Lee la Política de Privacidad</a> para el detalle completo, y{' '}
+          <a href="#terminos">los Términos y Condiciones</a> para las condiciones de uso y el tratamiento de tus
+          datos de bienestar según la Ley 1581 de 2012.
         </p>
 
         {!confirmClear ? (

@@ -8,6 +8,7 @@ import { QuizPage } from './pages/QuizPage';
 import { PanelPage } from './pages/PanelPage';
 import { ScoliosisPage } from './pages/ScoliosisPage';
 import { PrivacidadPage } from './pages/PrivacidadPage';
+import { TerminosPage } from './pages/TerminosPage';
 
 function getRouteFromUrl(): { page: PageRoute; sectionId?: string } {
   const hash = window.location.hash.replace('#', '').toLowerCase();
@@ -28,6 +29,9 @@ function getRouteFromUrl(): { page: PageRoute; sectionId?: string } {
   if (hash === 'privacidad' || path.endsWith('/privacidad') || path.endsWith('/privacidad.html')) {
     return { page: 'privacidad' };
   }
+  if (hash === 'terminos' || path.endsWith('/terminos') || path.endsWith('/terminos.html')) {
+    return { page: 'terminos' };
+  }
   if (hash === 'beneficios' || hash === 'programas' || hash === 'como-funciona') {
     return { page: 'inicio', sectionId: hash };
   }
@@ -47,6 +51,8 @@ export const App: React.FC = () => {
           const el = document.getElementById(next.sectionId!);
           if (el) el.scrollIntoView({ behavior: 'smooth' });
         }, 50);
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     };
     window.addEventListener('popstate', handlePopState);
@@ -65,6 +71,7 @@ export const App: React.FC = () => {
       panel: 'FitCasa – Panel de seguimiento',
       escoliosis: 'FitCasa – Información sobre escoliosis y ejercicio',
       privacidad: 'FitCasa – Política de Privacidad',
+      terminos: 'Términos y Condiciones | FitCasa',
     };
     document.title = titles[currentPage] || titles.inicio;
   }, [currentPage]);
@@ -99,6 +106,7 @@ export const App: React.FC = () => {
         {currentPage === 'panel' && <PanelPage />}
         {currentPage === 'escoliosis' && <ScoliosisPage onNavigate={handleNavigate} />}
         {currentPage === 'privacidad' && <PrivacidadPage onNavigate={handleNavigate} />}
+        {currentPage === 'terminos' && <TerminosPage onNavigate={handleNavigate} />}
       </div>
 
       <Footer onNavigate={handleNavigate} />

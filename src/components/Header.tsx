@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 
-export type PageRoute = 'inicio' | 'ejercicios' | 'quiz' | 'panel' | 'escoliosis' | 'privacidad';
+export type PageRoute =
+  | 'inicio'
+  | 'ejercicios'
+  | 'quiz'
+  | 'panel'
+  | 'escoliosis'
+  | 'privacidad'
+  | 'terminos';
 
 interface HeaderProps {
   currentPage: PageRoute;
