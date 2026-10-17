@@ -363,69 +363,128 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
       </section>
 {/* Escoliosis */}
       <section id="escoliosis" aria-labelledby="titulo-escoliosis" tabIndex={-1} className="container seccion">
-        <h2 id="titulo-escoliosis">Cuidado postural y enfoque en escoliosis</h2>
-        <div className="escoliosis-grid">
-          {/* Columna narrativa: lectura, aviso clinico y llamada a la accion. */}
-          <div className="escoliosis-texto">
-            <p className="escoliosis-insignia">
-              <span className="escoliosis-insignia__punto" aria-hidden="true" />
-              Enfoque postural consciente
-            </p>
-            <h3>Comprensión y respeto hacia cada columna vertebral</h3>
-            <p>
-              La escoliosis implica curvas y rotaciones tridimensionales que varían en cada persona.
-              No existen rutinas universales ni ejercicios estándar válidos para todas las curvaturas.
-            </p>
-            <p>
-              En FitCasa brindamos pautas divulgativas sobre higiene postural, estiramientos suaves y
-              activación muscular equilibrada, diseñadas para acompañar tu bienestar cotidiano.
-            </p>
-            <div className="escoliosis-aviso" role="note" aria-labelledby="escoliosis-aviso-titulo">
-              <svg className="escoliosis-aviso__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path d="M12 3.5 19 6v5c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6Z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-                <path d="M12 8.5v4.2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                <path d="M12 15.8h.01" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+        <div className="escoliosis-card">
+          <div className="escoliosis-grid">
+            {/* Columna principal: cabecera editorial, lectura, aviso y acciones. */}
+            <div className="escoliosis-texto">
+              <header className="escoliosis-cabecera">
+                <p className="escoliosis-insignia">
+                  <span className="escoliosis-insignia__punto" aria-hidden="true" />
+                  Enfoque postural consciente
+                </p>
+                <h2 id="titulo-escoliosis">Cuidado postural y enfoque en escoliosis</h2>
+                {/* Se mantiene como h3 y no como parrafo: visualmente es un
+                    subtitulo, pero para quien navega por titulos sigue siendo
+                    un tema real de la seccion. */}
+                <h3 className="escoliosis-subtitulo">
+                  Comprensión y respeto hacia cada columna vertebral
+                </h3>
+              </header>
+
+              <div className="escoliosis-cuerpo">
+                <p>
+                  La escoliosis implica curvas y rotaciones tridimensionales que varían en cada
+                  persona. No existen rutinas universales ni ejercicios estándar válidos para todas
+                  las curvaturas.
+                </p>
+                <p>
+                  En FitCasa brindamos pautas divulgativas sobre higiene postural, estiramientos
+                  suaves y activación muscular equilibrada, diseñadas para acompañar tu bienestar
+                  cotidiano.
+                </p>
+              </div>
+
+              {/* Aviso clinico. Se nombra con aria-labelledby y NO con aria-label:
+                  un aria-label sustituiria el texto visible por su nombre accesible y
+                  un lector de pantalla anunciaria solo el titulo, saltandose los
+                  282 caracteres del aviso. */}
+              <div
+                className="escoliosis-aviso"
+                role="note"
+                aria-labelledby="escoliosis-aviso-titulo"
+              >
+                <svg
+                  className="escoliosis-aviso__icono"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <path d="M12 3.5 19 6v5c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6Z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+                  <path d="M12 8.5v4.2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                  <path d="M12 15.8h.01" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+                </svg>
+                <p className="escoliosis-aviso__cuerpo">
+                  <strong id="escoliosis-aviso-titulo">Aviso esencial de salud:</strong> Nuestros
+                  contenidos tienen un propósito exclusivamente formativo y no constituyen
+                  tratamiento médico ni correctivo. Consulta siempre con tu traumatólogo o
+                  fisioterapeuta antes de comenzar, y suspende de inmediato la actividad si
+                  experimentas dolor punzante, adormecimiento o mareos.
+                </p>
+              </div>
+
+              <div className="escoliosis-acciones">
+                <a href="#escoliosis" className="btn" onClick={ir('escoliosis')}>
+                  Leer guía completa de escoliosis
+                </a>
+                <a href="#ejercicios" className="escoliosis-acciones__secundario" onClick={ir('ejercicios')}>
+                  Ver ejercicios de cuidado postural
+                </a>
+              </div>
+            </div>
+
+            {/* Columna visual: curva punteada, trazos cinematicos y puntos nodales.
+                Decorativa entera: sin siluetas anatomicas ni radiografias. */}
+            <div className="escoliosis-visual">
+              <svg
+                className="escoliosis-arte"
+                viewBox="0 0 400 470"
+                fill="none"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <circle cx="200" cy="235" r="150" fill="var(--color-superficie)" opacity="0.5" />
+                <path
+                  d="M116 150C216 86 320 186 258 302 200 410 84 336 116 150Z"
+                  fill="var(--color-secundario)"
+                  opacity="0.1"
+                />
+                {/* Curva de alineacion: punteada, nunca solida ni patologica. */}
+                <path
+                  d="M200 74C172 142 240 212 192 282 152 342 222 392 200 430"
+                  stroke="var(--color-primario)"
+                  strokeWidth="3.5"
+                  strokeLinecap="round"
+                  strokeDasharray="8 7"
+                  opacity="0.8"
+                />
+                <path
+                  d="M160 116C246 166 152 252 240 332"
+                  stroke="var(--color-secundario-oscuro)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  opacity="0.42"
+                />
+                <path
+                  d="M220 168C152 218 232 292 172 378"
+                  stroke="var(--color-terciario-oscuro)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  opacity="0.38"
+                />
+                {/* Puntos nodales de equilibrio. */}
+                <g className="escoliosis-nodos">
+                  <circle cx="200" cy="74" r="6" fill="var(--color-primario)" />
+                  <circle cx="181" cy="150" r="4.5" fill="var(--color-secundario-oscuro)" />
+                  <circle cx="214" cy="236" r="5.5" fill="var(--color-primario-oscuro)" />
+                  <circle cx="178" cy="314" r="4.5" fill="var(--color-terciario-oscuro)" />
+                  <circle cx="200" cy="430" r="6" fill="var(--color-primario)" />
+                </g>
               </svg>
-              <p className="escoliosis-aviso__cuerpo">
-                <strong id="escoliosis-aviso-titulo">Aviso esencial de salud:</strong> Nuestros
-                contenidos tienen un propósito exclusivamente formativo y no constituyen tratamiento
-                médico ni correctivo. Consulta siempre con tu traumatólogo o fisioterapeuta antes de
-                comenzar, y suspende de inmediato la actividad si experimentas dolor punzante,
-                adormecimiento o mareos.
+              <p className="escoliosis-ficha">
+                <strong>Cada columna es tridimensional y única.</strong>
+                <span>Sin fórmulas universales.</span>
               </p>
             </div>
-            <p className="escoliosis-acciones">
-              <a href="#escoliosis" className="btn" onClick={ir('escoliosis')}>
-                Leer guía completa de escoliosis
-              </a>
-            </p>
-          </div>
-
-          {/* Columna visual: arcos armonicos. Sin siluetas ni radiografias, y
-              decorativo para los lectores de pantalla. */}
-          <div className="escoliosis-visual">
-            <svg
-              className="escoliosis-motivo"
-              viewBox="0 0 320 340"
-              preserveAspectRatio="xMidYMid meet"
-              aria-hidden="true"
-              focusable="false"
-            >
-              <circle cx="160" cy="160" r="152" fill="var(--color-superficie)" opacity="0.55" />
-              <g fill="none" stroke="var(--color-secundario)" strokeLinecap="round">
-                <path d="M36 244c34-88 74-88 108 0s74 88 140 0" strokeWidth="3" opacity="0.5" />
-                <path d="M58 214c32-80 70-80 100 0s68 80 132 0" strokeWidth="3" opacity="0.34" />
-                <path d="M82 186c28-70 64-70 90 0s62 70 124 0" strokeWidth="3" opacity="0.2" />
-              </g>
-              <g fill="none" stroke="var(--color-primario)" strokeWidth="3" strokeLinecap="round">
-                <path d="M118 118c28-56 60-56 86 0" opacity="0.34" />
-              </g>
-              <circle cx="160" cy="70" r="6" fill="var(--color-secundario)" opacity="0.55" />
-            </svg>
-            <p className="escoliosis-ficha">
-              <strong>Cada columna es tridimensional y única.</strong>
-              <span>Sin fórmulas universales.</span>
-            </p>
           </div>
         </div>
       </section>
