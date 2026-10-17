@@ -1,0 +1,956 @@
+/* ==========================================================================
+   FitCasa — Guía editorial de escoliosis (ScoliosisPage)
+   Estilos BEM, mobile-first, sin dependencias externas, sin estilos inline.
+   Variables del tema: --color-*, --espacio-*, --radio-*, --texto-*, --alto-*
+   ========================================================================== */
+
+/* ---- Contenedor raíz de la página --------------------------------------- */
+.scoliosis-page {
+  --scoliosis-ancho-indice-min: 12rem;
+  --scoliosis-ancho-indice-max: 15rem;
+  --scoliosis-ancho-texto: 68ch;
+  --scoliosis-desplazamiento-ancla: 5rem;
+  --scoliosis-duracion-entrada: 240ms;
+}
+
+.scoliosis-page .container > section article,
+.scoliosis-page .scoliosis-contenido > section article {
+  height: auto;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.scoliosis-page .container > section article:hover,
+.scoliosis-page .scoliosis-contenido > section article:hover {
+  border-color: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+.scoliosis-page .scoliosis-contenido > section {
+  padding-block: var(--espacio-6);
+}
+
+.scoliosis-page .scoliosis-contenido > section + section {
+  border-top: 1px solid var(--color-borde);
+}
+
+.scoliosis-page .scoliosis-contenido li + li {
+  margin-top: var(--espacio-3);
+}
+
+/* ---- Hero editorial ------------------------------------------------------- */
+.scoliosis-hero {
+  padding-block: clamp(var(--espacio-5), 5vw, var(--espacio-7));
+  background: var(--color-fondo-azul);
+}
+
+.scoliosis-hero__contenido {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+  align-items: flex-start;
+}
+
+@media (min-width: 64rem) {
+  .scoliosis-hero__contenido {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--espacio-8);
+  }
+}
+
+.scoliosis-hero__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-1) var(--espacio-3);
+  font-size: var(--texto-xs);
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-secundario-oscuro);
+  background: var(--color-fondo-verde);
+  border: 1px solid var(--color-secundario);
+  border-radius: var(--radio-pill);
+}
+
+.scoliosis-hero__titulo {
+  margin: 0;
+  font-size: clamp(var(--guia-hero-min), var(--guia-hero-min) + var(--guia-hero-fluido), var(--guia-hero-max));
+  line-height: var(--alto-linea-titulo);
+  color: var(--color-primario-oscuro);
+  max-width: var(--ancho-titulo-guia);
+  text-wrap: balance;
+}
+
+.scoliosis-hero__apertura {
+  margin: 0;
+  max-width: 60ch;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-lg);
+  line-height: var(--alto-linea);
+}
+
+.scoliosis-hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espacio-3);
+}
+
+.scoliosis-hero__meta-item {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-1);
+  color: var(--color-texto-suave);
+  font-size: var(--texto-sm);
+}
+
+.scoliosis-hero__etiqueta {
+  color: var(--color-texto-suave);
+}
+
+.scoliosis-hero__valor {
+  color: var(--color-texto);
+  font-weight: 700;
+}
+
+.scoliosis-hero__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+  margin-top: var(--espacio-2);
+}
+
+.scoliosis-hero__btn-imprimir,
+.scoliosis-hero__btn-copiar {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  min-height: var(--alto-objetivo-tactil);
+  padding: var(--espacio-2) var(--espacio-4);
+  border-radius: var(--radio-md);
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color var(--duracion-corta) ease, border-color var(--duracion-corta) ease, color var(--duracion-corta) ease;
+}
+
+.scoliosis-hero__btn-imprimir {
+  background: var(--color-primario);
+  color: var(--color-sobre-primario);
+  border: 1px solid var(--color-primario);
+}
+
+.scoliosis-hero__btn-imprimir:hover {
+  background: var(--color-primario-oscuro);
+  border-color: var(--color-primario-oscuro);
+}
+
+.scoliosis-hero__btn-copiar {
+  background: transparent;
+  color: var(--color-texto);
+  border: 1px solid var(--color-borde);
+}
+
+.scoliosis-hero__btn-copiar:hover {
+  border-color: var(--color-primario);
+  color: var(--color-primario-oscuro);
+}
+
+.scoliosis-hero__btn-imprimir svg,
+.scoliosis-hero__btn-copiar svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.scoliosis-hero__ilustracion {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 26rem;
+  aspect-ratio: 1;
+  margin-top: var(--espacio-6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 64rem) {
+  .scoliosis-hero__ilustracion {
+    margin-top: 0;
+    flex-shrink: 0;
+    width: 22rem;
+    max-width: none;
+  }
+}
+
+.scoliosis-hero__ilustracion svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ---- Tríptico «Lo esencial» ---------------------------------------------- */
+.scoliosis-esencial {
+  padding: var(--espacio-5);
+  margin: var(--espacio-6) 0;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-left: 0.35rem solid var(--color-secundario);
+  border-radius: var(--radio-md);
+}
+
+.scoliosis-esencial h2 {
+  margin: 0 0 var(--espacio-5);
+  font-size: var(--texto-lg);
+  font-weight: 800;
+  color: var(--color-primario-oscuro);
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+}
+
+.scoliosis-esencial__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--espacio-4);
+}
+
+@media (min-width: 48rem) {
+  .scoliosis-esencial__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.scoliosis-esencial__tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+  padding: var(--espacio-4);
+  background: var(--color-fondo-verde);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+  border-top: 0.35rem solid var(--color-secundario);
+}
+
+.scoliosis-esencial__cabecera {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+}
+
+.scoliosis-esencial__numero {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: var(--color-secundario-oscuro);
+  color: var(--color-sobre-primario);
+  font-size: var(--texto-lg);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.scoliosis-esencial__icono {
+  width: 1.75rem;
+  height: 1.75rem;
+  flex-shrink: 0;
+  fill: none;
+  stroke: var(--color-secundario-oscuro);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.scoliosis-esencial__titulo {
+  margin: 0;
+  font-size: var(--texto-sm);
+  font-weight: 800;
+  color: var(--color-primario-oscuro);
+  line-height: var(--alto-linea-titulo);
+}
+
+.scoliosis-esencial__texto {
+  margin: 0;
+  font-size: var(--texto-sm);
+  color: var(--color-texto-suave);
+  line-height: var(--alto-linea);
+}
+
+/* ---- Botón índice móvil --------------------------------------------------- */
+.scoliosis-toc-toggle {
+  display: none;
+  width: 100%;
+  min-height: var(--alto-objetivo-tactil);
+  padding: var(--espacio-3) var(--espacio-4);
+  border-radius: var(--radio-md);
+  border: 1px solid var(--color-borde);
+  background: var(--color-superficie);
+  color: var(--color-texto);
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color var(--duracion-corta) ease, background-color var(--duracion-corta) ease;
+}
+
+.scoliosis-toc-toggle:hover {
+  border-color: var(--color-primario);
+  background: var(--color-fondo-azul);
+}
+
+@media (max-width: 63.99rem) {
+  .scoliosis-toc-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: var(--espacio-5);
+  }
+}
+
+/* ---- Retícula principal (TOC lateral + contenido) ------------------------- */
+.scoliosis-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--espacio-6);
+  margin-top: var(--espacio-6);
+}
+
+@media (min-width: 64rem) {
+  .scoliosis-layout {
+    grid-template-columns: minmax(var(--scoliosis-ancho-indice-min), var(--scoliosis-ancho-indice-max)) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+/* ---- Índice de contenidos ------------------------------------------------- */
+.scoliosis-toc {
+  margin-top: 0;
+  padding: var(--espacio-4);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+}
+
+.scoliosis-toc__titulo {
+  margin: 0 0 var(--espacio-3);
+  font-weight: 800;
+  font-size: var(--texto-sm);
+  color: var(--color-primario-oscuro);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.scoliosis-toc__lista {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+}
+
+.scoliosis-toc__enlace {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2) var(--espacio-3);
+  min-height: var(--alto-objetivo-tactil);
+  color: var(--color-texto-suave);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: var(--texto-sm);
+  border-radius: var(--radio-sm);
+  transition: color var(--duracion-corta) ease, background-color var(--duracion-corta) ease, box-shadow var(--duracion-corta) ease;
+}
+
+.scoliosis-toc__enlace:hover {
+  color: var(--color-primario-oscuro);
+  background: var(--color-fondo-azul);
+}
+
+.scoliosis-toc__enlace[aria-current="location"] {
+  color: var(--color-primario-oscuro);
+  font-weight: 800;
+  box-shadow: inset 0.25rem 0 0 var(--color-primario);
+  padding-left: calc(var(--espacio-3) - 0.25rem);
+}
+
+/* Escritorio: panel adhesivo */
+@media (min-width: 64rem) {
+  .scoliosis-toc {
+    position: sticky;
+    top: var(--scoliosis-desplazamiento-ancla);
+    margin-top: 0;
+    align-self: start;
+  }
+}
+
+/* Móvil: despliegue controlado por React */
+.scoliosis-toc__lista {
+  display: none;
+}
+
+.scoliosis-toc--abierto .scoliosis-toc__lista {
+  display: flex;
+}
+
+@media (min-width: 64rem) {
+  .scoliosis-toc__lista {
+    display: flex;
+  }
+}
+
+/* ---- Columna de lectura --------------------------------------------------- */
+.scoliosis-contenido {
+  max-width: var(--scoliosis-ancho-texto);
+  min-width: 0;
+}
+
+@media (min-width: 64rem) {
+  .scoliosis-contenido {
+    max-width: var(--scoliosis-ancho-texto);
+  }
+}
+
+/* ---- Enlaces de ancla ----------------------------------------------------- */
+.scoliosis-ancla {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--alto-objetivo-tactil);
+  min-height: var(--alto-objetivo-tactil);
+  opacity: 0;
+  text-decoration: none;
+  color: var(--color-texto-suave);
+}
+
+.scoliosis-ancla svg {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+h2:hover .scoliosis-ancla,
+.scoliosis-ancla:focus-visible {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .scoliosis-ancla {
+    opacity: 0.65;
+  }
+}
+
+/* ---- Cuadrícula de tipos de escoliosis ------------------------------------ */
+.scoliosis-tipos {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--espacio-4);
+  margin: var(--espacio-6) 0;
+}
+
+@media (min-width: 48rem) {
+  .scoliosis-tipos {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.scoliosis-tipo {
+  padding: var(--espacio-5);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+}
+
+.scoliosis-tipo__insignia {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-1);
+  padding: var(--espacio-1) var(--espacio-2);
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  color: var(--color-secundario-oscuro);
+  background: var(--color-fondo-verde);
+  border: 1px solid var(--color-secundario);
+  border-radius: var(--radio-pill);
+}
+
+.scoliosis-tipo__titulo {
+  margin: 0;
+  font-size: var(--texto-lg);
+  font-weight: 800;
+  color: var(--color-primario-oscuro);
+  line-height: var(--alto-linea-titulo);
+}
+
+.scoliosis-tipo__texto {
+  margin: 0;
+  font-size: var(--texto-base);
+  color: var(--color-texto-suave);
+  line-height: var(--alto-linea);
+}
+
+/* ---- Tabla de evidencia científica --------------------------------------- */
+.scoliosis-tabla-evidencia {
+  width: 100%;
+  margin: var(--espacio-6) 0;
+  border-collapse: collapse;
+  font-size: var(--texto-sm);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+  overflow: hidden;
+}
+
+.scoliosis-tabla-evidencia caption {
+  caption-side: top;
+  text-align: left;
+  padding: var(--espacio-4);
+  margin: 0;
+  background: var(--color-fondo-azul);
+  color: var(--color-primario-oscuro);
+  font-size: var(--texto-lg);
+  font-weight: 800;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.scoliosis-tabla-evidencia th,
+.scoliosis-tabla-evidencia td {
+  padding: var(--espacio-3) var(--espacio-4);
+  border-bottom: 1px solid var(--color-borde);
+  text-align: left;
+  vertical-align: top;
+}
+
+.scoliosis-tabla-evidencia th {
+  background: var(--color-fondo-azul);
+  color: var(--color-primario-oscuro);
+  font-weight: 800;
+  font-size: var(--texto-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.scoliosis-tabla-evidencia tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.scoliosis-tabla-evidencia tr:hover {
+  background: var(--color-fondo-verde);
+}
+
+.scoliosis-etiqueta-sesgo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-1);
+  padding: var(--espacio-1) var(--espacio-2);
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  color: var(--color-terciario-oscuro);
+  background: var(--color-fondo-aviso);
+  border: 1px solid var(--color-foco);
+  border-radius: var(--radio-pill);
+}
+
+/* Móvil: tarjetas semánticas con data-label */
+@media (max-width: 47.99rem) {
+  .scoliosis-tabla-evidencia thead {
+    display: none;
+  }
+
+  .scoliosis-tabla-evidencia tbody tr {
+    display: block;
+    margin-bottom: var(--espacio-4);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-md);
+    overflow: hidden;
+  }
+
+  .scoliosis-tabla-evidencia tbody tr td {
+    display: block;
+    border: 0;
+    border-top: 1px solid var(--color-borde);
+    padding: var(--espacio-3) var(--espacio-4);
+  }
+
+  .scoliosis-tabla-evidencia tbody tr td:first-child {
+    border-top: 0;
+  }
+
+  .scoliosis-tabla-evidencia td::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: var(--espacio-1);
+    color: var(--color-primario-oscuro);
+    font-weight: 800;
+    font-size: var(--texto-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+}
+
+/* ---- Avisos sanitarios ---------------------------------------------------- */
+.scoliosis-notice-warn,
+.scoliosis-notice-urgent {
+  padding: var(--espacio-4);
+  margin: var(--espacio-5) 0;
+  border-radius: var(--radio-md);
+  border: 1px solid transparent;
+  line-height: var(--alto-linea);
+}
+
+.scoliosis-notice-warn {
+  background: var(--color-fondo-aviso);
+  border-color: var(--color-terciario-oscuro);
+  border-left-width: 0.35rem;
+  border-left-style: solid;
+  color: var(--color-texto);
+}
+
+.scoliosis-notice-urgent {
+  background: var(--color-fondo-alerta);
+  border-color: var(--color-peligro);
+  border-left-width: 0.35rem;
+  border-left-style: solid;
+  color: var(--color-texto);
+}
+
+.scoliosis-notice__header {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  margin-bottom: var(--espacio-2);
+}
+
+.scoliosis-notice__icono {
+  width: 1.75rem;
+  height: 1.75rem;
+  flex-shrink: 0;
+  fill: none;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.scoliosis-notice-warn .scoliosis-notice__icono {
+  stroke: var(--color-terciario-oscuro);
+}
+
+.scoliosis-notice-urgent .scoliosis-notice__icono {
+  stroke: var(--color-peligro);
+}
+
+.scoliosis-notice__titulo {
+  margin: 0;
+  font-size: var(--texto-lg);
+  font-weight: 800;
+}
+
+.scoliosis-notice-warn .scoliosis-notice__titulo {
+  color: var(--color-terciario-oscuro);
+}
+
+.scoliosis-notice-urgent .scoliosis-notice__titulo {
+  color: var(--color-peligro);
+}
+
+.scoliosis-notice__texto {
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-base);
+}
+
+.scoliosis-notice-urgent p {
+  color: var(--color-texto);
+}
+
+/* ---- Preguntas frecuentes ------------------------------------------------- */
+.scoliosis-faq details {
+  margin-bottom: var(--espacio-4);
+  padding: var(--espacio-4);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+  transition: border-color var(--duracion-corta) ease, background-color var(--duracion-corta) ease, box-shadow var(--duracion-corta) ease;
+}
+
+.scoliosis-faq details[open] {
+  background: var(--color-fondo-azul);
+  border-color: var(--color-primario);
+  box-shadow: 0 0.5rem 1.25rem rgba(23, 62, 80, 0.06);
+}
+
+.scoliosis-faq summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-3);
+  padding: 0;
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--color-primario-oscuro);
+  font-size: var(--texto-base);
+}
+
+.scoliosis-faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.scoliosis-faq summary::marker {
+  content: "";
+}
+
+.scoliosis-faq summary::after {
+  content: "+";
+  margin-left: auto;
+  flex: none;
+  color: var(--color-primario);
+  font-weight: 800;
+  font-size: var(--texto-xl);
+  line-height: 1;
+}
+
+.scoliosis-faq details[open] summary::after {
+  content: "−";
+}
+
+.scoliosis-faq summary:focus-visible {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 2px;
+  border-radius: var(--radio-sm);
+}
+
+.scoliosis-faq p {
+  margin: var(--espacio-3) 0 0;
+  color: var(--color-texto-suave);
+  line-height: var(--alto-linea);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scoliosis-faq details {
+    transition: none;
+  }
+  .scoliosis-faq summary::after {
+    transition: none;
+  }
+  .scoliosis-faq details[open] summary::after {
+    transform: none;
+  }
+}
+
+/* ---- Kit para tu consulta médica ------------------------------------------ */
+.scoliosis-checklist {
+  padding: var(--espacio-5);
+  margin: var(--espacio-6) 0;
+  background: var(--color-fondo-verde);
+  border: 1px solid var(--color-borde);
+  border-left: 0.35rem solid var(--color-secundario);
+  border-radius: var(--radio-md);
+}
+
+.scoliosis-checklist h3 {
+  margin: 0 0 var(--espacio-4);
+  font-size: var(--texto-lg);
+  font-weight: 800;
+  color: var(--color-primario-oscuro);
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+}
+
+.scoliosis-checklist__lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--espacio-3);
+}
+
+.scoliosis-checklist__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espacio-3);
+  padding: var(--espacio-3);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-sm);
+}
+
+.scoliosis-checklist__casilla {
+  flex: 0 0 1.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-top: 0.1rem;
+  accent-color: var(--color-primario);
+  cursor: pointer;
+}
+
+.scoliosis-checklist__texto {
+  margin: 0;
+  color: var(--color-texto);
+  font-size: var(--texto-base);
+  line-height: var(--alto-linea);
+}
+
+.scoliosis-checklist__accion {
+  margin-top: var(--espacio-5);
+  display: flex;
+  gap: var(--espacio-3);
+}
+
+.scoliosis-checklist__btn-copiar {
+  min-height: var(--alto-objetivo-tactil);
+  padding: var(--espacio-2) var(--espacio-4);
+  border-radius: var(--radio-md);
+  border: 1px solid var(--color-borde);
+  background: var(--color-superficie);
+  color: var(--color-texto);
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color var(--duracion-corta) ease, background-color var(--duracion-corta) ease, color var(--duracion-corta) ease;
+}
+
+.scoliosis-checklist__btn-copiar:hover {
+  border-color: var(--color-primario);
+  background: var(--color-fondo-azul);
+  color: var(--color-primario-oscuro);
+}
+
+.scoliosis-checklist__confirmacion {
+  margin-top: var(--espacio-3);
+  font-size: var(--texto-sm);
+  color: var(--color-secundario-oscuro);
+  font-weight: 700;
+}
+
+/* ---- Referencias ---------------------------------------------------------- */
+.scoliosis-refs li {
+  padding-left: var(--espacio-3);
+  text-indent: calc(var(--espacio-3) * -1);
+  margin-bottom: var(--espacio-2);
+  font-size: var(--texto-sm);
+  line-height: var(--alto-linea);
+}
+
+.scoliosis-refs li:target {
+  background: var(--color-fondo-aviso);
+  border-radius: var(--radio-sm);
+  padding: var(--espacio-2);
+}
+
+/* ---- Aviso legal ---------------------------------------------------------- */
+.scoliosis-aviso-legal {
+  padding: var(--espacio-5);
+  margin: var(--espacio-6) 0;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+  font-size: var(--texto-sm);
+  color: var(--color-texto-suave);
+  line-height: var(--alto-linea);
+}
+
+.scoliosis-aviso-legal p {
+  margin: 0;
+}
+
+/* ---- Impresión ------------------------------------------------------------ */
+@media print {
+  .scoliosis-page {
+    color: CanvasText;
+    background: Canvas;
+  }
+
+  .scoliosis-page a {
+    color: CanvasText;
+  }
+
+  .scoliosis-hero,
+  .scoliosis-toc-toggle,
+  .scoliosis-toc,
+  .scoliosis-layout {
+    display: block;
+  }
+
+  .scoliosis-hero__acciones,
+  .scoliosis-toc-toggle,
+  .scoliosis-toc,
+  .scoliosis-checklist__accion,
+  .scoliosis-checklist__casilla {
+    display: none;
+  }
+
+  .scoliosis-contenido > section > article {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .scoliosis-h2,
+  .scoliosis-h3,
+  .scoliosis-notice-warn,
+  .scoliosis-notice-urgent,
+  .scoliosis-tabla-evidencia tr,
+  .scoliosis-faq details {
+    break-inside: avoid;
+  }
+
+  .scoliosis-tabla-evidencia a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: var(--texto-xs);
+    color: #000;
+  }
+
+  .scoliosis-faq details[open] summary::after {
+    content: "";
+  }
+
+  .scoliosis-esencial__tarjeta,
+  .scoliosis-tipo,
+  .scoliosis-tabla-evidencia,
+  .scoliosis-notice-warn,
+  .scoliosis-notice-urgent,
+  .scoliosis-checklist,
+  .scoliosis-faq details {
+    break-inside: avoid;
+    border-color: #000;
+    background: #fff !important;
+    color: #000 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* ---- Forced colors -------------------------------------------------------- */
+@media (forced-colors: active) {
+  .scoliosis-toc,
+  .scoliosis-tabla-evidencia th,
+  .scoliosis-tabla-evidencia td,
+  .scoliosis-faq details,
+  .scoliosis-notice-warn,
+  .scoliosis-notice-urgent {
+    border: 1px solid CanvasText;
+  }
+  .scoliosis-ancla {
+    opacity: 1;
+  }
+}
