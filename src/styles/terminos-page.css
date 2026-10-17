@@ -1,8 +1,8 @@
-/* Términos y Condiciones: hoja de estilos exclusiva de TerminosPage.tsx.
-   Todo queda bajo el prefijo .terminos y usa tokens ya existentes del
-   proyecto, de modo que ninguna regla alcanza a otra pantalla.
-   --terminos-borde-control sustituye a --color-borde en los elementos
-   interactivos porque #7f949c alcanza 3.17:1 sobre blanco (WCAG 1.4.11). */
+/* ==========================================================================
+   FitCasa — Términos y Condiciones de Uso (TerminosPage)
+   Rediseño editorial: transparencia, gobernanza de datos y privacidad por diseño.
+   Todo queda bajo el prefijo .terminos y usa tokens ya existentes del proyecto.
+   ========================================================================== */
 
 main.terminos {
   --terminos-borde-control: #7f949c;
@@ -14,8 +14,10 @@ main.terminos > section {
   padding-block: var(--espacio-6);
 }
 
-/* style.css aplica `nav { display: flex; align-items: center }` al encabezado,
-   pero alcanza a todo <nav>. Aquí se restablece el flujo de bloque. */
+/* ==========================================================================
+   Cabecera protagonista
+   ========================================================================== */
+
 .terminos__cabecera {
   display: block;
   padding-block: clamp(var(--espacio-6), 6vw, var(--espacio-8)) var(--espacio-5);
@@ -24,19 +26,46 @@ main.terminos > section {
   border-bottom: 1px solid var(--color-borde);
 }
 
+.terminos__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-1) var(--espacio-3);
+  margin-bottom: var(--espacio-4);
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-secundario-oscuro);
+  background: var(--color-fondo-verde);
+  border: 1px solid var(--color-secundario);
+  border-radius: var(--radio-pill);
+}
+
+.terminos__chip::before {
+  width: 0.5rem;
+  height: 0.5rem;
+  content: "";
+  background: var(--color-secundario);
+  border-radius: 50%;
+}
+
 .terminos__titulo {
   max-width: 22ch;
   margin: 0 0 var(--espacio-3);
   font-size: var(--texto-2xl);
   line-height: var(--alto-linea-titulo);
-  letter-spacing: -0.03em;
+  color: var(--color-primario-oscuro);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 
 .terminos__intro {
-  max-width: 62ch;
-  margin: 0 0 var(--espacio-4);
+  max-width: 56ch;
+  margin: 0 0 var(--espacio-5);
   color: var(--color-texto);
   font-size: var(--texto-lg);
+  line-height: var(--alto-linea);
 }
 
 .terminos__meta {
@@ -72,13 +101,180 @@ main.terminos > section {
   stroke-linejoin: round;
 }
 
-/* --------------------------------------------------------------- Avisos */
+/* ==========================================================================
+   Layout: índice + contenido
+   ========================================================================== */
+
+.terminos__layout {
+  display: grid;
+  gap: var(--espacio-6);
+  margin-top: var(--espacio-6);
+}
+
+@media (min-width: 64rem) {
+  .terminos__layout {
+    grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+/* ==========================================================================
+   Índice de cláusulas
+   ========================================================================== */
+
+.terminos__indice {
+  display: block;
+  padding: var(--espacio-4);
+  margin: 0 0 var(--espacio-6);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+  box-shadow: var(--sombra-suave);
+}
+
+.terminos__indice__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-3);
+  margin-bottom: var(--espacio-3);
+  flex-wrap: wrap;
+}
+
+.terminos__indice h2 {
+  margin: 0;
+  font-size: var(--texto-lg);
+  color: var(--color-primario-oscuro);
+}
+
+.terminos__indice__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  min-height: var(--alto-objetivo-tactil);
+  padding: var(--espacio-2) var(--espacio-4);
+  border: 1px solid var(--color-borde);
+  background: var(--color-superficie);
+  color: var(--color-texto);
+  font-weight: 700;
+  font-size: var(--texto-sm);
+  border-radius: var(--radio-md);
+  cursor: pointer;
+  transition: border-color var(--terminos-duracion) ease, background-color var(--terminos-duracion) ease;
+}
+
+.terminos__indice__toggle:hover {
+  border-color: var(--color-primario);
+  background: var(--color-fondo-azul);
+}
+
+.terminos__indice__toggle svg {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.terminos__indice__lista {
+  display: none;
+  gap: var(--espacio-1);
+  max-width: none;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  counter-reset: terminos;
+}
+
+.terminos__indice--abierto .terminos__indice__lista {
+  display: block;
+}
+
+.terminos__indice li {
+  margin: 0;
+}
+
+.terminos__indice a {
+  display: flex;
+  align-items: center;
+  min-height: var(--alto-objetivo-tactil);
+  padding: var(--espacio-2) var(--espacio-2);
+  color: var(--color-primario);
+  border-radius: var(--radio-sm);
+  font-weight: 700;
+  font-size: var(--texto-sm);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  transition: color var(--terminos-duracion) ease, background-color var(--terminos-duracion) ease, box-shadow var(--terminos-duracion) ease;
+}
+
+.terminos__indice a::before {
+  min-width: 1.9rem;
+  margin-right: var(--espacio-1);
+  color: var(--color-texto-suave);
+  content: counter(terminos) ".";
+  counter-increment: terminos;
+  font-variant-numeric: tabular-nums;
+}
+
+.terminos__indice a:hover {
+  color: var(--color-primario-oscuro);
+  background: var(--color-fondo-azul);
+}
+
+.terminos__indice__activo {
+  color: var(--color-primario-oscuro);
+  background: var(--color-fondo-verde);
+  border-left: 0.35rem solid var(--color-secundario);
+  padding-left: calc(var(--espacio-2) - 0.35rem);
+  text-decoration: none;
+  box-shadow: 0 0 0 2px var(--color-fondo-verde);
+}
+
+@media (min-width: 64rem) {
+  .terminos__indice__toggle {
+    display: none;
+  }
+
+  .terminos__indice__lista {
+    display: block;
+  }
+
+  .terminos__indice {
+    position: sticky;
+    top: 6rem;
+    align-self: start;
+    margin-top: 0;
+  }
+}
+
+/* ==========================================================================
+   Contenido principal (cláusulas)
+   ========================================================================== */
+
+.terminos__contenido {
+  max-width: 74ch;
+  min-width: 0;
+}
+
+@media (min-width: 64rem) {
+  .terminos__contenido {
+    max-width: 74ch;
+  }
+}
+
+/* ==========================================================================
+   Avisos
+   ========================================================================== */
 
 .terminos__aviso {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   gap: var(--espacio-3);
   padding: var(--espacio-4);
+  margin: var(--espacio-5) 0;
   color: var(--color-texto);
   background: var(--color-fondo-aviso);
   border-left: 0.35rem solid var(--color-foco);
@@ -109,89 +305,32 @@ main.terminos > section {
   margin-top: var(--espacio-2);
 }
 
-/* ---------------------------------------------------------------- Índice */
-
-.terminos__indice {
-  display: block;
-  padding: var(--espacio-4);
-  margin: 0 0 var(--espacio-6);
-  background: var(--color-superficie);
-  border: 1px solid var(--color-borde);
-  border-radius: var(--radio-md);
-  box-shadow: var(--sombra-suave);
-}
-
-.terminos__indice h2 {
+.terminos__aviso-titulo {
   margin: 0 0 var(--espacio-2);
-  font-size: var(--texto-lg);
-}
-
-.terminos__indice ol {
-  display: grid;
-  gap: var(--espacio-1);
-  max-width: none;
-  padding: 0;
-  margin: 0;
-  list-style: none;
-  counter-reset: terminos;
-}
-
-.terminos__indice li {
-  margin: 0;
-}
-
-.terminos__indice a {
-  display: flex;
-  align-items: center;
-  min-height: var(--alto-objetivo-tactil);
-  padding: var(--espacio-2);
-  color: var(--color-primario);
-  border-radius: var(--radio-sm);
-  font-weight: 700;
-  text-decoration: underline;
-  text-underline-offset: 0.18em;
-}
-
-.terminos__indice a::before {
-  min-width: 1.9rem;
-  margin-right: var(--espacio-1);
-  color: var(--color-texto-suave);
-  content: counter(terminos) ".";
-  counter-increment: terminos;
-  font-variant-numeric: tabular-nums;
-}
-
-.terminos__indice a:hover {
+  font-size: var(--texto-base);
+  font-weight: 800;
   color: var(--color-primario-oscuro);
-  background: var(--color-fondo-azul);
 }
 
-@media (min-width: 48rem) {
-  .terminos__indice ol {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: var(--espacio-5);
-  }
-}
-
-/* ------------------------------------------------------------- Cláusulas */
+/* ==========================================================================
+   Cláusulas
+   ========================================================================== */
 
 .terminos__clausula {
-  max-width: 74ch;
-}
-
-.terminos__clausula + .terminos__clausula {
-  padding-top: var(--espacio-5);
-  border-top: 1px solid var(--color-borde);
+  margin-bottom: var(--espacio-7);
 }
 
 .terminos__clausula h2 {
   margin: 0 0 var(--espacio-3);
   font-size: var(--texto-xl);
+  color: var(--color-primario-oscuro);
+  scroll-margin-top: 8rem;
 }
 
 .terminos__clausula h3 {
-  margin: var(--espacio-5) 0 var(--espacio-2);
+  margin: var(--espacio-6) 0 var(--espacio-2);
   font-size: var(--texto-lg);
+  color: var(--color-primario-oscuro);
 }
 
 .terminos__clausula p,
@@ -218,9 +357,18 @@ main.terminos > section {
 
 .terminos__clausula a {
   overflow-wrap: anywhere;
+  color: var(--color-primario);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
 }
 
-/* ------------------------------------------------------ Bloques destacada */
+.terminos__clausula a:hover {
+  color: var(--color-primario-oscuro);
+}
+
+/* ==========================================================================
+   Bloques destacados
+   ========================================================================== */
 
 .terminos__destacado {
   display: grid;
@@ -232,8 +380,18 @@ main.terminos > section {
   border-radius: var(--radio-md);
 }
 
+.terminos__destacado--atencion {
+  background: var(--color-fondo-aviso);
+  border-color: var(--color-terciario-oscuro);
+  border-left: 0.35rem solid var(--color-terciario-oscuro);
+}
+
 .terminos__destacado > * {
   margin: 0;
+}
+
+.terminos__destacado strong:first-child {
+  color: var(--color-primario-oscuro);
 }
 
 .terminos__norma {
@@ -281,7 +439,9 @@ main.terminos > section {
   color: var(--color-primario-oscuro);
 }
 
-/* ----------------------------------------------------------------- Cierre */
+/* ==========================================================================
+   Cierre
+   ========================================================================== */
 
 .terminos__cierre {
   display: flex;
@@ -291,17 +451,71 @@ main.terminos > section {
   margin: var(--espacio-5) 0 0;
 }
 
+.terminos__imprimir,
+.terminos__volver,
+.terminos__privacidad {
+  min-height: var(--alto-objetivo-tactil);
+  padding: 0.65rem 1.1rem;
+  font-size: var(--texto-sm);
+  font-weight: 750;
+  border-radius: var(--radio-md);
+  cursor: pointer;
+  border: 1px solid var(--terminos-borde-control);
+  background: var(--color-superficie);
+  color: var(--color-texto);
+  transition: border-color var(--terminos-duracion) ease, background-color var(--terminos-duracion) ease, color var(--terminos-duracion) ease;
+}
+
+.terminos__imprimir {
+  background: var(--color-primario);
+  color: var(--color-sobre-primario);
+  border-color: var(--color-primario);
+}
+
+.terminos__imprimir:hover {
+  background: var(--color-primario-oscuro);
+  border-color: var(--color-primario-oscuro);
+}
+
+.terminos__imprimir svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: var(--espacio-2);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.terminos__volver,
+.terminos__privacidad {
+  background: transparent;
+  color: var(--color-texto);
+}
+
+.terminos__volver:hover,
+.terminos__privacidad:hover {
+  border-color: var(--color-primario);
+  color: var(--color-primario-oscuro);
+}
+
 .terminos__cambios {
   margin: 0;
   color: var(--color-texto-suave);
   font-size: var(--texto-sm);
 }
 
-/* -------------------------------------------------------------- Movimiento */
+/* ==========================================================================
+   Movimiento reducido
+   ========================================================================== */
 
 @media (prefers-reduced-motion: no-preference) {
+  .terminos__indice__toggle,
   .terminos__indice a,
-  .terminos__accion,
+  .terminos__imprimir,
+  .terminos__volver,
+  .terminos__privacidad,
   .btn {
     transition:
       background-color var(--terminos-duracion) ease,
@@ -310,14 +524,20 @@ main.terminos > section {
       box-shadow var(--terminos-duracion) ease;
   }
 
-  .btn.terminos__accion:hover {
+  .terminos__imprimir:hover,
+  .terminos__volver:hover,
+  .terminos__privacidad:hover,
+  .btn:hover {
     transform: translateY(-1px);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .terminos__indice__toggle,
   .terminos__indice a,
-  .terminos__accion,
+  .terminos__imprimir,
+  .terminos__volver,
+  .terminos__privacidad,
   .btn {
     animation: none !important;
     transition: none !important;
@@ -331,18 +551,78 @@ main.terminos > section {
   .terminos__pendiente,
   .terminos__aviso,
   .terminos__norma,
-  .terminos__insignia {
+  .terminos__insignia,
+  .terminos__clausula h2,
+  .terminos__clausula h3 {
     border: 1px solid CanvasText;
   }
 }
 
+/* ==========================================================================
+   Impresión
+   ========================================================================== */
+
 @media print {
   main.terminos .terminos__indice,
-  main.terminos .terminos__cierre {
+  main.terminos .terminos__cierre,
+  main.terminos .terminos__imprimir {
     display: none;
   }
 
   main.terminos > section {
     padding-block: var(--espacio-4);
+  }
+
+  .terminos__cabecera {
+    background: Canvas;
+    border-bottom: 1px solid CanvasText;
+    color: CanvasText;
+  }
+
+  .terminos__cabecera h1,
+  .terminos__cabecera p,
+  .terminos__cabecera span {
+    color: CanvasText;
+  }
+
+  .terminos__chip,
+  .terminos__insignia {
+    background: Canvas !important;
+    border: 1px solid CanvasText !important;
+    color: CanvasText !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .terminos__clausula {
+    break-inside: avoid;
+    margin-bottom: var(--espacio-6);
+  }
+
+  .terminos__destacado,
+  .terminos__aviso,
+  .terminos__pendiente {
+    break-inside: avoid;
+    border-color: #000;
+    background: #fff !important;
+    color: #000 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .terminos__clausula h2,
+  .terminos__clausula h3 {
+    break-after: avoid;
+    color: #000;
+  }
+
+  .terminos__clausula a {
+    color: #000;
+    text-decoration: none;
+  }
+
+  .terminos__clausula a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: var(--texto-xs);
   }
 }

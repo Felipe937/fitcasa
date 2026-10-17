@@ -31,10 +31,14 @@
 del sitio web FitCasa (**«la Plataforma»**), un recurso educativo sobre ejercicio
 físico general, ergonomía cotidiana y escoliosis.
 
-1.2. **La navegación, lectura o cualquier interacción con la Platforma
-constituye aceptación expresa de estos Términos**, sin necesidad de un clic de
-confirmación, en los términos del artículo 2 del Código Civil y del artículo 1 de la
-Ley 1481 de 2011 respecto de la información al consumidor.
+1.2. **Cómo funciona la aceptación en esta plataforma:** las páginas públicas de
+FitCasa (inicio, beneficios, ejercicios y guía de escoliosis) se pueden leer sin
+aceptar nada. El acceso a las funciones protegidas —el cuestionario de sugerencias
+y el panel de seguimiento— requiere marcar dos casillas de decisión: los Términos
+de Uso y la Política de Privacidad. Esa decisión se registra en el navegador de
+este dispositivo con la versión del documento y la fecha y hora, pero **no es una
+firma digital ni una prueba inalterable**: puede editarse o borrarse desde los
+ajustes del navegador.
 
 1.3. Si **no está de acuerdo** con alguno de estos Términos, debe dejar de usar la
 Plataforma. La uso implica que ha leído, comprendido y aceptado la totalidad de
@@ -167,10 +171,11 @@ personal o doméstico»*.
 
 3.2.3. El almacenamiento de la Plataforma es **local, único y exclusivo en el
 navegador del propio usuario**, sin base de datos compartida, sin servidor de
-backend y sin transferencia a los autores del proyecto. En esa medida, y conforme a
-la interpretación que el propietario determine con asesoría jurídica, estos datos se
-encuentran **prescindidos del ámbito de aplicación de la Ley 1581 de 2012 y del
-Decreto 1377 de 2013**.
+backend y sin transferencia a los autores del proyecto. Si este almacenamiento se
+considera efectivamente un «ámbito exclusivamente personal o doméstico» a los fines
+del artículo 2 literal a de la Ley 1581 de 2012 es una determinación que el
+propietario debe confirmar con asesoría jurídica; este documento no la da por
+sentada.
 
 `[Pendiente: el propietario debe confirmar con un profesional del derecho (a) si el
 almacenamiento en localStorage de FitCasa se considera efectivamente un «ámbito
@@ -393,11 +398,13 @@ debe precisarlo aquí; hoy la Plataforma es sin costo y sin soporte.]`
 referencia de esta versión de los Términos.
 
 7.2. **Responsable del proyecto:**
-`[Pendiente: nombre o razón social del responsable del tratamiento]`
+Felipe Andres Vargas (persona natural).
 
-7.3. **Correo de contacto:** `[Pendiente: correo de contacto del responsable]`
+7.3. **Correo de contacto:**
+spaceyisusshop@gmail.com
 
-7.4. **Jurisdicción / domicilio:** `[Pendiente: país y domicilio del responsable]`
+7.4. **País y jurisdicción:**
+República de Colombia. No se declara NIT, dirección física ni teléfono.
 
 7.5. Para reportar un problema técnico, una vulneración o una inquietud sobre estos
 Términos, escriba a la dirección anterior o abra un *issue* en el repositorio.
