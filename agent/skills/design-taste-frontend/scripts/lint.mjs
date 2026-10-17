@@ -71,7 +71,7 @@ for (const file of files) {
     if (/<\/(pre|code)>/i.test(line)) inCode = false;
     if (line.length > 2000) return; // minified or data
     if (/taste-skill-ignore/.test(line)) return;
-    if (!/^\s*(\/\/|\/\*|\*|<!--)/.test(line)) emDashes += (line.replace(/\/\/.*$|\/\*.*?\*\/|<!--.*?-->/g, '').match(/—/g) || []).length; // comments are not copy
+    if (!/^\s*(\/\/|\/\*|\*|<!--)/.test(line)) emDashes += (line.replace(/\/\/[^\n\r]*|\/\*[\s\S]*?\*\/|<!--[\s\S]*?(?:-->|--!>)/g, '').match(/—/g) || []).length; // comments are not copy
     for (const [level, id, re, message] of R) {
       if (id === 'mono' && (codeLine || /(^|[\s,>+~(])(pre|code|kbd|samp)\b|code/i.test(selector))) continue; // real code may be monospace
       if ((id === 'hairline' || id === 'outlined-box') && /(^|[\s,>+~(])(table|thead|tbody|tfoot|tr|td|th|input|textarea|select|fieldset)\b/i.test(selector)) continue; // real tables and form fields keep their lines
