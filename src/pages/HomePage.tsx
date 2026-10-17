@@ -43,7 +43,9 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
     // el encuadre de la portada en lugar de ser un ejercicio cualquiera.
     const destacado =
       EXERCISES_DATA.find((e) => e.category === 'cuidado_postural') ?? EXERCISES_DATA[0];
-    return { total, sinEquipamiento, zonas, postural, destacado };
+    // Muestra de la portada: los tres primeros, con sus datos reales.
+    const muestra = EXERCISES_DATA.slice(0, 3);
+    return { total, sinEquipamiento, zonas, postural, destacado, muestra };
   }, []);
 
   const ir = (page: PageRoute) => (e: React.MouseEvent) => {
@@ -248,65 +250,87 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
         </ul>
       </section>
 
-      {/* Programas */}
+{/* Programas */}
       <section id="programas" aria-labelledby="titulo-programas" tabIndex={-1} className="container seccion">
-        <h2 id="titulo-programas">Elige tu siguiente paso</h2>
+        <h2 id="titulo-programas">Un camino de tres pasos</h2>
         <p className="seccion-intro">
-          Tres caminos para moverte con información clara: explora, orienta tu actividad o registra
-          cómo te sientes.
+          Explora, orienta tu actividad y registra cómo te sientes.
         </p>
 
         <div className="programas-grid">
-          <article className="programa">
-            <p className="programa__foco">Autonomía y consulta abierta</p>
+          {/* Paso 01 · protagonista. Fondo verde bosque y una muestra real de
+              la biblioteca, sacada de los datos y no escrita a mano. */}
+          <article className="programa programa--destacado">
+            <svg
+              className="programa__motivo"
+              viewBox="0 0 320 200"
+              preserveAspectRatio="xMinYMax slice"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <g fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M-20 60c54-62 108-62 162 0s108 62 162 0" />
+                <path d="M-20 110c54-62 108-62 162 0s108 62 162 0" opacity="0.62" />
+                <path d="M-20 160c54-62 108-62 162 0s108 62 162 0" opacity="0.34" />
+              </g>
+            </svg>
+            <header className="programa__cabecera">
+              <p className="programa__numero" aria-hidden="true">01</p>
+              <p className="programa__foco">Explora</p>
+            </header>
             <h3>Biblioteca de ejercicios</h3>
-            <p>
+            <p className="programa__texto">
               Filtra la colección educativa por duración, dificultad, equipamiento y zona
               corporal, y abre cada ficha con su adaptación.
             </p>
-            <ul className="programa__filtros" aria-label="Filtros de la biblioteca">
-              <li>Duración</li>
-              <li>Dificultad</li>
-              <li>Zona corporal</li>
+            <ul className="programa__muestra" aria-label="Ejercicios de la biblioteca">
+              {biblioteca.muestra.map((e) => (
+                <li key={e.id}>
+                  <span className="programa__nombre">{e.name}</span>
+                  <span className="programa__meta">
+                    {durationLabels[e.duration]} · {zoneLabels[e.zone[0]] ?? e.zone[0]}
+                  </span>
+                </li>
+              ))}
             </ul>
-            <a className="card-link" href="#ejercicios" onClick={ir('ejercicios')}>
+            <a className="card-link programa__enlace" href="#ejercicios" onClick={ir('ejercicios')}>
               Abrir biblioteca
             </a>
           </article>
 
-          <article className="programa">
-            <p className="programa__foco">Propuesta guiada según tu tiempo</p>
+          {/* Paso 02. Los tres pasos son los del cuestionario real:
+              Actividad, Seguridad y Revisión. */}
+          <article className="programa programa--orienta">
+            <header className="programa__cabecera">
+              <p className="programa__numero" aria-hidden="true">02</p>
+              <p className="programa__foco">Orienta</p>
+            </header>
             <h3>Sugerencias de actividad</h3>
-            <p>
+            <ol className="programa__pasos" aria-label="Pasos del cuestionario">
+              <li>Actividad</li>
+              <li>Seguridad</li>
+              <li>Revisión</li>
+            </ol>
+            <p className="programa__texto">
               Responde el cuestionario para ordenar una propuesta educativa general basada en la
               biblioteca disponible. No es un diagnóstico ni un tratamiento personalizado.
             </p>
-            <p className="programa__insignia">
-              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path
-                  d="M12 3.5 19 6v5c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6Z"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinejoin="round"
-                />
-                <path d="m9.5 12 1.8 1.8 3.4-3.6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              Orientación personalizada, calculada en tu navegador
-            </p>
-            <a className="card-link" href="#quiz" onClick={ir('quiz')}>
+            <a className="card-link programa__enlace" href="#quiz" onClick={ir('quiz')}>
               Responder cuestionario
             </a>
           </article>
 
-          <article className="programa">
-            <p className="programa__foco">Tu diario de sensaciones</p>
+          {/* Paso 03. Soberanía de datos y estado local. */}
+          <article className="programa programa--registra">
+            <header className="programa__cabecera">
+              <p className="programa__numero" aria-hidden="true">03</p>
+              <p className="programa__foco">Registra</p>
+            </header>
             <h3>Seguimiento personal</h3>
-            <p>
-              Registra actividad, dolor subjetivo y bienestar en este dispositivo, sin enviar datos
-              a FitCasa.
+            <p className="programa__texto">
+              Registra actividad, dolor subjetivo y bienestar en este dispositivo.
             </p>
-            <p className="programa__insignia">
+            <p className="programa__local">
               <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                 <path
                   d="M6.5 10.5h11V20a1 1 0 0 1-1 1h-9a1 1 0 0 1-1-1v-9.5Z"
@@ -315,23 +339,28 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                   strokeWidth="2"
                   strokeLinejoin="round"
                 />
-                <path d="M9 10.5V7.75a3 3 0 1 1 6 0v2.75" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <path
+                  d="M9 10.5V7.75a3 3 0 1 1 6 0v2.75"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
               </svg>
               <span>
                 Estado:{' '}
                 <span id="seguimiento-badge" role="status">
                   {recordCount > 0 ? `${recordCount} entradas guardadas` : 'Seguimiento local'}
                 </span>
+                . Tus registros nunca salen de este navegador.
               </span>
             </p>
-            <a className="card-link" href="#panel" onClick={ir('panel')}>
+            <a className="card-link programa__enlace" href="#panel" onClick={ir('panel')}>
               Abrir seguimiento
             </a>
           </article>
         </div>
       </section>
-
-      {/* Escoliosis Preview */}
       <section id="escoliosis" aria-labelledby="titulo-escoliosis" tabIndex={-1} className="container seccion">
         <h2 id="titulo-escoliosis">Cuidado postural y enfoque en escoliosis</h2>
         <article className="escoliosis-nota">

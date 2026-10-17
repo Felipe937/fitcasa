@@ -18,6 +18,10 @@
   /* Salvia mineral: insignias, iconos y líneas de apoyo. */
   --color-secundario: #5c8276;
   --color-secundario-oscuro: #44685d;
+  /* Variante clara de la salvia para el fondo verde bosque. La salvia normal
+     sobre #15433b se queda en 2.6:1 y no sirve ni para texto ni para iconos
+     pequeños; esta llega a 5.9:1 sin salir del mismo tono. */
+  --color-salvia-claro: #a8c4b8;
   /* Arcilla: un solo acento, para detalles activos. Máximo 5% de la página. */
   --color-terciario: #c86d51;
   --color-terciario-oscuro: #a0523a;
@@ -456,37 +460,187 @@ li + li { margin-top: var(--espacio-2); }
 /* --- Programas ------------------------------------------------------------ */
 .seccion { padding-block: var(--espacio-8); }
 .seccion-intro { max-width: 58ch; margin: 0 0 var(--espacio-6); color: var(--color-texto); }
+/* --- Programas: un camino de tres pasos ------------------------------------
+   Los tres selectores de base llevan el prefijo .programa- para no rozar el
+   resto del sitio: esta seccion no comparte reglas con las tarjetas de
+   Beneficios. */
+.seccion > #programas,
+#programas { display: block; }
 .programas-grid {
-  display: grid; gap: var(--espacio-5); width: 100%; max-width: none;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  display: grid; gap: var(--espacio-5);
+  width: 100%; max-width: none;
+  grid-template-columns: 1fr;
 }
+.programas-grid > .programa { min-width: 0; margin: 0; }
+
 .programa {
-  display: flex; flex-direction: column; height: 100%;
-  padding: clamp(var(--espacio-5), 3vw, var(--espacio-6));
+  position: relative;
+  display: flex; flex-direction: column; min-width: 0; height: 100%;
+  padding: clamp(var(--espacio-5), 2.6vw, var(--espacio-6));
   background: var(--color-superficie);
   border: 1px solid var(--color-borde); /* taste-skill-ignore: borde sutil de tarjeta, definido por el encargo */
   border-radius: var(--radio-lg);
+  overflow: hidden;
 }
-.programa__foco { margin: 0 0 var(--espacio-2); color: var(--color-secundario-oscuro); font-size: var(--texto-sm); font-weight: 700; }
+/* Folio y rotulo comparten linea: es la firma editorial de la seccion y
+   ahorra la altura suficiente para que la seccion quepa en 720 px a 1440. */
+.programa__cabecera {
+  display: flex; align-items: baseline; gap: var(--espacio-3);
+  margin-bottom: var(--espacio-3);
+}
+.programa__numero {
+  margin: 0;
+  color: var(--color-terciario-oscuro);
+  font-size: 2rem; font-weight: 800; line-height: 1;
+  letter-spacing: -0.04em; opacity: 0.8;
+  font-variant-numeric: tabular-nums;
+}
+.programa__foco {
+  margin: 0;
+  font-size: var(--texto-xs); font-weight: 800;
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
 .programa h3 { margin-bottom: var(--espacio-3); }
-.programa > p { margin: 0; color: var(--color-texto); }
-.programa .card-link { margin-top: auto; padding-top: var(--espacio-4); }
-.programa__filtros { display: flex; flex-wrap: wrap; gap: var(--espacio-2); padding: 0; margin: var(--espacio-4) 0 0; list-style: none; }
-.programa__filtros li {
-  padding: 0.25rem 0.65rem; margin: 0;
-  color: var(--color-secundario-oscuro); background: var(--color-fondo-verde);
-  border-radius: var(--radio-pill); font-size: var(--texto-xs); font-weight: 650;
-}
-.programa__insignia {
-  display: flex; gap: var(--espacio-2); align-items: flex-start;
-  margin: var(--espacio-4) 0 0 !important;
-  padding: var(--espacio-3); color: var(--color-texto-suave);
-  background: var(--color-superficie-suave); border-radius: var(--radio-sm);
-  font-size: var(--texto-sm); font-weight: 600; line-height: 1.45;
-}
-.programa__insignia svg { flex: 0 0 1.25rem; width: 1.25rem; height: 1.25rem; margin-top: 0.1rem; color: var(--color-terciario-oscuro); fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
-.programa:focus-within { border-color: var(--color-primario); }
+.programa__texto { margin: 0; color: var(--color-texto); font-size: var(--texto-sm); line-height: 1.6; }
+.programa__enlace { margin-top: auto; padding-top: var(--espacio-4); }
 
+/* Paso 02: acento en salvia. */
+.programa--orienta { border-top: 3px solid var(--color-secundario); } /* taste-skill-ignore: acento de seccion, borde superior */
+.programa--orienta .programa__foco { color: var(--color-secundario-oscuro); }
+.programa--orienta .programa__numero { color: var(--color-secundario-oscuro); }
+.programa__pasos {
+  display: flex; flex-wrap: wrap; gap: var(--espacio-2);
+  padding: 0; margin: 0 0 var(--espacio-3); list-style: none;
+  counter-reset: programa-paso;
+}
+.programa__pasos li {
+  display: inline-flex; align-items: center; gap: 0.35rem; margin: 0;
+  padding: 0.2rem 0.65rem;
+  color: var(--color-secundario-oscuro);
+  background: var(--color-fondo-verde);
+  border-radius: var(--radio-pill);
+  font-size: var(--texto-xs); font-weight: 650;
+}
+.programa__pasos li::before {
+  counter-increment: programa-paso;
+  content: counter(programa-paso);
+  color: var(--color-superficie);
+  background: var(--color-secundario-oscuro);
+  border-radius: 50%;
+  width: 1rem; height: 1rem;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 0.625rem; font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Paso 03: acento en arcilla y soberania de datos. */
+.programa--registra { border-top: 3px solid var(--color-terciario); } /* taste-skill-ignore: acento de seccion, borde superior */
+.programa--registra .programa__foco { color: var(--color-terciario-oscuro); }
+.programa--registra .programa__numero { color: var(--color-terciario-oscuro); }
+.programa__local {
+  display: flex; gap: var(--espacio-2); align-items: center;
+  margin: var(--espacio-3) 0 0 !important;
+  padding: var(--espacio-3);
+  color: var(--color-texto-suave);
+  background: var(--color-superficie-suave);
+  border-radius: var(--radio-sm);
+  font-size: var(--texto-sm); font-weight: 600;
+}
+.programa__local svg { flex: 0 0 1.15rem; width: 1.15rem; height: 1.15rem; color: var(--color-terciario-oscuro); fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.programa__soberania { margin: var(--espacio-3) 0 0; color: var(--color-terciario-oscuro); font-size: var(--texto-sm); font-weight: 700; }
+
+/* Paso 01: protagonista en verde bosque, con arcos armonicos de fondo. */
+.programa--destacado {
+  color: var(--color-sobre-primario);
+  background: var(--color-primario);
+  border-color: transparent;
+}
+.programa__motivo {
+  position: absolute; right: 0; bottom: 0;
+  width: min(100%, 22rem); height: auto;
+  color: var(--color-salvia-claro);
+  opacity: 0.32;
+  pointer-events: none;
+}
+.programa--destacado .programa__numero,
+.programa--destacado .programa__foco { color: var(--color-salvia-claro); }
+.programa--destacado h3 { color: var(--color-sobre-primario); }
+.programa--destacado .programa__texto { color: var(--color-sobre-primario); opacity: 0.92; }
+.programa__muestra {
+  display: grid; gap: var(--espacio-2);
+  padding: var(--espacio-4) 0 0; margin: var(--espacio-4) 0 0;
+  border-top: 1px solid rgb(255 255 255 / 0.18);
+  list-style: none;
+}
+.programa__muestra li {
+  display: flex; flex-wrap: wrap; gap: 0.1rem var(--espacio-3);
+  align-items: baseline; justify-content: space-between;
+  margin: 0;
+  padding: var(--espacio-2) var(--espacio-3);
+  background: rgb(255 255 255 / 0.07);
+  border-radius: var(--radio-sm);
+}
+.programa__nombre { color: var(--color-sobre-primario); font-size: var(--texto-sm); font-weight: 650; }
+.programa__meta {
+  color: var(--color-salvia-claro);
+  font-size: var(--texto-xs); font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.programa--destacado .programa__enlace { color: var(--color-sobre-primario); }
+
+/* Tablet (48rem a 63.99rem): 2 columnas y la protagonista arriba a todo lo
+   ancho. Nunca tres columnas estrechas en este rango. Va ANTES que escritorio
+   a proposito: si se invirtiera, esta regla le pisaria la de 64rem tambien en
+   pantallas anchas. */
+@media (min-width: 48rem) {
+  .programas-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .programa--destacado { grid-column: 1 / -1; grid-row: auto; }
+}
+
+/* Ritmo propio: esta seccion lleva mas contenido que las demas y aun asi
+   tiene que caber en 720 px a 1440, asi que respira algo menos. El ajuste
+   queda acotado a #programas y no toca el resto de secciones. */
+#programas { padding-block: 1.5rem; }
+#programas h2 { margin-bottom: var(--espacio-2); }
+#programas .seccion-intro { margin-bottom: var(--espacio-4); }
+.programas-grid { gap: 1.25rem; }
+.programa { padding: 1.125rem; }
+.programa__cabecera { margin-bottom: var(--espacio-2); }
+.programa h3 { margin-bottom: var(--espacio-2); }
+.programa__muestra li { padding: 0.3rem var(--espacio-3); }
+.programa__muestra { padding-top: var(--espacio-3); margin-top: var(--espacio-3); }
+.programa__pasos { margin-bottom: var(--espacio-2); }
+.programa__local { margin-top: var(--espacio-3) !important; padding: var(--espacio-2) var(--espacio-3); }
+
+/* Escritorio: 2 columnas asimetricas y la protagonista a doble altura. */
+@media (min-width: 64rem) {
+  .programas-grid { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
+  .programa--destacado { grid-column: 1; grid-row: span 2; }
+}
+
+/* Microinteracciones. Transiciones individuales, nunca `all`. */
+@media (prefers-reduced-motion: no-preference) {
+  .programas-grid > .programa {
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  }
+  .programas-grid > .programa:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-flotante); /* taste-skill-ignore: sombra al elevar la tarjeta */
+    border-color: var(--color-secundario);
+  }
+  .programa--destacado:hover { border-color: transparent; }
+  .programa--orienta:hover { border-color: var(--color-terciario); }
+  .programa--registra:hover { border-color: var(--color-terciario); }
+  .programa__motivo { transition: transform 420ms ease; transform-origin: 100% 100%; }
+  .programa--destacado:hover .programa__motivo { transform: rotate(4deg); }
+  .programa__enlace::after { transition: transform 180ms ease; }
+  .programa__enlace:hover::after { transform: translateX(4px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .programas-grid > .programa:hover,
+  .programa__motivo,
+  .programa--destacado:hover .programa__motivo { transform: none; }
+}
 /* --- Escoliosis y pasos --------------------------------------------------- */
 .escoliosis-nota {
   height: 100%;
@@ -672,7 +826,8 @@ body.page-escoliosis details[open] summary::after { content: "−"; }
    `p, ul, ol { max-width: var(--ancho-texto) }` estrangula cualquier lista
    que sea a la vez contenedora de una grilla, y `li + li` inyecta margen
    dentro de la grilla. Estas reglas liberan el contenedor y neutralizan ese
-   margen, y son específicas de las dos secciones afectadas. */
+   margen, y son específicas de las secciones afectadas. La retícula de
+   Programas ya está definida más arriba, con 2 columnas: aquí no se toca. */
 .beneficios-grid,
 .programas-grid,
 .pasos {
@@ -684,19 +839,6 @@ body.page-escoliosis details[open] summary::after { content: "−"; }
 .pasos > li {
   min-width: 0;
   margin: 0;
-}
-
-/* #programas es la <section>, no la grilla: sus tarjetas viven en un <div>
-   hijo. La section se queda en bloque y la grilla vive en el envoltorio. */
-#programas {
-  display: block;
-}
-
-/* En escritorio la tarjeta destacada ocupa dos columnas del bento. */
-@media (min-width: 48rem) {
-  .programas-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
 }
 
 /* Por debajo de 30rem la ficha del hero deja de llevar los datos en tres
