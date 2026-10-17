@@ -902,6 +902,7 @@ li + li { margin-top: var(--espacio-2); }
 @media (min-width: 48rem) {
   #como-funciona .pasos-trayectoria {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--espacio-6);
   }
 
   #como-funciona .pasos-trayectoria::before {
@@ -910,13 +911,28 @@ li + li { margin-top: var(--espacio-2); }
     top: 1.375rem;
     left: 2.75rem;
     right: 2.75rem;
-    height: 1px;
+    height: 2px;
     background: var(--color-borde);
     z-index: 0;
   }
 
+  #como-funciona .paso {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
   #como-funciona .paso__marcador {
-    margin: 0 auto;
+    margin: 0 auto var(--espacio-4);
+  }
+
+  #como-funciona .paso__contenido {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
   }
 
   #como-funciona .paso__icono {
@@ -931,30 +947,42 @@ li + li { margin-top: var(--espacio-2); }
 
 @media (max-width: 47.99rem) {
   #como-funciona .pasos-trayectoria {
-    grid-template-columns: auto 1fr;
+    grid-template-columns: 1fr;
+    gap: var(--espacio-6);
   }
 
   #como-funciona .pasos-trayectoria::before {
     content: "";
     position: absolute;
-    top: 0;
-    bottom: 0;
+    top: 1.375rem;
+    bottom: 1.375rem;
     left: 1.375rem;
-    width: 1px;
+    width: 2px;
     background: var(--color-borde);
     z-index: 0;
   }
 
   #como-funciona .paso {
+    display: grid;
     grid-template-columns: auto 1fr;
+    gap: var(--espacio-4);
+    align-items: start;
   }
 
   #como-funciona .paso__marcador {
     margin: 0;
   }
 
+  #como-funciona .paso__contenido {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    min-width: 0;
+  }
+
   #como-funciona .paso__icono {
-    margin: 0 0 var(--espacio-3);
+    margin: 0 0 var(--espacio-2);
   }
 
   #como-funciona .paso__titulo,

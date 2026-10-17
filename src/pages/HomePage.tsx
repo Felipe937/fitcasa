@@ -524,51 +524,59 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
         <ol className="pasos-trayectoria" aria-label="Recorrido guiado en tres pasos">
           <li className="paso">
             <span className="paso__marcador">01</span>
-            <div className="paso__icono" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <path d="M4 4h8v16H4z" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
-                <path d="M12 4h8v16h-8z" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
-                <path d="M8 8l3-3 3 3" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+            <div className="paso__contenido">
+              <div className="paso__icono" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M4 4h8v16H4z" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+                  <path d="M12 4h8v16h-8z" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+                  <path d="M8 8l3-3 3 3" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+              <h3 className="paso__titulo">Explora</h3>
+              <p className="paso__texto">
+                Consulta ejercicios y sus adaptaciones informativas sin asumir que una etiqueta
+                equivale a una autorización clínica.
+              </p>
             </div>
-            <h3 className="paso__titulo">Explora</h3>
-            <p className="paso__texto">
-              Consulta ejercicios y sus adaptaciones informativas sin asumir que una etiqueta
-              equivale a una autorización clínica.
-            </p>
           </li>
           <li className="paso">
             <span className="paso__marcador">02</span>
-            <div className="paso__icono" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
-                <path d="M12 3v6M12 15v6M3 12h6M15 12h6" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
-                <path d="M12 12l4-4" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
-              </svg>
+            <div className="paso__contenido">
+              <div className="paso__icono" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+                  <path d="M12 3v6M12 15v6M3 12h6M15 12h6" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+                  <path d="M12 12l4-4" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+                </svg>
+              </div>
+              <h3 className="paso__titulo">Orienta</h3>
+              <p className="paso__texto">
+                Usa el cuestionario para ordenar una propuesta educativa según tu tiempo, experiencia
+                y equipamiento.
+              </p>
             </div>
-            <h3 className="paso__titulo">Orienta</h3>
-            <p className="paso__texto">
-              Usa el cuestionario para ordenar una propuesta educativa según tu tiempo, experiencia
-              y equipamiento.
-            </p>
           </li>
           <li className="paso">
             <span className="paso__marcador">03</span>
-            <div className="paso__icono" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <rect x="3" y="4" width="8" height="16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
-                <rect x="11" y="4" width="4" height="16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
-                <path d="M7 8l2 2 4-4" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+            <div className="paso__contenido">
+              <div className="paso__icono" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <rect x="3" y="4" width="8" height="16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+                  <rect x="11" y="4" width="4" height="16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+                  <path d="M7 8l2 2 4-4" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+              <h3 className="paso__titulo">Registra</h3>
+              <p className="paso__texto">
+                Observa tu actividad y tus sensaciones en un historial local voluntario, sin crear
+                una cuenta.
+              </p>
             </div>
-            <h3 className="paso__titulo">Registra</h3>
-            <p className="paso__texto">
-              Observa tu actividad y tus sensaciones en un historial local voluntario, sin crear
-              una cuenta.
-            </p>
           </li>
         </ol>
       </section>
     </>
   );
 };
+
+export default HomePage;
