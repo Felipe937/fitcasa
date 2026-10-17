@@ -754,14 +754,261 @@ li + li { margin-top: var(--espacio-2); }
   .escoliosis-cta,
   .escoliosis-cta:hover { transform: none; transition: none; }
 }
-.pasos {
-  display: grid; gap: var(--espacio-5); width: 100%; max-width: none;
-  padding: 0; margin: 0; list-style: none; counter-reset: paso;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+/* --- Cómo funciona: recorrido guiado infográfico --------------------------- */
+#como-funciona { width: min(100% - 2rem, var(--ancho-contenedor)); margin-inline: auto; }
+
+#como-funciona .como-funciona__cabecera {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+  margin-bottom: var(--espacio-7);
 }
-.pasos > li { min-width: 0; margin: 0; padding-top: var(--espacio-4); border-top: 2px solid var(--color-primario); }
-.pasos h3 { margin-bottom: var(--espacio-2); font-size: var(--texto-lg); }
-.pasos p { margin: 0; color: var(--color-texto); }
+
+#como-funciona .como-funciona__etiqueta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-1) var(--espacio-3);
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-secundario-oscuro);
+  background: var(--color-fondo-verde);
+  border: 1px solid var(--color-secundario);
+  border-radius: var(--radio-pill);
+}
+
+#como-funciona .como-funciona__etiqueta::before {
+  width: 0.5rem;
+  height: 0.5rem;
+  content: "";
+  background: var(--color-secundario);
+  border-radius: 50%;
+}
+
+#como-funciona .como-funciona__titulo {
+  margin: 0;
+  font-size: var(--texto-2xl);
+  line-height: var(--alto-linea-titulo);
+  color: var(--color-primario-oscuro);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  max-width: 42ch;
+}
+
+#como-funciona .como-funciona__intro {
+  margin: 0;
+  max-width: 56ch;
+  color: var(--color-texto);
+  font-size: var(--texto-base);
+  line-height: var(--alto-linea);
+}
+
+#como-funciona .como-funciona__rigor {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-3) var(--espacio-4);
+  margin-top: var(--espacio-2);
+  background: var(--color-fondo-azul);
+  border: 1px solid var(--color-borde);
+  border-left: 0.35rem solid var(--color-primario);
+  border-radius: var(--radio-md);
+  font-size: var(--texto-sm);
+  color: var(--color-texto-suave);
+}
+
+#como-funciona .como-funciona__rigor svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+#como-funciona .pasos-trayectoria {
+  display: grid;
+  gap: var(--espacio-6);
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  position: relative;
+}
+
+#como-funciona .paso {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--espacio-4);
+  align-items: start;
+  min-width: 0;
+  position: relative;
+}
+
+#como-funciona .paso__marcador {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-borde);
+  background: var(--color-superficie);
+  color: var(--color-primario-oscuro);
+  font-size: var(--texto-lg);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+#como-funciona .paso__icono {
+  width: 3rem;
+  height: 3rem;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+#como-funciona .paso__icono svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--color-secundario);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+#como-funciona .paso__titulo {
+  margin: 0;
+  font-size: var(--texto-lg);
+  font-weight: 800;
+  color: var(--color-primario-oscuro);
+}
+
+#como-funciona .paso__texto {
+  margin: var(--espacio-1) 0 0;
+  color: var(--color-texto);
+  font-size: var(--texto-base);
+  line-height: var(--alto-linea);
+  max-width: 48ch;
+}
+
+@media (min-width: 48rem) {
+  #como-funciona .pasos-trayectoria {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  #como-funciona .pasos-trayectoria::before {
+    content: "";
+    position: absolute;
+    top: 1.375rem;
+    left: 2.75rem;
+    right: 2.75rem;
+    height: 1px;
+    background: var(--color-borde);
+    z-index: 0;
+  }
+
+  #como-funciona .paso__marcador {
+    margin: 0 auto;
+  }
+
+  #como-funciona .paso__icono {
+    margin: 0 auto var(--espacio-3);
+  }
+
+  #como-funciona .paso__titulo,
+  #como-funciona .paso__texto {
+    text-align: center;
+  }
+}
+
+@media (max-width: 47.99rem) {
+  #como-funciona .pasos-trayectoria {
+    grid-template-columns: auto 1fr;
+  }
+
+  #como-funciona .pasos-trayectoria::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 1.375rem;
+    width: 1px;
+    background: var(--color-borde);
+    z-index: 0;
+  }
+
+  #como-funciona .paso {
+    grid-template-columns: auto 1fr;
+  }
+
+  #como-funciona .paso__marcador {
+    margin: 0;
+  }
+
+  #como-funciona .paso__icono {
+    margin: 0 0 var(--espacio-3);
+  }
+
+  #como-funciona .paso__titulo,
+  #como-funciona .paso__texto {
+    text-align: left;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  #como-funciona .paso:hover .paso__marcador {
+    border-color: var(--color-primario);
+    background: var(--color-fondo-azul);
+    color: var(--color-primario);
+    transform: translateY(-2px);
+  }
+
+  #como-funciona .paso:hover .paso__icono svg {
+    stroke: var(--color-primario);
+  }
+
+  #como-funciona .paso__marcador,
+  #como-funciona .paso__icono svg,
+  #como-funciona .paso__titulo {
+    transition:
+      border-color var(--duracion-corta) ease,
+      background-color var(--duracion-corta) ease,
+      color var(--duracion-corta) ease,
+      stroke var(--duracion-corta) ease,
+      transform var(--duracion-corta) var(--curva-suave);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #como-funciona .paso__marcador,
+  #como-funciona .paso__icono svg,
+  #como-funciona .paso__titulo {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+@media print {
+  #como-funciona .pasos-trayectoria::before { display: none; }
+  #como-funciona .paso { break-inside: avoid; }
+  #como-funciona .como-funciona__rigor { break-inside: avoid; border-color: #000; }
+}
+
+@media (forced-colors: active) {
+  #como-funciona .paso__marcador,
+  #como-funciona .paso__icono svg,
+  #como-funciona .pasos-trayectoria::before {
+    border: 1px solid CanvasText;
+  }
+}
 
 /* --- Movimiento ----------------------------------------------------------- */
 @media (prefers-reduced-motion: no-preference) {
@@ -929,13 +1176,13 @@ html.js .page-escoliosis .toc--open #toc-list { display: block; }
    Programas ya está definida más arriba, con 2 columnas: aquí no se toca. */
 .beneficios-grid,
 .programas-grid,
-.pasos {
+.pasos-trayectoria {
   width: 100%;
   max-width: none;
 }
 .beneficios-grid > li,
 .programas-grid > *,
-.pasos > li {
+.pasos-trayectoria > .paso {
   min-width: 0;
   margin: 0;
 }

@@ -504,30 +504,65 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
       </section>
 
       {/* Cómo funciona */}
-      <section id="como-funciona" aria-labelledby="titulo-como-funciona" tabIndex={-1} className="container seccion">
-        <h2 id="titulo-como-funciona">Cómo funciona FitCasa</h2>
-        <p className="seccion-intro">
-          Una experiencia en tres pasos para informarte, elegir con más contexto y observar tu
-          propia práctica. No sustituye la valoración de un profesional de la salud.
-        </p>
-        <ol className="pasos">
-          <li>
-            <h3>Explora</h3>
-            <p>
+      <section id="como-funciona" aria-labelledby="titulo-como-funciona" tabIndex={-1} className="container seccion como-funciona">
+        <header className="como-funciona__cabecera">
+          <span className="como-funciona__etiqueta">METODOLOGÍA FITCASA</span>
+          <h2 id="titulo-como-funciona" className="como-funciona__titulo">Cómo funciona FitCasa</h2>
+          <p className="como-funciona__intro">
+            Una experiencia en tres pasos para informarte, elegir con más contexto y observar tu
+            propia práctica. No sustituye la valoración de un profesional de la salud.
+          </p>
+          <div className="como-funciona__rigor" role="note" aria-label="Rigor divulgativo">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M12 2L2 7l10 5 10-5-10-5z" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M12 7v10" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+            </svg>
+            <span>Contenido educativo: información de referencia, no prescripción médica.</span>
+          </div>
+        </header>
+
+        <ol className="pasos-trayectoria" aria-label="Recorrido guiado en tres pasos">
+          <li className="paso">
+            <span className="paso__marcador">01</span>
+            <div className="paso__icono" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M4 4h8v16H4z" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+                <path d="M12 4h8v16h-8z" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+                <path d="M8 8l3-3 3 3" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <h3 className="paso__titulo">Explora</h3>
+            <p className="paso__texto">
               Consulta ejercicios y sus adaptaciones informativas sin asumir que una etiqueta
               equivale a una autorización clínica.
             </p>
           </li>
-          <li>
-            <h3>Orienta</h3>
-            <p>
+          <li className="paso">
+            <span className="paso__marcador">02</span>
+            <div className="paso__icono" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+                <path d="M12 3v6M12 15v6M3 12h6M15 12h6" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+                <path d="M12 12l4-4" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+              </svg>
+            </div>
+            <h3 className="paso__titulo">Orienta</h3>
+            <p className="paso__texto">
               Usa el cuestionario para ordenar una propuesta educativa según tu tiempo, experiencia
               y equipamiento.
             </p>
           </li>
-          <li>
-            <h3>Registra</h3>
-            <p>
+          <li className="paso">
+            <span className="paso__marcador">03</span>
+            <div className="paso__icono" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <rect x="3" y="4" width="8" height="16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+                <rect x="11" y="4" width="4" height="16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+                <path d="M7 8l2 2 4-4" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <h3 className="paso__titulo">Registra</h3>
+            <p className="paso__texto">
               Observa tu actividad y tus sensaciones en un historial local voluntario, sin crear
               una cuenta.
             </p>
