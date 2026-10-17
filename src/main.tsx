@@ -5,6 +5,10 @@ import './styles/style.css';
 import './styles/fitcasa-app.css';
 import './styles/ejercicios.css';
 import './styles/scoliosis-page.css';
+import './styles/panel-page.css';
+import './styles/privacidad-page.css';
+import './styles/terminos-page.css';
+import './styles/consent-guard.css';
 
 // Add js class to html documentElement for progressive enhancement matching original script
 document.documentElement.classList.add('js');

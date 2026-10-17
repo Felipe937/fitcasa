@@ -39,6 +39,7 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
   const [stepError, setStepError] = useState<string>('');
   const [storageNotice, setStorageNotice] = useState<{ message: string; type: 'warning' | 'info' } | null>(null);
   const [clearStatus, setClearStatus] = useState<string>('');
+  const [confirmClear, setConfirmClear] = useState<boolean>(false);
 
   const [results, setResults] = useState<QuizResult | null>(null);
   const [showExportModal, setShowExportModal] = useState<boolean>(false);
@@ -156,12 +157,12 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
     setResults(output);
   };
 
-  const handleClearData = () => {
-    if (!window.confirm('¿Borrar las respuestas y todos los registros guardados en este navegador?')) return;
+  const handleConfirmClearData = () => {
     const res = removeAllStorage();
     // Borrar los datos del sitio incluye la aceptación: hay que avisar a la
     // capa superior para que vuelva a proteger estas rutas.
     onStorageCleared?.();
+    setConfirmClear(false);
     if (res.removed) {
       setObjective('');
       setDays('');
@@ -929,14 +930,51 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
         <p>
           Las respuestas del cuestionario y los registros se conservan únicamente en el almacenamiento local de tu navegador. FitCasa no envía estos datos a servidores externos.
         </p>
-        <button
-          type="button"
-          id="clear-data"
-          className="btn secondary"
-          onClick={handleClearData}
-        >
-          Borrar respuestas y registros guardados
-        </button>
+        {!confirmClear ? (
+          <button
+            type="button"
+            id="clear-data"
+            className="btn secondary"
+            onClick={() => setConfirmClear(true)}
+          >
+            Borrar respuestas y registros guardados
+          </button>
+        ) : (
+          <div
+            className="panel-confirmacion"
+            role="alertdialog"
+            aria-labelledby="clear-confirm-heading"
+            aria-describedby="clear-confirm-body"
+            tabIndex={-1}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') {
+                e.stopPropagation();
+                setConfirmClear(false);
+              }
+            }}
+          >
+            <h3 id="clear-confirm-heading">¿Confirmas el borrado?</h3>
+            <p id="clear-confirm-body">
+              Esto borrará todo tu historial de actividad y las respuestas del cuestionario guardadas en este dispositivo. No se puede deshacer.
+            </p>
+            <div className="panel-confirmacion__acciones">
+              <button
+                type="button"
+                className="panel-peligro panel-boton"
+                onClick={handleConfirmClearData}
+              >
+                Sí, borrar todo
+              </button>
+              <button
+                type="button"
+                className="btn secondary panel-boton"
+                onClick={() => setConfirmClear(false)}
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        )}
         {clearStatus && (
           <p id="clear-status" role="status" className="small-print mt-2">
             {clearStatus}
@@ -946,3 +984,4 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
     </main>
   );
 };
+export default QuizPage;

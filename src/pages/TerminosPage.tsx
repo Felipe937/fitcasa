@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import { PageRoute } from '../components/Header';
-import '../styles/terminos-page.css';
 
 /** Fecha de actualización. Debe coincidir con TERMINOS.md. */
 const FECHA_ACTUALIZACION = '16 de octubre de 2026';

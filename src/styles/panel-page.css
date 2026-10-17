@@ -921,7 +921,7 @@ main.panel-page > section {
   line-height: var(--alto-linea);
 }
 
-.panel-privacidad small-print {
+.panel-privacidad .small-print {
   /* sin estilos específicos, hereda de .small-print global */
 }
 

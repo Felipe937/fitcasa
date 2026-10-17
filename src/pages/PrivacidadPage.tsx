@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import { PageRoute } from '../components/Header';
-import '../styles/privacidad-page.css';
 
 /** Fecha de actualización de la política. Debe coincidir con PRIVACY.md. */
 const FECHA_ACTUALIZACION = '15 de octubre de 2026';

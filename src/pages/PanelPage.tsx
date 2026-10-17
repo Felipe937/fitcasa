@@ -10,7 +10,6 @@ import {
   STORAGE_KEYS,
   PANEL_STORAGE_VERSION,
 } from '../utils/storage';
-import '../styles/panel-page.css';
 
 const PAIN_MIN = 0;
 const PAIN_MAX = 10;
@@ -157,6 +156,7 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
   const [statusMessage, setStatusMessage] = useState<string>('');
   const [clearStatus, setClearStatus] = useState<string>('');
   const [confirmClear, setConfirmClear] = useState(false);
+  const [recordToDelete, setRecordToDelete] = useState<PanelRecord | null>(null);
 
   const [range, setRange] = useState<RangeFilter>('todos');
   const [search, setSearch] = useState<string>('');
@@ -405,14 +405,24 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
     if (entryHeading) entryHeading.focus();
   };
 
-  const handleDelete = (id: string) => {
-    if (!window.confirm('¿Eliminar esta entrada del historial? Esta acción no se puede deshacer.')) return;
+  const handleRequestDelete = (record: PanelRecord) => {
+    setRecordToDelete(record);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!recordToDelete) return;
+    const id = recordToDelete.id;
     const filtered = records.filter((rec) => rec.id !== id);
     saveUpdatedRecords(filtered);
     if (editingId === id) {
       resetForm();
     }
+    setRecordToDelete(null);
     announce(DELETED_TEXT);
+  };
+
+  const handleCancelDelete = () => {
+    setRecordToDelete(null);
   };
 
   const handleClearAll = () => {
@@ -849,6 +859,44 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
           Historial de actividad y bienestar
         </h2>
 
+        {recordToDelete && (
+          <div
+            className="panel-confirmacion"
+            role="alertdialog"
+            aria-labelledby="record-delete-heading"
+            aria-describedby="record-delete-body"
+            tabIndex={-1}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') {
+                e.stopPropagation();
+                handleCancelDelete();
+              }
+            }}
+          >
+            <h3 id="record-delete-heading">¿Confirmas la eliminación de esta entrada?</h3>
+            <p id="record-delete-body">
+              Se eliminará el registro del {formatDate(recordToDelete.date)}
+              {recordToDelete.activity ? ` (${recordToDelete.activity})` : ''}. Esta acción no se puede deshacer.
+            </p>
+            <div className="panel-confirmacion__acciones">
+              <button
+                type="button"
+                className="panel-peligro panel-boton"
+                onClick={handleConfirmDelete}
+              >
+                Sí, eliminar entrada
+              </button>
+              <button
+                type="button"
+                className="btn secondary panel-boton"
+                onClick={handleCancelDelete}
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        )}
+
         {sortedRecords.length > 0 && (
           <div className="panel-filtros">
             <fieldset className="panel-filtros__grupo">
@@ -977,7 +1025,7 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
                       <button
                         type="button"
                         className="btn secondary panel-boton panel-boton--peligro"
-                        onClick={() => handleDelete(record.id)}
+                        onClick={() => handleRequestDelete(record)}
                       >
                         Eliminar
                         <span className="sr-only">
@@ -1020,7 +1068,7 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
                   <button
                     type="button"
                     className="btn secondary panel-boton panel-boton--peligro"
-                    onClick={() => handleDelete(record.id)}
+                    onClick={() => handleRequestDelete(record)}
                   >
                     Eliminar
                     <span className="sr-only"> el registro del {formatDateLong(record.date)}</span>
@@ -1177,3 +1225,4 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
     </main>
   );
 };
+export default PanelPage;

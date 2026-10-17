@@ -24,7 +24,10 @@ export const ScoliosisPage: React.FC<ScoliosisPageProps> = ({ onNavigate }) => {
     const el = document.getElementById(id);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
-      el.focus();
+      if (typeof el.focus === 'function') {
+        el.setAttribute('tabindex', '-1');
+        el.focus();
+      }
     }
   }, []);
 
@@ -173,24 +176,24 @@ export const ScoliosisPage: React.FC<ScoliosisPageProps> = ({ onNavigate }) => {
                 </linearGradient>
               </defs>
               {/* Eje gravitacional vertical */}
-              <line x1="100" y1="20" x2="100" y2="180" stroke="url(#gradVerde)" stroke-width="4" stroke-linecap="round" opacity="0.35" />
+              <line x1="100" y1="20" x2="100" y2="180" stroke="url(#gradVerde)" strokeWidth={4} strokeLinecap="round" opacity={0.35} />
               {/* Columna abstracta (curva suave en S) */}
-              <path d="M100 160 Q 110 140 100 120 Q 90 100 100 80 Q 110 60 100 40" fill="none" stroke="url(#gradVerde)" stroke-width="6" stroke-linecap="round" />
+              <path d="M100 160 Q 110 140 100 120 Q 90 100 100 80 Q 110 60 100 40" fill="none" stroke="url(#gradVerde)" strokeWidth={6} strokeLinecap="round" />
               {/* Puntos nodales de equilibrio postural */}
               <circle cx="100" cy="160" r="5" fill="#15433b" />
               <circle cx="100" cy="120" r="5" fill="#c86d51" />
               <circle cx="100" cy="80" r="5" fill="#5c8276" />
               <circle cx="100" cy="40" r="5" fill="#0e2f29" />
               {/* Ejes de referencia técnico */}
-              <line x1="60" y1="160" x2="140" y2="160" stroke="#15433b" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.6" />
-              <line x1="60" y1="120" x2="140" y2="120" stroke="#c86d51" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.6" />
-              <line x1="60" y1="80" x2="140" y2="80" stroke="#5c8276" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.6" />
-              <line x1="60" y1="40" x2="140" y2="40" stroke="#0e2f29" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.6" />
+              <line x1="60" y1="160" x2="140" y2="160" stroke="#15433b" strokeWidth={1.5} strokeDasharray="4,4" opacity={0.6} />
+              <line x1="60" y1="120" x2="140" y2="120" stroke="#c86d51" strokeWidth={1.5} strokeDasharray="4,4" opacity={0.6} />
+              <line x1="60" y1="80" x2="140" y2="80" stroke="#5c8276" strokeWidth={1.5} strokeDasharray="4,4" opacity={0.6} />
+              <line x1="60" y1="40" x2="140" y2="40" stroke="#0e2f29" strokeWidth={1.5} strokeDasharray="4,4" opacity={0.6} />
               {/* Marcas de escala milimétrica discreta */}
-              <line x1="96" y1="160" x2="104" y2="160" stroke="#15433b" stroke-width="2" />
-              <line x1="96" y1="120" x2="104" y2="120" stroke="#c86d51" stroke-width="2" />
-              <line x1="96" y1="80" x2="104" y2="80" stroke="#5c8276" stroke-width="2" />
-              <line x1="96" y1="40" x2="104" y2="40" stroke="#0e2f29" stroke-width="2" />
+              <line x1="96" y1="160" x2="104" y2="160" stroke="#15433b" strokeWidth={2} />
+              <line x1="96" y1="120" x2="104" y2="120" stroke="#c86d51" strokeWidth={2} />
+              <line x1="96" y1="80" x2="104" y2="80" stroke="#5c8276" strokeWidth={2} />
+              <line x1="96" y1="40" x2="104" y2="40" stroke="#0e2f29" strokeWidth={2} />
             </svg>
           </div>
         </div>
@@ -245,7 +248,7 @@ export const ScoliosisPage: React.FC<ScoliosisPageProps> = ({ onNavigate }) => {
         >
           Índice de contenidos
           <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true" width="1.25rem" height="1.25rem">
-            <path d="M7 14l5-5 5 5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M7 14l5-5 5 5z" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
 
@@ -665,3 +668,4 @@ export const ScoliosisPage: React.FC<ScoliosisPageProps> = ({ onNavigate }) => {
     </main>
   );
 };
+export default ScoliosisPage;

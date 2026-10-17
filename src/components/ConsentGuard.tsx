@@ -11,7 +11,6 @@ import {
   STORAGE_KEYS,
   CONSENT_STORAGE_VERSION,
 } from '../utils/storage';
-import '../styles/consent-guard.css';
 
 /** Funciones cuyo uso guarda datos introducidos por la persona. */
 export type ProtectedRoute = 'panel' | 'quiz';
