@@ -489,6 +489,13 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
     <main id="contenido" tabIndex={-1} className="container app-main panel-page">
       <header className="panel-page__cabecera">
         <p className="panel-page__eyebrow">Seguimiento personal</p>
+        <div className="panel-page__motivo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M12 2L1 21h22L12 2zm0 4.5v9l7-4.5z" />
+            <path d="M12 11.5v4.5" />
+            <path d="M12 17.6h.01" />
+          </svg>
+        </div>
         <h1 className="panel-page__titulo">Tu registro de bienestar</h1>
         <p className="panel-page__pildora">
           <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
@@ -541,7 +548,7 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
           evaluación de progreso ni una medida de resultado clínico.
         </p>
         <dl className="panel-metricas">
-          <div className="panel-metrica">
+          <div className="panel-metrica panel-metrica--numero">
             <dt>Registros guardados</dt>
             <dd>{records.length}</dd>
           </div>
@@ -566,223 +573,238 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
         </p>
 
         <form id="panel-form" className="panel-form" noValidate onSubmit={handleSubmit}>
-          <div className="panel-form__campo">
-            <label className="panel-form__etiqueta" htmlFor="entry-date">
-              Fecha
-            </label>
-            <input
-              ref={dateRef}
-              type="date"
-              id="entry-date"
-              name="date"
-              className="panel-campo"
-              required
-              max={today}
-              value={date}
-              onChange={(e) => {
-                setDate(e.target.value);
-                clearFieldError('date');
-              }}
-              aria-invalid={fieldErrors.date ? true : undefined}
-              aria-describedby={joinIds('date-help', fieldErrors.date && 'error-date')}
-            />
-            <p id="date-help" className="panel-pista">
-              No se admiten fechas futuras.
-            </p>
-            {fieldErrors.date && (
-              <p id="error-date" className="panel-error">
-                <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M12 7.5v5" />
-                  <path d="M12 16h.01" />
-                </svg>
-                <span>{fieldErrors.date}</span>
-              </p>
-            )}
-          </div>
+          {/* Grupo: Actividad */}
+          <div className="panel-form__grupo">
+            <h3 className="panel-form__grupo-titulo">Actividad</h3>
 
-          <div className="panel-form__campo">
-            <label className="panel-form__etiqueta" htmlFor="exercise-quick-select">
-              Vincular ejercicio de la biblioteca <span className="small-print">(opcional)</span>
-            </label>
-            <select
-              id="exercise-quick-select"
-              className="panel-campo"
-              value={exerciseId}
-              onChange={handleSelectExercise}
-              aria-describedby="exercise-link-status"
-            >
-              <option value="">Selecciona un ejercicio de la biblioteca…</option>
-              {EXERCISES_DATA.map((ex) => (
-                <option key={ex.id} value={ex.id}>
-                  {ex.name} ({ex.category === 'cuidado_postural' ? 'Postural' : 'General'})
-                </option>
-              ))}
-            </select>
-            <p id="exercise-link-status" className="panel-pista">
-              {linkStatusText}
-            </p>
-          </div>
-
-          <div className="panel-form__campo panel-form__campo--ancho">
-            <label className="panel-form__etiqueta" htmlFor="entry-activity">
-              Actividad realizada <span className="small-print">(opcional o personalizada)</span>
-            </label>
-            <input
-              ref={activityRef}
-              type="text"
-              id="entry-activity"
-              name="activity"
-              className="panel-campo"
-              maxLength={ACTIVITY_MAX}
-              autoComplete="off"
-              value={activity}
-              onChange={(e) => handleActivityChange(e.target.value)}
-              placeholder="Ej. Sentadilla con peso corporal, caminata suave, estiramiento…"
-              aria-invalid={fieldErrors.activity ? true : undefined}
-              aria-describedby={joinIds('activity-help', fieldErrors.activity && 'error-activity')}
-            />
-            <p id="activity-help" className="panel-pista">
-              Si eliges un ejercicio de la biblioteca, el nombre se rellena solo.
-              <span className="panel-contador" aria-hidden="true">
-                {' '}
-                · {activity.length}/{ACTIVITY_MAX}
-              </span>
-            </p>
-            {fieldErrors.activity && (
-              <p id="error-activity" className="panel-error">
-                <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M12 7.5v5" />
-                  <path d="M12 16h.01" />
-                </svg>
-                <span>{fieldErrors.activity}</span>
-              </p>
-            )}
-          </div>
-
-          <div className="panel-form__campo panel-form__campo--ancho">
-            <div className={painClasses} role="group" aria-labelledby="pain-label">
-              <span className="panel-form__etiqueta" id="pain-label">
-                Dolor percibido, de 0 a 10
-              </span>
-              <div className="panel-dolor__cabecera">
-                <span className="panel-pista">
-                  Es tu percepción subjetiva del dolor, no una medición diagnóstica.
-                </span>
-                <span className={readoutClasses}>
-                  {pain === null ? 'Sin indicar' : `${pain} / ${PAIN_MAX} · ${painLabel(pain)}`}
-                </span>
-              </div>
+            <div className="panel-form__campo">
+              <label className="panel-form__etiqueta" htmlFor="entry-date">
+                Fecha
+              </label>
               <input
-                ref={painRef}
-                type="range"
-                id="entry-pain"
-                name="pain"
-                className="panel-dolor__rango"
-                min={PAIN_MIN}
-                max={PAIN_MAX}
-                step={1}
+                ref={dateRef}
+                type="date"
+                id="entry-date"
+                name="date"
+                className="panel-campo"
                 required
-                value={painValue}
-                onChange={handlePainChange}
-                style={painStyle}
-                aria-required="true"
-                aria-valuemin={PAIN_MIN}
-                aria-valuemax={PAIN_MAX}
-                aria-valuenow={painValue}
-                aria-valuetext={`Dolor percibido: ${painValue} de ${PAIN_MAX}${
-                  pain === null ? ', sin indicar' : `, ${painLabel(painValue)}`
-                }`}
-                aria-invalid={fieldErrors.pain ? true : undefined}
-                aria-describedby={joinIds('pain-help', fieldErrors.pain && 'error-pain')}
+                max={today}
+                value={date}
+                onChange={(e) => {
+                  setDate(e.target.value);
+                  clearFieldError('date');
+                }}
+                aria-invalid={fieldErrors.date ? true : undefined}
+                aria-describedby={joinIds('date-help', fieldErrors.date && 'error-date')}
               />
-              <div className="panel-dolor__marcas" aria-hidden="true" />
-              <div className="panel-dolor__escala" aria-hidden="true">
-                <span>0 · Sin molestia</span>
-                <span>5 · Molestia moderada</span>
-                <span>10 · Dolor muy intenso</span>
-              </div>
-              <p id="pain-help" className="panel-pista">
-                Usa las flechas ← → del teclado, las teclas Inicio y Fin, o desliza el control. Elige un valor aunque
-                sea 0: el 0 significa “sin molestia” y es una respuesta válida.
+              <p id="date-help" className="panel-pista">
+                No se admiten fechas futuras.
               </p>
-              {fieldErrors.pain && (
-                <p id="error-pain" className="panel-error">
+              {fieldErrors.date && (
+                <p id="error-date" className="panel-error">
                   <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
                     <circle cx="12" cy="12" r="9" />
                     <path d="M12 7.5v5" />
                     <path d="M12 16h.01" />
                   </svg>
-                  <span>{fieldErrors.pain}</span>
+                  <span>{fieldErrors.date}</span>
                 </p>
               )}
             </div>
 
-            {showPainAlert && (
-              <div className="panel-alerta" role="note" aria-live="polite">
-                <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
-                  <path d="M12 3.6 2.6 20h18.8L12 3.6Z" />
-                  <path d="M12 10v4.5" />
-                  <path d="M12 17.6h.01" />
-                </svg>
-                <div>
-                  <p className="panel-estado-fuerte">Aviso de precaución</p>
-                  <p>
-                    Ante dolor intenso, persistente, que empeora o que se acompaña de síntomas neurológicos
-                    (hormigueo, debilidad o pérdida de sensibilidad), detén la actividad y consulta a un profesional
-                    sanitario.
-                  </p>
-                  <p>El dolor que registras es una percepción subjetiva y no sustituye una valoración médica.</p>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="panel-form__campo panel-form__campo--ancho">
-            <label className="panel-form__etiqueta" htmlFor="entry-note">
-              Nota de bienestar <span className="small-print">(opcional, sensaciones o evolución)</span>
-            </label>
-            <textarea
-              ref={noteRef}
-              id="entry-note"
-              name="note"
-              className="panel-campo panel-campo--area"
-              maxLength={NOTE_MAX}
-              rows={3}
-              value={note}
-              onChange={(e) => {
-                setNote(e.target.value);
-                clearFieldError('note');
-              }}
-              placeholder="¿Cómo te sentiste durante o después de moverte?"
-              aria-invalid={fieldErrors.note ? true : undefined}
-              aria-describedby={joinIds('note-help', fieldErrors.note && 'error-note')}
-            ></textarea>
-            <p id="note-help" className="panel-pista">
-              Sensaciones, evolución o contexto que quieras recordar.
-              <span className="panel-contador" aria-hidden="true">
-                {' '}
-                · {note.length}/{NOTE_MAX}
-              </span>
-            </p>
-            {fieldErrors.note && (
-              <p id="error-note" className="panel-error">
-                <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M12 7.5v5" />
-                  <path d="M12 16h.01" />
-                </svg>
-                <span>{fieldErrors.note}</span>
+            <div className="panel-form__campo">
+              <label className="panel-form__etiqueta" htmlFor="exercise-quick-select">
+                Vincular ejercicio de la biblioteca <span className="small-print">(opcional)</span>
+              </label>
+              <select
+                id="exercise-quick-select"
+                className="panel-campo"
+                value={exerciseId}
+                onChange={handleSelectExercise}
+                aria-describedby="exercise-link-status"
+              >
+                <option value="">Selecciona un ejercicio de la biblioteca…</option>
+                {EXERCISES_DATA.map((ex) => (
+                  <option key={ex.id} value={ex.id}>
+                    {ex.name} ({ex.category === 'cuidado_postural' ? 'Postural' : 'General'})
+                  </option>
+                ))}
+              </select>
+              <p id="exercise-link-status" className="panel-pista">
+                {linkStatusText}
               </p>
-            )}
+            </div>
+
+            <div className="panel-form__campo panel-form__campo--ancho">
+              <label className="panel-form__etiqueta" htmlFor="entry-activity">
+                Actividad realizada <span className="small-print">(opcional o personalizada)</span>
+              </label>
+              <input
+                ref={activityRef}
+                type="text"
+                id="entry-activity"
+                name="activity"
+                className="panel-campo"
+                maxLength={ACTIVITY_MAX}
+                autoComplete="off"
+                value={activity}
+                onChange={(e) => handleActivityChange(e.target.value)}
+                placeholder="Ej. Sentadilla con peso corporal, caminata suave, estiramiento…"
+                aria-invalid={fieldErrors.activity ? true : undefined}
+                aria-describedby={joinIds('activity-help', fieldErrors.activity && 'error-activity')}
+              />
+              <p id="activity-help" className="panel-pista">
+                Si eliges un ejercicio de la biblioteca, el nombre se rellena solo.
+                <span className="panel-contador" aria-hidden="true">
+                  {' '}
+                  · {activity.length}/{ACTIVITY_MAX}
+                </span>
+              </p>
+              {fieldErrors.activity && (
+                <p id="error-activity" className="panel-error">
+                  <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M12 7.5v5" />
+                    <path d="M12 16h.01" />
+                  </svg>
+                  <span>{fieldErrors.activity}</span>
+                </p>
+              )}
+            </div>
           </div>
 
-          <p className="small-print" id="entry-consent-note">
-            La aceptación de los documentos se confirmó al entrar en el panel y se guarda solo en
-            este dispositivo. Puedes consultarla o retirarla en{' '}
-            <a href="#privacy-heading">Privacidad y borrado</a>, más abajo en esta misma página.
-          </p>
+          {/* Grupo: Sensaciones */}
+          <div className="panel-form__grupo">
+            <h3 className="panel-form__grupo-titulo">Sensaciones</h3>
+
+            <div className="panel-form__campo panel-form__campo--ancho">
+              <div className={painClasses} role="group" aria-labelledby="pain-label">
+                <span className="panel-form__etiqueta panel-dolor__etiqueta" id="pain-label">
+                  Dolor percibido, de 0 a 10
+                </span>
+                <div className="panel-dolor__cabecera">
+                  <span className="panel-pista panel-dolor__pista">
+                    Es tu percepción subjetiva del dolor, no una medición diagnóstica.
+                  </span>
+                  <span className={readoutClasses}>
+                    {pain === null ? 'Sin indicar' : `${pain} / ${PAIN_MAX} · ${painLabel(pain)}`}
+                  </span>
+                </div>
+                <input
+                  ref={painRef}
+                  type="range"
+                  id="entry-pain"
+                  name="pain"
+                  className="panel-dolor__rango"
+                  min={PAIN_MIN}
+                  max={PAIN_MAX}
+                  step={1}
+                  required
+                  value={painValue}
+                  onChange={handlePainChange}
+                  style={painStyle}
+                  aria-required="true"
+                  aria-valuemin={PAIN_MIN}
+                  aria-valuemax={PAIN_MAX}
+                  aria-valuenow={painValue}
+                  aria-valuetext={`Dolor percibido: ${painValue} de ${PAIN_MAX}${
+                    pain === null ? ', sin indicar' : `, ${painLabel(painValue)}`
+                  }`}
+                  aria-invalid={fieldErrors.pain ? true : undefined}
+                  aria-describedby={joinIds('pain-help', fieldErrors.pain && 'error-pain')}
+                />
+                <div className="panel-dolor__marcas" aria-hidden="true" />
+                <div className="panel-dolor__escala" aria-hidden="true">
+                  <span>0 · Sin molestia</span>
+                  <span>5 · Molestia moderada</span>
+                  <span>10 · Dolor muy intenso</span>
+                </div>
+                <p id="pain-help" className="panel-pista">
+                  Usa las flechas ← → del teclado, las teclas Inicio y Fin, o desliza el control. Elige un valor aunque
+                  sea 0: el 0 significa “sin molestia” y es una respuesta válida.
+                </p>
+                {fieldErrors.pain && (
+                  <p id="error-pain" className="panel-error">
+                    <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                      <circle cx="12" cy="12" r="9" />
+                      <path d="M12 7.5v5" />
+                      <path d="M12 16h.01" />
+                    </svg>
+                    <span>{fieldErrors.pain}</span>
+                  </p>
+                )}
+              </div>
+
+              {showPainAlert && (
+                <div className="panel-alerta" role="note" aria-live="polite">
+                  <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                    <path d="M12 3.6 2.6 20h18.8L12 3.6Z" />
+                    <path d="M12 10v4.5" />
+                    <path d="M12 17.6h.01" />
+                  </svg>
+                  <div>
+                    <p className="panel-estado-fuerte">Aviso de precaución</p>
+                    <p>
+                      Ante dolor intenso, persistente, que empeora o que se acompaña de síntomas neurológicos
+                      (hormigueo, debilidad o pérdida de sensibilidad), detén la actividad y consulta a un profesional
+                      sanitario.
+                    </p>
+                    <p>El dolor que registras es una percepción subjetiva y no sustituye una valoración médica.</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Grupo: Nota personal */}
+          <div className="panel-form__grupo">
+            <h3 className="panel-form__grupo-titulo">Nota personal</h3>
+
+            <div className="panel-form__campo panel-form__campo--ancho">
+              <label className="panel-form__etiqueta" htmlFor="entry-note">
+                Nota de bienestar <span className="small-print">(opcional, sensaciones o evolución)</span>
+              </label>
+              <textarea
+                ref={noteRef}
+                id="entry-note"
+                name="note"
+                className="panel-campo panel-campo--area"
+                maxLength={NOTE_MAX}
+                rows={3}
+                value={note}
+                onChange={(e) => {
+                  setNote(e.target.value);
+                  clearFieldError('note');
+                }}
+                placeholder="¿Cómo te sentiste durante o después de moverte?"
+                aria-invalid={fieldErrors.note ? true : undefined}
+                aria-describedby={joinIds('note-help', fieldErrors.note && 'error-note')}
+              ></textarea>
+              <p id="note-help" className="panel-pista">
+                Sensaciones, evolución o contexto que quieras recordar.
+                <span className="panel-contador" aria-hidden="true">
+                  {' '}
+                  · {note.length}/{NOTE_MAX}
+                </span>
+              </p>
+              {fieldErrors.note && (
+                <p id="error-note" className="panel-error">
+                  <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M12 7.5v5" />
+                    <path d="M12 16h.01" />
+                  </svg>
+                  <span>{fieldErrors.note}</span>
+                </p>
+              )}
+            </div>
+
+            <p className="small-print" id="entry-consent-note">
+              La aceptación de los documentos se confirmó al entrar en el panel y se guarda solo en
+              este dispositivo. Puedes consultarla o retirarla en{' '}
+              <a href="#privacy-heading">Privacidad y borrado</a>, más abajo en esta misma página.
+            </p>
+          </div>
 
           <div className="panel-form__acciones">
             <button type="submit" id="save-entry" className="btn panel-boton">
@@ -1010,20 +1032,24 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
         )}
       </section>
 
-      <section className="app-card" aria-labelledby="privacy-heading">
+      <section className="app-card panel-privacidad" aria-labelledby="privacy-heading">
         <h2 id="privacy-heading">Privacidad y borrado</h2>
-        <p>
-          Los registros permanecen en este navegador y en este dispositivo, en el almacenamiento local del navegador
-          (<code>localStorage</code>). FitCasa no los envía a ningún servidor, no existe una cuenta asociada y esta
-          herramienta no cifra ese almacenamiento. Si borras los datos del navegador, usas el modo privado o
-          compartes el dispositivo, tus entradas pueden desaparecer o quedar accesibles para otras personas.
-        </p>
-        <p className="small-print">
-          FitCasa no ofrece exportar tus registros: no hay función de descarga ni copia de seguridad en ningún
-          servidor. <a href="#privacidad">Lee la Política de Privacidad</a> para el detalle completo, y{' '}
-          <a href="#terminos">los Términos y Condiciones</a> para las condiciones de uso y el tratamiento de tus
-          datos de bienestar según la Ley 1581 de 2012.
-        </p>
+        <div className="panel-privacidad__grupo">
+          <p>
+            Los registros permanecen en este navegador y en este dispositivo, en el almacenamiento local del navegador
+            (<code>localStorage</code>). FitCasa no los envía a ningún servidor, no existe una cuenta asociada y esta
+            herramienta no cifra ese almacenamiento. Si borras los datos del navegador, usas el modo privado o
+            compartes el dispositivo, tus entradas pueden desaparecer o quedar accesibles para otras personas.
+          </p>
+        </div>
+        <div className="panel-privacidad__grupo">
+          <p className="small-print">
+            FitCasa no ofrece exportar tus registros: no hay función de descarga ni copia de seguridad en ningún
+            servidor. <a href="#privacidad">Lee la Política de Privacidad</a> para el detalle completo, y{' '}
+            <a href="#terminos">los Términos y Condiciones</a> para las condiciones de uso y el tratamiento de tus
+            datos de bienestar según la Ley 1581 de 2012.
+          </p>
+        </div>
 
         <p className="small-print" id="consent-status">
           {consent ? (
@@ -1051,34 +1077,35 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
 
         {consent && (
           <>
-            <p className="small-print">
-              Este registro vive en el almacenamiento local de tu navegador, que no está cifrado y
-              que puedes editar o borrar por tu cuenta. Acredita una trazabilidad personal, no es
-              un documento firmado ni una garantía de cumplimiento legal.
-            </p>
-            <p className="small-print">
-              <button
-                type="button"
-                id="reset-consent"
-                className="btn secondary panel-boton panel-boton--peligro"
-                onClick={handleWithdrawConsent}
-              >
-                Retirar mi aceptación
-              </button>
-            </p>
-            <p className="small-print">
-              Retirarla cierra el acceso al panel y al cuestionario, pero{' '}
-              <strong>no borra</strong> los registros ni las respuestas que ya habías guardado.
-            </p>
+            <div className="panel-privacidad__grupo">
+              <p className="small-print">
+                Este registro vive en el almacenamiento local de tu navegador, que no está cifrado y
+                que puedes editar o borrar por tu cuenta. Acredita una trazabilidad personal, no es
+                un documento firmado ni una garantía de cumplimiento legal.
+              </p>
+              <p className="small-print">
+                <button
+                  type="button"
+                  id="reset-consent"
+                  className="btn secondary panel-boton panel-boton--peligro"
+                  onClick={handleWithdrawConsent}
+                >
+                  Retirar mi aceptación
+                </button>
+              </p>
+              <p className="small-print">
+                Retirarla cierra el acceso al panel y al cuestionario, pero{' '}
+                <strong>no borra</strong> los registros ni las respuestas que ya habías guardado.
+              </p>
+            </div>
+            <div className="panel-privacidad__grupo">
+              <p className="small-print" id="consent-version-warning">
+                Versiones vigentes: {DOC_VERSIONS.terminos} (Términos y autorización) y{' '}
+                {DOC_VERSIONS.privacidad} (Privacidad). Si cambian, FitCasa volverá a pedírtelas al
+                entrar.
+              </p>
+            </div>
           </>
-        )}
-
-        {consent && (
-          <p className="small-print" id="consent-version-warning">
-            Versiones vigentes: {DOC_VERSIONS.terminos} (Términos y autorización) y{' '}
-            {DOC_VERSIONS.privacidad} (Privacidad). Si cambian, FitCasa volverá a pedírtelas al
-            entrar.
-          </p>
         )}
 
         <p className="panel-page__slot" role="status" aria-live="polite">

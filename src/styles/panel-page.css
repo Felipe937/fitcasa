@@ -1,11 +1,12 @@
-/* Panel de seguimiento: hoja de estilos exclusiva de src/pages/PanelPage.tsx.
-   Todo se apoya en el prefijo .panel-page y en tokens ya existentes del
-   proyecto, de modo que ninguna regla puede alcanzar a otra pantalla.
-   --panel-borde-control sustituye a --color-borde en los controles del
-   formulario porque #7f949c alcanza 3.17:1 sobre blanco (WCAG 1.4.11) y
-   --color-borde (#d7e1e5) se queda en 1.33:1. */
+/* ==========================================================================
+   FitCasa — Panel de seguimiento personal (PanelPage)
+   Rediseño editorial: diario personal de bienestar, sereno y profesional.
+   Todo se apoya en el prefijo .panel-page y en tokens del proyecto.
+   --sombra-suave se define localmente porque no existe en :root.
+   ========================================================================== */
 
 main.panel-page {
+  --sombra-suave: 0 6px 18px -8px rgba(23, 62, 80, 0.08);
   --panel-borde-control: #7f949c;
   --panel-duracion: 180ms;
   --panel-media-escala: 0.875rem;
@@ -15,15 +16,20 @@ main.panel-page > section {
   padding-block: var(--espacio-6);
 }
 
+/* ==========================================================================
+   Cabecera editorial
+   ========================================================================== */
+
 .panel-page__cabecera {
-  padding-block: var(--espacio-6) 0;
+  padding-block: var(--espacio-5) 0;
+  margin-bottom: var(--espacio-7);
 }
 
 .panel-page__eyebrow {
   display: inline-flex;
   align-items: center;
   gap: var(--espacio-2);
-  margin: 0 0 var(--espacio-3);
+  margin: 0 0 var(--espacio-2);
   color: var(--color-secundario-oscuro);
   font-size: var(--texto-xs);
   font-weight: 800;
@@ -40,11 +46,37 @@ main.panel-page > section {
 }
 
 .panel-page__titulo {
-  max-width: 20ch;
   margin: 0 0 var(--espacio-3);
-  font-size: var(--texto-2xl);
+  font-size: clamp(1.75rem, 1.35rem + 1.8vw, 2.75rem);
   line-height: var(--alto-linea-titulo);
-  letter-spacing: -0.03em;
+  color: var(--color-primario-oscuro);
+  letter-spacing: -0.02em;
+  max-width: 42ch;
+}
+
+.panel-page__motivo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: var(--espacio-4);
+  color: var(--color-secundario);
+  background: var(--color-fondo-verde);
+  border: 1px solid var(--color-secundario);
+  border-radius: var(--radio-md);
+  flex-shrink: 0;
+}
+
+.panel-page__motivo svg {
+  width: 1.75rem;
+  height: 1.75rem;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .panel-page__pildora {
@@ -52,10 +84,10 @@ main.panel-page > section {
   align-items: center;
   gap: var(--espacio-2);
   padding: var(--espacio-1) var(--espacio-3);
-  margin: 0 0 var(--espacio-3);
+  margin: 0 0 var(--espacio-4);
   color: var(--color-primario-oscuro);
   background: var(--color-fondo-verde);
-  border: 1px solid var(--color-borde);
+  border: 1px solid var(--color-secundario);
   border-radius: var(--radio-pill);
   font-size: var(--texto-xs);
   font-weight: 800;
@@ -73,31 +105,33 @@ main.panel-page > section {
 }
 
 .panel-page__intro {
-  max-width: 62ch;
-  margin: 0;
+  max-width: 56ch;
+  margin: 0 0 var(--espacio-5);
   color: var(--color-texto-suave);
+  font-size: var(--texto-base);
+  line-height: var(--alto-linea);
 }
 
-/* ---------------------------------------------------------------- Resumen */
+/* ==========================================================================
+   Resumen y métricas
+   ========================================================================== */
 
 .panel-page__resumen {
-  padding: clamp(var(--espacio-4), 3vw, var(--espacio-5));
-  background: var(--color-superficie);
-  border: 1px solid var(--color-borde);
-  border-radius: var(--radio-lg);
-  box-shadow: var(--sombra-suave);
+  margin: 0 0 var(--espacio-7);
 }
 
 .panel-page__seccion-titulo {
   margin: 0 0 var(--espacio-1);
   font-size: var(--texto-xl);
+  color: var(--color-primario-oscuro);
 }
 
 .panel-page__seccion-nota {
   max-width: 62ch;
-  margin: 0 0 var(--espacio-4);
+  margin: 0 0 var(--espacio-5);
   color: var(--color-texto-suave);
   font-size: var(--texto-sm);
+  line-height: var(--alto-linea);
 }
 
 .panel-metricas {
@@ -112,9 +146,10 @@ main.panel-page > section {
   align-content: start;
   min-width: 0;
   padding: var(--espacio-4);
-  background: var(--color-superficie-suave);
+  background: var(--color-superficie);
   border: 1px solid var(--color-borde);
   border-radius: var(--radio-md);
+  border-top: 0.35rem solid var(--color-secundario);
 }
 
 .panel-metrica dt {
@@ -129,18 +164,25 @@ main.panel-page > section {
   margin: 0;
   color: var(--color-primario-oscuro);
   font-size: var(--texto-lg);
-  font-weight: 850;
+  font-weight: 800;
   line-height: 1.25;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
-@media (min-width: 40.25rem) {
+.panel-metrica--numero dd {
+  font-size: clamp(1.75rem, 2vw + 1rem, 2.75rem);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (min-width: 48rem) {
   .panel-metricas {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
-/* ---------------------------------------------------------------- Avisos */
+/* ==========================================================================
+   Avisos y retroalimentación
+   ========================================================================== */
 
 .panel-alerta,
 .panel-estado {
@@ -149,23 +191,25 @@ main.panel-page > section {
   gap: var(--espacio-3);
   padding: var(--espacio-4);
   color: var(--color-texto);
-  border-left: 0.35rem solid var(--color-primario);
   border-radius: var(--radio-md);
 }
 
 .panel-alerta {
   background: var(--color-fondo-aviso);
-  border-left-color: var(--color-foco);
+  border: 1px solid var(--color-terciario-oscuro);
+  border-left: 0.35rem solid var(--color-terciario-oscuro);
 }
 
 .panel-estado {
   background: var(--color-fondo-verde);
-  border-left-color: var(--color-secundario);
+  border: 1px solid var(--color-secundario);
+  border-left: 0.35rem solid var(--color-secundario);
 }
 
 .panel-estado--error {
   background: var(--color-fondo-alerta);
-  border-left-color: var(--color-peligro);
+  border: 1px solid var(--color-peligro);
+  border-left: 0.35rem solid var(--color-peligro);
 }
 
 .panel-alerta svg,
@@ -178,6 +222,18 @@ main.panel-page > section {
   stroke-width: 1.75;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+.panel-alerta svg {
+  stroke: var(--color-terciario-oscuro);
+}
+
+.panel-estado svg {
+  stroke: var(--color-secundario-oscuro);
+}
+
+.panel-estado--error svg {
+  stroke: var(--color-peligro);
 }
 
 .panel-alerta p,
@@ -199,15 +255,56 @@ main.panel-page > section {
 }
 
 .panel-page__slot:not(:empty) {
-  margin: var(--espacio-4) 0;
+  margin: var(--espacio-5) 0;
 }
 
-/* ---------------------------------------------------------------- Formulario */
+/* ==========================================================================
+   Formulario: diario personal
+   ========================================================================== */
 
 .panel-form {
   display: grid;
-  gap: var(--espacio-4);
+  gap: var(--espacio-5);
   margin: 0;
+}
+
+.panel-form__grupo {
+  display: grid;
+  gap: var(--espacio-4);
+  padding: var(--espacio-4) var(--espacio-5);
+  background: var(--color-superficie-suave);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-lg);
+}
+
+.panel-form__grupo + .panel-form__grupo {
+  margin-top: var(--espacio-2);
+}
+
+.panel-form__grupo-titulo {
+  margin: 0;
+  font-size: var(--texto-sm);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-secundario-oscuro);
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+}
+
+.panel-form__grupo-titulo::before {
+  width: 0.5rem;
+  height: 0.5rem;
+  content: "";
+  background: var(--color-secundario);
+  border-radius: 50%;
+}
+
+.panel-form__separador {
+  border: 0;
+  border-top: 1px solid var(--color-borde);
+  margin: var(--espacio-2) 0 0;
 }
 
 .panel-form__campo {
@@ -220,10 +317,12 @@ main.panel-page > section {
 .panel-form__etiqueta {
   color: var(--color-primario-oscuro);
   font-weight: 750;
+  font-size: var(--texto-base);
 }
 
 .panel-form__etiqueta .small-print {
   font-weight: 400;
+  font-size: var(--texto-xs);
 }
 
 .panel-campo {
@@ -232,13 +331,20 @@ main.panel-page > section {
   padding: var(--espacio-2) var(--espacio-3);
   color: var(--color-texto);
   background: var(--color-superficie);
-  border: 1px solid var(--panel-borde-control);
+  border: 1.5px solid var(--panel-borde-control);
   border-radius: var(--radio-md);
+  font-size: var(--texto-base);
 }
 
 .panel-campo--area {
   min-height: 7rem;
   resize: vertical;
+}
+
+.panel-campo:focus {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 2px;
+  border-color: var(--color-foco);
 }
 
 .panel-campo[aria-invalid="true"] {
@@ -251,6 +357,7 @@ main.panel-page > section {
   margin: 0;
   color: var(--color-texto-suave);
   font-size: var(--texto-xs);
+  line-height: var(--alto-linea);
 }
 
 .panel-contador {
@@ -280,7 +387,7 @@ main.panel-page > section {
   stroke-linejoin: round;
 }
 
-@media (min-width: 40.25rem) {
+@media (min-width: 48rem) {
   .panel-form {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -302,69 +409,62 @@ main.panel-page > section {
   grid-column: 1 / -1;
 }
 
-.panel-acciones {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--espacio-2);
-  margin: 0;
-}
-
-.panel-acciones .btn {
-  padding: 0.45rem 0.85rem;
-  font-size: var(--texto-sm);
-}
-
-.panel-page .btn.panel-boton--peligro,
-.panel-page .btn.panel-boton--peligro:hover,
-.panel-page .btn.panel-boton--peligro:active {
-  color: var(--color-peligro);
-  background: var(--color-superficie);
-  border-color: var(--panel-borde-control);
-}
-
-.panel-page .btn.panel-boton--peligro:hover,
-.panel-page .btn.panel-boton--peligro:active {
-  background: var(--color-fondo-alerta);
-  border-color: var(--color-peligro);
-}
-
-/* ---------------------------------------------------------------- Dolor */
+/* ==========================================================================
+   Escala de dolor
+   ========================================================================== */
 
 .panel-dolor {
   display: grid;
   gap: var(--espacio-3);
-  padding: var(--espacio-4);
-  background: var(--color-superficie-suave);
+  padding: var(--espacio-5);
+  background: var(--color-superficie);
   border: 1px solid var(--color-borde);
-  border-radius: var(--radio-md);
+  border-radius: var(--radio-lg);
+  border-left: 0.35rem solid var(--color-primario);
 }
 
 .panel-dolor__cabecera {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--espacio-2) var(--espacio-3);
+  gap: var(--espacio-2) var(--espacio-4);
   align-items: baseline;
   justify-content: space-between;
+}
+
+.panel-form__etiqueta {
+  font-size: var(--texto-base);
+}
+
+.panel-dolor__etiqueta {
+  color: var(--color-primario-oscuro);
+  font-weight: 800;
+}
+
+.panel-dolor__pista {
+  color: var(--color-texto-suave);
+  font-size: var(--texto-xs);
 }
 
 .panel-dolor__lectura {
   display: inline-flex;
   align-items: baseline;
   gap: var(--espacio-2);
-  padding: var(--espacio-1) var(--espacio-3);
+  padding: var(--espacio-2) var(--espacio-4);
   color: var(--color-primario-oscuro);
   background: var(--color-superficie);
-  border: 1px solid var(--panel-borde-control);
+  border: 1.5px solid var(--panel-borde-control);
   border-radius: var(--radio-pill);
-  font-size: var(--texto-lg);
-  font-weight: 850;
+  font-size: clamp(1.5rem, 2vw + 0.75rem, 2rem);
+  font-weight: 800;
   font-variant-numeric: tabular-nums;
+  min-height: var(--alto-objetivo-tactil);
 }
 
 .panel-dolor__lectura--pendiente {
   color: var(--color-texto-suave);
-  font-size: var(--texto-sm);
+  font-size: var(--texto-lg);
   font-weight: 700;
+  border-style: dashed;
 }
 
 .panel-dolor__lectura--alto {
@@ -384,7 +484,7 @@ main.panel-page > section {
 }
 
 .panel-dolor__rango::-webkit-slider-runnable-track {
-  height: 0.6rem;
+  height: 0.75rem;
   border-radius: var(--radio-pill);
   background: linear-gradient(
     90deg,
@@ -394,21 +494,21 @@ main.panel-page > section {
 }
 
 .panel-dolor__rango::-moz-range-track {
-  height: 0.6rem;
+  height: 0.75rem;
   border-radius: var(--radio-pill);
   background: var(--color-borde);
 }
 
 .panel-dolor__rango::-moz-range-progress {
-  height: 0.6rem;
+  height: 0.75rem;
   border-radius: var(--radio-pill);
   background: var(--color-primario);
 }
 
 .panel-dolor__rango::-webkit-slider-thumb {
-  width: 1.75rem;
-  height: 1.75rem;
-  margin-top: -0.575rem;
+  width: 2rem;
+  height: 2rem;
+  margin-top: -0.625rem;
   background: var(--color-primario);
   border: 3px solid var(--color-superficie);
   border-radius: 50%;
@@ -418,8 +518,8 @@ main.panel-page > section {
 }
 
 .panel-dolor__rango::-moz-range-thumb {
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 2rem;
+  height: 2rem;
   background: var(--color-primario);
   border: 3px solid var(--color-superficie);
   border-radius: 50%;
@@ -449,7 +549,7 @@ main.panel-page > section {
 }
 
 .panel-dolor__marcas {
-  height: 0.6rem;
+  height: 0.75rem;
   margin: 0 var(--panel-media-escala);
   background-image: linear-gradient(
     to right,
@@ -457,7 +557,7 @@ main.panel-page > section {
     transparent 1px
   );
   background-size: calc(100% / 10) 100%;
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
 .panel-dolor__escala {
@@ -480,7 +580,9 @@ main.panel-page > section {
   text-align: right;
 }
 
-/* ---------------------------------------------------------------- Filtros */
+/* ==========================================================================
+   Filtros y búsqueda
+   ========================================================================== */
 
 .panel-filtros {
   display: grid;
@@ -505,6 +607,7 @@ main.panel-page > section {
   margin: 0 0 var(--espacio-2);
   color: var(--color-primario-oscuro);
   font-weight: 750;
+  font-size: var(--texto-base);
 }
 
 .panel-filtros__opciones {
@@ -535,7 +638,7 @@ main.panel-page > section {
   padding: var(--espacio-2) var(--espacio-4);
   color: var(--color-primario-oscuro);
   background: var(--color-superficie);
-  border: 1px solid var(--panel-borde-control);
+  border: 1.5px solid var(--panel-borde-control);
   border-radius: var(--radio-pill);
   font-size: var(--texto-sm);
   font-weight: 750;
@@ -567,6 +670,7 @@ main.panel-page > section {
 .panel-busqueda label {
   color: var(--color-primario-oscuro);
   font-weight: 750;
+  font-size: var(--texto-base);
 }
 
 @media (min-width: 48rem) {
@@ -582,12 +686,18 @@ main.panel-page > section {
   font-weight: 700;
 }
 
-/* ---------------------------------------------------------------- Tabla */
+/* ==========================================================================
+   Tabla de historial (escritorio)
+   ========================================================================== */
 
 .panel-tabla {
   width: 100%;
   border-collapse: collapse;
   font-size: var(--texto-sm);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+  overflow: hidden;
 }
 
 .panel-tabla caption {
@@ -600,7 +710,7 @@ main.panel-page > section {
 
 .panel-tabla th,
 .panel-tabla td {
-  padding: var(--espacio-3);
+  padding: var(--espacio-3) var(--espacio-4);
   text-align: left;
   vertical-align: top;
   border-bottom: 1px solid var(--color-borde);
@@ -611,16 +721,27 @@ main.panel-page > section {
   color: var(--color-primario-oscuro);
   background: var(--color-fondo-azul);
   border-bottom: 2px solid var(--panel-borde-control);
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.panel-tabla tbody tr:last-child td {
+  border-bottom: 0;
 }
 
 .panel-tabla__fecha {
   font-weight: 800;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+  color: var(--color-primario-oscuro);
 }
 
 .panel-tabla__actividad {
   font-weight: 800;
+  color: var(--color-texto);
+  overflow-wrap: break-word;
 }
 
 .panel-tabla__acciones {
@@ -635,9 +756,13 @@ main.panel-page > section {
 .panel-tabla__acciones .btn {
   flex: 0 0 auto;
   white-space: nowrap;
+  padding: 0.45rem 0.85rem;
+  font-size: var(--texto-sm);
 }
 
-/* ---------------------------------------------------------------- Tarjetas (móvil) */
+/* ==========================================================================
+   Tarjetas de historial (móvil)
+   ========================================================================== */
 
 .panel-tarjetas {
   display: grid;
@@ -654,6 +779,20 @@ main.panel-page > section {
   border: 1px solid var(--color-borde);
   border-radius: var(--radio-md);
   box-shadow: var(--sombra-suave);
+  position: relative;
+  overflow: hidden;
+}
+
+.panel-tarjeta::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0.35rem;
+  height: 100%;
+  background: var(--color-secundario);
+  opacity: 0;
+  transition: opacity var(--panel-duracion) ease;
 }
 
 .panel-tarjeta__cabecera {
@@ -669,30 +808,32 @@ main.panel-page > section {
   color: var(--color-primario-oscuro);
   font-weight: 800;
   font-variant-numeric: tabular-nums;
+  font-size: var(--texto-base);
 }
 
 .panel-tarjeta__actividad {
   margin: 0 0 var(--espacio-2);
   font-weight: 800;
-  overflow-wrap: anywhere;
-}
-
-.panel-tarjeta__dolor {
-  margin: 0 0 var(--espacio-2);
+  color: var(--color-texto);
+  font-size: var(--texto-base);
+  overflow-wrap: break-word;
 }
 
 .panel-tarjeta__nota {
   margin: 0;
   color: var(--color-texto-suave);
   font-size: var(--texto-sm);
-  overflow-wrap: anywhere;
+  line-height: var(--alto-linea);
+  overflow-wrap: break-word;
 }
 
 .panel-tarjeta__nota strong {
   color: var(--color-primario-oscuro);
 }
 
-/* ---------------------------------------------------------------- Dolor guardado */
+/* ==========================================================================
+   Chip de dolor guardado
+   ========================================================================== */
 
 .panel-dolor-chip {
   display: inline-flex;
@@ -700,7 +841,7 @@ main.panel-page > section {
   gap: var(--espacio-2);
   max-width: 100%;
   padding: var(--espacio-1) var(--espacio-3);
-  border: 1px solid var(--panel-borde-control);
+  border: 1.5px solid var(--panel-borde-control);
   border-radius: var(--radio-pill);
   font-size: var(--texto-sm);
   font-weight: 800;
@@ -723,22 +864,24 @@ main.panel-page > section {
   border-color: var(--color-peligro);
 }
 
-/* ---------------------------------------------------------------- Estado vacío */
+/* ==========================================================================
+   Estado vacío
+   ========================================================================== */
 
 .panel-vacio {
   display: grid;
   justify-items: center;
-  gap: var(--espacio-3);
-  padding: var(--espacio-6) var(--espacio-4);
+  gap: var(--espacio-4);
+  padding: var(--espacio-7) var(--espacio-4);
   text-align: center;
-  background: var(--color-superficie-suave);
-  border: 1px dashed var(--panel-borde-control);
-  border-radius: var(--radio-md);
+  background: var(--color-fondo-verde);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-lg);
 }
 
 .panel-vacio svg {
-  width: 4.5rem;
-  height: 4.5rem;
+  width: 5rem;
+  height: 5rem;
   color: var(--color-primario);
   fill: none;
   stroke: currentColor;
@@ -751,27 +894,83 @@ main.panel-page > section {
   max-width: 46ch;
   margin: 0;
   color: var(--color-texto-suave);
+  font-size: var(--texto-base);
+  line-height: var(--alto-linea);
 }
 
-/* ---------------------------------------------------------------- Borrado */
+/* ==========================================================================
+   Privacidad y borrado
+   ========================================================================== */
+
+.panel-privacidad {
+  padding: var(--espacio-5);
+  background: var(--color-superficie-suave);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-lg);
+}
+
+.panel-privacidad h2 {
+  margin: 0 0 var(--espacio-4);
+  font-size: var(--texto-xl);
+  color: var(--color-primario-oscuro);
+}
+
+.panel-privacidad p {
+  margin: 0 0 var(--espacio-4);
+  color: var(--color-texto-suave);
+  line-height: var(--alto-linea);
+}
+
+.panel-privacidad small-print {
+  /* sin estilos específicos, hereda de .small-print global */
+}
+
+.panel-privacidad__grupo {
+  margin: var(--espacio-5) 0;
+  padding: var(--espacio-4);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+}
+
+.panel-privacidad__grupo h3 {
+  margin: 0 0 var(--espacio-2);
+  font-size: var(--texto-base);
+  font-weight: 800;
+  color: var(--color-primario-oscuro);
+}
+
+.panel-privacidad__grupo p {
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-sm);
+  line-height: var(--alto-linea);
+}
+
+/* ==========================================================================
+   Confirmación de borrado
+   ========================================================================== */
 
 .panel-confirmacion {
   display: grid;
   gap: var(--espacio-3);
-  padding: var(--espacio-4);
+  padding: var(--espacio-5);
   margin-top: var(--espacio-4);
   background: var(--color-fondo-alerta);
   border: 1px solid var(--color-peligro);
-  border-radius: var(--radio-md);
+  border-radius: var(--radio-lg);
 }
 
 .panel-confirmacion h3 {
   margin: 0;
   font-size: var(--texto-lg);
+  color: var(--color-primario-oscuro);
 }
 
 .panel-confirmacion p {
   margin: 0;
+  color: var(--color-texto);
+  line-height: var(--alto-linea);
 }
 
 .panel-confirmacion__acciones {
@@ -792,6 +991,7 @@ main.panel-page > section {
   border-radius: var(--radio-sm);
   font-weight: 750;
   line-height: 1.2;
+  cursor: pointer;
 }
 
 .panel-peligro:hover,
@@ -800,7 +1000,32 @@ main.panel-page > section {
   border-color: #8a2418;
 }
 
-/* ---------------------------------------------------------------- Movimiento */
+/* ==========================================================================
+   Botones del panel
+   ========================================================================== */
+
+.panel-boton {
+  min-height: var(--alto-objetivo-tactil);
+  padding: 0.65rem 1.1rem;
+  font-size: var(--texto-sm);
+  font-weight: 750;
+}
+
+.panel-boton--peligro {
+  color: var(--color-peligro);
+  background: var(--color-superficie);
+  border-color: var(--panel-borde-control);
+}
+
+.panel-boton--peligro:hover,
+.panel-boton--peligro:active {
+  background: var(--color-fondo-alerta);
+  border-color: var(--color-peligro);
+}
+
+/* ==========================================================================
+   Movimiento reducido
+   ========================================================================== */
 
 @media (prefers-reduced-motion: no-preference) {
   .panel-page__resumen,
@@ -810,7 +1035,8 @@ main.panel-page > section {
   .panel-chip span,
   .panel-alerta,
   .panel-estado,
-  .btn.panel-boton {
+  .btn.panel-boton,
+  .panel-dolor {
     transition:
       background-color var(--panel-duracion) ease,
       color var(--panel-duracion) ease,
@@ -855,6 +1081,10 @@ main.panel-page > section {
     box-shadow: var(--sombra-flotante);
   }
 
+  .panel-tarjeta:hover::before {
+    opacity: 1;
+  }
+
   @keyframes panel-aparece {
     from {
       opacity: 0;
@@ -876,7 +1106,9 @@ main.panel-page > section {
   .panel-chip span,
   .panel-alerta,
   .panel-estado,
-  .btn.panel-boton {
+  .btn.panel-boton,
+  .panel-dolor,
+  .panel-tarjeta::before {
     animation: none !important;
     transition: none !important;
     opacity: 1 !important;
@@ -893,7 +1125,8 @@ main.panel-page > section {
   .panel-filtros,
   .panel-campo,
   .panel-chip span,
-  .panel-dolor-chip {
+  .panel-dolor-chip,
+  .panel-privacidad__grupo {
     border: 1px solid CanvasText;
   }
 
