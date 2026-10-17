@@ -248,3 +248,497 @@
   .step-panel.step-enter,
   .step-panel.step-enter-active { opacity: 1; transform: none; }
 }
+
+/* ==========================================================================
+   Cuestionario #quiz — estilo editorial premium
+   ========================================================================== */
+
+.quiz-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-1) var(--espacio-3);
+  margin-bottom: var(--espacio-3);
+  font-size: var(--texto-xs);
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-secundario-oscuro);
+  background: var(--color-fondo-verde);
+  border: 1px solid var(--color-secundario);
+  border-radius: var(--radio-pill);
+}
+
+.quiz-titulo {
+  font-size: clamp(1.75rem, 1.35rem + 1.8vw, 2.75rem);
+  line-height: var(--alto-linea-titulo);
+  color: var(--color-texto);
+  margin: 0 0 var(--espacio-2);
+  text-wrap: balance;
+  max-width: var(--ancho-titulo-guia);
+}
+
+.quiz-intro {
+  max-width: 60ch;
+  margin: 0 0 var(--espacio-5);
+  color: var(--color-texto-suave);
+  font-size: var(--texto-lg);
+  line-height: var(--alto-linea);
+}
+
+/* Aviso de salud (sustitución del .notice.warning plano). */
+.quiz-notice {
+  display: flex;
+  gap: var(--espacio-3);
+  padding: var(--espacio-4);
+  margin: var(--espacio-5) 0;
+  background: var(--color-fondo-alerta);
+  border: 1px solid var(--color-terciario-oscuro);
+  border-left-width: 0.35rem;
+  border-radius: var(--radio-md);
+  color: var(--color-texto);
+  font-size: var(--texto-base);
+  line-height: var(--alto-linea);
+}
+.quiz-notice--salud {
+  background: var(--color-fondo-alerta);
+  border-color: var(--color-terciario-oscuro);
+}
+.quiz-notice__icono {
+  flex: 0 0 1.75rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-top: 0.15rem;
+  fill: none;
+  stroke: var(--color-terciario-oscuro);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+.quiz-notice__contenido {
+  display: flex;
+  flex-direction: column;
+}
+.quiz-notice__titulo {
+  display: block;
+  margin: 0 0 var(--espacio-1);
+  font-size: var(--texto-sm);
+  font-weight: 750;
+  color: var(--color-terciario-oscuro);
+}
+.quiz-notice__texto {
+  margin: 0;
+  color: var(--color-texto);
+}
+
+/* Stepper de 3 etapas: números en círculo, check al completar, línea de unión y barra de avance. */
+.quiz-stepper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+}
+.quiz-stepper__lista {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  position: relative;
+}
+.quiz-stepper__lista::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 2.75rem;
+  right: 2.75rem;
+  height: 1px;
+  background: var(--color-borde);
+  z-index: 0;
+}
+.quiz-stepper__item {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--espacio-1);
+  min-width: 0;
+}
+.quiz-stepper__numero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-borde);
+  background: var(--color-superficie);
+  color: var(--color-texto-suave);
+  font-weight: 800;
+  font-size: var(--texto-sm);
+  transition: border-color 180ms ease, background-color 180ms ease, color 180ms ease;
+}
+.quiz-stepper__item[aria-current="step"] .quiz-stepper__numero,
+.quiz-stepper__item[aria-current="step"] ~ .quiz-stepper__item .quiz-stepper__numero {
+  border-color: var(--color-primario);
+  color: var(--color-primario-oscuro);
+  background: var(--color-fondo-azul);
+}
+.quiz-stepper__item[aria-current="step"] ~ .quiz-stepper__item .quiz-stepper__numero {
+  border-color: var(--color-secundario);
+  color: var(--color-secundario-oscuro);
+  background: var(--color-fondo-verde);
+}
+.quiz-stepper__etiqueta {
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  color: var(--color-texto-suave);
+  text-align: center;
+  line-height: var(--alto-linea);
+}
+.quiz-stepper__item[aria-current="step"] .quiz-stepper__etiqueta {
+  color: var(--color-primario-oscuro);
+}
+.quiz-stepper__item[aria-current="step"] ~ .quiz-stepper__item .quiz-stepper__etiqueta {
+  color: var(--color-secundario-oscuro);
+}
+.quiz-stepper__barra {
+  height: 6px;
+  border-radius: var(--radio-pill);
+  background: var(--color-borde);
+  overflow: hidden;
+}
+.quiz-stepper__relleno {
+  display: block;
+  height: 100%;
+  background: var(--color-secundario);
+  border-radius: inherit;
+  transition: width var(--duracion-media) var(--curva-suave);
+}
+
+/* Tarjetas de selección interactivas (.choice-card). */
+.choice-card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espacio-3);
+  padding: var(--espacio-4);
+  margin: calc(-1 * var(--espacio-4));
+  background: var(--color-superficie);
+  border: 1.5px solid var(--color-borde);
+  border-radius: var(--radio-md);
+  cursor: pointer;
+  transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease;
+}
+.choice-card:hover {
+  border-color: var(--color-secundario);
+  background: var(--color-superficie-suave);
+  transform: translateY(-2px);
+}
+.choice-card:has(input:checked) {
+  border-color: var(--color-primario);
+  background: var(--color-fondo-verde);
+  box-shadow: 0 4px 12px -2px rgba(23, 62, 80, 0.08);
+}
+.choice-card input {
+  flex: 0 0 auto;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.35rem;
+  accent-color: var(--color-primario);
+  cursor: pointer;
+}
+.choice-card:focus-within {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 2px;
+  border-radius: var(--radio-md);
+}
+
+/* Botones segmentados Sí/No (píldoras) para el paso de seguridad. */
+.segmented-group {
+  display: flex;
+  gap: var(--espacio-2);
+}
+.segmented-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-3) var(--espacio-4);
+  min-height: var(--alto-objetivo-tactil);
+  background: var(--color-superficie);
+  border: 1.5px solid var(--color-borde);
+  border-radius: var(--radio-pill);
+  color: var(--color-texto-suave);
+  font-weight: 750;
+  font-size: var(--texto-sm);
+  cursor: pointer;
+  transition: border-color 180ms ease, background-color 180ms ease, color 180ms ease;
+}
+.segmented-btn:hover {
+  border-color: var(--color-secundario);
+  background: var(--color-superficie-suave);
+  color: var(--color-primario-oscuro);
+}
+.segmented-btn:has(input:checked) {
+  border-color: var(--color-primario);
+  background: var(--color-fondo-verde);
+  color: var(--color-sobre-primario);
+}
+.segmented-btn input {
+  display: none;
+}
+.segmented-btn:focus-within {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 2px;
+  border-radius: var(--radio-pill);
+}
+
+/* Tarjeta de supervisión de seguridad clínica (paso 2). */
+.safety-card {
+  padding: var(--espacio-5);
+  margin: var(--espacio-6) 0;
+  background: var(--color-fondo-alerta);
+  border: 1.5px solid var(--color-terciario-oscuro);
+  border-radius: var(--radio-lg);
+}
+.safety-card__header {
+  align-items: center;
+}
+.safety-card__icono {
+  flex: 0 0 1.75rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  fill: none;
+  stroke: var(--color-terciario-oscuro);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Paso 3: ficha de perfil en 2 columnas. */
+.review-step .review-summary h4 {
+  margin: 0 0 var(--espacio-3);
+  font-size: var(--texto-lg);
+  font-weight: 800;
+  color: var(--color-primario-oscuro);
+}
+.review-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--espacio-3);
+}
+.review-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+  padding: var(--espacio-3);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+}
+.review-label {
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  color: var(--color-texto-suave);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.review-valor {
+  font-size: var(--texto-base);
+  color: var(--color-texto);
+  font-weight: 600;
+}
+
+/* Botón primario dominante. */
+.btn--primario {
+  background: var(--color-primario);
+  color: var(--color-sobre-primario);
+  border: none;
+  min-height: var(--alto-objetivo-tactil);
+}
+.btn--primario:hover {
+  background: var(--color-primario-oscuro);
+}
+
+/* Fieldset opcional (contexto escoliosis). */
+.fieldset-opcional {
+  padding: var(--espacio-4);
+  margin: var(--espacio-6) 0;
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+}
+
+/* Bloqueo de seguridad clínica — contención serena. */
+.bloqueo-seguridad {
+  padding: var(--espacio-5);
+  margin: var(--espacio-6) 0;
+  background: var(--color-fondo-alerta);
+  border: 1.5px solid var(--color-terciario-oscuro);
+  border-radius: var(--radio-lg);
+}
+.bloqueo-seguridad h3 {
+  margin: 0 0 var(--espacio-3);
+  color: var(--color-terciario-oscuro);
+  font-size: var(--texto-lg);
+  font-weight: 800;
+}
+.bloqueo-seguridad p {
+  margin: 0 0 var(--espacio-3);
+  color: var(--color-texto);
+}
+
+/* Resultados insuficientes. */
+.resultados-insuficientes {
+  padding: var(--espacio-5);
+  margin: var(--espacio-6) 0;
+  background: var(--color-fondo-aviso);
+  border: 1px solid var(--color-foco);
+  border-radius: var(--radio-lg);
+}
+.resultados-insuficientes p {
+  margin: 0 0 var(--espacio-3);
+  color: var(--color-texto);
+}
+
+/* Tarjetas de plan semanal. */
+.plan-card {
+  padding: var(--espacio-4);
+  margin: 0;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+.plan-card:hover {
+  border-color: var(--color-secundario);
+  box-shadow: 0 4px 12px -2px rgba(23, 62, 80, 0.08);
+}
+.plan-card__cabecera {
+  display: flex;
+  align-items: baseline;
+  gap: var(--espacio-2);
+  margin-bottom: var(--espacio-2);
+}
+.plan-card__dia {
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  color: var(--color-secundario-oscuro);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.plan-card__titulo {
+  margin: 0 0 var(--espacio-2);
+  font-size: var(--texto-lg);
+  font-weight: 750;
+  color: var(--color-texto);
+}
+.plan-card__descripcion {
+  margin: 0 0 var(--espacio-3);
+  font-size: var(--texto-base);
+  color: var(--color-texto-suave);
+  line-height: var(--alto-linea);
+}
+.plan-card__meta {
+  display: flex;
+  gap: var(--espacio-2);
+  margin-bottom: var(--espacio-3);
+  flex-wrap: wrap;
+}
+.plan-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--espacio-1) var(--espacio-2);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  border-radius: var(--radio-pill);
+}
+.plan-chip--categoria {
+  background: var(--color-fondo-verde);
+  color: var(--color-secundario-oscuro);
+}
+.plan-chip--duracion {
+  background: var(--color-fondo-azul);
+  color: var(--color-primario-oscuro);
+}
+.plan-chip--nivel {
+  background: var(--color-fondo-aviso);
+  color: var(--color-foco);
+}
+.plan-card__adaptacion {
+  margin: 0 0 var(--espacio-3);
+  font-size: var(--texto-sm);
+  color: var(--color-terciario-oscuro);
+}
+.plan-card__adaptacion strong {
+  color: var(--color-terciario-oscuro);
+}
+.plan-card__accion {
+  margin-top: auto;
+}
+
+/* Modal de exportación — formato documento limpio. */
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(23, 38, 48, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+.dialog-backdrop[hidden],
+.export-card[hidden] {
+  display: none !important;
+}
+.export-card {
+  background: var(--color-superficie);
+  color: var(--color-texto);
+  max-width: 46rem;
+  width: 100%;
+  border-radius: var(--radio-lg);
+  padding: var(--espacio-6);
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--sombra-flotante-alta);
+}
+.export-card h2 {
+  color: var(--color-primario-oscuro);
+}
+
+/* Impresión del cuestionario y exportación. */
+@media print {
+  .quiz-stepper,
+  .quiz-actions,
+  .dialog-backdrop button,
+  #imprimir-guia,
+  .btn {
+    display: none !important;
+  }
+  .quiz-notice,
+  .safety-card,
+  .bloqueo-seguridad,
+  .resultados-insuficientes,
+  .plan-card {
+    break-inside: avoid;
+    border-color: #000;
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .plan-chip {
+    border: 1px solid #000;
+    color: #000 !important;
+    background: #fff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .export-card {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+}

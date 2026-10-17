@@ -196,8 +196,8 @@ export const ConsentGuard: React.FC<ConsentGuardProps> = ({
   };
 
   return (
-    <main id="contenido" tabIndex={-1} className="consent-guard container">
-      <p className="eyebrow">Acceso restringido</p>
+      <main id="contenido" tabIndex={-1} className="consent-guard container">
+      <span className="consent-guard__insignia">Soberanía de datos y privacidad local</span>
       <h1 ref={headingRef} tabIndex={-1} className="consent-guard__titulo">
         Antes de continuar
       </h1>
@@ -220,7 +220,7 @@ export const ConsentGuard: React.FC<ConsentGuardProps> = ({
       )}
 
       <form className="consent-guard__form" noValidate onSubmit={aceptar}>
-        <div className="consent-guard__bloque">
+        <div className={`consent-guard__bloque ${terms ? 'consent-guard__bloque--marcado' : ''}`}>
           <label className="consent-guard__casilla">
             <input
               type="checkbox"
@@ -239,6 +239,11 @@ export const ConsentGuard: React.FC<ConsentGuardProps> = ({
               </a>{' '}
               <span className="consent-guard__obligatorio">(obligatorio)</span>
             </span>
+            {terms && (
+              <svg className="consent-guard__estado" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12" fill="none" stroke="var(--color-sobre-primario)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            )}
           </label>
           <p id="guard-terms-note" className="consent-guard__nota">
             Versión {DOC_VERSIONS.terminos}. Se abre en una pestaña nueva para que no pierdas
@@ -246,7 +251,7 @@ export const ConsentGuard: React.FC<ConsentGuardProps> = ({
           </p>
         </div>
 
-        <div className="consent-guard__bloque">
+        <div className={`consent-guard__bloque ${privacy ? 'consent-guard__bloque--marcado' : ''}`}>
           <label className="consent-guard__casilla">
             <input
               type="checkbox"
@@ -265,6 +270,11 @@ export const ConsentGuard: React.FC<ConsentGuardProps> = ({
               </a>{' '}
               <span className="consent-guard__obligatorio">(obligatorio)</span>
             </span>
+            {privacy && (
+              <svg className="consent-guard__estado" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12" fill="none" stroke="var(--color-sobre-primario)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            )}
           </label>
           <p id="guard-privacy-note" className="consent-guard__nota">
             Versión {DOC_VERSIONS.privacidad}. Explica qué datos se guardan, dónde y cómo
@@ -272,7 +282,7 @@ export const ConsentGuard: React.FC<ConsentGuardProps> = ({
           </p>
         </div>
 
-        <div className="consent-guard__bloque consent-guard__bloque--autorizacion">
+        <div className={`consent-guard__bloque consent-guard__bloque--autorizacion ${health ? 'consent-guard__bloque--marcado' : ''}`}>
           <p className="consent-guard__autorizacion-titulo">
             <IconoEscudo />
             Autorización para guardar tus datos de salud
@@ -295,6 +305,11 @@ export const ConsentGuard: React.FC<ConsentGuardProps> = ({
               Autorizo que FitCasa guarde en este dispositivo el dolor percibido y la nota
               de bienestar que anote <span className="consent-guard__obligatorio">(obligatorio)</span>
             </span>
+            {health && (
+              <svg className="consent-guard__estado" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12" fill="none" stroke="var(--color-sobre-primario)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            )}
           </label>
           <p id="guard-health-note" className="consent-guard__nota">
             Es una autorización separada de haber leído la Política. Puedes retirar tu
