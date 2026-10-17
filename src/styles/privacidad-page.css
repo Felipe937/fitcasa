@@ -261,12 +261,6 @@ main.privacidad > section {
 }
 
 @media (min-width: 64rem) {
-  .privacidad__indice {
-    position: sticky;
-    top: 6rem;
-    align-self: start;
-  }
-
   .privacidad__indice__toggle {
     display: none;
   }
