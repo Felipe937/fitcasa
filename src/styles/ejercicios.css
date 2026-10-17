@@ -19,7 +19,23 @@
 }
 
 .exercise-main {
-  padding-block: clamp(var(--espacio-7), 8vw, var(--espacio-9)) var(--espacio-9);
+  padding-block: clamp(var(--espacio-6), 5vw, var(--espacio-8)) var(--espacio-9);
+}
+
+/* La regla global de style.css aplica padding-block de 3rem a todo <section>
+   hijo de <main>. En la biblioteca esos bloques son funcionales (barra de
+   herramientas, filtros y rejilla), no separadores de contenido: 96px por
+   bloque empujaban la primera fila de ejercicios fuera del primer pliegue. */
+main.exercise-main > section {
+  padding-block: 0;
+}
+
+main.exercise-main > #exercise-list {
+  margin-top: var(--espacio-3);
+}
+
+.result-counter {
+  margin: var(--espacio-3) 0 var(--espacio-2);
 }
 
 .page-lead {
@@ -40,17 +56,95 @@
   font-weight: 800;
 }
 
+/* Categorización del catálogo: plegada por defecto para no esconder la
+   primera fila de ejercicios. El contenido sigue siendo alcanzable. */
+.catalogo {
+  margin-top: var(--espacio-5);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+}
+
+.catalogo__summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+  padding: var(--espacio-3) var(--espacio-4);
+  cursor: pointer;
+}
+
+.catalogo__summary:focus-visible {
+  outline: 3px solid var(--color-foco);
+  outline-offset: -3px;
+  border-radius: var(--radio-md);
+}
+
+.catalogo__titulo {
+  margin: 0;
+  font-size: var(--texto-base);
+}
+
+.catalogo__resumen {
+  color: var(--color-texto-suave);
+  font-size: var(--texto-sm);
+}
+
+.catalogo__rejilla {
+  display: grid;
+  gap: var(--espacio-3);
+  padding: 0 var(--espacio-4) var(--espacio-4);
+}
+
+.catalogo__item {
+  padding: var(--espacio-3);
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-sm);
+  font-size: var(--texto-sm);
+}
+
+.catalogo__texto {
+  margin: var(--espacio-1) 0 0;
+  color: var(--color-texto-suave);
+}
+
+@media (min-width: 48rem) {
+  .catalogo__rejilla {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 /* Barra de herramientas: siempre visible en todos los anchos. */
 .toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: end;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: var(--espacio-3);
-  margin-top: var(--espacio-6);
+  margin-top: var(--espacio-5);
+}
+
+@media (min-width: 22rem) {
+  .toolbar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .toolbar-search {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 64rem) {
+  .toolbar {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) auto;
+    align-items: end;
+  }
+
+  .toolbar-search {
+    grid-column: auto;
+  }
 }
 
 .toolbar-search {
-  flex: 1 1 14rem;
+  min-width: 0;
 }
 
 .toolbar-search input {
@@ -67,6 +161,12 @@
   display: flex;
   align-items: center;
   gap: var(--espacio-2);
+  min-width: 0;
+}
+
+.toolbar-order select {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .toolbar-order label {
@@ -146,6 +246,48 @@ html.js #filters-panel.abierto {
   display: none;
 }
 
+/* Panel de filtros: el JSX usa .filters-panel, no .filters-section. */
+.filters-panel {
+  padding: var(--espacio-4);
+  margin-top: var(--espacio-4);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-suave);
+}
+
+.filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-4);
+}
+
+.filter-group fieldset {
+  min-width: 0;
+  flex: 1 1 12rem;
+  padding: var(--espacio-3);
+  margin: 0;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+}
+
+.filter-group legend {
+  padding-inline: var(--espacio-2);
+  color: var(--color-primario-oscuro);
+  font-size: var(--texto-sm);
+  font-weight: 800;
+}
+
+.choice-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-1);
+}
+
+.filters-panel .btn {
+  margin-top: var(--espacio-4);
+}
+
 /* Chips compactos: el checkbox nativo se oculta con clip (no display:none)
    para conservar foco y teclado. */
 .chip {
@@ -154,8 +296,8 @@ html.js #filters-panel.abierto {
   align-items: center;
   gap: var(--espacio-2);
   min-height: var(--alto-objetivo-tactil);
-  padding: var(--espacio-2) var(--espacio-3);
-  margin: var(--espacio-1);
+  padding: var(--espacio-1) var(--espacio-2);
+  margin: 0;
   color: var(--color-texto-suave);
   background: var(--color-superficie);
   border: 1px solid var(--color-borde);
@@ -254,12 +396,39 @@ html.js #filters-panel.abierto {
   outline-offset: 2px;
 }
 
+/* Rejilla de resultados. El JSX usa .exercise-grid; .exercise-list se
+   conserva como alias para no romper selectores externos. */
+.exercise-grid,
 .exercise-list {
   display: grid;
   gap: var(--espacio-5);
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--ancho-columna-resultado)), 1fr));
+  grid-template-columns: 1fr;
+  width: 100%;
 }
 
+@media (min-width: 24rem) {
+  .exercise-grid,
+  .exercise-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 48rem) {
+  .exercise-grid,
+  .exercise-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 75rem) {
+  .exercise-grid,
+  .exercise-list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.exercise-grid > [role="status"],
+.exercise-grid > [role="alert"],
 .exercise-list > [role="status"],
 .exercise-list > [role="alert"] {
   padding: var(--espacio-5);
@@ -269,6 +438,15 @@ html.js #filters-panel.abierto {
   border-radius: var(--radio-md);
 }
 
+@media (min-width: 48rem) {
+  .exercise-grid > [role="status"],
+  .exercise-grid > [role="alert"],
+  .exercise-list > [role="status"],
+  .exercise-list > [role="alert"] {
+    grid-column: 1 / -1;
+  }
+}
+
 .exercise-skeleton {
   min-height: var(--alto-esqueleto);
   background: var(--color-fondo-azul);
@@ -276,29 +454,7 @@ html.js #filters-panel.abierto {
   border-radius: var(--radio-lg);
 }
 
-/* Glifo decorativo genérico (idéntico en todas las tarjetas). */
-.exercise-glyph {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--tamano-glifo);
-  height: var(--tamano-glifo);
-  margin-bottom: var(--espacio-3);
-  color: var(--color-primario);
-  background: var(--color-fondo-azul);
-  border-radius: 50%;
-}
-
-.exercise-glyph svg {
-  width: var(--tamano-glifo-interior);
-  height: var(--tamano-glifo-interior);
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.75;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
+/* El glifo genérico se sustituyó por .exercise-media (póster por categoría). */
 .exercise-card {
   display: flex;
   flex-direction: column;
@@ -329,9 +485,108 @@ html.js #filters-panel.abierto {
   background: var(--color-fondo-azul);
 }
 
+/* Área multimedia de la tarjeta: proporción fija 16/9 para evitar saltos. */
+.exercise-media {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: var(--proporcion-imagen);
+  margin-bottom: var(--espacio-4);
+  overflow: hidden;
+  background: var(--color-fondo-azul);
+  border-radius: var(--radio-sm);
+}
+
+.exercise-media__arte,
+.exercise-media__arte svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.exercise-media__arte svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.exercise-media--actividad .exercise-media__arte {
+  color: var(--color-primario);
+  background: var(--color-fondo-azul);
+}
+
+.exercise-media--postural .exercise-media__arte {
+  color: var(--color-secundario-oscuro);
+  background: var(--color-fondo-verde);
+}
+
+.exercise-media--psse .exercise-media__arte {
+  color: var(--color-primario-oscuro);
+  background: var(--color-fondo-aviso);
+}
+
+/* El vídeo solo se monta al interactuar: en reposo se ve el póster. */
+.exercise-media__video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: var(--color-primario-oscuro);
+}
+
+.exercise-media__velo {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.exercise-media__play {
+  display: grid;
+  place-items: center;
+  width: var(--alto-objetivo-tactil);
+  height: var(--alto-objetivo-tactil);
+  color: var(--color-sobre-primario);
+  background: var(--color-primario);
+  border-radius: 50%;
+  box-shadow: var(--sombra-flotante);
+}
+
+.exercise-media__play svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-left: 0.125rem;
+  fill: currentColor;
+}
+
+.exercise-media__velo:focus-visible {
+  outline: 3px solid var(--color-foco);
+  outline-offset: -3px;
+  border-radius: var(--radio-sm);
+}
+
+.exercise-media__estado {
+  position: absolute;
+  inset-inline: var(--espacio-2);
+  bottom: var(--espacio-2);
+  padding: var(--espacio-1) var(--espacio-2);
+  color: var(--color-texto);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-pill);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  text-align: center;
+}
+
 .exercise-card h3 {
   margin: 0 0 var(--espacio-2);
   font-size: var(--texto-lg);
+  text-wrap: balance;
 }
 
 .exercise-desc {
@@ -362,6 +617,7 @@ html.js #filters-panel.abierto {
   border-radius: var(--radio-sm);
   font-size: var(--texto-xs);
   font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 .exercise-tags {
@@ -381,9 +637,174 @@ html.js #filters-panel.abierto {
   font-weight: 700;
 }
 
+/* Categoría del ejercicio: descriptiva, no clínica. */
+.category-tag {
+  display: block;
+  width: fit-content;
+  margin: var(--espacio-3) 0 var(--espacio-2);
+  padding: var(--espacio-1) var(--espacio-2);
+  color: var(--color-texto-suave);
+  background: transparent;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-sm);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+}
+
+.category-tag--psse {
+  color: var(--color-primario-oscuro);
+  background: var(--color-fondo-aviso);
+  border-color: var(--color-foco);
+}
+
+.category-note {
+  display: block;
+  color: var(--color-texto-suave);
+  font-weight: 700;
+}
+
+#exercise-dialog .category-tag {
+  display: block;
+  width: fit-content;
+  margin: var(--espacio-3) 0 var(--espacio-2);
+}
+
+#exercise-dialog .category-tag .category-note {
+  display: block;
+}
+
+.dialog-psse {
+  padding: var(--espacio-3);
+  margin-top: var(--espacio-4);
+  color: var(--color-texto);
+  background: var(--color-fondo-aviso);
+  border-left: 0.25rem solid var(--color-foco);
+  border-radius: var(--radio-sm);
+  font-size: var(--texto-sm);
+}
+
+/* Zonas y equipamiento, más tenues que los metadatos. */
+.exercise-tags .exercise-tag {
+  color: var(--color-texto-suave);
+  background: transparent;
+  border: 1px solid var(--color-borde);
+}
 .exercise-card .btn {
   align-self: flex-start;
+  width: 100%;
+  min-height: var(--alto-objetivo-tactil);
   margin-top: auto;
+  text-align: center;
+}
+
+/* Reproductor del diálogo. */
+.dialog-cabecera {
+  display: flex;
+  gap: var(--espacio-3);
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--espacio-4);
+}
+
+.dialog-cabecera h2 {
+  margin: var(--espacio-1) 0 0;
+}
+
+.dialog-video {
+  display: block;
+  width: 100%;
+  aspect-ratio: var(--proporcion-imagen);
+  margin-bottom: var(--espacio-4);
+  background: var(--color-primario-oscuro);
+  border-radius: var(--radio-sm);
+}
+
+.dialog-video-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espacio-3);
+  margin-bottom: var(--espacio-4);
+}
+
+.dialog-video-controls__grupo {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+}
+
+.dialog-video-controls__grupo > span {
+  color: var(--color-texto-suave);
+  font-size: var(--texto-sm);
+  font-weight: 700;
+}
+
+.dialog-video-controls button,
+.dialog-video-controls select {
+  min-height: var(--alto-objetivo-tactil);
+  padding: var(--espacio-2) var(--espacio-3);
+  color: var(--color-texto);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-sm);
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.dialog-video-controls button[aria-pressed="true"] {
+  color: var(--color-sobre-primario);
+  background: var(--color-primario);
+  border-color: var(--color-primario);
+}
+
+.dialog-sin-video {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-3);
+  padding: var(--espacio-4);
+  margin-bottom: var(--espacio-4);
+  color: var(--color-texto);
+  background: var(--color-fondo-azul);
+  border: 1px dashed var(--color-borde);
+  border-radius: var(--radio-sm);
+}
+
+.dialog-sin-video strong {
+  display: block;
+}
+
+.dialog-sin-video span {
+  color: var(--color-texto-suave);
+  font-size: var(--texto-sm);
+}
+
+.exercise-media__estado-inline {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: var(--alto-objetivo-tactil);
+  height: var(--alto-objetivo-tactil);
+  color: var(--color-primario);
+  background: var(--color-fondo-azul);
+  border-radius: var(--radio-sm);
+}
+
+.exercise-media__estado-inline svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  fill: none;
+  stroke: currentColor;
+}
+
+.dialog-aviso-clinico {
+  padding: var(--espacio-3);
+  margin-top: var(--espacio-4);
+  color: var(--color-texto);
+  background: var(--color-fondo-aviso);
+  border-left: 0.25rem solid var(--color-foco);
+  border-radius: var(--radio-sm);
+  font-size: var(--texto-sm);
 }
 
 #exercise-dialog {
@@ -396,6 +817,8 @@ html.js #filters-panel.abierto {
   border: 1px solid var(--color-borde);
   border-radius: var(--radio-lg);
   box-shadow: var(--sombra-flotante);
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 #exercise-dialog::backdrop {
@@ -414,7 +837,10 @@ html.js #filters-panel.abierto {
   display: flex;
   flex-wrap: wrap;
   gap: var(--espacio-3);
+  justify-content: space-between;
   margin-top: var(--espacio-5);
+  padding-top: var(--espacio-4);
+  border-top: 1px solid var(--color-borde);
 }
 
 #exercise-dialog .dialog-nav button:disabled {
@@ -422,9 +848,29 @@ html.js #filters-panel.abierto {
   opacity: 0.55;
 }
 
+@media (min-width: 64rem) {
+  /* Banda horizontal: los cuatro grupos en una sola fila. */
+  .filters-panel {
+    padding: var(--espacio-3) var(--espacio-4);
+  }
+
+  .filter-group {
+    gap: var(--espacio-3);
+  }
+
+  .filter-group fieldset {
+    flex: 1 1 0;
+    padding: var(--espacio-2) var(--espacio-3);
+  }
+
+  .filters-panel .btn {
+    margin-top: var(--espacio-3);
+  }
+}
+
 @media (max-width: 39.99rem) {
   #filters-toggle {
-    flex: 1 1 100%;
+    grid-column: 1 / -1;
   }
 }
 
@@ -520,7 +966,7 @@ html.js #filters-panel.abierto {
 @media (forced-colors: active) {
   .chip,
   .exercise-card,
-  .exercise-glyph,
+  .exercise-media,
   .active-filter-tag,
   .toolbar-search input,
   .toolbar-order select {

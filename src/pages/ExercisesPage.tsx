@@ -8,6 +8,7 @@ import {
   categoryLabels,
 } from '../data/exerciseLabels';
 import { Exercise, Duration, Difficulty, ExerciseCategory } from '../types';
+import { getExerciseVideo } from '../data/exerciseVideos';
 
 const difficultyOrder: Record<Difficulty, number> = {
   principiante: 1,
@@ -20,6 +21,49 @@ const normalizeText = (value: string) =>
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '');
+
+const categoryModifier: Record<string, string> = {
+  actividad_general: 'actividad',
+  cuidado_postural: 'postural',
+  psse_supervisado: 'psse',
+};
+
+/** Póster abstracto y decorativo: distingue la categoría sin inventar anatomía. */
+const PosterArt: React.FC<{ category?: ExerciseCategory }> = ({ category }) => {
+  const mod = categoryModifier[category || 'actividad_general'];
+  return (
+    <span className={`exercise-media__arte exercise-media--${mod}`} aria-hidden="true">
+      <svg viewBox="0 0 320 180" focusable="false" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <pattern id={`puntos-${mod}`} width="18" height="18" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r="1.4" fill="currentColor" opacity="0.16" />
+          </pattern>
+        </defs>
+        <rect x="176" y="18" width="128" height="66" fill={`url(#puntos-${mod})`} />
+        {mod === 'postural' && (
+          <>
+            <path d="M40 148C88 108 112 62 160 44" strokeWidth="2" opacity="0.5" />
+            <path d="M232 44C268 74 280 112 258 148" strokeWidth="1.5" opacity="0.35" />
+          </>
+        )}
+        {mod === 'actividad' && (
+          <>
+            <path d="M34 132h120" strokeWidth="2.5" opacity="0.55" />
+            <path d="M74 132V74l52-18" strokeWidth="2" opacity="0.4" />
+            <circle cx="126" cy="56" r="7" strokeWidth="2" opacity="0.55" />
+          </>
+        )}
+        {mod === 'psse' && (
+          <>
+            <path d="M52 40v100" strokeWidth="1.5" opacity="0.4" />
+            <path d="M52 66h22M52 96h34M52 126h16" strokeWidth="1.5" opacity="0.4" />
+            <path d="M160 148C196 112 232 84 282 70" strokeWidth="2" opacity="0.5" />
+          </>
+        )}
+      </svg>
+    </span>
+  );
+};
 
 export const ExercisesPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -34,7 +78,12 @@ export const ExercisesPage: React.FC = () => {
   // Dialog state
   const [activeModalExerciseIndex, setActiveModalExerciseIndex] = useState<number | null>(null);
   const lastFocusedEl = useRef<HTMLElement | null>(null);
-  const dialogRef = useRef<HTMLDivElement | null>(null);
+  const dialogRef = useRef<HTMLDialogElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [playbackRate, setPlaybackRate] = useState<'0.5' | '1'>('1');
+  const [loopOn, setLoopOn] = useState(false);
+  const activeFiltersRef = useRef<HTMLDivElement | null>(null);
+  const shouldRestoreFocus = useRef(false);
 
   // Check URL params on initial load
   useEffect(() => {
@@ -126,7 +175,33 @@ export const ExercisesPage: React.FC = () => {
     setOrderSelect('name');
   };
 
-  const handleOpenDialog = (index: number, e: React.MouseEvent<HTMLButtonElement>) => {
+  // Al quitar un filtro con el teclado el foco no debe caer en <body>:
+  // pasa al filtro siguiente, a «Limpiar todo» o al botón «Filtros».
+  useEffect(() => {
+    if (!shouldRestoreFocus.current) return;
+    shouldRestoreFocus.current = false;
+    const siguiente = activeFiltersRef.current?.querySelector<HTMLButtonElement>('.active-filter-tag');
+    if (siguiente) {
+      siguiente.focus();
+      return;
+    }
+    const limpiar = document.getElementById('clear-all-filters') as HTMLButtonElement | null;
+    if (limpiar) {
+      limpiar.focus();
+      return;
+    }
+    // A partir de 64rem el botón «Filtros» está oculto: cae al buscador.
+    const toggle = document.getElementById('filters-toggle') as HTMLButtonElement | null;
+    if (toggle && toggle.offsetParent !== null) toggle.focus();
+    else document.getElementById('search-input')?.focus();
+  }, [totalActiveFilterCount]);
+
+  const quitarFiltro = (cambio: () => void) => {
+    shouldRestoreFocus.current = true;
+    cambio();
+  };
+
+  const handleOpenDialog = (index: number, e: React.MouseEvent<HTMLElement>) => {
     lastFocusedEl.current = e.currentTarget;
     setActiveModalExerciseIndex(index);
   };
@@ -138,28 +213,53 @@ export const ExercisesPage: React.FC = () => {
     }
   };
 
-  // Keyboard accessibility for modal
+  // El <dialog> nativo aporta foco atrapado, inertización del fondo y Escape.
+  useEffect(() => {
+    const dlg = dialogRef.current;
+    if (!dlg) return;
+    if (activeModalExerciseIndex !== null) {
+      if (!dlg.open) dlg.showModal();
+    } else if (dlg.open) {
+      dlg.close();
+    }
+  }, [activeModalExerciseIndex]);
+
+  // Anterior / Siguiente con teclado, salvo dentro del reproductor o un control.
   useEffect(() => {
     if (activeModalExerciseIndex === null) return;
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        handleCloseDialog();
-      } else if (e.key === 'ArrowLeft') {
-        if (activeModalExerciseIndex > 0) {
-          setActiveModalExerciseIndex(activeModalExerciseIndex - 1);
-        }
-      } else if (e.key === 'ArrowRight') {
-        if (activeModalExerciseIndex < filteredExercises.length - 1) {
-          setActiveModalExerciseIndex(activeModalExerciseIndex + 1);
-        }
+      const target = e.target as HTMLElement | null;
+      if (target && (target.closest('video') || target.closest('input, select, textarea'))) return;
+      if (e.key === 'ArrowLeft' && activeModalExerciseIndex > 0) {
+        e.preventDefault();
+        setActiveModalExerciseIndex(activeModalExerciseIndex - 1);
+      } else if (e.key === 'ArrowRight' && activeModalExerciseIndex < filteredExercises.length - 1) {
+        e.preventDefault();
+        setActiveModalExerciseIndex(activeModalExerciseIndex + 1);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeModalExerciseIndex, filteredExercises.length]);
 
+  // Al cerrar o cambiar de ejercicio se detiene la reproducción y se libera
+  // la fuente para que el navegador deje de descargar el clip.
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.playbackRate = Number(playbackRate);
+    v.loop = loopOn;
+    return () => {
+      v.pause();
+      v.removeAttribute('src');
+      v.load();
+    };
+  }, [activeModalExerciseIndex, playbackRate, loopOn]);
+
   const activeModalExercise: Exercise | null =
     activeModalExerciseIndex !== null ? filteredExercises[activeModalExerciseIndex] || null : null;
+
+  const activeModalVideo = getExerciseVideo(activeModalExercise?.id || '');
 
   return (
     <main id="contenido" tabIndex={-1} className="container exercise-main">
@@ -168,35 +268,43 @@ export const ExercisesPage: React.FC = () => {
         Colección educativa de ejercicios generales ejecutables con el propio peso corporal. No constituye prescripción médica ni sustituye una valoración individual.
       </p>
 
-      {/* Categorización transparente de ejercicios */}
-      <section className="notice notice-info my-6" aria-labelledby="cat-heading">
-        <h2 id="cat-heading" className="text-base font-bold m-0 mb-2">
-          Categorización transparente del catálogo
-        </h2>
-        <div className="grid gap-3 sm:grid-cols-3 text-sm">
-          <div className="p-3 bg-[var(--color-superficie)] rounded-[var(--radio-sm)] border border-[var(--color-borde)]">
+      {/* Categorización del catálogo: plegada para no tapar la primera fila. */}
+      <details className="catalogo">
+        <summary className="catalogo__summary">
+          <h2 className="catalogo__titulo" id="cat-heading">
+            Categorización transparente del catálogo
+          </h2>
+          <span className="catalogo__resumen">
+            Tres grupos: actividad física general, cuidado postural y movilidad, y
+            métodos específicos supervisados (PSSE).
+          </span>
+        </summary>
+        <div className="catalogo__rejilla">
+          <div className="catalogo__item">
             <strong>1. Actividad física general:</strong>
-            <p className="m-0 mt-1 text-[var(--color-texto-suave)]">
+            <p className="catalogo__texto">
               Ejercicios estándar de fuerza y resistencia con peso corporal para toda la población.
             </p>
           </div>
-          <div className="p-3 bg-[var(--color-superficie)] rounded-[var(--radio-sm)] border border-[var(--color-borde)]">
+          <div className="catalogo__item">
             <strong>2. Cuidado postural y movilidad:</strong>
-            <p className="m-0 mt-1 text-[var(--color-texto-suave)]">
+            <p className="catalogo__texto">
               Estiramientos, apertura torácica y estabilización de columna y pelvis.
             </p>
           </div>
-          <div className="p-3 bg-[var(--color-superficie)] rounded-[var(--radio-sm)] border border-[var(--color-borde)]">
+          <div className="catalogo__item">
             <strong>3. Específicos supervisados (PSSE):</strong>
-            <p className="m-0 mt-1 text-[var(--color-texto-suave)]">
-              Métodos tipo Schroth o SEAS. Requieren valoración y enseñanza presencial por un fisioterapeuta certificado.
+            <p className="catalogo__texto">
+              Métodos tipo Schroth o SEAS. Requieren valoración y enseñanza presencial por un
+              fisioterapeuta certificado.
             </p>
           </div>
         </div>
-      </section>
+      </details>
 
       <p className="equipment-note">
-        Nota de equipamiento: todos los ejercicios actuales de la biblioteca se realizan con el propio peso corporal (sin equipamiento).
+        Nota de equipamiento: todos los ejercicios actuales de la biblioteca se realizan con el
+        propio peso corporal (sin equipamiento).
       </p>
 
       {/* Toolbar */}
@@ -254,13 +362,19 @@ export const ExercisesPage: React.FC = () => {
       </section>
 
       {/* Active filters chips */}
-      <div id="active-filters" className="active-filters" aria-label="Filtros aplicados" role="region">
+      <div
+        id="active-filters"
+        className="active-filters"
+        aria-label="Filtros aplicados"
+        role="region"
+        ref={activeFiltersRef}
+      >
         {selectedCategory !== 'todas' && (
           <button
             type="button"
             className="active-filter-tag"
             aria-label={`Quitar filtro categoría: ${categoryLabels[selectedCategory]}`}
-            onClick={() => setSelectedCategory('todas')}
+            onClick={() => quitarFiltro(() => setSelectedCategory('todas'))}
           >
             {categoryLabels[selectedCategory]} ×
           </button>
@@ -272,7 +386,7 @@ export const ExercisesPage: React.FC = () => {
             type="button"
             className="active-filter-tag"
             aria-label={`Quitar filtro: ${durationLabels[dur as Duration] || dur}`}
-            onClick={() => setSelectedDuration((prev) => prev.filter((x) => x !== dur))}
+            onClick={() => quitarFiltro(() => setSelectedDuration((prev) => prev.filter((x) => x !== dur)))}
           >
             {durationLabels[dur as Duration] || dur} ×
           </button>
@@ -284,7 +398,7 @@ export const ExercisesPage: React.FC = () => {
             type="button"
             className="active-filter-tag"
             aria-label={`Quitar filtro: ${difficultyLabels[diff as Difficulty] || diff}`}
-            onClick={() => setSelectedDifficulty((prev) => prev.filter((x) => x !== diff))}
+            onClick={() => quitarFiltro(() => setSelectedDifficulty((prev) => prev.filter((x) => x !== diff)))}
           >
             {difficultyLabels[diff as Difficulty] || diff} ×
           </button>
@@ -296,7 +410,7 @@ export const ExercisesPage: React.FC = () => {
             type="button"
             className="active-filter-tag"
             aria-label={`Quitar filtro: ${equipmentLabels[eq] || eq}`}
-            onClick={() => setSelectedEquipment((prev) => prev.filter((x) => x !== eq))}
+            onClick={() => quitarFiltro(() => setSelectedEquipment((prev) => prev.filter((x) => x !== eq)))}
           >
             {equipmentLabels[eq] || eq} ×
           </button>
@@ -308,7 +422,7 @@ export const ExercisesPage: React.FC = () => {
             type="button"
             className="active-filter-tag"
             aria-label={`Quitar filtro: ${zoneLabels[z] || z}`}
-            onClick={() => setSelectedZone((prev) => prev.filter((x) => x !== z))}
+            onClick={() => quitarFiltro(() => setSelectedZone((prev) => prev.filter((x) => x !== z)))}
           >
             {zoneLabels[z] || z} ×
           </button>
@@ -319,14 +433,14 @@ export const ExercisesPage: React.FC = () => {
             type="button"
             className="active-filter-tag"
             aria-label={`Quitar búsqueda: ${searchTerm.trim()}`}
-            onClick={() => setSearchTerm('')}
+            onClick={() => quitarFiltro(() => setSearchTerm(''))}
           >
             Búsqueda: {searchTerm.trim()} ×
           </button>
         )}
 
         {totalActiveFilterCount > 0 && (
-          <button type="button" className="btn secondary" onClick={clearAllFilters}>
+          <button type="button" id="clear-all-filters" className="btn secondary" onClick={() => quitarFiltro(clearAllFilters)}>
             Limpiar todo
           </button>
         )}
@@ -345,7 +459,7 @@ export const ExercisesPage: React.FC = () => {
               <legend>Duración</legend>
               <div className="choice-list">
                 {(['corta', 'media', 'larga'] as Duration[]).map((dur) => (
-                  <label key={dur}>
+                  <label key={dur} className="chip">
                     <input
                       type="checkbox"
                       name="duration"
@@ -358,7 +472,7 @@ export const ExercisesPage: React.FC = () => {
                         );
                       }}
                     />
-                    {durationLabels[dur]}
+                    <span>{durationLabels[dur]}</span>
                   </label>
                 ))}
               </div>
@@ -368,7 +482,7 @@ export const ExercisesPage: React.FC = () => {
               <legend>Dificultad</legend>
               <div className="choice-list">
                 {(['principiante', 'intermedio', 'avanzado'] as Difficulty[]).map((diff) => (
-                  <label key={diff}>
+                  <label key={diff} className="chip">
                     <input
                       type="checkbox"
                       name="difficulty"
@@ -381,7 +495,7 @@ export const ExercisesPage: React.FC = () => {
                         );
                       }}
                     />
-                    {difficultyLabels[diff]}
+                    <span>{difficultyLabels[diff]}</span>
                   </label>
                 ))}
               </div>
@@ -393,7 +507,7 @@ export const ExercisesPage: React.FC = () => {
                 {['ninguno', 'bandas', 'peso', 'colchoneta'].map((eq) => {
                   const isAvailable = availableOptions.equipment.has(eq);
                   return (
-                    <label key={eq} style={!isAvailable ? { display: 'none' } : undefined}>
+                    <label key={eq} className="chip" style={!isAvailable ? { display: 'none' } : undefined}>
                       <input
                         type="checkbox"
                         name="equipment"
@@ -407,7 +521,7 @@ export const ExercisesPage: React.FC = () => {
                           );
                         }}
                       />
-                      {equipmentLabels[eq] || eq}
+                      <span>{equipmentLabels[eq] || eq}</span>
                     </label>
                   );
                 })}
@@ -427,7 +541,7 @@ export const ExercisesPage: React.FC = () => {
                   'torax',
                   'hombros',
                 ].map((z) => (
-                  <label key={z}>
+                  <label key={z} className="chip">
                     <input
                       type="checkbox"
                       name="zone"
@@ -440,7 +554,7 @@ export const ExercisesPage: React.FC = () => {
                         );
                       }}
                     />
-                    {zoneLabels[z] || z}
+                    <span>{zoneLabels[z] || z}</span>
                   </label>
                 ))}
               </div>
@@ -459,8 +573,9 @@ export const ExercisesPage: React.FC = () => {
       </section>
 
       {/* Result count */}
-      <p id="result-count" role="status" className="font-semibold text-lg my-4">
-        {filteredExercises.length} ejercicio{filteredExercises.length !== 1 ? 's' : ''} encontrado{filteredExercises.length !== 1 ? 's' : ''}
+      <p id="result-count" role="status" className="result-counter">
+        {filteredExercises.length} ejercicio{filteredExercises.length !== 1 ? 's' : ''} encontrado
+        {filteredExercises.length !== 1 ? 's' : ''}
       </p>
 
       {/* Exercise list grid */}
@@ -478,143 +593,180 @@ export const ExercisesPage: React.FC = () => {
             </button>
           </div>
         ) : (
-          filteredExercises.map((exercise, index) => (
-            <article key={exercise.id} className="exercise-card">
-              <span className="exercise-glyph" aria-hidden="true">
-                <svg viewBox="0 0 24 24" focusable="false">
-                  <path d="M4 14c2.5-5.5 5.5-8 8-8s5.5 2.5 8 8" fill="none" stroke="currentColor" strokeWidth="2" />
-                  <path d="M4 19h16" fill="none" stroke="currentColor" strokeWidth="2" />
-                </svg>
-              </span>
+          filteredExercises.map((exercise, index) => {
+            const video = getExerciseVideo(exercise.id);
+            const mod = categoryModifier[exercise.category || 'actividad_general'];
+            return (
+              <article key={exercise.id} className="exercise-card">
+                <div className={`exercise-media exercise-media--${mod}`}>
+                  <PosterArt category={exercise.category} />
+                  {video.hasVideo ? (
+                    <button
+                      type="button"
+                      className="exercise-media__velo"
+                      data-id={exercise.id}
+                      aria-label={`Ver demostración de ${exercise.name}`}
+                      onClick={(e) => handleOpenDialog(index, e)}
+                    >
+                      <span className="exercise-media__play" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" focusable="false">
+                          <path d="M8 5.5v13l11-6.5Z" />
+                        </svg>
+                      </span>
+                    </button>
+                  ) : (
+                    <p className="exercise-media__estado">Demostración próximamente</p>
+                  )}
+                </div>
 
-              {/* Categoría destacada */}
-              <div className="mb-2">
-                <span
-                  className="inline-block text-xs font-semibold px-2 py-0.5 rounded"
-                  style={{
-                    backgroundColor:
-                      exercise.category === 'cuidado_postural'
-                        ? 'var(--color-fondo-verde)'
-                        : 'var(--color-fondo-azul)',
-                    color:
-                      exercise.category === 'cuidado_postural'
-                        ? 'var(--color-secundario-oscuro)'
-                        : 'var(--color-primario-oscuro)',
-                  }}
-                >
+                <span className="category-tag">
                   {categoryLabels[exercise.category || 'actividad_general']}
                 </span>
-              </div>
 
-              <h3>{exercise.name}</h3>
-              <p className="exercise-desc">{exercise.description}</p>
+                <h3>{exercise.name}</h3>
+                <p className="exercise-desc">{exercise.description}</p>
 
-              <div className="exercise-meta">
-                <span className="exercise-meta-item">
-                  Duración: {durationLabels[exercise.duration] || exercise.duration}
-                </span>
-                <span className="exercise-meta-item">
-                  Dificultad: {difficultyLabels[exercise.difficulty] || exercise.difficulty}
-                </span>
-              </div>
-
-              <div className="exercise-tags">
-                {exercise.zone.map((z) => (
-                  <span key={z} className="exercise-tag">
-                    {zoneLabels[z] || z}
+                <div className="exercise-meta">
+                  <span className="exercise-meta-item">
+                    Duración: {durationLabels[exercise.duration] || exercise.duration}
                   </span>
-                ))}
-                {exercise.equipment
-                  .filter((eq) => eq !== 'ninguno')
-                  .map((eq) => (
-                    <span key={eq} className="exercise-tag">
-                      {equipmentLabels[eq] || eq}
+                  <span className="exercise-meta-item">
+                    Dificultad: {difficultyLabels[exercise.difficulty] || exercise.difficulty}
+                  </span>
+                </div>
+
+                <div className="exercise-tags">
+                  {exercise.zone.map((z) => (
+                    <span key={z} className="exercise-tag">
+                      {zoneLabels[z] || z}
                     </span>
                   ))}
-              </div>
+                  {exercise.equipment
+                    .filter((eq) => eq !== 'ninguno')
+                    .map((eq) => (
+                      <span key={eq} className="exercise-tag">
+                        {equipmentLabels[eq] || eq}
+                      </span>
+                    ))}
+                </div>
 
-              <button
-                type="button"
-                className="btn"
-                data-id={exercise.id}
-                onClick={(e) => handleOpenDialog(index, e)}
-              >
-                Ver detalle
-              </button>
-            </article>
-          ))
+                <button
+                  type="button"
+                  className="btn"
+                  data-id={exercise.id}
+                  onClick={(e) => handleOpenDialog(index, e)}
+                >
+                  Ver detalle y ejercicio
+                </button>
+              </article>
+            );
+          })
         )}
       </section>
 
-      {/* Detail Dialog / Modal */}
+      {/* Detalle en modo cine. El <dialog> nativo da foco atrapado y Escape. */}
       {activeModalExercise && (
-        <div
-          className="dialog-backdrop"
-          onClick={handleCloseDialog}
-          role="presentation"
-          style={{
-            position: 'fixed',
-            inset: 0,
-            backgroundColor: 'rgba(23, 38, 48, 0.65)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-            padding: '1rem',
+        <dialog
+          ref={dialogRef}
+          id="exercise-dialog"
+          aria-labelledby="dialog-title"
+          onClose={handleCloseDialog}
+          onClick={(e) => {
+            // Solo cierra si el clic cae en el propio diálogo (fuera de su caja).
+            if (e.target === dialogRef.current) handleCloseDialog();
           }}
         >
-          <div
-            ref={dialogRef}
-            id="exercise-dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="dialog-title"
-            tabIndex={-1}
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              background: 'var(--color-superficie)',
-              maxWidth: '42rem',
-              width: '100%',
-              borderRadius: 'var(--radio-lg)',
-              padding: 'clamp(1.5rem, 4vw, 2.5rem)',
-              maxHeight: '90vh',
-              overflowY: 'auto',
-              boxShadow: 'var(--sombra-flotante)',
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <span
-                  className="text-xs font-semibold px-2 py-0.5 rounded"
-                  style={{
-                    backgroundColor:
-                      activeModalExercise.category === 'cuidado_postural'
-                        ? 'var(--color-fondo-verde)'
-                        : 'var(--color-fondo-azul)',
-                    color:
-                      activeModalExercise.category === 'cuidado_postural'
-                        ? 'var(--color-secundario-oscuro)'
-                        : 'var(--color-primario-oscuro)',
-                  }}
-                >
-                  {categoryLabels[activeModalExercise.category || 'actividad_general']}
-                </span>
-                <h2 id="dialog-title" tabIndex={-1} style={{ margin: '0.25rem 0 0 0' }}>
-                  {activeModalExercise.name}
-                </h2>
-              </div>
-              <button
-                type="button"
-                id="close-dialog"
-                className="btn secondary"
-                onClick={handleCloseDialog}
-                aria-label="Cerrar detalle"
-              >
-                ✕ Cerrar
-              </button>
+          <div className="dialog-cabecera">
+            <div>
+              <span className="category-tag">
+                {categoryLabels[activeModalExercise.category || 'actividad_general']}
+              </span>
+              <h2 id="dialog-title" tabIndex={-1}>
+                {activeModalExercise.name}
+              </h2>
             </div>
+            <button
+              type="button"
+              id="close-dialog"
+              className="btn secondary"
+              onClick={handleCloseDialog}
+              aria-label="Cerrar detalle"
+            >
+              ✕ Cerrar
+            </button>
+          </div>
 
-            <div id="dialog-content" style={{ marginTop: '1.25rem' }}>
+          {activeModalVideo.hasVideo ? (
+            <>
+              <video
+                key={activeModalExercise.id}
+                ref={videoRef}
+                className="dialog-video"
+                src={activeModalVideo.src}
+                poster={activeModalVideo.poster}
+                controls
+                playsInline
+                preload="none"
+                aria-label={`Demostración de ${activeModalExercise.name}`}
+              >
+                Tu navegador no puede reproducir este vídeo.
+              </video>
+              <div className="dialog-video-controls">
+                <div className="dialog-video-controls__grupo">
+                  <span id="velocidad-label">Velocidad</span>
+                  <div role="group" aria-labelledby="velocidad-label">
+                    <button
+                      type="button"
+                      aria-pressed={playbackRate === '0.5'}
+                      onClick={() => setPlaybackRate('0.5')}
+                    >
+                      0,5×
+                    </button>
+                    <button
+                      type="button"
+                      aria-pressed={playbackRate === '1'}
+                      onClick={() => setPlaybackRate('1')}
+                    >
+                      1×
+                    </button>
+                  </div>
+                </div>
+                <div className="dialog-video-controls__grupo">
+                  <button
+                    type="button"
+                    id="toggle-loop"
+                    aria-pressed={loopOn}
+                    onClick={() => setLoopOn((v) => !v)}
+                  >
+                    {loopOn ? 'Bucle activado' : 'Repetir en bucle'}
+                  </button>
+                </div>
+              </div>
+            </>
+          ) : (
+            <p className="dialog-sin-video">
+              <span className="exercise-media__estado-inline" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path
+                    d="M4 6.5h16v11H4z"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.75"
+                    strokeLinejoin="round"
+                  />
+                  <path d="M10 9.8v4.4l4-2.2Z" fill="currentColor" />
+                </svg>
+              </span>
+              <span>
+                <strong>Demostración próximamente</strong>
+                <span>
+                  La demostración en vídeo de este ejercicio todavía no está publicada.
+                </span>
+              </span>
+            </p>
+          )}
+
+          <div id="dialog-content">
               <p>{activeModalExercise.description}</p>
 
               <div className="exercise-meta" style={{ marginTop: '1rem' }}>
@@ -655,7 +807,7 @@ export const ExercisesPage: React.FC = () => {
                   <h3 className="text-sm font-bold m-0 mb-2">Ficha de revisión documental</h3>
                   <div className="space-y-2">
                     <p className="m-0">
-                      <strong>Estado de revisión:</strong>{' '}
+                      <strong>Estado de la ficha:</strong>{' '}
                       <span
                         className="font-medium"
                         style={{
@@ -666,7 +818,7 @@ export const ExercisesPage: React.FC = () => {
                         }}
                       >
                         {activeModalExercise.clinicalMetadata.reviewStatus === 'revisado_profesional'
-                          ? 'Revisado profesionalmente'
+                          ? 'Revisión documental completada'
                           : 'En proceso de revisión documental'}
                       </span>
                       {activeModalExercise.clinicalMetadata.reviewedBy && (
@@ -675,6 +827,10 @@ export const ExercisesPage: React.FC = () => {
                       {activeModalExercise.clinicalMetadata.reviewDate && (
                         <span> ({activeModalExercise.clinicalMetadata.reviewDate})</span>
                       )}
+                    </p>
+                    <p className="m-0">
+                      Esta ficha recoge el contenido publicado y sus fuentes. No constituye
+                      una validación clínica por parte de un profesional sanitario.
                     </p>
 
                     {activeModalExercise.clinicalMetadata.precautions &&
@@ -731,20 +887,17 @@ export const ExercisesPage: React.FC = () => {
                 </div>
               )}
 
+              <p className="dialog-aviso-clinico">
+                Información general orientativa, no sustituye la prescripción de un
+                profesional sanitario.
+              </p>
+
               <p className="small-print" style={{ color: 'var(--color-texto-suave)' }}>
                 Clasificación de catálogo: <strong>{activeModalExercise.clinicalReview || 'pendiente'}</strong>. Ninguna ficha sustituye la supervisión de un fisioterapeuta o médico.
               </p>
             </div>
 
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginTop: '1.5rem',
-                borderTop: '1px solid var(--color-borde)',
-                paddingTop: '1rem',
-              }}
-            >
+            <div className="dialog-nav">
               <button
                 type="button"
                 id="dialog-prev"
@@ -779,9 +932,8 @@ export const ExercisesPage: React.FC = () => {
                 Siguiente →
               </button>
             </div>
-          </div>
-        </div>
-      )}
+          </dialog>
+        )}
     </main>
   );
 };

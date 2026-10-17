@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" width="320" height="180" role="img" aria-label="Póster de la demostración del ejercicio Bird-Dog">
+  <rect width="320" height="180" fill="#1f3f45"/>
+  <defs>
+    <pattern id="pts" width="18" height="18" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.4" fill="#cfe0d4" opacity="0.22"/>
+    </pattern>
+  </defs>
+  <rect x="176" y="14" width="128" height="66" fill="url(#pts)"/>
+  <g fill="none" stroke="#cfe0d4" stroke-linecap="round">
+    <path d="M40 148C88 108 112 62 160 44" stroke-width="2" opacity="0.55"/>
+    <path d="M232 44C268 74 280 112 258 148" stroke-width="1.5" opacity="0.4"/>
+    <path d="M44 40v100" stroke-width="1.5" opacity="0.35"/>
+    <path d="M44 66h20M44 96h30M44 126h14" stroke-width="1.5" opacity="0.35"/>
+  </g>
+</svg>
