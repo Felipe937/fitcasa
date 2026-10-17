@@ -641,118 +641,118 @@ li + li { margin-top: var(--espacio-2); }
   .programa__motivo,
   .programa--destacado:hover .programa__motivo { transform: none; }
 }
-/* --- Escoliosis: equilibrio y cuidado tridimensional ------------------------
-   Composicion asimetrica de dos columnas. Todos los selectores llevan el
-   prefijo .escoliosis- para no rozar el resto de secciones. */
-.escoliosis-card {
-  position: relative;
+/* --- Escoliosis: placa editorial --------------------------------------------
+   El bloque es un campo de tono, no una tarjeta: sin borde y sin sombra. Las
+   zonas se distinguen por superficie y aire, no por cajas anidadas. Solo el
+   aviso lleva superficie propia. */
+.escoliosis-placa {
   margin-top: var(--espacio-5);
-  overflow: hidden;
-  background: var(--color-superficie);
-  border: 1px solid var(--color-borde); /* taste-skill-ignore: borde sutil de tarjeta */
+  background: var(--color-fondo-verde);
   border-radius: var(--radio-lg);
-  box-shadow: 0 4px 24px -4px rgb(31 41 39 / 0.06); /* taste-skill-ignore: sombra suave de tarjeta */
 }
 .escoliosis-grid {
   display: grid;
-  gap: clamp(var(--espacio-5), 4vw, var(--espacio-7));
-  padding: clamp(var(--espacio-5), 3.5vw, var(--espacio-7));
+  gap: clamp(var(--espacio-6), 4vw, var(--espacio-8));
+  padding: clamp(var(--espacio-5), 4vw, var(--espacio-8));
   grid-template-columns: 1fr;
   align-items: center;
 }
 .escoliosis-texto { min-width: 0; }
 
-/* Cabecera editorial: insignia, titular de seccion y subtitulo. */
-.escoliosis-cabecera { margin-bottom: var(--espacio-5); }
+/* Cabecera: insignia pequena, titular con presencia y subtitulo por encima del
+   cuerpo. Los tres niveles ya no comparten tamano. */
+.escoliosis-cabecera { margin-bottom: var(--espacio-6); }
 .escoliosis-insignia {
   display: inline-flex; align-items: center; gap: var(--espacio-2);
-  padding: 0.3rem 0.8rem 0.3rem 0.55rem; margin: 0 0 var(--espacio-3);
+  padding: 0.3rem 0.8rem 0.3rem 0.55rem; margin: 0 0 var(--espacio-4);
   color: var(--color-secundario-oscuro);
-  background: var(--color-fondo-verde);
+  background: var(--color-superficie);
   border-radius: var(--radio-pill);
   font-size: var(--texto-xs); font-weight: 800;
   letter-spacing: 0.1em; text-transform: uppercase;
 }
 .escoliosis-insignia__punto { width: 0.55rem; height: 0.55rem; background: var(--color-secundario); border-radius: 50%; }
-#titulo-escoliosis { max-width: 20ch; margin: 0 0 var(--espacio-2); text-wrap: balance; }
-.escoliosis-subtitulo {
-  max-width: 34ch; margin: 0;
-  color: var(--color-primario);
-  font-size: var(--texto-base); font-weight: 600;
+#titulo-escoliosis {
+  max-width: 17ch; margin: 0 0 var(--espacio-3);
+  font-size: clamp(var(--texto-2xl), 1rem + 2.9vw, 3.5rem);
+  line-height: 1.04; letter-spacing: -0.03em;
   text-wrap: balance;
 }
+.escoliosis-subtitulo {
+  max-width: 30ch; margin: 0;
+  color: var(--color-primario);
+  font-size: var(--texto-lg); font-weight: 650;
+  line-height: 1.4; text-wrap: balance;
+}
+.escoliosis-cuerpo { display: flex; flex-direction: column; gap: var(--espacio-4); margin-bottom: var(--espacio-6); }
+.escoliosis-cuerpo p { max-width: 56ch; margin: 0; color: var(--color-texto); line-height: 1.65; }
 
-.escoliosis-cuerpo { display: flex; flex-direction: column; gap: var(--espacio-3); margin-bottom: var(--espacio-5); }
-.escoliosis-cuerpo p { max-width: 58ch; margin: 0; color: var(--color-texto); line-height: 1.65; }
-
-/* Aviso clinico: ficha clara con filo de arcilla. El rojo de error queda
-   reservado para errores; aqui el tono es de calma, no de alarma. */
+/* Aviso clinico: unica superficie propia, blanca sobre el campo de tono.
+   El rojo de error queda reservado para errores; aqui el tono es de calma. */
 .escoliosis-aviso {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  gap: var(--espacio-3);
+  gap: var(--espacio-4);
   align-items: start;
-  max-width: 62ch;
-  padding: var(--espacio-4);
-  margin-bottom: var(--espacio-5);
-  background: var(--color-superficie-suave);
-  border-left: 4px solid var(--color-terciario); /* taste-skill-ignore: filo de acento en la nota clinica */
+  max-width: 60ch;
+  padding: var(--espacio-5);
+  margin-bottom: var(--espacio-6);
+  background: var(--color-superficie);
+  border-left: 3px solid var(--color-terciario); /* taste-skill-ignore: filo de acento en la nota clinica */
   border-radius: 0 var(--radio-sm) var(--radio-sm) 0;
 }
-.escoliosis-aviso__icono {
-  flex: 0 0 1.35rem; width: 1.35rem; height: 1.35rem; margin-top: 0.15rem;
-  color: var(--color-terciario-oscuro);
-  fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round;
-}
-.escoliosis-aviso__cuerpo { margin: 0; color: var(--color-texto); font-size: var(--texto-sm); line-height: 1.65; }
+.escoliosis-aviso__icono { display: block; width: 1.5rem; height: 1.5rem; margin-top: 0.1rem; color: var(--color-terciario-oscuro); }
+.escoliosis-aviso__icono svg { display: block; width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+.escoliosis-aviso__cuerpo { margin: 0; color: var(--color-texto); font-size: var(--texto-sm); line-height: 1.7; }
 .escoliosis-aviso__cuerpo strong { color: var(--color-primario-oscuro); }
 
-/* Acciones: llamada principal + contexto secundario. */
-.escoliosis-acciones { display: flex; flex-wrap: wrap; align-items: center; gap: var(--espacio-4); }
-.escoliosis-acciones .btn { display: inline-flex; align-items: center; min-height: var(--alto-objetivo-tactil); }
+/* Acciones: llamada principal y contexto secundario. */
+.escoliosis-acciones { display: flex; flex-wrap: wrap; align-items: center; gap: var(--espacio-4) var(--espacio-5); }
+.escoliosis-cta { display: inline-flex; align-items: center; min-height: var(--alto-objetivo-tactil); padding-inline: var(--espacio-5); }
 .escoliosis-acciones__secundario {
   display: inline-flex; align-items: center; min-height: var(--alto-objetivo-tactil);
   padding-inline: var(--espacio-2);
   color: var(--color-secundario-oscuro);
   font-size: var(--texto-sm); font-weight: 700;
-  text-decoration: underline; text-underline-offset: 4px;
-  text-decoration-thickness: 1px;
+  text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px;
 }
 .escoliosis-acciones__secundario:hover { color: var(--color-primario-oscuro); text-decoration-thickness: 2px; }
 
-/* Columna visual: curva punteada y trazos cinematicos sobre campo plano. */
-.escoliosis-visual { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0; min-height: 320px; }
-.escoliosis-arte { display: block; width: 100%; max-width: 24rem; height: auto; }
+/* Columna visual: la lamina llena la columna y la ficha se ancla al pie,
+   sin caja propia que anide una tercera superficie. */
+.escoliosis-visual { display: flex; flex-direction: column; min-width: 0; }
+.escoliosis-arte { display: block; width: 100%; max-width: 27rem; height: auto; margin-inline: auto; }
 .escoliosis-ficha {
-  max-width: 24rem; margin: var(--espacio-4) auto 0;
-  padding: var(--espacio-4);
-  background: var(--color-superficie);
-  border: 1px solid var(--color-borde); /* taste-skill-ignore: borde sutil de ficha */
-  border-radius: var(--radio-md);
-  box-shadow: var(--sombra-flotante); /* taste-skill-ignore: la ficha flota sobre el campo de color */
+  max-width: 27rem; margin: var(--espacio-5) auto 0;
+  padding-top: var(--espacio-4);
+  border-top: 1px solid var(--color-secundario); /* taste-skill-ignore: regla de apoyo bajo la ficha */
 }
 .escoliosis-ficha strong { display: block; color: var(--color-primario-oscuro); font-size: var(--texto-base); line-height: var(--alto-linea-titulo); text-wrap: balance; }
 .escoliosis-ficha span { display: block; margin-top: 0.15rem; color: var(--color-terciario-oscuro); font-size: var(--texto-sm); font-weight: 700; }
 
-/* Escritorio: asimetrico 60/40, la narrativa pesa mas que la lamina. */
+/* Escritorio: asimetrico 60/40, la lectura pesa mas que la lamina. */
 @media (min-width: 64rem) {
   .escoliosis-grid { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
 }
 
-/* Movimiento: solo transform y box-shadow, nunca `all`. */
+/* Columna estrecha: el icono se apila para que el aviso no quede en una
+   linea de 200 px. */
+@media (max-width: 30rem) {
+  .escoliosis-aviso { grid-template-columns: 1fr; gap: var(--espacio-3); padding: var(--espacio-4); }
+}
+
+/* Movimiento: solo transform, sin rebotes ni color en movimiento. */
 @media (prefers-reduced-motion: no-preference) {
-  .escoliosis-card { transition: box-shadow 240ms ease, border-color 240ms ease; }
-  .escoliosis-card:hover { box-shadow: 0 10px 34px -8px rgb(31 41 39 / 0.12); border-color: var(--color-secundario); }
-  .escoliosis-arte { transition: transform 380ms var(--curva-suave); transform-origin: 50% 50%; }
-  .escoliosis-visual:hover .escoliosis-arte { transform: translateY(-2px) rotate(3deg); }
-  .escoliosis-nodos circle { transition: transform 300ms var(--curva-suave); transform-box: fill-box; transform-origin: center; }
-  .escoliosis-visual:hover .escoliosis-nodos circle { transform: scale(1.12); }
+  .escoliosis-arte { transition: transform 420ms var(--curva-suave); transform-origin: 50% 50%; }
+  .escoliosis-visual:hover .escoliosis-arte { transform: translateY(-3px) rotate(2deg); }
+  .escoliosis-cta { transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease, border-color 180ms ease; }
+  .escoliosis-cta:hover { transform: translateY(-2px); box-shadow: var(--sombra-flotante); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .escoliosis-card,
   .escoliosis-arte,
   .escoliosis-visual:hover .escoliosis-arte,
-  .escoliosis-nodos circle { transform: none; transition: none; }
+  .escoliosis-cta,
+  .escoliosis-cta:hover { transform: none; transition: none; }
 }
 .pasos {
   display: grid; gap: var(--espacio-5); width: 100%; max-width: none;

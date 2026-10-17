@@ -363,9 +363,10 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
       </section>
 {/* Escoliosis */}
       <section id="escoliosis" aria-labelledby="titulo-escoliosis" tabIndex={-1} className="container seccion">
-        <div className="escoliosis-card">
+        {/* Placa editorial: campo de tono propio, sin borde ni sombra. Las zonas
+            se marcan por superficie y espacio, no por tarjetas anidadas. */}
+        <div className="escoliosis-placa">
           <div className="escoliosis-grid">
-            {/* Columna principal: cabecera editorial, lectura, aviso y acciones. */}
             <div className="escoliosis-texto">
               <header className="escoliosis-cabecera">
                 <p className="escoliosis-insignia">
@@ -373,9 +374,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                   Enfoque postural consciente
                 </p>
                 <h2 id="titulo-escoliosis">Cuidado postural y enfoque en escoliosis</h2>
-                {/* Se mantiene como h3 y no como parrafo: visualmente es un
-                    subtitulo, pero para quien navega por titulos sigue siendo
-                    un tema real de la seccion. */}
+                {/* h3 y no p: visualmente es un subtitulo, pero para quien
+                    navega por titulos sigue siendo un tema de la seccion. */}
                 <h3 className="escoliosis-subtitulo">
                   Comprensión y respeto hacia cada columna vertebral
                 </h3>
@@ -395,24 +395,20 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
               </div>
 
               {/* Aviso clinico. Se nombra con aria-labelledby y NO con aria-label:
-                  un aria-label sustituiria el texto visible por su nombre accesible y
-                  un lector de pantalla anunciaria solo el titulo, saltandose los
-                  282 caracteres del aviso. */}
+                  un aria-label sustituiria el texto visible por su nombre accesible
+                  y el lector de pantalla se saltaria los 282 caracteres del aviso. */}
               <div
                 className="escoliosis-aviso"
                 role="note"
                 aria-labelledby="escoliosis-aviso-titulo"
               >
-                <svg
-                  className="escoliosis-aviso__icono"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  focusable="false"
-                >
-                  <path d="M12 3.5 19 6v5c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6Z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-                  <path d="M12 8.5v4.2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                  <path d="M12 15.8h.01" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
-                </svg>
+                <span className="escoliosis-aviso__icono" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M12 3.5 19 6v5c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6Z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+                    <path d="M12 8.5v4.2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                    <path d="M12 15.8h.01" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+                  </svg>
+                </span>
                 <p className="escoliosis-aviso__cuerpo">
                   <strong id="escoliosis-aviso-titulo">Aviso esencial de salud:</strong> Nuestros
                   contenidos tienen un propósito exclusivamente formativo y no constituyen
@@ -423,61 +419,79 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
               </div>
 
               <div className="escoliosis-acciones">
-                <a href="#escoliosis" className="btn" onClick={ir('escoliosis')}>
+                <a href="#escoliosis" className="btn escoliosis-cta" onClick={ir('escoliosis')}>
                   Leer guía completa de escoliosis
                 </a>
-                <a href="#ejercicios" className="escoliosis-acciones__secundario" onClick={ir('ejercicios')}>
+                <a
+                  href="#ejercicios"
+                  className="escoliosis-acciones__secundario"
+                  onClick={ir('ejercicios')}
+                >
                   Ver ejercicios de cuidado postural
                 </a>
               </div>
             </div>
 
-            {/* Columna visual: curva punteada, trazos cinematicos y puntos nodales.
-                Decorativa entera: sin siluetas anatomicas ni radiografias. */}
+            {/* Lamina editorial. Tres formas de caracter distinto —una curva
+                dominante, un arco tendido y una traza punteada— sobre una
+                matriz de puntos y un eje de referencia. No representa ninguna
+                curvatura concreta ni un modelo anatomico. */}
             <div className="escoliosis-visual">
               <svg
                 className="escoliosis-arte"
-                viewBox="0 0 400 470"
+                viewBox="0 0 360 430"
                 fill="none"
                 aria-hidden="true"
                 focusable="false"
               >
-                <circle cx="200" cy="235" r="150" fill="var(--color-superficie)" opacity="0.5" />
+                <defs>
+                  <pattern id="escoliosis-puntos" width="20" height="20" patternUnits="userSpaceOnUse">
+                    <circle cx="2" cy="2" r="1.3" fill="var(--color-primario)" opacity="0.13" />
+                  </pattern>
+                </defs>
+                <rect x="196" y="42" width="128" height="150" fill="url(#escoliosis-puntos)" />
+
+                {/* Eje de referencia con marcas alternas: escala de atlas. */}
+                <g stroke="var(--color-primario-oscuro)" strokeLinecap="round">
+                  <path d="M40 64v304" strokeWidth="1" opacity="0.2" />
+                  <path d="M40 100h9M40 152h18M40 204h9M40 256h18M40 308h9M40 360h18" strokeWidth="1.5" opacity="0.42" />
+                </g>
+
+                {/* 1. Curva dominante: el foco de la lamina. */}
                 <path
-                  d="M116 150C216 86 320 186 258 302 200 410 84 336 116 150Z"
-                  fill="var(--color-secundario)"
-                  opacity="0.1"
-                />
-                {/* Curva de alineacion: punteada, nunca solida ni patologica. */}
-                <path
-                  d="M200 74C172 142 240 212 192 282 152 342 222 392 200 430"
+                  d="M164 62C228 102 118 156 182 214 246 272 136 326 219 370"
                   stroke="var(--color-primario)"
-                  strokeWidth="3.5"
+                  strokeWidth="3.25"
                   strokeLinecap="round"
-                  strokeDasharray="8 7"
-                  opacity="0.8"
                 />
+                {/* 2. Arco tendido: cruza en horizontal, no repite la S. */}
                 <path
-                  d="M160 116C246 166 152 252 240 332"
-                  stroke="var(--color-secundario-oscuro)"
-                  strokeWidth="2"
+                  d="M54 306C134 346 236 258 330 306"
+                  stroke="var(--color-secundario)"
+                  strokeWidth="1.75"
                   strokeLinecap="round"
-                  opacity="0.42"
+                  opacity="0.62"
                 />
+                {/* 3. Traza punteada, casi vertical, en el flanco derecho. */}
                 <path
-                  d="M220 168C152 218 232 292 172 378"
+                  d="M312 74C268 162 328 254 274 358"
                   stroke="var(--color-terciario-oscuro)"
-                  strokeWidth="2"
+                  strokeWidth="1.75"
                   strokeLinecap="round"
-                  opacity="0.38"
+                  strokeDasharray="2 7"
+                  opacity="0.5"
                 />
-                {/* Puntos nodales de equilibrio. */}
-                <g className="escoliosis-nodos">
-                  <circle cx="200" cy="74" r="6" fill="var(--color-primario)" />
-                  <circle cx="181" cy="150" r="4.5" fill="var(--color-secundario-oscuro)" />
-                  <circle cx="214" cy="236" r="5.5" fill="var(--color-primario-oscuro)" />
-                  <circle cx="178" cy="314" r="4.5" fill="var(--color-terciario-oscuro)" />
-                  <circle cx="200" cy="430" r="6" fill="var(--color-primario)" />
+
+                {/* Marcas de referencia en los puntos de inflexion. */}
+                <g stroke="var(--color-primario)" strokeWidth="1" opacity="0.3">
+                  <path d="M40 178h56" />
+                  <path d="M40 286h104" />
+                </g>
+                <g>
+                  <circle cx="164" cy="62" r="7.5" fill="var(--color-primario)" />
+                  <circle cx="134" cy="178" r="4.5" fill="var(--color-secundario-oscuro)" />
+                  <circle cx="230" cy="286" r="6" fill="var(--color-primario-oscuro)" />
+                  <circle cx="219" cy="370" r="5.5" fill="var(--color-terciario-oscuro)" />
                 </g>
               </svg>
               <p className="escoliosis-ficha">
