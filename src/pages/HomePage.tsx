@@ -361,30 +361,73 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           </article>
         </div>
       </section>
+{/* Escoliosis */}
       <section id="escoliosis" aria-labelledby="titulo-escoliosis" tabIndex={-1} className="container seccion">
         <h2 id="titulo-escoliosis">Cuidado postural y enfoque en escoliosis</h2>
-        <article className="escoliosis-nota">
-          <h3>Comprensión y respeto hacia cada columna vertebral</h3>
-          <p>
-            La escoliosis implica curvas y rotaciones tridimensionales que varían en cada persona.
-            No existen rutinas universales ni ejercicios estándar válidos para todas las curvaturas.
-          </p>
-          <p>
-            En FitCasa brindamos pautas divulgativas sobre higiene postural, estiramientos suaves y
-            activación muscular equilibrada, diseñadas para acompañar tu bienestar cotidiano.
-          </p>
-          <p className="escoliosis-nota__aviso">
-            <strong>Aviso esencial de salud:</strong> Nuestros contenidos tienen un propósito
-            exclusivamente formativo y no constituyen tratamiento médico ni correctivo. Consulta
-            siempre con tu traumatólogo o fisioterapeuta antes de comenzar, y suspende de inmediato
-            la actividad si experimentas dolor punzante, adormecimiento o mareos.
-          </p>
-          <p>
-            <a href="#escoliosis" className="btn" onClick={ir('escoliosis')}>
-              Leer guía completa de escoliosis
-            </a>
-          </p>
-        </article>
+        <div className="escoliosis-grid">
+          {/* Columna narrativa: lectura, aviso clinico y llamada a la accion. */}
+          <div className="escoliosis-texto">
+            <p className="escoliosis-insignia">
+              <span className="escoliosis-insignia__punto" aria-hidden="true" />
+              Enfoque postural consciente
+            </p>
+            <h3>Comprensión y respeto hacia cada columna vertebral</h3>
+            <p>
+              La escoliosis implica curvas y rotaciones tridimensionales que varían en cada persona.
+              No existen rutinas universales ni ejercicios estándar válidos para todas las curvaturas.
+            </p>
+            <p>
+              En FitCasa brindamos pautas divulgativas sobre higiene postural, estiramientos suaves y
+              activación muscular equilibrada, diseñadas para acompañar tu bienestar cotidiano.
+            </p>
+            <div className="escoliosis-aviso" role="note" aria-labelledby="escoliosis-aviso-titulo">
+              <svg className="escoliosis-aviso__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M12 3.5 19 6v5c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6Z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+                <path d="M12 8.5v4.2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <path d="M12 15.8h.01" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+              </svg>
+              <p className="escoliosis-aviso__cuerpo">
+                <strong id="escoliosis-aviso-titulo">Aviso esencial de salud:</strong> Nuestros
+                contenidos tienen un propósito exclusivamente formativo y no constituyen tratamiento
+                médico ni correctivo. Consulta siempre con tu traumatólogo o fisioterapeuta antes de
+                comenzar, y suspende de inmediato la actividad si experimentas dolor punzante,
+                adormecimiento o mareos.
+              </p>
+            </div>
+            <p className="escoliosis-acciones">
+              <a href="#escoliosis" className="btn" onClick={ir('escoliosis')}>
+                Leer guía completa de escoliosis
+              </a>
+            </p>
+          </div>
+
+          {/* Columna visual: arcos armonicos. Sin siluetas ni radiografias, y
+              decorativo para los lectores de pantalla. */}
+          <div className="escoliosis-visual">
+            <svg
+              className="escoliosis-motivo"
+              viewBox="0 0 320 340"
+              preserveAspectRatio="xMidYMid meet"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <circle cx="160" cy="160" r="152" fill="var(--color-superficie)" opacity="0.55" />
+              <g fill="none" stroke="var(--color-secundario)" strokeLinecap="round">
+                <path d="M36 244c34-88 74-88 108 0s74 88 140 0" strokeWidth="3" opacity="0.5" />
+                <path d="M58 214c32-80 70-80 100 0s68 80 132 0" strokeWidth="3" opacity="0.34" />
+                <path d="M82 186c28-70 64-70 90 0s62 70 124 0" strokeWidth="3" opacity="0.2" />
+              </g>
+              <g fill="none" stroke="var(--color-primario)" strokeWidth="3" strokeLinecap="round">
+                <path d="M118 118c28-56 60-56 86 0" opacity="0.34" />
+              </g>
+              <circle cx="160" cy="70" r="6" fill="var(--color-secundario)" opacity="0.55" />
+            </svg>
+            <p className="escoliosis-ficha">
+              <strong>Cada columna es tridimensional y única.</strong>
+              <span>Sin fórmulas universales.</span>
+            </p>
+          </div>
+        </div>
       </section>
 
       {/* Cómo funciona */}
