@@ -154,7 +154,7 @@ export const ConsentGuard: React.FC<ConsentGuardProps> = ({
   if (pending.privacy) changed.push('Política de Privacidad');
   if (pending.health) changed.push('autorización sobre tus datos de salud');
 
-  const completo = terms && privacy && health;
+  const completo = terms && privacy;
 
   const aceptar = (event: React.FormEvent) => {
     event.preventDefault();
@@ -162,9 +162,8 @@ export const ConsentGuard: React.FC<ConsentGuardProps> = ({
       const faltan: string[] = [];
       if (!terms) faltan.push('los Términos de Uso');
       if (!privacy) faltan.push('la Política de Privacidad');
-      if (!health) faltan.push('la autorización para guardar tus datos de salud');
       setError(`Falta marcar: ${faltan.join(', ')}.`);
-      const id = !terms ? 'guard-terms' : !privacy ? 'guard-privacy' : 'guard-health';
+      const id = !terms ? 'guard-terms' : 'guard-privacy';
       document.getElementById(id)?.focus();
       return;
     }
@@ -175,7 +174,7 @@ export const ConsentGuard: React.FC<ConsentGuardProps> = ({
       terms: { accepted: true, at: ahora, docVersion: DOC_VERSIONS.terminos },
       privacy: { accepted: true, at: ahora, docVersion: DOC_VERSIONS.privacidad },
       health: {
-        accepted: true,
+        accepted: health,
         at: ahora,
         docVersion: DOC_VERSIONS.terminos,
         purpose: HEALTH_DATA_PURPOSE,
@@ -201,9 +200,12 @@ export const ConsentGuard: React.FC<ConsentGuardProps> = ({
         Antes de continuar
       </h1>
       <p className="consent-guard__intro">
-        Para usar <strong>{titulo}</strong> necesitamos que confirmes tres cosas. Lo que
-        anotes allí se guarda en este navegador, no sale de tu dispositivo y FitCasa no lo
-        envía a ningún servidor.
+        Para usar <strong>{titulo}</strong> necesitamos que confirmes dos cosas:
+        los Términos de Uso y la Política de Privacidad. La autorización para
+        guardar tus datos de salud es opcional: si no la marcas, podrás usar la
+        función pero no se guardarán tus notas de bienestar ni tu percepción de
+        dolor. Todo lo que anotes se guarda en este navegador, no sale de tu
+        dispositivo y FitCasa no lo envía a ningún servidor.
       </p>
 
       {motivo === 'updated' && (
@@ -302,7 +304,7 @@ export const ConsentGuard: React.FC<ConsentGuardProps> = ({
             />
             <span>
               Autorizo que FitCasa guarde en este dispositivo el dolor percibido y la nota
-              de bienestar que anote <span className="consent-guard__obligatorio">(obligatorio)</span>
+              de bienestar que anote <span className="consent-guard__obligatorio">(opcional)</span>
             </span>
             {health && (
               <svg className="consent-guard__estado" viewBox="0 0 24 24" focusable="false" aria-hidden="true">

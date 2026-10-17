@@ -118,7 +118,9 @@ export const HEALTH_DATA_PURPOSE =
   'Guardar en este dispositivo el dolor percibido, la nota de bienestar y la actividad que anotas, para que puedas consultarlos y editarlos tú mismo.';
 
 export interface Decision<TVersion extends string = string> {
-  accepted: true;
+  /** Si la persona aceptó el documento. Puede ser false cuando la
+     autorización es facultativa y la persona decidió no otorgarla. */
+  accepted: boolean;
   /** Fecha y hora de la decisión en ISO 8601. */
   at: string;
   /** Versión del documento en el momento de decidir. */
