@@ -19,6 +19,7 @@ export const CATALOGO_EQUIPAMIENTO: ProductoAfiliado[] = [
     descripcionCorta: 'Esterilla antideslizante de grosor adecuado para apoyar rodillas y columna.',
     porQueEsUtil: 'Amortigua el contacto con el suelo en posturas de cuadrupedia y decúbito, evitando molestias óseas.',
     recomendacionUso: 'Busca superficies densas que no deslicen y aíslen del frío.',
+    ejerciciosRelacionados: ['e01', 'e02', 'e08', 'e10', 'e14', 'e16', 'e17', 'e18'],
     urlAmazon: undefined,
   },
   {
@@ -28,6 +29,7 @@ export const CATALOGO_EQUIPAMIENTO: ProductoAfiliado[] = [
     descripcionCorta: 'Bandas textiles o de látex para activar glúteos, cadera y cintura escapular.',
     porQueEsUtil: 'Permiten aplicar tensión gradual y controlada sin someter a la columna a impactos axiales bruscos.',
     recomendacionUso: 'Comienza siempre por la resistencia más baja para priorizar la alineación y el control motor.',
+    ejerciciosRelacionados: ['e04', 'e06', 'e13', 'e20'],
     urlAmazon: undefined,
   },
   {
@@ -37,6 +39,7 @@ export const CATALOGO_EQUIPAMIENTO: ProductoAfiliado[] = [
     descripcionCorta: 'Cargas reducidas para estabilidad de hombros y fortalecimiento postural.',
     porQueEsUtil: 'Aportan resistencia externa suficiente para estimular musculatura dorsal sin sobrecargar la zona lumbar.',
     recomendacionUso: 'El peso no debe comprometer la fluidez de la respiración ni la postura.',
+    ejerciciosRelacionados: ['e07', 'e11', 'e12', 'e15', 'e19'],
     urlAmazon: undefined,
   },
 ];
