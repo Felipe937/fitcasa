@@ -5,8 +5,6 @@ import { PanelRecord } from '../types';
 import { EXERCISES_DATA } from '../data/exercisesData';
 import {
   durationLabels,
-  difficultyLabels,
-  equipmentLabels,
   zoneLabels,
 } from '../data/exerciseLabels';
 
@@ -39,7 +37,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
     ).length;
     const zonas = new Set(EXERCISES_DATA.flatMap((e) => e.zone)).size;
     const postural = EXERCISES_DATA.filter((e) => e.category === 'cuidado_postural').length;
-    // El primer ejercicio de cuidado postural es el que Illustramos: encaja con
+    // El primer ejercicio de cuidado postural es el que ilustramos: encaja con
     // el encuadre de la portada en lugar de ser un ejercicio cualquiera.
     const destacado =
       EXERCISES_DATA.find((e) => e.category === 'cuidado_postural') ?? EXERCISES_DATA[0];
@@ -89,83 +87,176 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
             </ul>
           </div>
 
-          {/* Composición visual: lámina ilustrada en el cabeza de la ficha real
-              de la biblioteca, con dos datos reales flotando en las esquinas. */}
-          <div className="hero-visual">
-            <figure className="hero-ficha" data-ui>
-              <svg
-                className="hero-forma"
-                viewBox="0 0 400 180"
-                preserveAspectRatio="xMidYMid slice"
-                aria-hidden="true"
-                focusable="false"
-              >
-                <rect width="400" height="180" fill="var(--color-fondo-verde)" />
-                <ellipse cx="200" cy="154" rx="112" ry="17" fill="var(--color-secundario)" opacity="0.22" />
-                <g
-                  fill="none"
-                  stroke="var(--color-primario)"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  opacity="0.34"
+          {/* Composición visual 3D editorial: figura escultórica con profundidad */ }
+          <div className="hero-visual" data-depth>
+            <figure className="hero-escena" aria-hidden="true">
+              {/* Capa de fondo: malla de puntos */}
+              <div className="hero-escena__fondo-malla" aria-hidden="true" />
+
+              {/* Capa intermedia: formas abstractas flotantes */}
+              <div className="hero-escena__formas" aria-hidden="true">
+                <div className="hero-escena__forma hero-escena__forma--1" />
+                <div className="hero-escena__forma hero-escena__forma--2" />
+                <div className="hero-escena__forma hero-escena__forma--3" />
+                <div className="hero-escena__forma hero-escena__forma--4" />
+              </div>
+
+              {/* Capa principal: figura escultórica central */}
+              <div className="hero-escena__figura" aria-hidden="true">
+                <svg
+                  className="hero-escena__silhueta"
+                  viewBox="0 0 400 500"
+                  preserveAspectRatio="xMidYMid slice"
+                  focusable="false"
+                  aria-hidden="true"
                 >
-                  {/* Columna en curva suave: la figura sentada, en reposo. */}
-                  <path d="M200 46c-4 24 4 42 0 64" />
-                  <path d="M200 110c-30 12-46 24-50 38" />
-                  <path d="M200 110c30 12 46 24 50 38" />
-                  <path d="M198 64c-28 10-42 26-46 42" />
-                </g>
-                <circle cx="200" cy="26" r="19" fill="var(--color-primario)" opacity="0.3" />
-              </svg>
-              <figcaption className="hero-ficha__cabecera">
-                <span className="hero-ficha__zona">
-                  {zoneLabels[biblioteca.destacado.zone[0]] ?? biblioteca.destacado.zone[0]}
-                </span>
-                <span className="hero-ficha__aviso">Contenido educativo</span>
-              </figcaption>
-              <p className="hero-ficha__nombre">{biblioteca.destacado.name}</p>
-              <p className="hero-ficha__descripcion">{biblioteca.destacado.description}</p>
-              <dl className="hero-ficha__datos">
-                <div>
-                  <dt>Duración</dt>
-                  <dd>{durationLabels[biblioteca.destacado.duration]}</dd>
-                </div>
-                <div>
-                  <dt>Nivel</dt>
-                  <dd>{difficultyLabels[biblioteca.destacado.difficulty]}</dd>
-                </div>
-                <div>
-                  <dt>Equipamiento</dt>
-                  <dd>
-                    {equipmentLabels[biblioteca.destacado.equipment[0]] ??
-                      biblioteca.destacado.equipment[0]}
-                  </dd>
-                </div>
-              </dl>
-              <a
-                href="#ejercicios"
-                className="hero-ficha__enlace"
-                onClick={ir('ejercicios')}
-              >
-                Ver la biblioteca completa
-                <span aria-hidden="true"> →</span>
-              </a>
+                  <defs>
+                    <linearGradient id="grad-figura" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="var(--color-primario)" stopOpacity="0.95" />
+                      <stop offset="50%" stopColor="var(--color-primario-oscuro)" stopOpacity="0.98" />
+                      <stop offset="100%" stopColor="var(--color-secundario-oscuro)" stopOpacity="1" />
+                    </linearGradient>
+                    <linearGradient id="grad-figura-brillo" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="var(--color-salvia-claro)" stopOpacity="0" />
+                      <stop offset="30%" stopColor="var(--color-salvia-claro)" stopOpacity="0.15" />
+                      <stop offset="50%" stopColor="var(--color-salvia-claro)" stopOpacity="0.08" />
+                      <stop offset="70%" stopColor="var(--color-salvia-claro)" stopOpacity="0.15" />
+                      <stop offset="100%" stopColor="var(--color-salvia-claro)" stopOpacity="0" />
+                    </linearGradient>
+                    <filter id="sombra-suave" x="-50%" y="-50%" width="200%" height="200%">
+                      <feDropShadow dx="0" dy="12" stdDeviation="20" flood-color="var(--color-primario-oscuro)" flood-opacity="0.25" />
+                    </filter>
+                  </defs>
+
+                  {/* Sombra de contacto en el suelo */}
+                  <ellipse
+                    cx="200"
+                    cy="470"
+                    rx="120"
+                    ry="18"
+                    fill="var(--color-primario-oscuro)"
+                    opacity="0.15"
+                    filter="url(#sombra-suave)"
+                  />
+
+                  {/* Cuerpo principal - torso y columna */}
+                  <g filter="url(#sombra-suave)">
+                    {/* Piernas */}
+                    <path
+                      d="M165 420 Q155 480 170 500 L190 500 Q205 480 195 420 Z"
+                      fill="url(#grad-figura)"
+                      stroke="var(--color-primario-oscuro)"
+                      strokeWidth="1.5"
+                    />
+                    <path
+                      d="M235 420 Q245 480 230 500 L210 500 Q195 480 205 420 Z"
+                      fill="url(#grad-figura)"
+                      stroke="var(--color-primario-oscuro)"
+                      strokeWidth="1.5"
+                    />
+
+                    {/* Torso */}
+                    <path
+                      d="M155 420 Q140 380 145 280 Q148 220 165 180 Q200 150 235 180 Q252 220 255 280 Q258 380 245 420 Z"
+                      fill="url(#grad-figura)"
+                      stroke="var(--color-primario-oscuro)"
+                      strokeWidth="1.5"
+                    />
+
+                    {/* Columna vertebral - curva elegante */}
+                    <path
+                      d="M200 180 Q198 200 198 230 Q200 260 200 290 Q202 320 202 350 Q200 380 200 400"
+                      fill="none"
+                      stroke="var(--color-salvia-claro)"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      opacity="0.85"
+                    />
+
+                    {/* Brazos */}
+                    <path
+                      d="M155 220 Q120 200 90 240 Q80 260 100 280 Q130 250 150 240"
+                      fill="url(#grad-figura)"
+                      stroke="var(--color-primario-oscuro)"
+                      strokeWidth="1.5"
+                    />
+                    <path
+                      d="M245 220 Q280 200 310 240 Q320 260 300 280 Q270 250 250 240"
+                      fill="url(#grad-figura)"
+                      stroke="var(--color-primario-oscuro)"
+                      strokeWidth="1.5"
+                    />
+
+                    {/* Cabeza */}
+                    <ellipse
+                      cx="200"
+                      cy="140"
+                      rx="32"
+                      ry="40"
+                      fill="url(#grad-figura)"
+                      stroke="var(--color-primario-oscuro)"
+                      strokeWidth="1.5"
+                    />
+
+                    {/* Brillo sutil en el torso */}
+                    <path
+                      d="M180 200 Q190 220 190 280 Q185 320 180 350"
+                      fill="none"
+                      stroke="url(#grad-figura-brillo)"
+                      strokeWidth="20"
+                      strokeLinecap="round"
+                      opacity="0.6"
+                    />
+                  </g>
+
+                  {/* Elementos flotantes decorativos alrededor */}
+                  <g opacity="0.4" fill="var(--color-secundario)">
+                    <circle cx="80" cy="120" r="4" />
+                    <circle cx="340" cy="100" r="3" />
+                    <circle cx="60" cy="300" r="5" />
+                    <circle cx="360" cy="280" r="3" />
+                    <circle cx="50" cy="420" r="4" />
+                    <circle cx="370" cy="400" r="3" />
+                  </g>
+
+                  {/* Líneas de energía/movimiento sutiles */}
+                  <g stroke="var(--color-salvia-claro)" strokeWidth="1.5" strokeLinecap="round" opacity="0.3" fill="none">
+                    <path d="M120 300 Q140 280 150 260 Q160 240 170 220" />
+                    <path d="M280 300 Q260 280 250 260 Q240 240 230 220" />
+                    <path d="M100 380 Q120 360 140 340" strokeDasharray="4 8" />
+                    <path d="M300 380 Q280 360 260 340" strokeDasharray="4 8" />
+                  </g>
+                </svg>
+              </div>
+
+              {/* Partículas de luz flotantes */}
+              <div className="hero-escena__particulas" aria-hidden="true">
+                <span style={{top: '15%', left: '10%', animationDelay: '0s'}} />
+                <span style={{top: '25%', left: '85%', animationDelay: '1s'}} />
+                <span style={{top: '45%', left: '5%', animationDelay: '2s'}} />
+                <span style={{top: '65%', left: '90%', animationDelay: '0.5s'}} />
+                <span style={{top: '80%', left: '20%', animationDelay: '1.5s'}} />
+                <span style={{top: '20%', left: '70%', animationDelay: '2.5s'}} />
+                <span style={{top: '55%', left: '75%', animationDelay: '3s'}} />
+                <span style={{top: '75%', left: '10%', animationDelay: '1s'}} />
+              </div>
             </figure>
 
-            <p className="hero-mini hero-mini--a">
+            {/* Datos flotantes */}
+            <div className="hero-mini hero-mini--a">
               <strong>{biblioteca.total}</strong>
               <span>ejercicios en la biblioteca</span>
-            </p>
-            <p className="hero-mini hero-mini--b">
+            </div>
+            <div className="hero-mini hero-mini--b">
               <strong>{biblioteca.postural}</strong>
               <span>de {biblioteca.total} son de cuidado postural</span>
-            </p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Beneficios */}
-      <section id="beneficios" aria-labelledby="titulo-beneficios" tabIndex={-1} className="container seccion">
+      <section id="beneficios" aria-labelledby="titulo-beneficios" tabIndex={-1} className="container seccion beneficios-entrada">
         <h2 id="titulo-beneficios">Beneficios del ejercicio en casa</h2>
         <ul className="beneficios-grid">
           {/* Protagonista: ocupa 2x2 de la retícula en escritorio. */}
