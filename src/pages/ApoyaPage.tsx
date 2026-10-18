@@ -9,7 +9,7 @@ const DAVIPLATA_KEY = '@PLATA3213884340';
 const DAVIPLATA_NAME = 'FELIPE ANDRES VARGAS SERRATO';
 const QR_IMAGE_SRC = '/images/daviplata-bre-b-qr.png';
 
-export const ApoyaPage: React.FC<ApoyaPageProps> = ({ /* onNavigate */ }) => {
+export const ApoyaPage: React.FC<ApoyaPageProps> = ({ onNavigate }) => {
   const [isQrExpanded, setIsQrExpanded] = useState(false);
   const [copyStatus, setCopyStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const qrImageRef = useRef<HTMLImageElement>(null);
@@ -83,6 +83,19 @@ export const ApoyaPage: React.FC<ApoyaPageProps> = ({ /* onNavigate */ }) => {
 
   return (
     <main id="contenido" tabIndex={-1} className="apoya-page container">
+      <nav aria-label="Miga de pan" className="mb-4">
+        <a
+          href="#inicio"
+          className="apoya-breadcrumb-link"
+          onClick={(e) => {
+            e.preventDefault();
+            onNavigate('inicio');
+          }}
+        >
+          ← Volver al inicio
+        </a>
+      </nav>
+
       <header className="apoya-header">
         <span className="apoya-kicker">APOYA EL PROYECTO</span>
         <h1 className="apoya-titulo">Ayuda a que FitCasa siga creciendo</h1>

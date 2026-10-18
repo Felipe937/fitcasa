@@ -301,6 +301,19 @@ export const PlanPage: React.FC<PlanPageProps> = ({ onNavigate }) => {
 
   return (
     <main id="contenido" tabIndex={-1} className="plan-page container">
+      <nav aria-label="Miga de pan" className="mb-4">
+        <a
+          href="#inicio"
+          className="plan-page__breadcrumb-link"
+          onClick={(e) => {
+            e.preventDefault();
+            onNavigate('inicio');
+          }}
+        >
+          ← Volver al inicio
+        </a>
+      </nav>
+
       <header className="plan-page__header">
         <span className="plan-page__kicker">ORGANIZADOR PERSONAL</span>
         <h1 className="plan-page__titulo">Mi Plan de 4 Semanas</h1>

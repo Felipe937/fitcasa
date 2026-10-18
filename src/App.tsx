@@ -151,7 +151,9 @@ export const App: React.FC = () => {
         {currentPage === 'ejercicios' && <ExercisesPage />}
         {currentPage === 'escoliosis' && <ScoliosisPage onNavigate={handleNavigate} />}
         {currentPage === 'actualidad' && <ActualidadPage onNavigate={handleNavigate} articulo={articulosNoticias[0]} />}
-        {currentPage === 'plan' && <PlanPage onNavigate={handleNavigate} onStorageCleared={refreshConsent} />}
+        {currentPage === 'plan' && !showGuard && (
+          <PlanPage onNavigate={handleNavigate} onStorageCleared={refreshConsent} />
+        )}
         {currentPage === 'apoya' && <ApoyaPage onNavigate={handleNavigate} />}
         {currentPage === 'pausas-activas' && <PausasActivasPage onNavigate={handleNavigate} />}
         {currentPage === 'privacidad' && <PrivacidadPage onNavigate={handleNavigate} />}
