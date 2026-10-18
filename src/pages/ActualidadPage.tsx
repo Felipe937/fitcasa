@@ -7,12 +7,24 @@ interface ActualidadPageProps {
   articulo: ArticuloCientifico;
 }
 
-export const ActualidadPage: React.FC<ActualidadPageProps> = ({ articulo }) => {
-
+export const ActualidadPage: React.FC<ActualidadPageProps> = ({ articulo, onNavigate }) => {
   const fuentes = articulo.enlaces;
 
   return (
     <main id="contenido" tabIndex={-1} className="actualidad-page container">
+      <nav aria-label="Miga de pan" className="mb-4">
+        <a
+          href="#inicio"
+          className="actualidad-breadcrumb-link"
+          onClick={(e) => {
+            e.preventDefault();
+            onNavigate('inicio');
+          }}
+        >
+          ← Volver al inicio
+        </a>
+      </nav>
+
       {/* --- Cabecera de Sección --- */}
       <header className="actualidad-header">
         <span className="actualidad-kicker">{articulo.etiquetaEditorial}</span>
@@ -86,13 +98,6 @@ export const ActualidadPage: React.FC<ActualidadPageProps> = ({ articulo }) => {
         <p className="actualidad-parrafo-meta">
           {articulo.preguntaInvestigacion}
         </p>
-        <ul className="actualidad-lista-hallazgos">
-          {articulo.queEncontraron.map((item, i) => (
-            <li key={i} className="actualidad-lista-item">
-              {item}
-            </li>
-          ))}
-        </ul>
       </section>
 
       {/* --- Principales hallazgos --- */}
