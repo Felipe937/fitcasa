@@ -59,6 +59,12 @@ export const PausaPlayer: React.FC<PausaPlayerProps> = ({
   const [lastAnnouncedMinute, setLastAnnouncedMinute] = useState<number | null>(null);
 
   useEffect(() => {
+    if (elapsedSeconds === 0) {
+      setLastAnnouncedMinute(null);
+    }
+  }, [elapsedSeconds]);
+
+  useEffect(() => {
     if (isRunning && !isFinished) {
       const currentMinute = Math.ceil(remainingSeconds / 60);
       if (currentMinute === 1 && lastAnnouncedMinute !== 1) {

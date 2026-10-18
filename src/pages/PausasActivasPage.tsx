@@ -31,14 +31,15 @@ export const PausasActivasPage: React.FC<PausasActivasPageProps> = ({ onNavigate
 
   const handleStart = useCallback(() => {
     const now = Date.now();
-    const targetEndTime = endTime ?? now + remainingSeconds * 1000;
+    const targetEndTime = now + remainingSeconds * 1000;
     setEndTime(targetEndTime);
     setIsRunning(true);
     setIsFinished(false);
-  }, [endTime, remainingSeconds]);
+  }, [remainingSeconds]);
 
   const handlePause = useCallback(() => {
     setIsRunning(false);
+    setEndTime(null);
   }, []);
 
   const handleReset = useCallback(() => {
@@ -77,7 +78,20 @@ export const PausasActivasPage: React.FC<PausasActivasPageProps> = ({ onNavigate
 
   const handleNavigateToPanel = useCallback(() => {
     onNavigate('panel');
-  }, [onNavigate]);
+    const today = new Date().toISOString().split('T')[0];
+    setTimeout(() => {
+      const dateInput = document.getElementById('entry-date') as HTMLInputElement;
+      const activityInput = document.getElementById('entry-activity') as HTMLInputElement;
+      if (dateInput) {
+        dateInput.value = today;
+        dateInput.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      if (activityInput) {
+        activityInput.value = `Pausa activa de movilidad (${Math.ceil(durationSeconds / 60)} min)`;
+        activityInput.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }, 100);
+  }, [onNavigate, durationSeconds]);
 
   return (
     <main id="contenido" tabIndex={-1} className="pausas-activas-page container">
