@@ -16,10 +16,16 @@ Describe cómo imaginas la mejora, sin necesidad de escribir código.
 
 ## Alternativas consideradas
 
-¿Has pensado en otras formas de resolverlo? ¿Por qué prefieres esta?
+¿Has pensado en otras formas de resolverlo? ¿Por qué prefieres esta alternativa?
 
 ## Contexto adicional
 
-Cualquier información extra: capturas, ejemplos de otros sitios, enlaces, etc.
+Cualquier información complementaria: bocetos, capturas, ejemplos accesibles, referencias, etc.
 
-> ⚠️ Recuerda: las propuestas deben respetar las reglas clínicas del proyecto: no prometer la corrección de la curva, no dar consejos médicos sin respaldo científico y no eliminar los avisos de seguridad.
+---
+
+> ℹ️ **Gobernanza y criterios del proyecto:**
+> - Proponer una mejora no garantiza su implementación ni inclusión en el repositorio oficial.
+> - Solo el propietario de FitCasa (@Felipe937) evalúa, aprueba o descarta propuestas en función de la visión del proyecto.
+> - Si tu idea implica código, te recomendamos esperar feedback en esta Issue antes de preparar un Pull Request.
+> - **Rigor sanitario:** Las propuestas deben respetar las normas de salud: no prometer la corrección de la curva, no dar consejos médicos sin respaldo científico y no debilitar los avisos de responsabilidad.

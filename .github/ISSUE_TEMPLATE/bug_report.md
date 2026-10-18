@@ -26,11 +26,16 @@ Qué pasó en realidad. Si hay un mensaje de error en la consola, cópialo aquí
 
 ## Navegador y dispositivo
 
-- Navegador y versión: (por ejemplo, Firefox 131)
-- Dispositivo y sistema operativo: (por ejemplo, Android 14, Windows 11)
+- Navegador y versión: (por ejemplo, Firefox 131, Chrome 129, Safari 18)
+- Dispositivo y sistema operativo: (por ejemplo, Android 14, iOS 18, Windows 11, macOS Sequoia)
 
-## Capturas
+## Capturas o registros
 
-Si aplica, añade una captura de pantalla.
+Si aplica, añade una captura de pantalla o el mensaje de error textual.
 
-> ⚠️ Recuerda: no incluyas datos médicos personales (ni tuyos ni de terceros) en este reporte.
+---
+
+> ⚠️ **Aviso de seguridad y privacidad:**
+> - **Datos personales y de salud:** No incluyas información médica privada, radiografías, nombres de pacientes ni diagnósticos personales.
+> - **Seguridad:** No compartas credenciales, tokens, contraseñas ni información sensible.
+> - **Gestión:** Las incidencias son revisadas y priorizadas exclusivamente por el propietario del proyecto (@Felipe937).

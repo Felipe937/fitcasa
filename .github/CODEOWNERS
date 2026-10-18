@@ -1,0 +1,27 @@
+# CODEOWNERS de FitCasa
+# Sintaxis oficial de GitHub CODEOWNERS:
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Regla global por defecto:
+# Todo archivo en el repositorio es propiedad exclusiva de @Felipe937.
+* @Felipe937
+
+# Gobernanza y configuración del repositorio en GitHub:
+/.github/ @Felipe937
+/.github/CODEOWNERS @Felipe937
+/.github/pull_request_template.md @Felipe937
+/.github/ISSUE_TEMPLATE/ @Felipe937
+/.github/workflows/ @Felipe937
+
+# Políticas de gobernanza, seguridad y términos legales:
+/CONTRIBUTING.md @Felipe937
+/SECURITY.md @Felipe937
+/CODE_OF_CONDUCT.md @Felipe937
+/PRIVACY.md @Felipe937
+/TERMINOS.md @Felipe937
+
+# Configuración del proyecto, dependencias y herramientas:
+/package.json @Felipe937
+/package-lock.json @Felipe937
+/tsconfig.json @Felipe937
+/vite.config.ts @Felipe937
