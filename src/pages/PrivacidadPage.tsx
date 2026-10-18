@@ -870,3 +870,5 @@ export const PrivacidadPage: React.FC<PrivacidadPageProps> = ({ onNavigate }) =>
     </main>
   );
 };
+
+export default PrivacidadPage;

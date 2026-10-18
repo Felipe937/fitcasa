@@ -22,10 +22,10 @@ const TITULOS: Record<ProtectedRoute, string> = {
   quiz: 'el cuestionario de Sugerencias',
 };
 
-const isDecision = (value: unknown, expected: string): value is Decision =>
+const isDecision = (value: unknown, expected: string, requireAccepted = true): value is Decision =>
   !!value &&
   typeof value === 'object' &&
-  (value as Decision).accepted === true &&
+  (requireAccepted ? (value as Decision).accepted === true : typeof (value as Decision).accepted === 'boolean') &&
   typeof (value as Decision).at === 'string' &&
   !Number.isNaN(Date.parse((value as Decision).at)) &&
   (value as Decision).docVersion === expected;
@@ -39,9 +39,9 @@ export function parseRegistry(data: unknown): ConsentRegistry | null {
   if (!data || typeof data !== 'object') return null;
   const r = data as Partial<ConsentRegistry>;
 
-  if (!isDecision(r.terms, DOC_VERSIONS.terminos)) return null;
-  if (!isDecision(r.privacy, DOC_VERSIONS.privacidad)) return null;
-  if (!isDecision(r.health, DOC_VERSIONS.terminos)) return null;
+  if (!isDecision(r.terms, DOC_VERSIONS.terminos, true)) return null;
+  if (!isDecision(r.privacy, DOC_VERSIONS.privacidad, true)) return null;
+  if (!isDecision(r.health, DOC_VERSIONS.terminos, false)) return null;
   if (typeof r.health?.purpose !== 'string' || r.health.purpose !== HEALTH_DATA_PURPOSE) return null;
   if (typeof r.updatedAt !== 'string' || Number.isNaN(Date.parse(r.updatedAt))) return null;
 
@@ -80,9 +80,9 @@ export function pendingDecisions(
   current: ConsentRegistry | null
 ): { terms: boolean; privacy: boolean; health: boolean } {
   return {
-    terms: !current || !isDecision(current.terms, DOC_VERSIONS.terminos),
-    privacy: !current || !isDecision(current.privacy, DOC_VERSIONS.privacidad),
-    health: !current || !isDecision(current.health, DOC_VERSIONS.terminos),
+    terms: !current || !isDecision(current.terms, DOC_VERSIONS.terminos, true),
+    privacy: !current || !isDecision(current.privacy, DOC_VERSIONS.privacidad, true),
+    health: !current || !isDecision(current.health, DOC_VERSIONS.terminos, false),
   };
 }
 

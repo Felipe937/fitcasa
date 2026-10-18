@@ -299,6 +299,7 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
 
   const validate = (): FieldErrors => {
     const errors: FieldErrors = {};
+    const healthAuthorized = consent?.health?.accepted !== false;
 
     if (!isValidDate(date) || date > today) {
       errors.date = 'Selecciona una fecha válida que no sea posterior a hoy.';
@@ -306,7 +307,7 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
     if (activity.length > ACTIVITY_MAX) {
       errors.activity = `La actividad debe tener ${ACTIVITY_MAX} caracteres o menos.`;
     }
-    if (pain === null) {
+    if (healthAuthorized && pain === null) {
       errors.pain =
         'Indica tu dolor percibido desplazando el control o con las flechas del teclado. El 0 es una respuesta válida: significa “sin molestia”.';
     }
@@ -341,7 +342,9 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
     setFieldErrors({});
     setFormError('');
 
-    const savedPain = pain as number;
+    const healthAuthorized = consent?.health?.accepted !== false;
+    const savedPain = healthAuthorized ? (pain ?? 0) : 0;
+    const savedNote = healthAuthorized ? note.trim() : '';
     const linkedId = exerciseId || undefined;
 
     if (editingId) {
@@ -352,7 +355,7 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
               date,
               activity: activity.trim(),
               pain: savedPain,
-              note: note.trim(),
+              note: savedNote,
               exerciseId: linkedId,
             }
           : rec
@@ -370,7 +373,7 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
         date,
         activity: activity.trim(),
         pain: savedPain,
-        note: note.trim(),
+        note: savedNote,
         exerciseId: linkedId,
       };
       saveUpdatedRecords([...records, newRec]);
@@ -1104,7 +1107,7 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
             <>
               <strong>Aceptación registrada localmente.</strong> Términos de Uso (versión{' '}
               {consent.terms.docVersion}), Política de Privacidad (versión {consent.privacy.docVersion}) y
-              autorización sobre tus datos de salud (versión {consent.health.docVersion}), el{' '}
+              autorización sobre datos de salud ({consent.health.accepted ? `otorgada, versión ${consent.health.docVersion}` : 'no otorgada, facultativa'}), el{' '}
               <time dateTime={consent.terms.at}>
                 {formatDateLong(consent.terms.at.slice(0, 10))}
               </time>
