@@ -1,0 +1,396 @@
+/* Pausas Activas Page — Ergonomic breaks timer */
+/* Uses exclusively CSS variables from style.css — no external dependencies */
+
+.pausas-activas-page {
+  padding-block: var(--espacio-7);
+}
+
+.pausas-activas-header {
+  max-width: var(--ancho-texto);
+  margin: 0 auto var(--espacio-8);
+}
+
+.pausas-activas-volver {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-1);
+  margin-bottom: var(--espacio-4);
+  color: var(--color-secundario-oscuro);
+  font-size: var(--texto-sm);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.pausas-activas-volver:hover {
+  color: var(--color-primario-oscuro);
+  text-decoration-thickness: 2px;
+}
+
+.pausas-activas-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2) var(--espacio-4);
+  margin-bottom: var(--espacio-4);
+  color: var(--color-secundario-oscuro);
+  background: var(--color-fondo-verde);
+  border-radius: var(--radio-pill);
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.pausas-activas-kicker::before {
+  width: 0.5rem;
+  height: 0.5rem;
+  content: "";
+  background: var(--color-secundario);
+  border-radius: 50%;
+}
+
+.pausas-activas-titulo {
+  margin: 0 0 var(--espacio-4);
+  font-size: var(--texto-3xl);
+  line-height: var(--alto-linea-titulo);
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  color: var(--color-primario-oscuro);
+}
+
+.pausas-activas-subtitulo {
+  max-width: 56ch;
+  margin: 0 0 var(--espacio-6);
+  color: var(--color-texto);
+  font-size: var(--texto-lg);
+  line-height: 1.65;
+}
+
+.pausas-activas-aviso {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--espacio-4);
+  align-items: start;
+  padding: var(--espacio-5);
+  background: var(--color-fondo-aviso);
+  border-left: 3px solid var(--color-foco);
+  border-radius: 0 var(--radio-sm) var(--radio-sm) 0;
+}
+
+.pausas-activas-aviso-icono {
+  display: block;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-top: 0.1rem;
+  color: var(--color-foco);
+  flex-shrink: 0;
+}
+
+.pausas-activas-aviso div {
+  color: var(--color-texto);
+  font-size: var(--texto-sm);
+  line-height: 1.6;
+}
+
+.pausas-activas-aviso strong {
+  color: var(--color-primario-oscuro);
+}
+
+.pausas-activas-config {
+  max-width: var(--ancho-texto);
+  margin: 0 auto var(--espacio-8);
+}
+
+.pausas-activas-fieldset {
+  border: none;
+  padding: 0;
+  margin: 0 0 var(--espacio-5);
+}
+
+.pausas-activas-legend {
+  margin: 0 0 var(--espacio-3);
+  font-size: var(--texto-base);
+  font-weight: 700;
+  color: var(--color-primario-oscuro);
+}
+
+.pausas-activas-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-3);
+}
+
+.pausas-activas-option {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-3) var(--espacio-4);
+  min-height: var(--alto-objetivo-tactil);
+  color: var(--color-texto);
+  background: var(--color-superficie);
+  border: 2px solid var(--color-borde);
+  border-radius: var(--radio-md);
+  font-size: var(--texto-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--duracion-corta) ease, background var(--duracion-corta) ease, color var(--duracion-corta) ease;
+}
+
+.pausas-activas-option:hover {
+  border-color: var(--color-secundario);
+  background: var(--color-fondo-verde);
+}
+
+.pausas-activas-option:has(input:checked) {
+  border-color: var(--color-primario);
+  background: var(--color-fondo-azul);
+  color: var(--color-primario-oscuro);
+}
+
+.pausas-activas-option:has(input:disabled) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pausas-activas-option input {
+  width: 1.125rem;
+  height: 1.125rem;
+  accent-color: var(--color-primario);
+}
+
+.pausas-activas-timer {
+  max-width: var(--ancho-texto);
+  margin: 0 auto;
+}
+
+/* PausaPlayer Component Styles */
+.pausa-player {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-lg);
+  padding: var(--espacio-6);
+  box-shadow: var(--sombra-flotante);
+}
+
+.pausa-player__modo {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  margin-bottom: var(--espacio-4);
+  padding: var(--espacio-3) var(--espacio-4);
+  background: var(--color-fondo-verde);
+  border-radius: var(--radio-md);
+  font-size: var(--texto-sm);
+  color: var(--color-texto);
+}
+
+.pausa-player__modo-label {
+  color: var(--color-secundario-oscuro);
+  font-weight: 700;
+}
+
+.pausa-player__modo strong {
+  color: var(--color-primario-oscuro);
+}
+
+.pausa-player__descripcion {
+  margin: 0 0 var(--espacio-5);
+  padding: var(--espacio-3) var(--espacio-4);
+  background: var(--color-fondo-azul);
+  border-left: 3px solid var(--color-primario);
+  border-radius: 0 var(--radio-sm) var(--radio-sm) 0;
+  color: var(--color-texto);
+  font-size: var(--texto-sm);
+  line-height: 1.6;
+}
+
+.pausa-player__timer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: var(--espacio-6);
+}
+
+.pausa-player__progress-ring {
+  width: 200px;
+  height: 200px;
+  transform: rotate(-90deg);
+}
+
+.pausa-player__progress-bg {
+  transition: stroke var(--duracion-corta) ease;
+}
+
+.pausa-player__progress {
+  transition: stroke-dashoffset 0.5s linear, stroke var(--duracion-corta) ease;
+}
+
+.pausa-player__time {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espacio-1);
+}
+
+.pausa-player__time-value {
+  font-size: clamp(3rem, 8vw, 5rem);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--color-primario-oscuro);
+  font-variant-numeric: tabular-nums;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+.pausa-player__time-total {
+  font-size: var(--texto-lg);
+  color: var(--color-texto-suave);
+  font-weight: 500;
+}
+
+.pausa-player__controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--espacio-3);
+  margin-top: var(--espacio-2);
+}
+
+.pausa-player__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  min-height: var(--alto-objetivo-tactil);
+  padding: var(--espacio-3) var(--espacio-5);
+  font-weight: 750;
+  font-size: var(--texto-sm);
+}
+
+.pausa-player__btn-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+
+.pausa-player__btn--primary {
+  background: var(--color-primario);
+  border-color: var(--color-primario);
+  color: var(--color-sobre-primario);
+}
+
+.pausa-player__btn--primary:hover {
+  background: var(--color-primario-oscuro);
+  border-color: var(--color-primario-oscuro);
+}
+
+.pausa-player__btn--secondary {
+  background: var(--color-superficie);
+  border-color: var(--color-primario);
+  color: var(--color-primario-oscuro);
+}
+
+.pausa-player__btn--secondary:hover {
+  background: var(--color-fondo-azul);
+}
+
+.pausa-player__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pausa-player__announcer {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Responsive */
+@media (max-width: 48rem) {
+  .pausas-activas-titulo {
+    font-size: var(--texto-2xl);
+  }
+
+  .pausas-activas-options {
+    flex-direction: column;
+  }
+
+  .pausas-activas-option {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .pausa-player {
+    padding: var(--espacio-4);
+  }
+
+  .pausa-player__progress-ring {
+    width: 180px;
+    height: 180px;
+  }
+
+  .pausa-player__time-value {
+    font-size: clamp(2.5rem, 7vw, 4rem);
+  }
+
+  .pausa-player__controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pausa-player__btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 30rem) {
+  .pausas-activas-header {
+    padding-inline: var(--espacio-2);
+  }
+
+  .pausa-player {
+    padding: var(--espacio-3);
+  }
+
+  .pausa-player__progress-ring {
+    width: 160px;
+    height: 160px;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .pausa-player__progress,
+  .pausa-player__btn,
+  .pausas-activas-option {
+    transition: none;
+  }
+}
+
+/* Forced Colors Mode */
+@media (forced-colors: active) {
+  .pausas-activas-option,
+  .pausa-player,
+  .pausa-player__btn,
+  .pausas-activas-aviso {
+    border: 2px solid CanvasText;
+  }
+
+  .pausa-player__progress {
+    stroke: CanvasText;
+  }
+
+  .pausa-player__progress-bg {
+    stroke: CanvasText;
+  }
+}

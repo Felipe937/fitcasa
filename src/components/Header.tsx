@@ -7,6 +7,7 @@ export type PageRoute =
   | 'panel'
   | 'plan'
   | 'apoya'
+  | 'pausas-activas'
   | 'escoliosis'
   | 'actualidad'
   | 'privacidad'
@@ -110,6 +111,18 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, onNavigate }) => {
               }}
             >
               Ejercicios
+            </a>
+          </li>
+          <li>
+            <a
+              href="#pausas-activas"
+              aria-current={currentPage === 'pausas-activas' ? 'page' : undefined}
+              onClick={(e) => {
+                e.preventDefault();
+                handleLinkClick('pausas-activas');
+              }}
+            >
+              Pausas
             </a>
           </li>
           <li>

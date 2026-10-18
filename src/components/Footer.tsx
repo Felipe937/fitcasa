@@ -79,6 +79,17 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           </li>
           <li>
             <a
+              href="#pausas-activas"
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigate('pausas-activas');
+              }}
+            >
+              Pausas activas
+            </a>
+          </li>
+          <li>
+            <a
               href="#apoya"
               onClick={(e) => {
                 e.preventDefault();
