@@ -8,6 +8,7 @@ import './styles/scoliosis-page.css';
 import './styles/panel-page.css';
 import './styles/privacidad-page.css';
 import './styles/plan-page.css';
+import './styles/apoya-page.css';
 import './styles/terminos-page.css';
 import './styles/actualidad-page.css';
 import './styles/consent-guard.css';

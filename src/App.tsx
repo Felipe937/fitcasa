@@ -13,6 +13,7 @@ import { ExercisesPage } from './pages/ExercisesPage';
 import { QuizPage } from './pages/QuizPage';
 import { PanelPage } from './pages/PanelPage';
 import { PlanPage } from './pages/PlanPage';
+import { ApoyaPage } from './pages/ApoyaPage';
 import { ScoliosisPage } from './pages/ScoliosisPage';
 import { ActualidadPage } from './pages/ActualidadPage';
 import { PrivacidadPage } from './pages/PrivacidadPage';
@@ -52,6 +53,9 @@ function getRouteFromUrl(): { page: PageRoute; sectionId?: string } {
   }
   if (hash === 'plan' || path.endsWith('/plan') || path.endsWith('/plan.html')) {
     return { page: 'plan' };
+  }
+  if (hash === 'apoya' || path.endsWith('/apoya') || path.endsWith('/apoya.html')) {
+    return { page: 'apoya' };
   }
   if (hash === 'beneficios' || hash === 'programas' || hash === 'como-funciona') {
     return { page: 'inicio', sectionId: hash };
@@ -98,6 +102,7 @@ export const App: React.FC = () => {
       quiz: 'FitCasa – Sugerencias de actividad',
       panel: 'FitCasa – Panel de seguimiento',
       plan: 'FitCasa – Mi Plan de Actividad',
+      apoya: 'FitCasa – Apoya a FitCasa',
       escoliosis: 'FitCasa – Información sobre escoliosis y ejercicio',
       actualidad: 'FitCasa – Actualidad y Evidencia Científica sobre Escoliosis',
       privacidad: 'FitCasa – Política de Privacidad',
@@ -142,6 +147,7 @@ export const App: React.FC = () => {
         {currentPage === 'escoliosis' && <ScoliosisPage onNavigate={handleNavigate} />}
         {currentPage === 'actualidad' && <ActualidadPage onNavigate={handleNavigate} articulo={articulosNoticias[0]} />}
         {currentPage === 'plan' && <PlanPage onNavigate={handleNavigate} onStorageCleared={refreshConsent} />}
+        {currentPage === 'apoya' && <ApoyaPage onNavigate={handleNavigate} />}
         {currentPage === 'privacidad' && <PrivacidadPage onNavigate={handleNavigate} />}
         {currentPage === 'terminos' && <TerminosPage onNavigate={handleNavigate} />}
         {currentPage === 'quiz' && !showGuard && (
