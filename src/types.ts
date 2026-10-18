@@ -145,6 +145,34 @@ export interface PanelRecord {
   exerciseId?: string;
 }
 
+export interface PlanSessionExercise {
+  exerciseId: string;
+}
+
+export interface PlanSession {
+  id: string;
+  sessionNumber: number;
+  weekNumber: number;
+  exercises: PlanSessionExercise[];
+  completed: boolean;
+  completedAt?: string;
+}
+
+export interface PlanWeek {
+  weekNumber: number;
+  focusTitle: string;
+  focusDescription: string;
+  sessions: PlanSession[];
+}
+
+export interface UserPlan {
+  id: string;
+  schemaVersion: number;
+  createdAt: string;
+  answersSnapshot: QuizAnswers;
+  weeks: PlanWeek[];
+}
+
 export interface StorageResult<T> {
   available: boolean;
   value: T | null;

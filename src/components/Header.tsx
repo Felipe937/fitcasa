@@ -5,6 +5,7 @@ export type PageRoute =
   | 'ejercicios'
   | 'quiz'
   | 'panel'
+  | 'plan'
   | 'escoliosis'
   | 'actualidad'
   | 'privacidad'
@@ -120,6 +121,18 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, onNavigate }) => {
               }}
             >
               Sugerencias
+            </a>
+          </li>
+          <li>
+            <a
+              href="#plan"
+              aria-current={currentPage === 'plan' ? 'page' : undefined}
+              onClick={(e) => {
+                e.preventDefault();
+                handleLinkClick('plan');
+              }}
+            >
+              Mi Plan
             </a>
           </li>
           <li>

@@ -13,13 +13,14 @@ import {
 } from '../utils/storage';
 
 /** Funciones cuyo uso guarda datos introducidos por la persona. */
-export type ProtectedRoute = 'panel' | 'quiz';
+export type ProtectedRoute = 'panel' | 'quiz' | 'plan';
 
-export const PROTECTED_ROUTES: ProtectedRoute[] = ['panel', 'quiz'];
+export const PROTECTED_ROUTES: ProtectedRoute[] = ['panel', 'quiz', 'plan'];
 
 const TITULOS: Record<ProtectedRoute, string> = {
   panel: 'el Panel de Seguimiento',
   quiz: 'el cuestionario de Sugerencias',
+  plan: 'el Plan de Actividad de 4 Semanas',
 };
 
 const isDecision = (value: unknown, expected: string, requireAccepted = true): value is Decision =>

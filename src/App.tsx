@@ -12,6 +12,7 @@ import { HomePage } from './pages/HomePage';
 import { ExercisesPage } from './pages/ExercisesPage';
 import { QuizPage } from './pages/QuizPage';
 import { PanelPage } from './pages/PanelPage';
+import { PlanPage } from './pages/PlanPage';
 import { ScoliosisPage } from './pages/ScoliosisPage';
 import { ActualidadPage } from './pages/ActualidadPage';
 import { PrivacidadPage } from './pages/PrivacidadPage';
@@ -22,7 +23,7 @@ import { articulosNoticias } from './data/noticias';
  * Rutas cuyo uso guarda datos introducidos por la persona. Requieren una
  * decisión registrada y vigente; el resto del sitio es público.
  */
-const PROTECTED_ROUTES: ProtectedRoute[] = ['panel', 'quiz'];
+const PROTECTED_ROUTES: ProtectedRoute[] = ['panel', 'quiz', 'plan'];
 
 function getRouteFromUrl(): { page: PageRoute; sectionId?: string } {
   const hash = window.location.hash.replace('#', '').toLowerCase();
@@ -48,6 +49,9 @@ function getRouteFromUrl(): { page: PageRoute; sectionId?: string } {
   }
   if (hash === 'actualidad' || path.endsWith('/actualidad') || path.endsWith('/actualidad.html')) {
     return { page: 'actualidad' };
+  }
+  if (hash === 'plan' || path.endsWith('/plan') || path.endsWith('/plan.html')) {
+    return { page: 'plan' };
   }
   if (hash === 'beneficios' || hash === 'programas' || hash === 'como-funciona') {
     return { page: 'inicio', sectionId: hash };
@@ -93,6 +97,7 @@ export const App: React.FC = () => {
       ejercicios: 'FitCasa – Biblioteca de ejercicios',
       quiz: 'FitCasa – Sugerencias de actividad',
       panel: 'FitCasa – Panel de seguimiento',
+      plan: 'FitCasa – Mi Plan de Actividad',
       escoliosis: 'FitCasa – Información sobre escoliosis y ejercicio',
       actualidad: 'FitCasa – Actualidad y Evidencia Científica sobre Escoliosis',
       privacidad: 'FitCasa – Política de Privacidad',
@@ -136,6 +141,7 @@ export const App: React.FC = () => {
         {currentPage === 'ejercicios' && <ExercisesPage />}
         {currentPage === 'escoliosis' && <ScoliosisPage onNavigate={handleNavigate} />}
         {currentPage === 'actualidad' && <ActualidadPage onNavigate={handleNavigate} articulo={articulosNoticias[0]} />}
+        {currentPage === 'plan' && <PlanPage onNavigate={handleNavigate} onStorageCleared={refreshConsent} />}
         {currentPage === 'privacidad' && <PrivacidadPage onNavigate={handleNavigate} />}
         {currentPage === 'terminos' && <TerminosPage onNavigate={handleNavigate} />}
         {currentPage === 'quiz' && !showGuard && (
