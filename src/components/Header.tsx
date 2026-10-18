@@ -6,6 +6,7 @@ export type PageRoute =
   | 'quiz'
   | 'panel'
   | 'escoliosis'
+  | 'actualidad'
   | 'privacidad'
   | 'terminos';
 
@@ -83,6 +84,18 @@ export const Header: React.FC<HeaderProps> = ({ currentPage, onNavigate }) => {
               }}
             >
               Escoliosis
+            </a>
+          </li>
+          <li>
+            <a
+              href="#actualidad"
+              aria-current={currentPage === 'actualidad' ? 'page' : undefined}
+              onClick={(e) => {
+                e.preventDefault();
+                handleLinkClick('actualidad');
+              }}
+            >
+              Actualidad
             </a>
           </li>
           <li>

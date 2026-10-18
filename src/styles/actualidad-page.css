@@ -1,0 +1,386 @@
+/* Actualidad Page — Editorial Science Digest Design */
+/* Uses exclusively CSS variables from style.css — no external dependencies */
+
+.actualidad-page {
+  padding-block: var(--espacio-7);
+}
+
+/* === Cabecera de Sección === */
+.actualidad-header {
+  text-align: center;
+  max-width: var(--ancho-texto);
+  margin: 0 auto var(--espacio-8);
+  padding-block: var(--espacio-6);
+}
+
+.actualidad-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2) var(--espacio-4);
+  margin-bottom: var(--espacio-4);
+  color: var(--color-secundario-oscuro);
+  background: var(--color-fondo-verde);
+  border-radius: var(--radio-pill);
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.actualidad-kicker::before {
+  width: 0.5rem;
+  height: 0.5rem;
+  content: "";
+  background: var(--color-secundario);
+  border-radius: 50%;
+}
+
+.actualidad-h1 {
+  margin: 0 0 var(--espacio-4);
+  font-size: var(--texto-3xl);
+  line-height: var(--alto-linea-titulo);
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  color: var(--color-primario-oscuro);
+}
+
+.actualidad-subtitulo {
+  max-width: 56ch;
+  margin: 0 auto var(--espacio-4);
+  color: var(--color-texto);
+  font-size: var(--texto-lg);
+  line-height: 1.65;
+}
+
+.actualidad-curaduría {
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-sm);
+  font-weight: 600;
+}
+
+/* === Hero Editorial === */
+.actualidad-hero {
+  max-width: var(--ancho-texto);
+  margin: 0 auto var(--espacio-8);
+  padding: var(--espacio-6);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-flotante);
+}
+
+.actualidad-hero-metadatos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--espacio-3) var(--espacio-5);
+  margin-bottom: var(--espacio-5);
+  padding-bottom: var(--espacio-4);
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.actualidad-badge-categoria {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--espacio-1) var(--espacio-3);
+  color: var(--color-secundario-oscuro);
+  background: var(--color-fondo-verde);
+  border-radius: var(--radio-pill);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.actualidad-meta-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-4);
+  color: var(--color-texto-suave);
+  font-size: var(--texto-sm);
+}
+
+.actualidad-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-1);
+}
+
+.actualidad-meta-item strong {
+  color: var(--color-primario-oscuro);
+  font-weight: 700;
+}
+
+.actualidad-hero-titular {
+  margin-bottom: var(--espacio-5);
+}
+
+.actualidad-titular {
+  margin: 0 0 var(--espacio-3);
+  font-size: var(--texto-2xl);
+  line-height: var(--alto-linea-titulo);
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+  color: var(--color-primario-oscuro);
+}
+
+.actualidad-subtitulo-riguroso {
+  margin: 0;
+  color: var(--color-texto);
+  font-size: var(--texto-base);
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* Botonera de fuentes */
+.actualidad-hero-fuentes nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-3);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.actualidad-enlace-fuente {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-1);
+  min-height: var(--alto-objetivo-tactil);
+  padding: var(--espacio-2) var(--espacio-4);
+  color: var(--color-primario-oscuro);
+  background: var(--color-fondo-azul);
+  border-radius: var(--radio-pill);
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.actualidad-enlace-fuente:hover {
+  color: var(--color-sobre-primario);
+  background: var(--color-primario);
+}
+
+.actualidad-enlace-fuente::after {
+  content: "→";
+  transition: transform var(--duracion-corta) ease;
+}
+
+.actualidad-enlace-fuente:hover::after {
+  transform: translateX(0.25rem);
+}
+
+/* === Bloque «En pocas palabras» === */
+.actualidad-pocas-palabras {
+  max-width: var(--ancho-texto);
+  margin: 0 auto var(--espacio-8);
+}
+
+.actualidad-seccion-titulo {
+  margin: 0 0 var(--espacio-4);
+  font-size: var(--texto-xl);
+  line-height: var(--alto-linea-titulo);
+  letter-spacing: -0.025em;
+  color: var(--color-primario-oscuro);
+}
+
+.actualidad-card-pocas-palabras {
+  padding: var(--espacio-5);
+  background: var(--color-fondo-azul);
+  border: 2px solid var(--color-primario);
+  border-radius: var(--radio-lg);
+}
+
+.actualidad-card-texto {
+  margin: 0 0 var(--espacio-3);
+  color: var(--color-texto);
+  font-size: var(--texto-lg);
+  line-height: 1.65;
+}
+
+.actualidad-card-texto-secundario {
+  margin: 0;
+  color: var(--color-primario);
+  font-size: var(--texto-lg);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+/* === Secciones Genéricas === */
+.actualidad-seccion {
+  max-width: var(--ancho-texto);
+  margin: 0 auto var(--espacio-7);
+}
+
+.actualidad-parrafo-meta {
+  margin: 0 0 var(--espacio-4);
+  color: var(--color-texto);
+  font-size: var(--texto-base);
+  line-height: 1.65;
+}
+
+.actualidad-lista-hallazgos {
+  padding-left: var(--espacio-5);
+  margin: 0;
+  list-style: disc;
+}
+
+.actualidad-lista-item {
+  margin: var(--espacio-3) 0;
+  color: var(--color-texto);
+  line-height: 1.65;
+}
+
+.actualidad-lista-item + .actualidad-lista-item {
+  margin-top: var(--espacio-3);
+}
+
+/* === Bloque Crítico: Lo que NO demuestra === */
+.actualidad-bloque-aviso {
+  max-width: var(--ancho-texto);
+  margin: 0 auto var(--espacio-8);
+}
+
+.actualidad-aviso-icono {
+  display: none;
+}
+
+.actualidad-aviso-contenido {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--espacio-4);
+  align-items: start;
+  padding: var(--espacio-5);
+  background: var(--color-fondo-aviso);
+  border-left: 3px solid var(--color-foco);
+  border-radius: 0 var(--radio-sm) var(--radio-sm) 0;
+}
+
+.actualidad-aviso-titulo {
+  margin: 0 0 var(--espacio-3);
+  font-size: var(--texto-xl);
+  line-height: var(--alto-linea-titulo);
+  color: var(--color-primario-oscuro);
+}
+
+.actualidad-aviso-texto {
+  margin: 0 0 var(--espacio-3);
+  color: var(--color-texto);
+  font-size: var(--texto-sm);
+  line-height: 1.6;
+}
+
+.actualidad-lista-sin-rides {
+  padding-left: var(--espacio-5);
+  margin: 0;
+  list-style: disc;
+}
+
+.actualidad-lista-aviso {
+  margin: var(--espacio-2) 0;
+  color: var(--color-texto);
+  line-height: 1.6;
+}
+
+/* === Ficha Bibliográfica === */
+.actualidad-ficha-bibliografica {
+  max-width: var(--ancho-texto);
+  margin: 0 auto;
+  padding-top: var(--espacio-7);
+  border-top: 1px solid var(--color-borde);
+}
+
+.actualidad-ficha-titulo {
+  margin: 0 0 var(--espacio-4);
+  font-size: var(--texto-xl);
+  line-height: var(--alto-linea-titulo);
+  letter-spacing: -0.025em;
+  color: var(--color-primario-oscuro);
+}
+
+.actualidad-cita-formateada {
+  margin: 0;
+  padding: var(--espacio-4);
+  background: var(--color-superficie-suave);
+  border-left: 3px solid var(--color-secundario);
+  border-radius: var(--radio-md);
+  font-size: var(--texto-sm);
+  line-height: 1.7;
+  color: var(--color-texto);
+}
+
+.actualidad-cita-formateada p {
+  margin: var(--espacio-2) 0;
+}
+
+.actualidad-cita-formateada a {
+  color: var(--color-primario);
+  text-underline-offset: 0.18em;
+}
+
+.actualidad-cita-formateada a:hover {
+  color: var(--color-primario-oscuro);
+}
+
+/* === Responsive === */
+@media (max-width: 48rem) {
+  .actualidad-hero {
+    padding: var(--espacio-4);
+  }
+
+  .actualidad-hero-metadatos {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--espacio-3);
+  }
+
+  .actualidad-meta-info {
+    flex-direction: column;
+    gap: var(--espacio-2);
+    width: 100%;
+  }
+
+  .actualidad-titular {
+    font-size: var(--texto-xl);
+  }
+
+  .actualidad-aviso-contenido {
+    grid-template-columns: 1fr;
+    gap: var(--espacio-3);
+  }
+
+  .actualidad-card-pocas-palabras {
+    padding: var(--espacio-4);
+  }
+
+  .actualidad-card-texto,
+  .actualidad-card-texto-secundario {
+    font-size: var(--texto-base);
+  }
+}
+
+/* === Reduced Motion === */
+@media (prefers-reduced-motion: reduce) {
+  .actualidad-enlace-fuente,
+  .actualidad-enlace-fuente::after {
+    transition: none;
+  }
+}
+
+/* === Forced Colors Mode === */
+@media (forced-colors: active) {
+  .actualidad-hero,
+  .actualidad-card-pocas-palabras,
+  .actualidad-aviso-contenido,
+  .actualidad-cita-formateada {
+    border: 2px solid CanvasText;
+  }
+
+  .actualidad-badge-categoria,
+  .actualidad-enlace-fuente {
+    border: 1px solid CanvasText;
+  }
+}

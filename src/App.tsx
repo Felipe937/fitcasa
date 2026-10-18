@@ -13,8 +13,10 @@ import { ExercisesPage } from './pages/ExercisesPage';
 import { QuizPage } from './pages/QuizPage';
 import { PanelPage } from './pages/PanelPage';
 import { ScoliosisPage } from './pages/ScoliosisPage';
+import { ActualidadPage } from './pages/ActualidadPage';
 import { PrivacidadPage } from './pages/PrivacidadPage';
 import { TerminosPage } from './pages/TerminosPage';
+import { articulosNoticias } from './data/noticias';
 
 /**
  * Rutas cuyo uso guarda datos introducidos por la persona. Requieren una
@@ -43,6 +45,9 @@ function getRouteFromUrl(): { page: PageRoute; sectionId?: string } {
   }
   if (hash === 'terminos' || path.endsWith('/terminos') || path.endsWith('/terminos.html')) {
     return { page: 'terminos' };
+  }
+  if (hash === 'actualidad' || path.endsWith('/actualidad') || path.endsWith('/actualidad.html')) {
+    return { page: 'actualidad' };
   }
   if (hash === 'beneficios' || hash === 'programas' || hash === 'como-funciona') {
     return { page: 'inicio', sectionId: hash };
@@ -89,6 +94,7 @@ export const App: React.FC = () => {
       quiz: 'FitCasa – Sugerencias de actividad',
       panel: 'FitCasa – Panel de seguimiento',
       escoliosis: 'FitCasa – Información sobre escoliosis y ejercicio',
+      actualidad: 'FitCasa – Actualidad y Evidencia Científica sobre Escoliosis',
       privacidad: 'FitCasa – Política de Privacidad',
       terminos: 'Términos y Condiciones | FitCasa',
     };
@@ -129,6 +135,7 @@ export const App: React.FC = () => {
         {currentPage === 'inicio' && <HomePage onNavigate={handleNavigate} />}
         {currentPage === 'ejercicios' && <ExercisesPage />}
         {currentPage === 'escoliosis' && <ScoliosisPage onNavigate={handleNavigate} />}
+        {currentPage === 'actualidad' && <ActualidadPage onNavigate={handleNavigate} articulo={articulosNoticias[0]} />}
         {currentPage === 'privacidad' && <PrivacidadPage onNavigate={handleNavigate} />}
         {currentPage === 'terminos' && <TerminosPage onNavigate={handleNavigate} />}
         {currentPage === 'quiz' && !showGuard && (
