@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { PageRoute } from '../components/Header';
+import { CATALOGO_EQUIPAMIENTO } from '../data/productos';
+import { ProductoRecomendado } from '../components/ProductoRecomendado';
 
 interface ApoyaPageProps {
   onNavigate: (page: PageRoute, sectionId?: string) => void;
@@ -224,6 +226,30 @@ export const ApoyaPage: React.FC<ApoyaPageProps> = ({ onNavigate }) => {
             Comprueba siempre el destinatario y el monto en la pantalla de confirmación de tu banco o billetera antes de autorizar la operación.
             Este apoyo no genera deducción fiscal ni constituye una donación benéfica oficialmente reconocida.
           </div>
+        </div>
+      </section>
+
+      <section className="apoya-equipamiento-section" aria-labelledby="equipamiento-heading">
+        <h2 id="equipamiento-heading" className="apoya-seccion-titulo">Equipamiento útil para tu práctica en casa</h2>
+        <p className="apoya-equipamiento-subtitulo">
+          Material básico que puede hacer más cómodas tus sesiones de movilidad y fuerza.
+        </p>
+
+        <div className="apoya-divulgacion-amazon" role="note">
+          <p className="apoya-divulgacion-texto-ingles">
+            <strong>As an Amazon Associate I earn from qualifying purchases.</strong>
+          </p>
+          <p className="apoya-divulgacion-texto-espanol">
+            FitCasa participa en el programa de afiliados de Amazon. Si compras a través de estos enlaces
+            patrocinados, FitCasa recibe una pequeña comisión sin ningún coste extra para ti, lo que nos ayuda
+            a mantener el proyecto gratuito y sin publicidad.
+          </p>
+        </div>
+
+        <div className="apoya-equipamiento-grid">
+          {CATALOGO_EQUIPAMIENTO.map((producto) => (
+            <ProductoRecomendado key={producto.id} producto={producto} variant="card" />
+          ))}
         </div>
       </section>
 

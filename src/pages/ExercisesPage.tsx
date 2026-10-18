@@ -9,6 +9,8 @@ import {
 } from '../data/exerciseLabels';
 import { Exercise, Duration, Difficulty, ExerciseCategory } from '../types';
 import { getExerciseVideo } from '../data/exerciseVideos';
+import { ProductoRecomendado } from '../components/ProductoRecomendado';
+import { getProductosByEjercicioId } from '../data/productos';
 
 const difficultyOrder: Record<Difficulty, number> = {
   principiante: 1,
@@ -793,6 +795,28 @@ export const ExercisesPage: React.FC = () => {
                   ))}
               </div>
 
+              {/* Sugerencia de equipamiento relacionado */}
+              {(() => {
+                const productosRelacionados = getProductosByEjercicioId(activeModalExercise.id);
+                if (productosRelacionados.length > 0) {
+                  return (
+                    <div className="exercise-equipamiento-sugerido" style={{ marginTop: '1.5rem', padding: '1rem', background: 'var(--color-fondo-verde)', border: '1px solid var(--color-borde)', borderLeft: '3px solid var(--color-secundario)', borderRadius: 'var(--radio-md)' }}>
+                      <h4 style={{ margin: '0 0 0.75rem', fontSize: 'var(--texto-sm)', fontWeight: 700, color: 'var(--color-primario-oscuro)' }}>
+                        Material sugerido para este ejercicio
+                      </h4>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+                        {productosRelacionados.map((producto) => (
+                          <ProductoRecomendado key={producto.id} producto={producto} variant="inline" />
+                        ))}
+                      </div>
+                      <p style={{ margin: '0.75rem 0 0', fontSize: 'var(--texto-xs)', color: 'var(--color-texto-suave)', fontStyle: 'italic' }}>
+                        El equipamiento es opcional y no sustituye la supervisión profesional. Prioriza siempre tu confort y seguridad.
+                      </p>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
               {activeModalExercise.adaptation && activeModalExercise.adaptation.notes && (
                 <div className="notice warning" style={{ margin: '1.25rem 0' }}>
                   <strong>Nota general de adaptación:</strong> {activeModalExercise.adaptation.notes}
