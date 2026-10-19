@@ -1,76 +1,230 @@
-/* Biblioteca: filtros, tarjetas y detalle. */
+/* ==========================================================================
+   FITCASA — Biblioteca de Ejercicios: Rediseño Editorial Premium
+   Sistema visual sin dependencias externas, mobile-first, accesible y cinemático.
+   ========================================================================== */
+
 :root {
   --proporcion-imagen: 16 / 9;
   --ancho-panel-min: 16rem;
   --ancho-panel-max: 20rem;
-  --ancho-columna-resultado: 17rem;
+  --ancho-columna-resultado: 18rem;
   --lineas-descripcion: 3;
   --alto-esqueleto: 12rem;
   --duracion-entrada-tarjeta: 350ms;
   --paso-entrada-tarjeta: 40ms;
   --desplazamiento-entrada: 0.75rem;
   --duracion-chip: 150ms;
-  --duracion-dialogo: 180ms;
+  --duracion-dialogo: 200ms;
   --desplazamiento-dialogo: 0.5rem;
   --duracion-pulso: 1200ms;
-  --elevacion-tarjeta: 0.125rem;
+  --elevacion-tarjeta: 0.25rem;
+  --duracion-parallax: 450ms;
   --tamano-glifo: 2.5rem;
   --tamano-glifo-interior: 1.5rem;
 }
 
+/* Contenedor principal de la página */
 .exercise-main {
-  padding-block: clamp(var(--espacio-6), 5vw, var(--espacio-8)) var(--espacio-9);
+  padding-block: 0 var(--espacio-9);
+  background-color: var(--color-fondo);
 }
 
-/* La regla global de style.css aplica padding-block de 3rem a todo <section>
-   hijo de <main>. En la biblioteca esos bloques son funcionales (barra de
-   herramientas, filtros y rejilla), no separadores de contenido: 96px por
-   bloque empujaban la primera fila de ejercicios fuera del primer pliegue. */
+/* Anulación del padding-block global de style.css para secciones en la biblioteca */
 main.exercise-main > section {
   padding-block: 0;
 }
 
-main.exercise-main > #exercise-list {
-  margin-top: var(--espacio-3);
+/* Envoltorio del contenido central tras el hero */
+.exercise-cuerpo {
+  max-width: var(--ancho-contenedor);
+  margin-inline: auto;
+  padding-inline: clamp(var(--espacio-4), 4vw, var(--espacio-6));
 }
 
-.result-counter {
-  margin: var(--espacio-3) 0 var(--espacio-2);
+/* ==========================================================================
+   1. HERO EDITORIAL ASIMÉTRICO
+   ========================================================================== */
+
+.exercise-hero {
+  position: relative;
+  width: 100%;
+  background: var(--color-fondo);
+  padding-block: clamp(2.5rem, 5vw, 4.5rem) clamp(2.5rem, 4vw, 3.5rem);
+  margin-bottom: var(--espacio-6);
+  overflow: clip;
 }
 
-.page-lead {
-  max-width: 62ch;
-  margin-top: 0;
-  color: var(--color-texto-suave);
+.exercise-hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--color-primario);
 }
 
-.equipment-note,
-.library-note {
-  max-width: 62ch;
-  color: var(--color-texto-suave);
-  font-size: var(--texto-sm);
+.exercise-hero__inner {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(var(--espacio-6), 4vw, var(--espacio-8));
+  align-items: center;
+  max-width: var(--ancho-contenedor);
+  margin-inline: auto;
+  padding-inline: clamp(var(--espacio-4), 4vw, var(--espacio-6));
 }
 
-.equipment-note {
+@media (min-width: 58rem) {
+  .exercise-hero__inner {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: clamp(var(--espacio-6), 5vw, var(--espacio-9));
+  }
+}
+
+.exercise-hero__texto {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.exercise-hero__insignia {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  width: fit-content;
+  padding: 0.35rem 0.85rem 0.35rem 0.65rem;
+  margin: 0 0 var(--espacio-4);
+  color: var(--color-secundario-oscuro);
+  background: var(--color-fondo-verde);
+  border: 1px solid rgba(92, 130, 118, 0.2);
+  border-radius: var(--radio-pill);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.exercise-hero__insignia-punto {
+  width: 0.5rem;
+  height: 0.5rem;
+  background: var(--color-primario);
+  border-radius: 50%;
+  border: 3px solid var(--color-fondo-verde);
+}
+
+.exercise-hero__titulo {
+  margin: 0 0 var(--espacio-4);
   color: var(--color-primario-oscuro);
-  font-weight: 800;
+  font-size: clamp(2.25rem, 1.6rem + 2.5vw, 3.75rem);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  font-weight: 850;
+  text-wrap: balance;
 }
 
-/* Categorización del catálogo: plegada por defecto para no esconder la
-   primera fila de ejercicios. El contenido sigue siendo alcanzable. */
-.catalogo {
-  margin-top: var(--espacio-5);
+.exercise-hero__lead {
+  max-width: 54ch;
+  margin: 0 0 var(--espacio-6);
+  color: var(--color-texto-suave);
+  font-size: var(--texto-lg);
+  line-height: 1.6;
+}
+
+/* Métricas dinámicas calculadas a partir de datos reales */
+.exercise-hero__stats {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espacio-4);
+  padding: var(--espacio-3) var(--espacio-5);
   background: var(--color-superficie);
   border: 1px solid var(--color-borde);
   border-radius: var(--radio-md);
+  width: fit-content;
+}
+
+.exercise-hero__stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.exercise-hero__stat-num {
+  color: var(--color-primario);
+  font-size: clamp(1.4rem, 1.2rem + 0.6vw, 1.85rem);
+  font-weight: 850;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.exercise-hero__stat-label {
+  color: var(--color-texto-suave);
+  font-size: var(--texto-xs);
+  font-weight: 650;
+  text-transform: lowercase;
+}
+
+.exercise-hero__stat-divisor {
+  width: 1px;
+  height: 2rem;
+  background: var(--color-borde);
+}
+
+/* ==========================================================================
+   ILUSTRACIÓN CINEMÁTICA DEL HERO (SVG multi-capa)
+   ========================================================================== */
+
+.exercise-hero__visual {
+  --hero-parallax-y: 0px;
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 34rem;
+  aspect-ratio: 460 / 300;
+  margin-inline: auto;
+  overflow: hidden;
+  background: var(--color-fondo-verde);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-lg);
+  transform: translate3d(0, var(--hero-parallax-y), 0);
+  transform-origin: center;
+  transition: transform var(--duracion-parallax) var(--curva-suave);
+}
+
+.exercise-hero__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ==========================================================================
+   GUÍA CLÍNICA TRANSPARENTE (<details className="catalogo">)
+   ========================================================================== */
+
+.catalogo {
+  margin-bottom: var(--espacio-6);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+  transition: border-color var(--duracion-corta) ease;
+}
+
+.catalogo[open] {
+  border-color: var(--color-secundario);
 }
 
 .catalogo__summary {
   display: flex;
   flex-direction: column;
   gap: var(--espacio-1);
-  padding: var(--espacio-3) var(--espacio-4);
+  padding: var(--espacio-4) var(--espacio-5);
   cursor: pointer;
+  list-style: none;
+}
+
+.catalogo__summary::-webkit-details-marker {
+  display: none;
 }
 
 .catalogo__summary:focus-visible {
@@ -79,33 +233,41 @@ main.exercise-main > #exercise-list {
   border-radius: var(--radio-md);
 }
 
+.catalogo__summary-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-3);
+}
+
 .catalogo__titulo {
   margin: 0;
   font-size: var(--texto-base);
+  font-weight: 800;
+  color: var(--color-primario-oscuro);
+}
+
+.catalogo__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  background: var(--color-fondo-verde);
+  color: var(--color-secundario-oscuro);
+  border-radius: var(--radio-pill);
+  font-size: var(--texto-xs);
+  font-weight: 750;
 }
 
 .catalogo__resumen {
   color: var(--color-texto-suave);
   font-size: var(--texto-sm);
+  line-height: 1.45;
 }
 
 .catalogo__rejilla {
   display: grid;
   gap: var(--espacio-3);
-  padding: 0 var(--espacio-4) var(--espacio-4);
-}
-
-.catalogo__item {
-  padding: var(--espacio-3);
-  background: var(--color-fondo);
-  border: 1px solid var(--color-borde);
-  border-radius: var(--radio-sm);
-  font-size: var(--texto-sm);
-}
-
-.catalogo__texto {
-  margin: var(--espacio-1) 0 0;
-  color: var(--color-texto-suave);
+  padding: 0 var(--espacio-5) var(--espacio-5);
 }
 
 @media (min-width: 48rem) {
@@ -114,47 +276,198 @@ main.exercise-main > #exercise-list {
   }
 }
 
-/* Barra de herramientas: siempre visible en todos los anchos. */
+.catalogo__item {
+  padding: var(--espacio-4);
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-sm);
+  font-size: var(--texto-sm);
+}
+
+.catalogo__item strong {
+  display: block;
+  margin-bottom: var(--espacio-1);
+  color: var(--color-primario-oscuro);
+}
+
+.catalogo__item--actividad {
+  border-left: 3px solid var(--color-primario);
+}
+
+.catalogo__item--postural {
+  border-left: 3px solid var(--color-secundario);
+}
+
+.catalogo__item--psse {
+  border-left: 3px solid var(--color-terciario);
+  background: #fdfaf7;
+}
+
+.catalogo__texto {
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-xs);
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   2. PESTAÑAS RÁPIDAS DE FILTRADO POR CATEGORÍA (.category-tabs)
+   ========================================================================== */
+
+.category-tabs {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  margin-bottom: var(--espacio-5);
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.category-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.category-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  min-height: var(--alto-objetivo-tactil);
+  padding: 0.45rem 1rem;
+  color: var(--color-texto-suave);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-pill);
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+  white-space: nowrap;
+  transition: color var(--duracion-corta) ease,
+              background-color var(--duracion-corta) ease,
+              border-color var(--duracion-corta) ease,
+              transform var(--duracion-corta) ease;
+}
+
+.category-tab:hover {
+  color: var(--color-primario);
+  border-color: var(--color-primario);
+  background: var(--color-fondo-verde);
+  transform: translateY(-1px);
+}
+
+.category-tab:focus-visible {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 2px;
+}
+
+.category-tab.is-active {
+  color: var(--color-sobre-primario);
+  background: var(--color-primario);
+  border-color: var(--color-primario);
+}
+
+.category-tab__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.35rem;
+  height: 1.35rem;
+  padding-inline: 0.35rem;
+  background: rgba(0, 0, 0, 0.07);
+  border-radius: var(--radio-pill);
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.category-tab.is-active .category-tab__count {
+  background: rgba(255, 255, 255, 0.22);
+  color: var(--color-sobre-primario);
+}
+
+/* ==========================================================================
+   3. BARRA DE HERRAMIENTAS: BÚSQUEDA Y FILTROS (.toolbar)
+   ========================================================================== */
+
 .toolbar {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--espacio-3);
-  margin-top: var(--espacio-5);
+  margin-bottom: var(--espacio-4);
 }
 
-@media (min-width: 22rem) {
+@media (min-width: 38rem) {
   .toolbar {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .toolbar-search {
-    grid-column: 1 / -1;
-  }
-}
-
-@media (min-width: 64rem) {
-  .toolbar {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) auto;
-    align-items: end;
-  }
-
-  .toolbar-search {
-    grid-column: auto;
+    grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr) auto;
+    align-items: center;
   }
 }
 
 .toolbar-search {
+  position: relative;
   min-width: 0;
+}
+
+.toolbar-search__caja {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.toolbar-search__icono {
+  position: absolute;
+  left: 0.85rem;
+  width: 1.15rem;
+  height: 1.15rem;
+  color: var(--color-secundario);
+  pointer-events: none;
 }
 
 .toolbar-search input {
   width: 100%;
   min-height: var(--alto-objetivo-tactil);
-  padding: var(--espacio-2) var(--espacio-3);
+  padding: var(--espacio-2) 2.5rem var(--espacio-2) 2.5rem;
   color: var(--color-texto);
   background: var(--color-superficie);
   border: 1px solid var(--color-borde);
-  border-radius: var(--radio-sm);
+  border-radius: var(--radio-md);
+  font-size: var(--texto-sm);
+  transition: border-color var(--duracion-corta) ease;
+}
+
+.toolbar-search input:focus {
+  outline: none;
+}
+
+.toolbar-search input:focus-visible {
+  border-color: var(--color-primario);
+  outline: 3px solid var(--color-foco);
+  outline-offset: 2px;
+}
+
+.toolbar-search__clear {
+  position: absolute;
+  right: 0.75rem;
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--color-texto-suave);
+  background: rgba(0, 0, 0, 0.05);
+  border: none;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: background var(--duracion-corta) ease, color var(--duracion-corta) ease;
+}
+
+.toolbar-search__clear:hover {
+  background: var(--color-primario);
+  color: var(--color-sobre-primario);
 }
 
 .toolbar-order {
@@ -164,118 +477,197 @@ main.exercise-main > #exercise-list {
   min-width: 0;
 }
 
+.toolbar-order label {
+  color: var(--color-texto-suave);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
 .toolbar-order select {
   flex: 1 1 auto;
   min-width: 0;
-}
-
-.toolbar-order label {
-  color: var(--color-texto-suave);
-  font-size: var(--texto-sm);
-  font-weight: 700;
-}
-
-.toolbar-order select {
   min-height: var(--alto-objetivo-tactil);
   padding: var(--espacio-2) var(--espacio-3);
   color: var(--color-texto);
   background: var(--color-superficie);
   border: 1px solid var(--color-borde);
-  border-radius: var(--radio-sm);
+  border-radius: var(--radio-md);
+  font-size: var(--texto-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--duracion-corta) ease;
 }
 
-/* Sin la clase js el panel se ve siempre y el botón está oculto. */
+.toolbar-order select:focus-visible {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 2px;
+}
+
 #filters-toggle {
-  display: none;
-}
-
-html.js #filters-toggle {
   display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  min-height: var(--alto-objetivo-tactil);
+  padding: var(--espacio-2) var(--espacio-4);
+  white-space: nowrap;
+  font-weight: 750;
+  border-radius: var(--radio-md);
+  cursor: pointer;
+  touch-action: manipulation;
 }
 
-html.js #filters-panel {
-  display: none;
+#filters-toggle.is-open {
+  background: var(--color-fondo-verde);
+  border-color: var(--color-primario);
+  color: var(--color-primario-oscuro);
 }
 
-html.js #filters-panel.abierto {
-  display: block;
-}
+/* ==========================================================================
+   CHIPS DE FILTROS ACTIVOS (.active-filters)
+   ========================================================================== */
 
-.exercise-layout {
-  display: grid;
-  gap: var(--espacio-6);
-  margin-top: var(--espacio-6);
-}
-
-.filters-section {
-  padding: var(--espacio-5);
-  background: var(--color-superficie);
-  border: 1px solid var(--color-borde);
-  border-radius: var(--radio-lg);
-  box-shadow: var(--sombra-suave);
-}
-
-.filters-section h2 {
-  margin-top: 0;
-  font-size: var(--texto-lg);
-}
-
-.filters-section form {
+.active-filters {
   display: flex;
-  flex-direction: column;
-  gap: var(--espacio-4);
-}
-
-.filters-section fieldset {
-  min-width: 0;
-  padding: var(--espacio-4);
-  margin: 0;
-  border: 1px solid var(--color-borde);
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espacio-2);
+  margin-bottom: var(--espacio-4);
+  padding: var(--espacio-2) var(--espacio-3);
+  background: var(--color-fondo-verde);
+  border: 1px solid rgba(92, 130, 118, 0.2);
   border-radius: var(--radio-md);
 }
 
-.filters-section legend {
-  padding-inline: var(--espacio-2);
+.active-filter-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-1);
+  min-height: 2rem;
+  padding: 0.25rem 0.65rem;
   color: var(--color-primario-oscuro);
-  font-size: var(--texto-sm);
-  font-weight: 800;
-}
-
-/* El atributo hidden siempre gana dentro de la sección de filtros. */
-.filters-section [hidden] {
-  display: none;
-}
-
-/* Panel de filtros: el JSX usa .filters-panel, no .filters-section. */
-.filters-panel {
-  padding: var(--espacio-4);
-  margin-top: var(--espacio-4);
   background: var(--color-superficie);
-  border: 1px solid var(--color-borde);
+  border: 1px solid var(--color-secundario);
+  border-radius: var(--radio-pill);
+  cursor: pointer;
+  touch-action: manipulation;
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  transition: color var(--duracion-corta) ease,
+              background-color var(--duracion-corta) ease,
+              border-color var(--duracion-corta) ease,
+              transform var(--duracion-corta) ease;
+}
+
+.active-filter-tag:hover {
+  color: var(--color-sobre-primario);
+  background: var(--color-terciario);
+  border-color: var(--color-terciario);
+  transform: translateY(-1px);
+}
+
+.active-filter-tag:focus-visible {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 2px;
+}
+
+.active-filters__clear-all {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  padding: 0.25rem 0.75rem;
+  color: var(--color-terciario-oscuro);
+  background: transparent;
+  border: 1px dashed var(--color-terciario);
+  border-radius: var(--radio-pill);
+  font-size: var(--texto-xs);
+  font-weight: 750;
+  cursor: pointer;
+  touch-action: manipulation;
+  margin-left: auto;
+  transition: color var(--duracion-corta) ease,
+              background-color var(--duracion-corta) ease,
+              border-color var(--duracion-corta) ease;
+}
+
+.active-filters__clear-all:hover {
+  background: var(--color-fondo-alerta);
+}
+
+/* ==========================================================================
+   PANEL DE FILTROS AVANZADOS COLAPSABLE (.filters-panel)
+   ========================================================================== */
+
+.filters-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  padding: 0 var(--espacio-5);
+  margin-bottom: 0;
+  background: var(--color-superficie);
+  border: 1px solid transparent;
   border-radius: var(--radio-lg);
-  box-shadow: var(--sombra-suave);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  overflow: hidden;
+  transition: grid-template-rows var(--duracion-media) var(--curva-suave),
+              opacity var(--duracion-corta) ease,
+              padding-block var(--duracion-media) var(--curva-suave),
+              margin-bottom var(--duracion-media) var(--curva-suave),
+              border-color var(--duracion-corta) ease;
+}
+
+.filters-panel > form {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.filters-panel.abierto {
+  grid-template-rows: 1fr;
+  padding-block: var(--espacio-5);
+  margin-bottom: var(--espacio-5);
+  border-color: var(--color-borde);
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
 
 .filter-group {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: var(--espacio-4);
+}
+
+@media (min-width: 44rem) {
+  .filter-group {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 68rem) {
+  .filter-group {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
 .filter-group fieldset {
   min-width: 0;
-  flex: 1 1 12rem;
-  padding: var(--espacio-3);
+  padding: var(--espacio-4);
   margin: 0;
   border: 1px solid var(--color-borde);
   border-radius: var(--radio-md);
+  background: var(--color-fondo);
 }
 
 .filter-group legend {
   padding-inline: var(--espacio-2);
   color: var(--color-primario-oscuro);
-  font-size: var(--texto-sm);
-  font-weight: 800;
+  font-size: var(--texto-xs);
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .choice-list {
@@ -284,26 +676,26 @@ html.js #filters-panel.abierto {
   gap: var(--espacio-1);
 }
 
-.filters-panel .btn {
-  margin-top: var(--espacio-4);
-}
-
-/* Chips compactos: el checkbox nativo se oculta con clip (no display:none)
-   para conservar foco y teclado. */
+/* Chips accesibles de selección */
 .chip {
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: var(--espacio-2);
-  min-height: var(--alto-objetivo-tactil);
-  padding: var(--espacio-1) var(--espacio-2);
+  min-height: 2.25rem;
+  padding: 0.2rem 0.65rem;
   margin: 0;
   color: var(--color-texto-suave);
   background: var(--color-superficie);
   border: 1px solid var(--color-borde);
   border-radius: var(--radio-pill);
   cursor: pointer;
-  font-size: var(--texto-sm);
+  touch-action: manipulation;
+  font-size: var(--texto-xs);
+  font-weight: 650;
+  transition: color var(--duracion-corta) ease,
+              background-color var(--duracion-corta) ease,
+              border-color var(--duracion-corta) ease,
+              transform var(--duracion-corta) ease;
 }
 
 .chip input[type="checkbox"] {
@@ -321,8 +713,9 @@ html.js #filters-panel.abierto {
 
 .chip:hover {
   color: var(--color-primario-oscuro);
-  background: var(--color-fondo-azul);
-  border-color: var(--color-primario);
+  background: var(--color-fondo-verde);
+  border-color: var(--color-secundario);
+  transform: translateY(-1px);
 }
 
 .chip:focus-within {
@@ -336,165 +729,128 @@ html.js #filters-panel.abierto {
   border-color: var(--color-primario);
 }
 
-.chip input[type="checkbox"]:checked + span::before {
-  content: "✓";
-  font-weight: 800;
-}
-
 .chip input[type="checkbox"]:disabled + span {
-  opacity: 0.55;
+  opacity: 0.45;
 }
 
-.filter-actions {
+.filters-panel__footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--espacio-4);
+  padding-top: var(--espacio-3);
+}
+
+/* Barra de conteo de resultados */
+.result-counter-bar {
   display: flex;
   align-items: center;
-  gap: var(--espacio-3);
-}
-
-.results-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: var(--espacio-4);
-  min-width: 0;
+  justify-content: space-between;
+  margin-bottom: var(--espacio-5);
+  padding-bottom: var(--espacio-2);
 }
 
 .result-counter {
   margin: 0;
-  color: var(--color-primario-oscuro);
-  font-size: var(--texto-base);
-  font-weight: 800;
-}
-
-.active-filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--espacio-2);
-}
-
-.active-filter-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--espacio-2);
-  min-height: var(--alto-objetivo-tactil);
-  padding: var(--espacio-2) var(--espacio-3);
-  color: var(--color-primario-oscuro);
-  background: var(--color-fondo-azul);
-  border: 1px solid var(--color-primario);
-  border-radius: var(--radio-pill);
-  cursor: pointer;
+  color: var(--color-texto-suave);
   font-size: var(--texto-sm);
-  font-weight: 700;
+  font-weight: 650;
 }
 
-.active-filter-tag:hover {
-  color: var(--color-sobre-primario);
-  background: var(--color-primario);
+.result-counter strong {
+  color: var(--color-primario-oscuro);
+  font-weight: 850;
 }
 
-.active-filter-tag:focus-visible {
-  outline: 3px solid var(--color-foco);
-  outline-offset: 2px;
-}
+/* ==========================================================================
+   4. CATÁLOGO CURADO DE TARJETAS (.exercise-grid / .exercise-card)
+   ========================================================================== */
 
-/* Rejilla de resultados. El JSX usa .exercise-grid; .exercise-list se
-   conserva como alias para no romper selectores externos. */
-.exercise-grid,
-.exercise-list {
+.exercise-grid {
   display: grid;
-  gap: var(--espacio-5);
+  gap: clamp(var(--espacio-4), 3vw, var(--espacio-6));
   grid-template-columns: 1fr;
   width: 100%;
 }
 
-@media (min-width: 24rem) {
-  .exercise-grid,
-  .exercise-list {
+@media (min-width: 36rem) {
+  .exercise-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (min-width: 48rem) {
-  .exercise-grid,
-  .exercise-list {
+@media (min-width: 64rem) {
+  .exercise-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
-@media (min-width: 75rem) {
-  .exercise-grid,
-  .exercise-list {
+@media (min-width: 82rem) {
+  .exercise-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
-.exercise-grid > [role="status"],
-.exercise-grid > [role="alert"],
-.exercise-list > [role="status"],
-.exercise-list > [role="alert"] {
-  padding: var(--espacio-5);
-  color: var(--color-texto-suave);
-  background: var(--color-superficie);
-  border: 1px dashed var(--color-borde);
-  border-radius: var(--radio-md);
-}
-
-@media (min-width: 48rem) {
-  .exercise-grid > [role="status"],
-  .exercise-grid > [role="alert"],
-  .exercise-list > [role="status"],
-  .exercise-list > [role="alert"] {
-    grid-column: 1 / -1;
-  }
-}
-
-.exercise-skeleton {
-  min-height: var(--alto-esqueleto);
-  background: var(--color-fondo-azul);
-  border: 1px solid var(--color-borde);
-  border-radius: var(--radio-lg);
-}
-
-/* El glifo genérico se sustituyó por .exercise-media (póster por categoría). */
+/* Tarjeta individual de ejercicio */
 .exercise-card {
+  --card-index: 0;
+  position: relative;
   display: flex;
   flex-direction: column;
   min-width: 0;
-  padding: var(--espacio-5);
   background: var(--color-superficie);
   border: 1px solid var(--color-borde);
   border-radius: var(--radio-lg);
-  box-shadow: var(--sombra-suave);
+  overflow: hidden;
+  transition: transform var(--duracion-media) var(--curva-suave),
+              border-color var(--duracion-media) var(--curva-suave);
 }
 
-.exercise-card::before {
-  width: 3rem;
-  height: 0.25rem;
-  margin-bottom: var(--espacio-4);
-  content: "";
-  background: var(--color-secundario);
-  border-radius: var(--radio-pill);
+.exercise-card:hover,
+.exercise-card:focus-within {
+  transform: translateY(-0.25rem);
+  border-color: var(--color-secundario);
 }
 
-.exercise-image {
-  display: block;
-  width: 100%;
-  aspect-ratio: var(--proporcion-imagen);
-  object-fit: cover;
-  margin-bottom: var(--espacio-4);
-  border-radius: var(--radio-sm);
-  background: var(--color-fondo-azul);
+/* RITMO EDITORIAL: Tarjeta destacada cuando no hay filtros activos */
+@media (min-width: 64rem) {
+  .exercise-card--destacada {
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    align-items: stretch;
+    background: #fdfefe;
+    border-color: rgba(21, 67, 59, 0.25);
+  }
+
+  .exercise-card--destacada .exercise-media {
+    height: 100%;
+    margin-bottom: 0;
+    border-radius: 0;
+  }
+
+  .exercise-card--destacada .exercise-card__contenido {
+    padding: var(--espacio-6);
+  }
+
+  .exercise-card--destacada .exercise-card__titulo {
+    font-size: var(--texto-xl);
+  }
+
+  .exercise-card--destacada .exercise-desc {
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    font-size: var(--texto-base);
+  }
 }
 
-/* Área multimedia de la tarjeta: proporción fija 16/9 para evitar saltos. */
+/* Área multimedia (PosterArt + Video trigger) */
 .exercise-media {
   position: relative;
   display: block;
   width: 100%;
   aspect-ratio: var(--proporcion-imagen);
-  margin-bottom: var(--espacio-4);
   overflow: hidden;
-  background: var(--color-fondo-azul);
-  border-radius: var(--radio-sm);
+  background: var(--color-fondo-verde);
 }
 
 .exercise-media__arte,
@@ -504,37 +860,35 @@ html.js #filters-panel.abierto {
   height: 100%;
 }
 
-.exercise-media__arte svg {
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.exercise-media--actividad .exercise-media__arte {
+.exercise-media__arte {
   color: var(--color-primario);
-  background: var(--color-fondo-azul);
+  transform: translate3d(0, 0, 0) scale(1.01);
+  transform-origin: center;
+  transition: transform var(--duracion-media) var(--curva-suave);
 }
 
-.exercise-media--postural .exercise-media__arte {
+@media (hover: hover) {
+  .exercise-card:hover .exercise-media__arte {
+    transform: translate3d(0, -0.2rem, 0) scale(1.025);
+  }
+}
+
+.exercise-media--actividad {
+  color: var(--color-primario);
+  background: #f0f6f4;
+}
+
+.exercise-media--postural {
   color: var(--color-secundario-oscuro);
-  background: var(--color-fondo-verde);
+  background: #f1f5f2;
 }
 
-.exercise-media--psse .exercise-media__arte {
-  color: var(--color-primario-oscuro);
-  background: var(--color-fondo-aviso);
+.exercise-media--psse {
+  color: var(--color-terciario-oscuro);
+  background: #faf4ef;
 }
 
-/* El vídeo solo se monta al interactuar: en reposo se ve el póster. */
-.exercise-media__video {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  background: var(--color-primario-oscuro);
-}
-
+/* Botón de reproducción de vídeo sobre la tarjeta */
 .exercise-media__velo {
   position: absolute;
   inset: 0;
@@ -543,39 +897,50 @@ html.js #filters-panel.abierto {
   background: transparent;
   border: 0;
   cursor: pointer;
+  touch-action: manipulation;
+  transition: background-color var(--duracion-corta) ease;
+}
+
+.exercise-media__velo:hover {
+  background-color: rgba(14, 47, 41, 0.12);
 }
 
 .exercise-media__play {
   display: grid;
   place-items: center;
-  width: var(--alto-objetivo-tactil);
-  height: var(--alto-objetivo-tactil);
+  width: 3.25rem;
+  height: 3.25rem;
   color: var(--color-sobre-primario);
   background: var(--color-primario);
   border-radius: 50%;
-  box-shadow: var(--sombra-flotante);
+  transition: transform var(--duracion-corta) ease, background-color var(--duracion-corta) ease;
+}
+
+.exercise-media__velo:hover .exercise-media__play {
+  transform: scale(1.08);
+  background: var(--color-primario-oscuro);
 }
 
 .exercise-media__play svg {
-  width: 1.25rem;
-  height: 1.25rem;
-  margin-left: 0.125rem;
+  width: 1.35rem;
+  height: 1.35rem;
+  margin-left: 0.18rem;
   fill: currentColor;
 }
 
 .exercise-media__velo:focus-visible {
   outline: 3px solid var(--color-foco);
   outline-offset: -3px;
-  border-radius: var(--radio-sm);
 }
 
 .exercise-media__estado {
   position: absolute;
-  inset-inline: var(--espacio-2);
-  bottom: var(--espacio-2);
-  padding: var(--espacio-1) var(--espacio-2);
-  color: var(--color-texto);
-  background: var(--color-superficie);
+  inset-inline: var(--espacio-3);
+  bottom: var(--espacio-3);
+  margin: 0;
+  padding: 0.25rem 0.5rem;
+  color: var(--color-texto-suave);
+  background: rgba(255, 255, 255, 0.92);
   border: 1px solid var(--color-borde);
   border-radius: var(--radio-pill);
   font-size: var(--texto-xs);
@@ -583,9 +948,72 @@ html.js #filters-panel.abierto {
   text-align: center;
 }
 
-.exercise-card h3 {
+/* Contenido de la tarjeta */
+.exercise-card__contenido {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  padding: var(--espacio-5);
+}
+
+.exercise-card__encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+  margin-bottom: var(--espacio-2);
+}
+
+.category-tag {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radio-pill);
+  font-size: var(--texto-xs);
+  font-weight: 750;
+  letter-spacing: 0.02em;
+}
+
+.category-tag--actividad {
+  color: var(--color-primario);
+  background: var(--color-fondo-verde);
+  border: 1px solid rgba(21, 67, 59, 0.2);
+}
+
+.category-tag--postural {
+  color: var(--color-secundario-oscuro);
+  background: #eef4f1;
+  border: 1px solid rgba(92, 130, 118, 0.25);
+}
+
+.category-tag--psse {
+  color: var(--color-terciario-oscuro);
+  background: var(--color-fondo-aviso);
+  border: 1px solid rgba(200, 109, 81, 0.3);
+}
+
+/* Insignia de duración con reloj */
+.exercise-duration {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.exercise-duration svg {
+  color: var(--color-secundario);
+}
+
+.exercise-card__titulo {
   margin: 0 0 var(--espacio-2);
+  color: var(--color-primario-oscuro);
   font-size: var(--texto-lg);
+  font-weight: 800;
+  line-height: 1.25;
   text-wrap: balance;
 }
 
@@ -595,109 +1023,201 @@ html.js #filters-panel.abierto {
   -webkit-line-clamp: var(--lineas-descripcion);
   line-clamp: var(--lineas-descripcion);
   overflow: hidden;
-  margin-top: 0;
+  margin: 0 0 var(--espacio-3);
   color: var(--color-texto-suave);
   font-size: var(--texto-sm);
+  line-height: 1.5;
 }
 
-.exercise-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--espacio-2);
-  margin-top: var(--espacio-3);
-}
-
-.exercise-meta-item {
+/* Indicador visual de dificultad */
+.exercise-difficulty {
   display: inline-flex;
   align-items: center;
-  gap: var(--espacio-1);
-  padding: var(--espacio-1) var(--espacio-2);
-  color: var(--color-texto-suave);
-  background: var(--color-fondo-azul);
-  border-radius: var(--radio-sm);
+  gap: var(--espacio-2);
   font-size: var(--texto-xs);
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
+  font-weight: 750;
+  color: var(--color-texto-suave);
 }
 
+.exercise-difficulty__meter {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.exercise-difficulty__bar {
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.3rem;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+  transition: background-color var(--duracion-corta) ease;
+}
+
+.exercise-difficulty__bar.is-active {
+  background: var(--color-primario);
+}
+
+.exercise-card--psse .exercise-difficulty__bar.is-active {
+  background: var(--color-terciario);
+}
+
+/* Etiquetas de zona y material */
 .exercise-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--espacio-2);
+  gap: var(--espacio-1);
   margin-top: var(--espacio-3);
-  margin-bottom: var(--espacio-4);
+  margin-bottom: var(--espacio-5);
 }
 
 .exercise-tag {
-  padding: var(--espacio-1) var(--espacio-2);
-  color: var(--color-secundario-oscuro);
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.5rem;
+  color: var(--color-texto-suave);
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-sm);
+  font-size: var(--texto-xs);
+  font-weight: 600;
+}
+
+.exercise-tag--equipment {
+  color: var(--color-primario);
   background: var(--color-fondo-verde);
-  border-radius: var(--radio-sm);
-  font-size: var(--texto-xs);
-  font-weight: 700;
+  border-color: rgba(21, 67, 59, 0.15);
 }
 
-/* Categoría del ejercicio: descriptiva, no clínica. */
-.category-tag {
-  display: block;
-  width: fit-content;
-  margin: var(--espacio-3) 0 var(--espacio-2);
-  padding: var(--espacio-1) var(--espacio-2);
-  color: var(--color-texto-suave);
-  background: transparent;
-  border: 1px solid var(--color-borde);
-  border-radius: var(--radio-sm);
-  font-size: var(--texto-xs);
-  font-weight: 700;
-}
-
-.category-tag--psse {
-  color: var(--color-primario-oscuro);
-  background: var(--color-fondo-aviso);
-  border-color: var(--color-foco);
-}
-
-.category-note {
-  display: block;
-  color: var(--color-texto-suave);
-  font-weight: 700;
-}
-
-#exercise-dialog .category-tag {
-  display: block;
-  width: fit-content;
-  margin: var(--espacio-3) 0 var(--espacio-2);
-}
-
-#exercise-dialog .category-tag .category-note {
-  display: block;
-}
-
-.dialog-psse {
-  padding: var(--espacio-3);
-  margin-top: var(--espacio-4);
-  color: var(--color-texto);
-  background: var(--color-fondo-aviso);
-  border-left: 0.25rem solid var(--color-foco);
-  border-radius: var(--radio-sm);
-  font-size: var(--texto-sm);
-}
-
-/* Zonas y equipamiento, más tenues que los metadatos. */
-.exercise-tags .exercise-tag {
-  color: var(--color-texto-suave);
-  background: transparent;
-  border: 1px solid var(--color-borde);
-}
-.exercise-card .btn {
-  align-self: flex-start;
+/* CTA de la tarjeta */
+.exercise-card__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
   min-height: var(--alto-objetivo-tactil);
+  padding: 0.65rem 1rem;
   margin-top: auto;
-  text-align: center;
+  color: var(--color-primario-oscuro);
+  background: var(--color-fondo-verde);
+  border: 1px solid rgba(21, 67, 59, 0.2);
+  border-radius: var(--radio-md);
+  font-weight: 750;
+  font-size: var(--texto-sm);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: color var(--duracion-corta) ease,
+              background-color var(--duracion-corta) ease,
+              border-color var(--duracion-corta) ease,
+              transform var(--duracion-corta) ease;
 }
 
-/* Reproductor del diálogo. */
+.exercise-card__cta:hover {
+  color: var(--color-sobre-primario);
+  background: var(--color-primario);
+  border-color: var(--color-primario);
+  transform: translateY(-1px);
+}
+
+.exercise-card__cta:hover svg {
+  transform: translateX(3px);
+}
+
+.exercise-card__cta svg {
+  transition: transform var(--duracion-corta) ease;
+}
+
+.exercise-card__cta:focus-visible {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   5. ILUSTRACIONES POSTERART POR CATEGORÍA (.poster-art)
+   ========================================================================== */
+
+.poster-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.poster-art text {
+  user-select: none;
+}
+
+/* ==========================================================================
+   6. EMPTY STATE (.exercise-empty-state)
+   ========================================================================== */
+
+.exercise-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: clamp(var(--espacio-6), 6vw, var(--espacio-9));
+  background: var(--color-superficie);
+  border: 1px dashed var(--color-borde);
+  border-radius: var(--radio-lg);
+  margin-block: var(--espacio-4);
+  grid-column: 1 / -1;
+}
+
+.exercise-empty-state__icon {
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  color: var(--color-secundario);
+  background: var(--color-fondo-verde);
+  border-radius: 50%;
+  margin-bottom: var(--espacio-4);
+}
+
+.exercise-empty-state__icon svg {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.exercise-empty-state__title {
+  margin: 0 0 var(--espacio-2);
+  color: var(--color-primario-oscuro);
+  font-size: var(--texto-xl);
+  font-weight: 850;
+}
+
+.exercise-empty-state__desc {
+  max-width: 44ch;
+  margin: 0 0 var(--espacio-5);
+  color: var(--color-texto-suave);
+  font-size: var(--texto-sm);
+  line-height: 1.55;
+}
+
+/* ==========================================================================
+   7. MODAL DE DETALLE EN MODO CINE (#exercise-dialog)
+   ========================================================================== */
+
+#exercise-dialog {
+  width: min(92vw, 44rem);
+  max-width: 44rem;
+  max-height: 90vh;
+  padding: clamp(var(--espacio-4), 4vw, var(--espacio-6));
+  color: var(--color-texto);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-lg);
+  box-shadow: 0 24px 60px -12px rgba(14, 47, 41, 0.4); /* taste-skill-ignore: modal overlay depth */
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+#exercise-dialog::backdrop {
+  background: rgba(14, 47, 41, 0.65);
+  backdrop-filter: blur(6px); /* taste-skill-ignore: modal backdrop overlay */
+}
+
 .dialog-cabecera {
   display: flex;
   gap: var(--espacio-3);
@@ -708,6 +1228,18 @@ html.js #filters-panel.abierto {
 
 .dialog-cabecera h2 {
   margin: var(--espacio-1) 0 0;
+  color: var(--color-primario-oscuro);
+  font-size: var(--texto-xl);
+  font-weight: 850;
+  line-height: 1.2;
+}
+
+.dialog-close-btn {
+  min-height: 2.25rem;
+  padding: 0.35rem 0.85rem;
+  font-size: var(--texto-xs);
+  cursor: pointer;
+  white-space: nowrap;
 }
 
 .dialog-video {
@@ -716,15 +1248,20 @@ html.js #filters-panel.abierto {
   aspect-ratio: var(--proporcion-imagen);
   margin-bottom: var(--espacio-4);
   background: var(--color-primario-oscuro);
-  border-radius: var(--radio-sm);
+  border-radius: var(--radio-md);
 }
 
 .dialog-video-controls {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   gap: var(--espacio-3);
-  margin-bottom: var(--espacio-4);
+  margin-bottom: var(--espacio-5);
+  padding: var(--espacio-3) var(--espacio-4);
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
 }
 
 .dialog-video-controls__grupo {
@@ -735,21 +1272,31 @@ html.js #filters-panel.abierto {
 
 .dialog-video-controls__grupo > span {
   color: var(--color-texto-suave);
-  font-size: var(--texto-sm);
-  font-weight: 700;
+  font-size: var(--texto-xs);
+  font-weight: 750;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
-.dialog-video-controls button,
-.dialog-video-controls select {
-  min-height: var(--alto-objetivo-tactil);
-  padding: var(--espacio-2) var(--espacio-3);
+.dialog-video-controls button {
+  min-height: 2.25rem;
+  padding: 0.25rem 0.75rem;
   color: var(--color-texto);
   background: var(--color-superficie);
   border: 1px solid var(--color-borde);
   border-radius: var(--radio-sm);
-  font-size: var(--texto-sm);
+  font-size: var(--texto-xs);
   font-weight: 700;
   cursor: pointer;
+  touch-action: manipulation;
+  transition: color var(--duracion-corta) ease,
+              background-color var(--duracion-corta) ease,
+              border-color var(--duracion-corta) ease,
+              transform var(--duracion-corta) ease;
+}
+
+.dialog-video-controls button:hover {
+  transform: translateY(-1px);
 }
 
 .dialog-video-controls button[aria-pressed="true"] {
@@ -765,13 +1312,14 @@ html.js #filters-panel.abierto {
   padding: var(--espacio-4);
   margin-bottom: var(--espacio-4);
   color: var(--color-texto);
-  background: var(--color-fondo-azul);
-  border: 1px dashed var(--color-borde);
-  border-radius: var(--radio-sm);
+  background: var(--color-fondo-verde);
+  border: 1px dashed var(--color-secundario);
+  border-radius: var(--radio-md);
 }
 
 .dialog-sin-video strong {
   display: block;
+  color: var(--color-primario-oscuro);
 }
 
 .dialog-sin-video span {
@@ -779,160 +1327,186 @@ html.js #filters-panel.abierto {
   font-size: var(--texto-sm);
 }
 
-.exercise-media__estado-inline {
-  display: grid;
-  flex: 0 0 auto;
-  place-items: center;
-  width: var(--alto-objetivo-tactil);
-  height: var(--alto-objetivo-tactil);
-  color: var(--color-primario);
-  background: var(--color-fondo-azul);
-  border-radius: var(--radio-sm);
+.dialog-descripcion {
+  font-size: var(--texto-base);
+  line-height: 1.6;
+  color: var(--color-texto);
+  margin-bottom: var(--espacio-4);
 }
 
-.exercise-media__estado-inline svg {
-  width: 1.5rem;
-  height: 1.5rem;
-  fill: none;
-  stroke: currentColor;
+.dialog-meta {
+  margin-bottom: var(--espacio-3);
+}
+
+.dialog-notice {
+  margin-block: var(--espacio-4);
+  padding: var(--espacio-4);
+  border-radius: var(--radio-md);
+}
+
+/* Ficha de revisión documental clínica */
+.clinical-sheet {
+  margin-block: var(--espacio-5);
+  padding: var(--espacio-4);
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+}
+
+.clinical-sheet__titulo {
+  margin: 0 0 var(--espacio-3);
+  color: var(--color-primario-oscuro);
+  font-size: var(--texto-base);
+  font-weight: 800;
+}
+
+.clinical-sheet__cuerpo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+  font-size: var(--texto-sm);
+  line-height: 1.5;
+}
+
+.clinical-sheet__disclaimer {
+  color: var(--color-texto-suave);
+  font-size: var(--texto-xs);
+  font-style: italic;
+  margin: 0;
+}
+
+.clinical-sheet__seccion strong {
+  display: block;
+  color: var(--color-primario-oscuro);
+  margin-bottom: var(--espacio-1);
+}
+
+.clinical-sheet__seccion ul {
+  margin: 0;
+  padding-left: var(--espacio-4);
 }
 
 .dialog-aviso-clinico {
-  padding: var(--espacio-3);
-  margin-top: var(--espacio-4);
+  padding: var(--espacio-3) var(--espacio-4);
+  margin-block: var(--espacio-4);
   color: var(--color-texto);
   background: var(--color-fondo-aviso);
-  border-left: 0.25rem solid var(--color-foco);
+  border-left: 3px solid var(--color-foco);
   border-radius: var(--radio-sm);
+  font-size: var(--texto-xs);
+  line-height: 1.5;
+}
+
+/* Material complementario sugerido */
+.exercise-equipamiento-sugerido {
+  margin-block: var(--espacio-5);
+  padding: var(--espacio-4);
+  background: var(--color-fondo-verde);
+  border: 1px solid rgba(92, 130, 118, 0.25);
+  border-radius: var(--radio-md);
+}
+
+.exercise-equipamiento-sugerido__titulo {
+  margin: 0 0 var(--espacio-3);
+  color: var(--color-primario-oscuro);
   font-size: var(--texto-sm);
+  font-weight: 800;
 }
 
-#exercise-dialog {
-  width: min(90vw, 40rem);
-  max-width: 40rem;
-  max-height: 90vh;
-  padding: var(--espacio-5);
-  color: var(--color-texto);
-  background: var(--color-superficie);
-  border: 1px solid var(--color-borde);
-  border-radius: var(--radio-lg);
-  box-shadow: var(--sombra-flotante);
-  overflow-y: auto;
-  overscroll-behavior: contain;
+.exercise-equipamiento-sugerido__grid {
+  display: grid;
+  gap: var(--espacio-3);
+  grid-template-columns: 1fr;
 }
 
-#exercise-dialog::backdrop {
-  background: rgba(10, 63, 75, 0.48);
+@media (min-width: 32rem) {
+  .exercise-equipamiento-sugerido__grid {
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  }
 }
 
-#exercise-dialog h2 {
-  margin-top: 0;
-}
-
-#exercise-dialog .exercise-tags {
-  margin-bottom: 0;
+.exercise-equipamiento-sugerido__nota {
+  margin: var(--espacio-3) 0 0;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-xs);
+  line-height: 1.4;
 }
 
 .dialog-nav {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--espacio-3);
+  align-items: center;
   justify-content: space-between;
+  gap: var(--espacio-3);
   margin-top: var(--espacio-5);
   padding-top: var(--espacio-4);
-  border-top: 1px solid var(--color-borde);
 }
 
 #exercise-dialog .dialog-nav button:disabled {
   cursor: not-allowed;
-  opacity: 0.55;
+  opacity: 0.45;
 }
 
-@media (min-width: 64rem) {
-  /* Banda horizontal: los cuatro grupos en una sola fila. */
-  .filters-panel {
-    padding: var(--espacio-3) var(--espacio-4);
-  }
-
-  .filter-group {
-    gap: var(--espacio-3);
-  }
-
-  .filter-group fieldset {
-    flex: 1 1 0;
-    padding: var(--espacio-2) var(--espacio-3);
-  }
-
-  .filters-panel .btn {
-    margin-top: var(--espacio-3);
-  }
-}
-
-@media (max-width: 39.99rem) {
-  #filters-toggle {
-    grid-column: 1 / -1;
-  }
-}
-
-@media (min-width: 64rem) {
-  html.js #filters-toggle {
-    display: none;
-  }
-
-  html.js #filters-panel {
-    display: block;
-  }
-
-  .exercise-layout {
-    grid-template-columns: minmax(var(--ancho-panel-min), var(--ancho-panel-max)) minmax(0, 1fr);
-    align-items: start;
-  }
-
-  .filters-section {
-    position: sticky;
-    top: var(--desplazamiento-ancla);
-  }
-}
+/* ==========================================================================
+   8. ANIMACIONES Y ACCESIBILIDAD
+   ========================================================================== */
 
 @media (prefers-reduced-motion: no-preference) {
-  .exercise-card {
-    transition: transform var(--duracion-media) var(--curva-suave), box-shadow var(--duracion-media) var(--curva-suave), border-color var(--duracion-media) var(--curva-suave);
+  /* La clase aparece al entrar en viewport; sin ella las tarjetas siguen visibles. */
+  #exercise-list.is-visible .exercise-card {
+    animation: entrada-tarjeta var(--duracion-entrada-tarjeta) var(--curva-suave) both;
+    animation-delay: calc(var(--card-index) * var(--paso-entrada-tarjeta));
   }
 
-  .exercise-card:hover,
-  .exercise-card:focus-within {
-    border-color: var(--color-primario);
-    box-shadow: var(--sombra-flotante);
-    transform: translateY(calc(var(--elevacion-tarjeta) * -1));
+  #exercise-list.is-visible .exercise-card__encabezado,
+  #exercise-list.is-visible .exercise-card__titulo,
+  #exercise-list.is-visible .exercise-desc,
+  #exercise-list.is-visible .exercise-meta,
+  #exercise-list.is-visible .exercise-tags,
+  #exercise-list.is-visible .exercise-card__cta {
+    animation: entrada-metadata var(--duracion-entrada-tarjeta) var(--curva-suave) both;
   }
 
-  .active-filter-tag {
-    transition: background-color var(--duracion-corta) ease, color var(--duracion-corta) ease;
-    animation: chip-entrada var(--duracion-chip) ease-out;
+  #exercise-list.is-visible .exercise-card__encabezado {
+    animation-delay: calc(var(--card-index) * var(--paso-entrada-tarjeta) + 70ms);
   }
 
-  @keyframes chip-entrada {
-    from { transform: scale(0.96); }
-    to { transform: scale(1); }
+  #exercise-list.is-visible .exercise-card__titulo {
+    animation-delay: calc(var(--card-index) * var(--paso-entrada-tarjeta) + 100ms);
   }
 
-  #exercise-list.animar-entrada .exercise-card {
-    animation: entrada-tarjeta var(--duracion-entrada-tarjeta) var(--curva-suave) backwards;
+  #exercise-list.is-visible .exercise-desc,
+  #exercise-list.is-visible .exercise-meta {
+    animation-delay: calc(var(--card-index) * var(--paso-entrada-tarjeta) + 130ms);
   }
 
-  #exercise-list.animar-entrada .exercise-card:nth-child(1) { animation-delay: calc(var(--paso-entrada-tarjeta) * 0); }
-  #exercise-list.animar-entrada .exercise-card:nth-child(2) { animation-delay: calc(var(--paso-entrada-tarjeta) * 1); }
-  #exercise-list.animar-entrada .exercise-card:nth-child(3) { animation-delay: calc(var(--paso-entrada-tarjeta) * 2); }
-  #exercise-list.animar-entrada .exercise-card:nth-child(4) { animation-delay: calc(var(--paso-entrada-tarjeta) * 3); }
-  #exercise-list.animar-entrada .exercise-card:nth-child(5) { animation-delay: calc(var(--paso-entrada-tarjeta) * 4); }
-  #exercise-list.animar-entrada .exercise-card:nth-child(6) { animation-delay: calc(var(--paso-entrada-tarjeta) * 5); }
-  #exercise-list.animar-entrada .exercise-card:nth-child(7) { animation-delay: calc(var(--paso-entrada-tarjeta) * 6); }
-  #exercise-list.animar-entrada .exercise-card:nth-child(8) { animation-delay: calc(var(--paso-entrada-tarjeta) * 7); }
-  #exercise-list.animar-entrada .exercise-card:nth-child(9) { animation-delay: calc(var(--paso-entrada-tarjeta) * 8); }
+  #exercise-list.is-visible .exercise-tags {
+    animation-delay: calc(var(--card-index) * var(--paso-entrada-tarjeta) + 160ms);
+  }
+
+  #exercise-list.is-visible .exercise-card__cta {
+    animation-delay: calc(var(--card-index) * var(--paso-entrada-tarjeta) + 190ms);
+  }
 
   @keyframes entrada-tarjeta {
-    from { opacity: 0; transform: translateY(var(--desplazamiento-entrada)); }
-    to { opacity: 1; transform: none; }
+    from {
+      opacity: 0;
+      transform: translateY(var(--desplazamiento-entrada));
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes entrada-metadata {
+    from {
+      opacity: 0;
+      transform: translateY(0.45rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
 
   #exercise-dialog[open] {
@@ -940,8 +1514,14 @@ html.js #filters-panel.abierto {
   }
 
   @keyframes dialogo-entrada {
-    from { opacity: 0; transform: translateY(var(--desplazamiento-dialogo)); }
-    to { opacity: 1; transform: none; }
+    from {
+      opacity: 0;
+      transform: translateY(var(--desplazamiento-dialogo)) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
 
   #exercise-dialog[open]::backdrop {
@@ -952,24 +1532,54 @@ html.js #filters-panel.abierto {
     from { opacity: 0; }
     to { opacity: 1; }
   }
+}
 
-  .exercise-skeleton {
-    animation: pulso-esqueleto var(--duracion-pulso) ease-in-out infinite;
+@media (prefers-reduced-motion: reduce) {
+  .exercise-card,
+  .exercise-hero__visual,
+  .exercise-media__arte,
+  .exercise-media__velo:hover .exercise-media__play,
+  .exercise-card__cta,
+  .exercise-card__cta svg,
+  .category-tab,
+  .active-filter-tag,
+  .active-filters__clear-all,
+  .chip,
+  .filters-panel,
+  .dialog-video-controls button {
+    transition: none !important;
+    transform: none !important;
   }
 
-  @keyframes pulso-esqueleto {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.55; }
+  #exercise-list.is-visible .exercise-card,
+  #exercise-list.is-visible .exercise-card__encabezado,
+  #exercise-list.is-visible .exercise-card__titulo,
+  #exercise-list.is-visible .exercise-desc,
+  #exercise-list.is-visible .exercise-meta,
+  #exercise-list.is-visible .exercise-tags,
+  #exercise-list.is-visible .exercise-card__cta,
+  #exercise-dialog[open],
+  #exercise-dialog[open]::backdrop {
+    animation: none !important;
   }
 }
 
+/* Modo de contraste forzado (High Contrast / Windows Contrast Themes) */
 @media (forced-colors: active) {
   .chip,
+  .category-tab,
   .exercise-card,
   .exercise-media,
   .active-filter-tag,
   .toolbar-search input,
-  .toolbar-order select {
+  .toolbar-order select,
+  .exercise-hero__visual {
     border: 1px solid CanvasText;
+  }
+
+  .category-tab.is-active,
+  .chip:has(input[type="checkbox"]:checked) {
+    background: Highlight;
+    color: HighlightText;
   }
 }
