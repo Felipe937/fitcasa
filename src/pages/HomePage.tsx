@@ -124,7 +124,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                       <stop offset="100%" stopColor="var(--color-salvia-claro)" stopOpacity="0" />
                     </linearGradient>
                     <filter id="sombra-suave" x="-50%" y="-50%" width="200%" height="200%">
-                      <feDropShadow dx="0" dy="12" stdDeviation="20" flood-color="var(--color-primario-oscuro)" flood-opacity="0.25" />
+                      <feDropShadow dx="0" dy="12" stdDeviation="20" floodColor="var(--color-primario-oscuro)" floodOpacity="0.25" />
                     </filter>
                   </defs>
 
