@@ -35,7 +35,8 @@ const MODO_DESCRIPTIONS: Record<Modo, string> = {
 const formatTime = (seconds: number): string => {
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
-  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  const twoDigits = (value: number) => value < 10 ? `0${value}` : `${value}`;
+  return `${twoDigits(mins)}:${twoDigits(secs)}`;
 };
 
 export const PausaPlayer: React.FC<PausaPlayerProps> = ({
@@ -54,6 +55,7 @@ export const PausaPlayer: React.FC<PausaPlayerProps> = ({
   const progress = durationSeconds > 0 ? elapsedSeconds / durationSeconds : 0;
   const circumference = 2 * Math.PI * 90;
   const strokeDashoffset = circumference * (1 - progress);
+  const playerState = isFinished ? 'finished' : isRunning ? 'running' : elapsedSeconds > 0 ? 'paused' : 'ready';
 
   const [announcement, setAnnouncement] = useState<string>('');
   const [lastAnnouncedMinute, setLastAnnouncedMinute] = useState<number | null>(null);
@@ -93,6 +95,8 @@ export const PausaPlayer: React.FC<PausaPlayerProps> = ({
   }, [isRunning, elapsedSeconds, isFinished]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.target !== e.currentTarget) return;
+
     if (e.key === ' ' || e.key === 'Enter') {
       e.preventDefault();
       if (isFinished) {
@@ -112,15 +116,21 @@ export const PausaPlayer: React.FC<PausaPlayerProps> = ({
 
   return (
     <div
-      className="pausa-player"
+      className={`pausa-player pausa-player--${playerState}`}
       role="region"
       aria-label="Temporizador de pausa activa"
+      data-state={playerState}
       onKeyDown={handleKeyDown}
       tabIndex={0}
     >
-      <div className="pausa-player__modo" aria-live="polite" aria-atomic="true">
-        <span className="pausa-player__modo-label">Modalidad: </span>
-        <strong>{MODO_LABELS[modo]}</strong>
+      <div className="pausa-player__context">
+        <div className="pausa-player__modo" aria-live="polite" aria-atomic="true">
+          <span className="pausa-player__modo-label">Modalidad</span>
+          <strong>{MODO_LABELS[modo]}</strong>
+        </div>
+        <span className="pausa-player__state-label" aria-hidden="true">
+          {playerState === 'running' ? 'Respira y muévete con calma' : playerState === 'paused' ? 'Puedes continuar cuando quieras' : playerState === 'finished' ? 'Buen trabajo haciendo espacio' : 'Tu tiempo empieza cuando estés listo'}
+        </span>
       </div>
 
       {modo !== 'libre' && (
@@ -140,6 +150,12 @@ export const PausaPlayer: React.FC<PausaPlayerProps> = ({
           viewBox="0 0 200 200"
           aria-hidden="true"
         >
+          <defs>
+            <linearGradient id="pausa-progress-gradient" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0%" stopColor="var(--color-secundario)" />
+              <stop offset="100%" stopColor="var(--color-terciario)" />
+            </linearGradient>
+          </defs>
           <circle
             className="pausa-player__progress-bg"
             cx="100"
@@ -155,18 +171,29 @@ export const PausaPlayer: React.FC<PausaPlayerProps> = ({
             cy="100"
             r="90"
             fill="none"
-            stroke="var(--color-primario)"
+            stroke="url(#pausa-progress-gradient)"
             strokeWidth="12"
             strokeDasharray={circumference}
             strokeDashoffset={strokeDashoffset}
             strokeLinecap="round"
             transform="rotate(-90 100 100)"
-            style={{ transition: 'stroke-dashoffset 0.5s linear' }}
+          />
+          <circle
+            className="pausa-player__ambient-ring"
+            cx="100"
+            cy="100"
+            r="78"
+            fill="none"
+            stroke="var(--color-secundario)"
+            strokeWidth="1.5"
+            strokeDasharray="2 9"
+            transform="rotate(-90 100 100)"
           />
         </svg>
         <div className="pausa-player__time" aria-hidden="true">
           <span className="pausa-player__time-value">{formatTime(remainingSeconds)}</span>
           <span className="pausa-player__time-total">/ {formatTime(durationSeconds)}</span>
+          <span className="pausa-player__time-caption">minutos</span>
         </div>
       </div>
 
