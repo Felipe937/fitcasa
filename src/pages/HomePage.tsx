@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { PageRoute } from '../components/Header';
 import { readStorage, STORAGE_KEYS, PANEL_STORAGE_VERSION } from '../utils/storage';
 import { PanelRecord } from '../types';
@@ -24,6 +24,35 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
     if (res.available && res.value) {
       setRecordCount(res.value.length);
     }
+  }, []);
+
+  /**
+   * Entrada progresiva del recorrido: se observa la seccion una sola vez y se
+   * anade `is-visible`. Sin la clase, el CSS deja todo visible, de modo que el
+   * contenido nunca depende del script ni queda oculto si no se observa.
+   */
+  const programasRef = useRef<HTMLElement | null>(null);
+  const [programasInView, setProgramasInView] = useState(false);
+
+  useEffect(() => {
+    const el = programasRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      setProgramasInView(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setProgramasInView(true);
+            observer.disconnect();
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -8% 0px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
   }, []);
 
   /**
@@ -507,58 +536,154 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
       </section>
 
 {/* Programas */}
-      <section id="programas" aria-labelledby="titulo-programas" tabIndex={-1} className="container seccion">
-        <h2 id="titulo-programas">Un camino de tres pasos</h2>
-        <p className="seccion-intro">
-          Explora, orienta tu actividad y registra cómo te sientes.
-        </p>
+      <section
+        id="programas"
+        aria-labelledby="titulo-programas"
+        tabIndex={-1}
+        ref={programasRef}
+        className={`container seccion programas-entrada${programasInView ? ' is-visible' : ''}`}
+      >
+        <header className="programas-header">
+          <h2 id="titulo-programas">Un camino de tres pasos</h2>
+          <p className="programas-subtitulo">
+            Explora, orienta y registra. Tres momentos que se suceden sin prisa, en tu ritmo.
+          </p>
+        </header>
 
         <div className="programas-grid">
-          {/* Paso 01 · protagonista. Fondo verde bosque y una muestra real de
-              la biblioteca, sacada de los datos y no escrita a mano. */}
+          {/* Trayectoria decorativa que une las tres etapas. Solo escritorio: en
+              móvil y tableta el recorrido se lee por orden y por la pieza. */}
+          <svg
+            className="programas-trail"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path
+              d="M 61 8 C 67 24 67 42 62 50 C 58 58 58 76 61 92"
+              vectorEffect="non-scaling-stroke"
+            />
+          </svg>
+
+          {/* Paso 01 · protagonista. Escenario oscuro con la pieza escultórica
+              y una muestra real de la biblioteca, sacada de los datos. */}
           <article className="programa programa--destacado">
-            <svg
-              className="programa__motivo"
-              viewBox="0 0 320 200"
-              preserveAspectRatio="xMinYMax slice"
-              aria-hidden="true"
-              focusable="false"
-            >
-              <g fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <path d="M-20 60c54-62 108-62 162 0s108 62 162 0" />
-                <path d="M-20 110c54-62 108-62 162 0s108 62 162 0" opacity="0.62" />
-                <path d="M-20 160c54-62 108-62 162 0s108 62 162 0" opacity="0.34" />
-              </g>
-            </svg>
-            <header className="programa__cabecera">
-              <p className="programa__numero" aria-hidden="true">01</p>
-              <p className="programa__foco">Explora</p>
-            </header>
-            <h3>Biblioteca de ejercicios</h3>
-            <p className="programa__texto">
-              Filtra la colección educativa por duración, dificultad, equipamiento y zona
-              corporal, y abre cada ficha con su adaptación.
-            </p>
-            <ul className="programa__muestra" aria-label="Ejercicios de la biblioteca">
-              {biblioteca.muestra.map((e) => (
-                <li key={e.id}>
-                  <span className="programa__nombre">{e.name}</span>
-                  <span className="programa__meta">
-                    {durationLabels[e.duration]} · {zoneLabels[e.zone[0]] ?? e.zone[0]}
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <a className="card-link programa__enlace" href="#ejercicios" onClick={ir('ejercicios')}>
-              Abrir biblioteca
-            </a>
+            <figure className="programas-escena" aria-hidden="true">
+              <svg
+                className="programas-escena__svg"
+                viewBox="0 0 380 300"
+                preserveAspectRatio="xMidYMid meet"
+                focusable="false"
+                aria-hidden="true"
+              >
+                <defs>
+                  <filter
+                    id="programa-sombra-contacto"
+                    x="-40%"
+                    y="-40%"
+                    width="180%"
+                    height="180%"
+                  >
+                    <feGaussianBlur stdDeviation="5" />
+                  </filter>
+                </defs>
+
+                {/* Suelo del escenario */}
+                <ellipse
+                  cx="190"
+                  cy="274"
+                  rx="150"
+                  ry="14"
+                  fill="var(--color-primario-oscuro)"
+                  opacity="0.28"
+                />
+
+                {/* Sombras de contacto de las tres plataformas */}
+                <g
+                  filter="url(#programa-sombra-contacto)"
+                  fill="var(--color-primario-oscuro)"
+                  opacity="0.5"
+                >
+                  <ellipse cx="104" cy="252" rx="62" ry="10" />
+                  <ellipse cx="206" cy="222" rx="50" ry="9" />
+                  <ellipse cx="298" cy="178" rx="42" ry="8" />
+                </g>
+
+                {/* Plataforma 1 · origen */}
+                <g>
+                  <polygon points="36,206 148,206 148,244 36,244" fill="var(--color-secundario-oscuro)" />
+                  <polygon points="148,206 170,232 170,270 148,244" fill="var(--color-primario-oscuro)" />
+                  <polygon points="36,206 148,206 170,232 58,232" fill="var(--color-secundario)" />
+                </g>
+
+                {/* Plataforma 2 · orientación */}
+                <g>
+                  <polygon points="150,160 242,160 242,192 150,192" fill="var(--color-secundario)" />
+                  <polygon points="242,160 262,184 262,216 242,192" fill="var(--color-secundario-oscuro)" />
+                  <polygon points="150,160 242,160 262,184 170,184" fill="var(--color-salvia-claro)" />
+                </g>
+
+                {/* Plataforma 3 · cima */}
+                <g>
+                  <polygon points="250,116 324,116 324,144 250,144" fill="var(--color-salvia-claro)" />
+                  <polygon points="324,116 342,138 342,166 324,144" fill="var(--color-secundario)" />
+                  <polygon points="250,116 324,116 342,138 268,138" fill="var(--color-superficie)" />
+                </g>
+
+                {/* Cinta del recorrido que asciende por las plataformas */}
+                <path
+                  d="M 60 224 C 110 214 150 196 178 176 C 205 157 236 140 276 126"
+                  fill="none"
+                  stroke="var(--color-salvia-claro)"
+                  strokeWidth="5"
+                  strokeLinecap="round"
+                  opacity="0.9"
+                />
+                <path d="M 286 124 L 266 116 L 270 134 Z" fill="var(--color-salvia-claro)" opacity="0.9" />
+
+                {/* Acento único: esfera en la cima */}
+                <circle cx="300" cy="104" r="14" fill="var(--color-terciario)" />
+                <circle cx="295" cy="99" r="4.5" fill="var(--color-superficie)" opacity="0.35" />
+
+                {/* Acentos flotantes */}
+                <g fill="var(--color-salvia-claro)" opacity="0.4">
+                  <circle cx="60" cy="120" r="4" />
+                  <circle cx="332" cy="70" r="3" />
+                  <circle cx="120" cy="80" r="2.5" />
+                </g>
+              </svg>
+            </figure>
+
+            <div className="programa__cuerpo">
+              <header className="programa__cabecera">
+                <p className="programa__foco">Explora</p>
+              </header>
+              <h3>Biblioteca de ejercicios</h3>
+              <p className="programa__texto">
+                Filtra la colección educativa por duración, dificultad, equipamiento y zona
+                corporal, y abre cada ficha con su adaptación.
+              </p>
+              <ul className="programa__muestra" aria-label="Ejercicios de la biblioteca">
+                {biblioteca.muestra.map((e) => (
+                  <li key={e.id}>
+                    <span className="programa__nombre">{e.name}</span>
+                    <span className="programa__meta">
+                      {durationLabels[e.duration]} · {zoneLabels[e.zone[0]] ?? e.zone[0]}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <a className="card-link programa__enlace" href="#ejercicios" onClick={ir('ejercicios')}>
+                Abrir biblioteca
+              </a>
+            </div>
           </article>
 
           {/* Paso 02. Los tres pasos son los del cuestionario real:
               Actividad, Seguridad y Revisión. */}
           <article className="programa programa--orienta">
             <header className="programa__cabecera">
-              <p className="programa__numero" aria-hidden="true">02</p>
               <p className="programa__foco">Orienta</p>
             </header>
             <h3>Sugerencias de actividad</h3>
@@ -579,7 +704,6 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           {/* Paso 03. Soberanía de datos y estado local. */}
           <article className="programa programa--registra">
             <header className="programa__cabecera">
-              <p className="programa__numero" aria-hidden="true">03</p>
               <p className="programa__foco">Registra</p>
             </header>
             <h3>Seguimiento personal</h3>
@@ -601,6 +725,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                   stroke="currentColor"
                   strokeWidth="2"
                   strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
               </svg>
               <span>
@@ -617,7 +742,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           </article>
         </div>
       </section>
-{/* Escoliosis */}
+
+      {/* Escoliosis */}
       <section id="escoliosis" aria-labelledby="titulo-escoliosis" tabIndex={-1} className="container seccion">
         {/* Placa editorial: campo de tono propio, sin borde ni sombra. Las zonas
             se marcan por superficie y espacio, no por tarjetas anidadas. */}
