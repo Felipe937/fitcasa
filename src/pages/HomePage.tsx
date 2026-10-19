@@ -255,8 +255,166 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
         </div>
       </section>
 
-      {/* Beneficios */}
+{/* Beneficios */}
       <section id="beneficios" aria-labelledby="titulo-beneficios" tabIndex={-1} className="container seccion beneficios-entrada">
+        <div className="beneficios-hero" aria-hidden="true">
+          <div className="beneficios-atmosfera" />
+          <figure className="beneficios-escultura" aria-hidden="true">
+            <svg
+              className="beneficios-escultura__svg"
+              viewBox="0 0 400 500"
+              preserveAspectRatio="xMidYMid slice"
+              focusable="false"
+              aria-hidden="true"
+            >
+              <defs>
+                <linearGradient id="grad-escultura" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="var(--color-secundario)" stopOpacity="0.85" />
+                  <stop offset="35%" stopColor="var(--color-secundario-oscuro)" stopOpacity="0.95" />
+                  <stop offset="70%" stopColor="var(--color-primario)" stopOpacity="1" />
+                  <stop offset="100%" stopColor="var(--color-primario-oscuro)" stopOpacity="1" />
+                </linearGradient>
+                <linearGradient id="grad-escultura-brillo" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="var(--color-salvia-claro)" stopOpacity="0" />
+                  <stop offset="25%" stopColor="var(--color-salvia-claro)" stopOpacity="0.18" />
+                  <stop offset="50%" stopColor="var(--color-salvia-claro)" stopOpacity="0.08" />
+                  <stop offset="75%" stopColor="var(--color-salvia-claro)" stopOpacity="0.18" />
+                  <stop offset="100%" stopColor="var(--color-salvia-claro)" stopOpacity="0" />
+                </linearGradient>
+                <radialGradient id="grad-sombra-contacto" cx="50%" cy="100%" r="50%">
+                  <stop offset="0%" stopColor="var(--color-primario-oscuro)" stopOpacity="0.22" />
+                  <stop offset="60%" stopColor="var(--color-primario-oscuro)" stopOpacity="0.08" />
+                  <stop offset="100%" stopColor="var(--color-primario-oscuro)" stopOpacity="0" />
+                </radialGradient>
+                <filter id="sombra-escultura" x="-50%" y="-50%" width="200%" height="200%">
+                  <feDropShadow dx="0" dy="16" stdDeviation="24" flood-color="var(--color-primario-oscuro)" flood-opacity="0.28" />
+                </filter>
+                <filter id="brillo-sutil" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="1.5" result="blur" />
+                  <feSpecularLighting surfaceScale="2" specularConstant="0.4" specularExponent="20" lighting-color="var(--color-salvia-claro)" result="specOut">
+                    <fePointLight x="200" y="-100" z="200" />
+                  </feSpecularLighting>
+                  <feComposite in="specOut" in2="SourceAlpha" operator="in" result="specIn" />
+                  <feComposite in="SourceGraphic" in2="specIn" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" />
+                </filter>
+              </defs>
+
+              {/* Sombra de contacto en el suelo */}
+              <ellipse
+                cx="200"
+                cy="475"
+                rx="130"
+                ry="22"
+                fill="url(#grad-sombra-contacto)"
+                filter="url(#sombra-escultura)"
+              />
+
+              {/* Forma escultórica principal: equilibrio y movimiento */}
+              <g filter="url(#sombra-escultura)">
+                {/* Base escultórica: forma orgánica que sugiere equilibrio */}
+                <path
+                  d="M200 420 
+                     Q 140 400  120 340 
+                     Q 100 280  130 220 
+                     Q 160 160  200 130 
+                     Q 240 160  280 220 
+                     Q 310 280  290 340 
+                     Q 270 400  230 420 Z"
+                  fill="url(#grad-escultura)"
+                  stroke="var(--color-primario-oscuro)"
+                  strokeWidth="1.2"
+                  filter="url(#sombra-escultura)"
+                />
+
+                {/* Núcleo central: eje de equilibrio */}
+                <path
+                  d="M200 180 
+                     Q 202 220  200 250 
+                     Q 198 280  200 310 
+                     Q 202 340  200 370 
+                     Q 198 400  200 400"
+                  fill="none"
+                  stroke="url(#grad-escultura-brillo)"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  opacity="0.7"
+                  strokeLinejoin="round"
+                />
+
+                {/* Anillos de equilibrio: sugieren movimiento y centro de gravedad */}
+                <g opacity="0.35" stroke="var(--color-salvia-claro)" strokeWidth="1.5" fill="none" strokeLinecap="round">
+                  <ellipse cx="200" cy="300" rx="85" ry="28" />
+                  <ellipse cx="200" cy="260" rx="65" ry="22" />
+                  <ellipse cx="200" cy="220" rx="45" ry="16" />
+                </g>
+
+                {/* Puntos de anclaje: sugerencia de puntos de contacto y apoyo */}
+                <g fill="var(--color-salvia-claro)" opacity="0.55">
+                  <circle cx="135" cy="340" r="4" />
+                  <circle cx="265" cy="340" r="4" />
+                  <circle cx="155" cy="260" r="3" />
+                  <circle cx="245" cy="260" r="3" />
+                  <circle cx="180" cy="200" r="3" />
+                  <circle cx="220" cy="200" r="3" />
+                </g>
+
+                {/* Línea de energía central: columna vertebral estilizada */}
+                <path
+                  d="M200 130 
+                     Q 200 160  200 190 
+                     Q 200 220  200 250 
+                     Q 200 280  200 310 
+                     Q 200 340  200 370"
+                  fill="none"
+                  stroke="var(--color-salvia-claro)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  opacity="0.25"
+                  strokeDasharray="4 6"
+                />
+
+                {/* Halo superior: corona de luz */}
+                <ellipse
+                  cx="200"
+                  cy="125"
+                  rx="45"
+                  ry="18"
+                  fill="url(#grad-escultura-brillo)"
+                  opacity="0.5"
+                />
+              </g>
+
+              {/* Partículas de energía flotantes alrededor */}
+              <g opacity="0.25" fill="var(--color-secundario)">
+                <circle cx="85" cy="110" r="3" />
+                <circle cx="330" cy="95" r="2.5" />
+                <circle cx="55" cy="280" r="3.5" />
+                <circle cx="355" cy="265" r="2.5" />
+                <circle cx="45" cy="400" r="3" />
+                <circle cx="365" cy="385" r="2.5" />
+                <circle cx="95" cy="380" r="2" />
+                <circle cx="325" cy="410" r="2.5" />
+              </g>
+
+              {/* Líneas de flujo energético */}
+              <g stroke="var(--color-salvia-claro)" strokeWidth="1.2" strokeLinecap="round" opacity="0.2" fill="none">
+                <path d="M110 320 Q 130 300  145 275 Q 160 250  175 225" />
+                <path d="M290 320 Q 270 300  255 275 Q 240 250  225 225" />
+                <path d="M95 390 Q 115 370  135 345" strokeDasharray="3 6" />
+                <path d="M305 390 Q 285 370  265 345" strokeDasharray="3 6" />
+              </g>
+            </svg>
+          </figure>
+
+          {/* Capas atmosféricas de fondo */}
+          <div className="beneficios-capas-atmosfericas" aria-hidden="true">
+            <div className="beneficios-capa beneficios-capa--1" />
+            <div className="beneficios-capa beneficios-capa--2" />
+            <div className="beneficios-capa beneficios-capa--3" />
+            <div className="beneficios-malla-luz" />
+          </div>
+        </div>
+
         <h2 id="titulo-beneficios">Beneficios del ejercicio en casa</h2>
         <ul className="beneficios-grid">
           {/* Protagonista: ocupa 2x2 de la retícula en escritorio. */}
