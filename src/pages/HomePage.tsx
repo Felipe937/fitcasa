@@ -287,11 +287,11 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                   <stop offset="100%" stopColor="var(--color-primario-oscuro)" stopOpacity="0" />
                 </radialGradient>
                 <filter id="sombra-escultura" x="-50%" y="-50%" width="200%" height="200%">
-                  <feDropShadow dx="0" dy="16" stdDeviation="24" flood-color="var(--color-primario-oscuro)" flood-opacity="0.28" />
+                  <feDropShadow dx="0" dy="16" stdDeviation="24" floodColor="var(--color-primario-oscuro)" floodOpacity="0.28" />
                 </filter>
                 <filter id="brillo-sutil" x="-50%" y="-50%" width="200%" height="200%">
                   <feGaussianBlur stdDeviation="1.5" result="blur" />
-                  <feSpecularLighting surfaceScale="2" specularConstant="0.4" specularExponent="20" lighting-color="var(--color-salvia-claro)" result="specOut">
+                  <feSpecularLighting surfaceScale="2" specularConstant="0.4" specularExponent="20" lightingColor="var(--color-salvia-claro)" result="specOut">
                     <fePointLight x="200" y="-100" z="200" />
                   </feSpecularLighting>
                   <feComposite in="specOut" in2="SourceAlpha" operator="in" result="specIn" />
