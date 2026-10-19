@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { EXERCISES_DATA } from '../data/exercisesData';
 import {
   QuizAnswers,
@@ -19,6 +19,7 @@ import {
   STORAGE_KEYS,
   QUIZ_STORAGE_VERSION,
 } from '../utils/storage';
+import QuizSculpture from '../components/QuizSculpture';
 
 export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
   onStorageCleared,
@@ -43,6 +44,7 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
 
   const [results, setResults] = useState<QuizResult | null>(null);
   const [showExportModal, setShowExportModal] = useState<boolean>(false);
+  const previousStep = useRef(currentStep);
 
   // Restore saved quiz answers
   useEffect(() => {
@@ -77,6 +79,18 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
       }
     }
   }, []);
+
+  useEffect(() => {
+    if (previousStep.current === currentStep) return;
+
+    previousStep.current = currentStep;
+    const headingId = `step-${currentStep === 1 ? 'one' : currentStep === 2 ? 'two' : 'three'}-heading`;
+    const frame = window.requestAnimationFrame(() => {
+      document.getElementById(headingId)?.focus();
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [currentStep]);
 
   const validateStep1 = (): boolean => {
     const errors: Record<string, string> = {};
@@ -228,12 +242,17 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
   const stepTitles = ['actividad disponible', 'preguntas de seguridad', 'revisar y generar'];
 
   return (
-    <main id="contenido" tabIndex={-1} className="container app-main">
-      <span className="quiz-eyebrow">Orientación personalizada</span>
-      <h1 className="quiz-titulo">Sugerencias de actividad</h1>
-      <p className="quiz-intro">
-        Responde unas preguntas generales para organizar una propuesta educativa a partir de la biblioteca disponible.
-      </p>
+    <main id="contenido" tabIndex={-1} className="container app-main quiz-page">
+      <section className="quiz-hero" aria-labelledby="quiz-page-title">
+        <div className="quiz-hero__copy">
+          <p className="quiz-context">Orientación personalizada</p>
+          <h1 id="quiz-page-title" className="quiz-titulo">Sugerencias de actividad</h1>
+          <p className="quiz-intro">
+            Responde unas preguntas generales para organizar una propuesta educativa a partir de la biblioteca disponible.
+          </p>
+        </div>
+        <QuizSculpture />
+      </section>
 
       <div className="quiz-notice quiz-notice--salud" role="note">
         <svg className="quiz-notice__icono" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
@@ -267,10 +286,16 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
               <li
                 key={s.num}
                 className="quiz-stepper__item"
+                data-state={isCompleted ? 'completed' : isCurrent ? 'current' : 'upcoming'}
                 aria-current={isCurrent ? 'step' : undefined}
+                aria-label={`${s.label}: ${isCurrent ? 'etapa actual' : isCompleted ? 'completada' : 'pendiente'}`}
               >
                 <span className="quiz-stepper__numero">
-                  {isCompleted ? '✓' : s.num}
+                  {isCompleted ? (
+                    <svg viewBox="0 0 16 16" focusable="false" aria-hidden="true">
+                      <path d="m3 8.5 3.1 3.1L13 4.9" />
+                    </svg>
+                  ) : s.num}
                 </span>
                 <span className="quiz-stepper__etiqueta">{s.label}</span>
               </li>
@@ -282,27 +307,12 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
         </div>
       </nav>
 
-      <section className="app-card" aria-labelledby="quiz-heading">
+      <section className={`app-card quiz-card quiz-card--step-${currentStep}`} aria-labelledby="quiz-heading">
         <h2 id="quiz-heading">Cuestionario</h2>
 
         <p id="quiz-progress-text" className="progress-text" aria-live="polite">
           Paso {currentStep} de 3: {stepTitles[currentStep - 1]}.
         </p>
-
-        <div
-          className="progress-track"
-          role="progressbar"
-          aria-labelledby="quiz-progress-text"
-          aria-valuemin={1}
-          aria-valuemax={3}
-          aria-valuenow={currentStep}
-        >
-          <span
-            id="quiz-progress-value"
-            className="progress-value"
-            style={{ width: `${(currentStep / 3) * 100}%` }}
-          ></span>
-        </div>
 
         <form id="quiz-form" noValidate onSubmit={handleGenerate}>
           {/* Paso 1: Preferencias de actividad y contexto opcional */}
@@ -617,7 +627,7 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
                 )}
               </fieldset>
 
-              <div className="mt-4 p-3 rounded bg-[var(--color-fondo-alerta)] border border-[var(--color-terciario-oscuro)] text-xs text-[var(--color-terciario-oscuro)]">
+              <div className="safety-card__reminder mt-4 p-3 rounded bg-[var(--color-fondo-alerta)] border border-[var(--color-terciario-oscuro)] text-xs text-[var(--color-terciario-oscuro)]">
                 <strong>Recordatorio clínico importante:</strong> si eres menor de edad en etapa de crecimiento activo o utilizas corsé ortopédico, cualquier rutina de ejercicios debe coordinarse directamente con tu médico ortopedista o fisioterapeuta especialista en escoliosis.
               </div>
             </section>
@@ -632,43 +642,59 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
               <p>Revisa tus respuestas antes de generar la propuesta educativa.</p>
 
               <div id="answer-summary" className="review-summary">
-                <h4>Tus respuestas</h4>
-                <div className="review-grid">
-                  <div className="review-item">
-                    <span className="review-label">Objetivo</span>
-                    <span className="review-valor">{objective ? objectiveLabels[objective] : 'No seleccionado'}</span>
+                <h4 className="review-summary__title">Tus respuestas</h4>
+
+                <div className="review-group">
+                  <h5 className="review-group__title">Actividad disponible</h5>
+                  <div className="review-grid">
+                    <div className="review-item">
+                      <span className="review-label">Objetivo</span>
+                      <span className="review-valor">{objective ? objectiveLabels[objective] : 'No seleccionado'}</span>
+                    </div>
+                    <div className="review-item">
+                      <span className="review-label">Días por semana</span>
+                      <span className="review-valor review-valor--numeric">{days} {days === '1' ? 'día' : 'días'}</span>
+                    </div>
+                    <div className="review-item">
+                      <span className="review-label">Tiempo por sesión</span>
+                      <span className="review-valor review-valor--numeric">{time ? timeLabels[time] : 'No seleccionado'}</span>
+                    </div>
+                    <div className="review-item">
+                      <span className="review-label">Nivel</span>
+                      <span className="review-valor">{level ? levelLabels[level] : 'No seleccionado'}</span>
+                    </div>
+                    <div className="review-item">
+                      <span className="review-label">Equipamiento</span>
+                      <span className="review-valor">{equipment.map((eq) => equipmentLabels[eq]).join(', ')}</span>
+                    </div>
                   </div>
-                  <div className="review-item">
-                    <span className="review-label">Días por semana</span>
-                    <span className="review-valor">{days} {days === '1' ? 'día' : 'días'}</span>
+                </div>
+
+                <div className="review-group">
+                  <h5 className="review-group__title">Contexto declarado</h5>
+                  <div className="review-grid">
+                    <div className="review-item review-item--wide">
+                      <span className="review-label">Contexto escoliosis</span>
+                      <span className="review-valor">{scoliosisLabels[scoliosisContext]}</span>
+                    </div>
                   </div>
-                  <div className="review-item">
-                    <span className="review-label">Tiempo por sesión</span>
-                    <span className="review-valor">{time ? timeLabels[time] : 'No seleccionado'}</span>
-                  </div>
-                  <div className="review-item">
-                    <span className="review-label">Nivel</span>
-                    <span className="review-valor">{level ? levelLabels[level] : 'No seleccionado'}</span>
-                  </div>
-                  <div className="review-item">
-                    <span className="review-label">Equipamiento</span>
-                    <span className="review-valor">{equipment.map((eq) => equipmentLabels[eq]).join(', ')}</span>
-                  </div>
-                  <div className="review-item">
-                    <span className="review-label">Contexto escoliosis</span>
-                    <span className="review-valor">{scoliosisLabels[scoliosisContext]}</span>
-                  </div>
-                  <div className="review-item">
-                    <span className="review-label">Cirugía sin autorización</span>
-                    <span className="review-valor">{surgeryNoAuth === 'si' ? 'Sí' : 'No'}</span>
-                  </div>
-                  <div className="review-item">
-                    <span className="review-label">Restricción clínica</span>
-                    <span className="review-valor">{clinicalRestriction === 'si' ? 'Sí' : 'No'}</span>
-                  </div>
-                  <div className="review-item">
-                    <span className="review-label">Síntomas preocupantes</span>
-                    <span className="review-valor">{concerningSymptoms === 'si' ? 'Sí' : 'No'}</span>
+                </div>
+
+                <div className="review-group">
+                  <h5 className="review-group__title">Preguntas de seguridad</h5>
+                  <div className="review-grid">
+                    <div className="review-item">
+                      <span className="review-label">Cirugía sin autorización</span>
+                      <span className="review-valor">{surgeryNoAuth === 'si' ? 'Sí' : 'No'}</span>
+                    </div>
+                    <div className="review-item">
+                      <span className="review-label">Restricción clínica</span>
+                      <span className="review-valor">{clinicalRestriction === 'si' ? 'Sí' : 'No'}</span>
+                    </div>
+                    <div className="review-item review-item--wide">
+                      <span className="review-label">Síntomas preocupantes</span>
+                      <span className="review-valor">{concerningSymptoms === 'si' ? 'Sí' : 'No'}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -821,7 +847,7 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
                   ))}
                 </div>
 
-                <p className="quiz-notice quiz-notice--salud mt-4" role="note">
+                <div className="quiz-notice quiz-notice--salud mt-4" role="note">
                   <svg className="quiz-notice__icono" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
                     <path d="M12 2.65C6.68 2.65 2.35 6.97 2.35 12.29c0 1.54.46 2.99 1.24 4.27-.1.36-.15.73-.15 1.11 0 3.97 2.6 7.28 5.89 8.26.15.04.31.07.47.07h.01c.5 0 .93-.39.96-.88.06-.92-.68-3.44-1.41-5.64-1.7-.88-3.39-2.68-3.39-5.24 0-1.4.48-2.69 1.34-3.64 1.37-.09 2.31 1.33 2.57 2.07.62.17 1.23.26 1.87.26 2.94 0 5.32-2.39 5.32-5.33 0-2.83-2.26-5.14-5.05-5.14zm-.02 16.71c-1.11 0-2.01-.91-2.01-2.02s.9-2.02 2.01-2.02c1.11 0 2.01.91 2.01 2.02 0 1.11-.9 2.02-2.01 2.02zm0-10.88c-1.03 0-1.88.85-1.88 1.87s.85 1.88 1.88 1.88c1.04 0 1.89-.84 1.89-1.88s-.85-1.87-1.89-1.87z" fill="var(--color-terciario-oscuro)"/>
                   </svg>
@@ -831,7 +857,7 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
                       Detén la actividad si aparece dolor intenso, debilidad, entumecimiento u otros síntomas inusuales y consulta con un profesional. La etiqueta de la biblioteca no sustituye una valoración individual.
                     </p>
                   </div>
-                </p>
+                </div>
               </>
             )}
           </div>
@@ -846,6 +872,9 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
             aria-modal="true"
             aria-labelledby="export-title"
             onClick={() => setShowExportModal(false)}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') setShowExportModal(false);
+            }}
           >
             <div
               className="export-card"
@@ -865,7 +894,7 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
                 className="btn secondary text-xs"
                 onClick={() => setShowExportModal(false)}
               >
-                ✕ Cerrar
+                Cerrar
               </button>
             </div>
 
@@ -917,7 +946,7 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
                 className="btn"
                 onClick={handlePrintClinicalSummary}
               >
-                🖨️ Imprimir documento
+                Imprimir documento
               </button>
             </div>
           </div>
