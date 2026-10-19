@@ -287,7 +287,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                   <stop offset="100%" stopColor="var(--color-primario-oscuro)" stopOpacity="0" />
                 </radialGradient>
                 <filter id="sombra-escultura" x="-50%" y="-50%" width="200%" height="200%">
-                  <feDropShadow dx="0" dy="16" stdDeviation="24" flood-color="var(--color-primario-oscuro)" flood-opacity="0.28" />
+                  <feDropShadow dx="0" dy="16" stdDeviation="24" floodColor="var(--color-primario-oscuro)" floodOpacity="0.28" />
                 </filter>
                 <filter id="brillo-sutil" x="-50%" y="-50%" width="200%" height="200%">
                   <feGaussianBlur stdDeviation="1.5" result="blur" />
@@ -415,7 +415,14 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           </div>
         </div>
 
-        <h2 id="titulo-beneficios">Beneficios del ejercicio en casa</h2>
+        <header className="beneficios-header">
+          <h2 id="titulo-beneficios">Beneficios del ejercicio en casa</h2>
+          <p className="beneficios-subtitulo">
+            El movimiento consciente transforma tu día a día. Cada beneficio nace de la constancia,
+            no de la intensidad.
+          </p>
+        </header>
+
         <ul className="beneficios-grid">
           {/* Protagonista: ocupa 2x2 de la retícula en escritorio. */}
           <li className="beneficio beneficio--destacado">
