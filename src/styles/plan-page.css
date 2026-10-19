@@ -28,7 +28,7 @@
   text-align: center;
 }
 
-.plan-page__kicker {
+.plan-page__context {
   display: inline-flex;
   align-items: center;
   gap: var(--espacio-2);
@@ -43,7 +43,7 @@
   text-transform: uppercase;
 }
 
-.plan-page__kicker::before {
+.plan-page__context::before {
   width: 0.5rem;
   height: 0.5rem;
   content: "";
@@ -380,14 +380,6 @@
   color: var(--color-secundario-oscuro);
 }
 
-.plan-page__semana-tab--completa:not(.plan-page__semana-tab--activa)::after {
-  content: "✓";
-  margin-top: var(--espacio-1);
-  color: var(--color-secundario);
-  font-size: var(--texto-xs);
-  font-weight: 800;
-}
-
 .plan-page__semana-numero {
   font-weight: 800;
 }
@@ -685,5 +677,756 @@
   .plan-page__revisar,
   .btn {
     border: 1px solid CanvasText;
+  }
+}
+
+/* ========================================================================
+   Viaje de cuatro semanas — composición editorial del plan
+   ======================================================================== */
+.plan-page--journey {
+  max-width: min(100% - 2rem, 78rem);
+  padding-block: clamp(var(--espacio-5), 5vw, var(--espacio-8)) var(--espacio-9);
+}
+
+.plan-page--journey .plan-page__header {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(18rem, 1.05fr);
+  align-items: end;
+  gap: clamp(var(--espacio-6), 7vw, var(--espacio-9));
+  max-width: none;
+  margin: 0 0 clamp(var(--espacio-6), 6vw, var(--espacio-8));
+  padding: clamp(var(--espacio-4), 5vw, var(--espacio-7)) 0 0;
+  text-align: left;
+}
+
+.plan-page--journey .plan-page__hero-copy {
+  position: relative;
+  z-index: 1;
+  max-width: 38rem;
+}
+
+.plan-page--journey .plan-page__context {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: 0;
+  margin: 0 0 var(--espacio-4);
+  color: var(--color-secundario-oscuro);
+  background: transparent;
+  border-radius: 0;
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.plan-page--journey .plan-page__context::before {
+  width: 0.65rem;
+  height: 0.65rem;
+  background: var(--color-terciario);
+  border-radius: 0;
+  transform: rotate(45deg);
+}
+
+.plan-page--journey .plan-page__titulo {
+  max-width: 8ch;
+  margin-bottom: var(--espacio-4);
+  font-size: clamp(3.2rem, 2rem + 5vw, 6.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.06em;
+}
+
+.plan-page__hero-lead {
+  max-width: 39ch;
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-lg);
+  line-height: 1.55;
+}
+
+.plan-sculpture {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: clamp(16rem, 35vw, 25rem);
+  margin: 0;
+}
+
+.plan-sculpture__svg {
+  display: block;
+  width: min(100%, 31rem);
+  height: auto;
+  overflow: visible;
+}
+
+.plan-sculpture figcaption {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  max-width: 15rem;
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-xs);
+  line-height: 1.45;
+  text-align: right;
+}
+
+.plan-sculpture__orbit {
+  fill: none;
+  stroke: var(--color-salvia-claro);
+  stroke-width: 1.25;
+}
+
+.plan-sculpture__orbit--one {
+  opacity: 0.75;
+  stroke-dasharray: 2 9;
+}
+
+.plan-sculpture__orbit--two {
+  opacity: 0.45;
+  transform: rotate(22deg);
+  transform-origin: center;
+}
+
+.plan-sculpture__shadow {
+  fill: var(--color-primario-oscuro);
+  opacity: 0.12;
+}
+
+.plan-sculpture__route {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.plan-sculpture__route--deep { stroke: var(--color-primario-oscuro); stroke-width: 24; }
+.plan-sculpture__route--sage { stroke: var(--color-secundario); stroke-width: 19; }
+.plan-sculpture__route--clay { stroke: var(--color-terciario); stroke-width: 14; }
+.plan-sculpture__route--light { stroke: var(--color-salvia-claro); stroke-width: 8; }
+
+.plan-sculpture__node {
+  fill: var(--color-fondo);
+  stroke-width: 3;
+}
+
+.plan-sculpture__node--one { stroke: var(--color-terciario); }
+.plan-sculpture__node--two { stroke: var(--color-primario); }
+.plan-sculpture__node--three { stroke: var(--color-secundario); }
+
+.plan-sculpture__spark {
+  fill: none;
+  stroke: var(--color-terciario);
+  stroke-linecap: round;
+  stroke-width: 2;
+}
+
+.plan-page--journey .plan-page__resumen {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--espacio-5);
+  max-width: none;
+  margin: var(--espacio-5) 0 0;
+  padding: var(--espacio-4) var(--espacio-5);
+  background: var(--color-fondo-verde);
+  border: 0;
+  border-radius: var(--radio-md);
+  box-shadow: none;
+}
+
+.plan-page--journey .plan-page__etiquetas {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--espacio-3) var(--espacio-6);
+}
+
+.plan-page--journey .plan-page__etiquetas dd {
+  color: var(--color-primario-oscuro);
+  font-size: var(--texto-base);
+  font-variant-numeric: tabular-nums;
+}
+
+.plan-page--journey .plan-page__revisar {
+  color: var(--color-sobre-primario);
+  background: var(--color-primario);
+  border: 2px solid var(--color-primario);
+  border-radius: var(--radio-md);
+}
+
+.plan-page--journey .plan-page__revisar:hover {
+  color: var(--color-sobre-primario);
+  background: var(--color-primario-oscuro);
+  border-color: var(--color-primario-oscuro);
+  transform: translate3d(0, -0.1rem, 0);
+}
+
+.plan-page--journey .plan-page__progreso-global {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--espacio-2) var(--espacio-4);
+  max-width: none;
+  margin: 0 0 var(--espacio-6);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.plan-page--journey .plan-page__progreso-barra {
+  grid-column: 1 / -1;
+  height: 0.5rem;
+  background: var(--color-borde);
+  border-radius: var(--radio-pill);
+}
+
+.plan-page--journey .plan-page__progreso-relleno {
+  background: var(--color-primario);
+  transition: width var(--duracion-media) var(--curva-suave);
+}
+
+.plan-page--journey .plan-page__progreso-texto {
+  margin: 0;
+  color: var(--color-primario-oscuro);
+  font-size: var(--texto-sm);
+  font-variant-numeric: tabular-nums;
+  text-align: left;
+}
+
+.plan-page--journey .plan-page__anuncio {
+  grid-column: 2;
+  grid-row: 2;
+  margin: 0;
+  color: var(--color-secundario-oscuro);
+  font-size: var(--texto-xs);
+  text-align: right;
+}
+
+.plan-page__mapa {
+  max-width: none;
+  margin: 0 0 var(--espacio-6);
+  padding: var(--espacio-4) var(--espacio-5) var(--espacio-3);
+  color: var(--color-superficie);
+  background: var(--color-primario-oscuro);
+  border-radius: var(--radio-lg);
+  overflow: hidden;
+}
+
+.plan-page__mapa-svg {
+  display: block;
+  width: 100%;
+  height: clamp(8rem, 18vw, 11rem);
+  overflow: visible;
+}
+
+.plan-page__mapa-trazo,
+.plan-page__mapa-avance {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.plan-page__mapa-trazo { stroke: rgba(168, 196, 184, 0.35); }
+.plan-page__mapa-avance {
+  stroke: var(--color-terciario);
+  stroke-dasharray: 100;
+  transition: stroke-dashoffset var(--duracion-media) var(--curva-suave);
+}
+
+.plan-page__mapa-nodo-anillo,
+.plan-page__mapa-nodo-centro {
+  vector-effect: non-scaling-stroke;
+}
+
+.plan-page__mapa-nodo-anillo {
+  fill: var(--color-primario-oscuro);
+  stroke: var(--color-salvia-claro);
+  stroke-width: 2;
+  transition: fill var(--duracion-corta) ease, stroke var(--duracion-corta) ease, stroke-width var(--duracion-corta) ease;
+}
+
+.plan-page__mapa-nodo-centro {
+  fill: var(--color-salvia-claro);
+  transition: fill var(--duracion-corta) ease, transform var(--duracion-corta) var(--curva-suave);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.plan-page__mapa-nodo-numero {
+  fill: var(--color-primario-oscuro);
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-anchor: middle;
+}
+
+.plan-page__mapa-nodo--activa .plan-page__mapa-nodo-anillo {
+  fill: var(--color-superficie);
+  stroke: var(--color-terciario);
+  stroke-width: 3;
+}
+
+.plan-page__mapa-nodo--activa .plan-page__mapa-nodo-centro { fill: var(--color-terciario); transform: scale(1.15); }
+.plan-page__mapa-nodo--completada .plan-page__mapa-nodo-anillo { stroke: var(--color-superficie); }
+.plan-page__mapa-nodo--completada .plan-page__mapa-nodo-centro { fill: var(--color-secundario); }
+.plan-page__mapa-nodo--en-progreso .plan-page__mapa-nodo-centro { fill: var(--color-terciario); }
+
+.plan-page__mapa-leyenda {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--espacio-3);
+  color: var(--color-salvia-claro);
+  font-size: var(--texto-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.plan-page--journey .plan-page__semanas {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--espacio-3);
+  max-width: none;
+  margin: 0 0 var(--espacio-6);
+  padding: 0;
+}
+
+.plan-page--journey .plan-page__semana-tab {
+  display: grid;
+  grid-template-columns: 2.7rem minmax(0, 1fr);
+  align-items: center;
+  gap: var(--espacio-3);
+  min-width: 0;
+  max-width: none;
+  min-height: 4.5rem;
+  padding: var(--espacio-3) var(--espacio-4);
+  color: var(--color-texto);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+  text-align: left;
+  transition: background-color var(--duracion-corta) ease, border-color var(--duracion-corta) ease, color var(--duracion-corta) ease, transform var(--duracion-corta) var(--curva-suave);
+}
+
+.plan-page--journey .plan-page__semana-tab:hover {
+  color: var(--color-primario-oscuro);
+  background: var(--color-fondo-verde);
+  border-color: var(--color-secundario);
+  transform: translate3d(0, -0.12rem, 0);
+}
+
+.plan-page--journey .plan-page__semana-tab--activa {
+  color: var(--color-superficie);
+  background: var(--color-primario);
+  border-color: var(--color-primario);
+}
+
+.plan-page--journey .plan-page__semana-tab--activa:hover {
+  color: var(--color-superficie);
+  background: var(--color-primario-oscuro);
+  border-color: var(--color-primario-oscuro);
+}
+
+.plan-page--journey .plan-page__semana-tab--completa:not(.plan-page__semana-tab--activa) {
+  color: var(--color-secundario-oscuro);
+  background: var(--color-fondo-verde);
+  border-color: var(--color-secundario);
+}
+
+.plan-page--journey .plan-page__semana-tab--completa:not(.plan-page__semana-tab--activa)::after {
+  content: none;
+}
+
+.plan-page__semana-anillo {
+  display: block;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.plan-page__semana-anillo svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.plan-page__semana-anillo-fondo,
+.plan-page__semana-anillo-avance {
+  fill: none;
+  stroke-width: 3;
+}
+
+.plan-page__semana-anillo-fondo { stroke: var(--color-borde); }
+.plan-page__semana-anillo-avance {
+  stroke: var(--color-secundario);
+  stroke-dasharray: 100;
+  transition: stroke-dashoffset var(--duracion-media) var(--curva-suave);
+}
+
+.plan-page__semana-anillo text {
+  fill: var(--color-primario-oscuro);
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-anchor: middle;
+  transform: rotate(90deg);
+  transform-origin: center;
+}
+
+.plan-page__semana-tab--activa .plan-page__semana-anillo-fondo { stroke: rgba(255, 255, 255, 0.3); }
+.plan-page__semana-tab--activa .plan-page__semana-anillo-avance { stroke: var(--color-terciario); }
+.plan-page__semana-tab--activa .plan-page__semana-anillo text { fill: var(--color-superficie); }
+
+.plan-page__semana-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.plan-page--journey .plan-page__semana-numero {
+  font-size: var(--texto-sm);
+  font-weight: 800;
+}
+
+.plan-page--journey .plan-page__semana-estado {
+  color: currentColor;
+  font-size: var(--texto-xs);
+  font-variant-numeric: tabular-nums;
+  opacity: 0.75;
+}
+
+.plan-page--journey .plan-page__panel-semana {
+  max-width: none;
+  margin: 0;
+  animation: plan-journey-enter var(--duracion-media) var(--curva-suave) both;
+}
+
+@keyframes plan-journey-enter {
+  from { opacity: 0; transform: translate3d(0, 0.5rem, 0); }
+  to { opacity: 1; transform: none; }
+}
+
+.plan-page--journey .plan-page__semana-foco {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  align-items: end;
+  gap: var(--espacio-6);
+  margin: 0 0 var(--espacio-5);
+  padding: var(--espacio-5) 0;
+  background: transparent;
+  border-radius: 0;
+  text-align: left;
+}
+
+.plan-page--journey .plan-page__semana-titulo {
+  max-width: 18ch;
+  margin: 0;
+  color: var(--color-primario-oscuro);
+  font-size: clamp(var(--texto-xl), 1.1rem + 1.4vw, var(--texto-2xl));
+}
+
+.plan-page--journey .plan-page__semana-descripcion {
+  max-width: 45ch;
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-base);
+}
+
+.plan-page--journey .plan-page__sesiones {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+  gap: var(--espacio-4);
+}
+
+.plan-page--journey .plan-page__sesion {
+  min-width: 0;
+  padding: var(--espacio-5);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+  box-shadow: none;
+  transition: background-color var(--duracion-corta) ease, border-color var(--duracion-corta) ease, transform var(--duracion-corta) var(--curva-suave);
+}
+
+.plan-page--journey .plan-page__sesion:hover {
+  background: var(--color-fondo-verde);
+  border-color: var(--color-secundario);
+  box-shadow: none;
+  transform: translate3d(0, -0.15rem, 0);
+}
+
+.plan-page--journey .plan-page__sesion--completada {
+  background: var(--color-fondo-verde);
+  border-color: var(--color-secundario);
+}
+
+.plan-page--journey .plan-page__sesion-cabecera {
+  align-items: flex-start;
+  margin-bottom: var(--espacio-4);
+}
+
+.plan-page--journey .plan-page__sesion-numero {
+  color: var(--color-primario-oscuro);
+  font-size: var(--texto-xl);
+  font-variant-numeric: tabular-nums;
+}
+
+.plan-page__sesion-titulo {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+}
+
+.plan-page__sesion-estado {
+  display: inline-grid;
+  width: 1.45rem;
+  height: 1.45rem;
+  place-items: center;
+  color: var(--color-superficie);
+  background: var(--color-secundario-oscuro);
+  border-radius: 50%;
+}
+
+.plan-page__sesion-estado svg {
+  width: 0.85rem;
+  height: 0.85rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.25;
+}
+
+.plan-page--journey .plan-page__sesion--completada .plan-page__sesion-numero::after {
+  content: ' · completada';
+  color: var(--color-secundario-oscuro);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.plan-page--journey .plan-page__checkbox-label {
+  color: var(--color-primario-oscuro);
+  font-weight: 700;
+}
+
+.plan-page--journey .plan-page__checkbox:focus-visible {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 3px;
+}
+
+.plan-page--journey .plan-page__ejercicios {
+  gap: var(--espacio-2);
+}
+
+.plan-page--journey .plan-page__ejercicio {
+  align-items: flex-start;
+  padding: var(--espacio-3);
+  background: var(--color-superficie-suave);
+  border: 0;
+  border-radius: var(--radio-sm);
+}
+
+.plan-page--journey .plan-page__ejercicio-enlace {
+  color: var(--color-primario);
+  transition: color var(--duracion-corta) ease, transform var(--duracion-corta) var(--curva-suave);
+}
+
+.plan-page--journey .plan-page__ejercicio-enlace:hover {
+  color: var(--color-primario-oscuro);
+  transform: translate3d(0.15rem, 0, 0);
+}
+
+.plan-page--journey .plan-page__sesion-acciones {
+  padding-top: var(--espacio-4);
+  border-top: 0;
+}
+
+.plan-page--journey .plan-page__btn-panel {
+  color: var(--color-secundario-oscuro);
+  background: transparent;
+  border-color: var(--color-secundario);
+  transition: background-color var(--duracion-corta) ease, color var(--duracion-corta) ease, transform var(--duracion-corta) var(--curva-suave);
+}
+
+.plan-page--journey .plan-page__btn-panel:hover {
+  color: var(--color-superficie);
+  background: var(--color-secundario);
+  border-color: var(--color-secundario);
+  transform: translate3d(0, -0.1rem, 0);
+}
+
+.plan-page--journey button:active:not(:disabled),
+.plan-page--journey .plan-page__ejercicio-enlace:active {
+  transform: scale(0.985);
+}
+
+.plan-page--journey button:focus-visible,
+.plan-page--journey a:focus-visible,
+.plan-page--journey input:focus-visible {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .plan-page--journey .plan-page__hero-copy > * {
+    animation: plan-copy-enter 560ms var(--curva-suave) both;
+  }
+
+  .plan-page--journey .plan-page__hero-copy > :nth-child(2) { animation-delay: 80ms; }
+  .plan-page--journey .plan-page__hero-copy > :nth-child(3) { animation-delay: 150ms; }
+  .plan-page--journey .plan-sculpture { animation: plan-sculpture-enter 700ms var(--curva-suave) 120ms both; }
+  .plan-sculpture__route--sage { animation: plan-sculpture-drift 13s ease-in-out infinite alternate; transform-origin: 50% 50%; }
+  .plan-sculpture__route--clay { animation: plan-sculpture-drift 16s ease-in-out -5s infinite alternate-reverse; transform-origin: 50% 50%; }
+  .plan-page--journey .plan-page__sesion--completada .plan-page__sesion-estado svg { animation: plan-check-in 240ms var(--curva-suave) both; }
+}
+
+@keyframes plan-copy-enter {
+  from { opacity: 0; transform: translate3d(0, 0.65rem, 0); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes plan-sculpture-enter {
+  from { opacity: 0; transform: translate3d(1rem, 0, 0) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes plan-sculpture-drift {
+  from { transform: rotate(-1deg) translate3d(0, 0, 0); }
+  to { transform: rotate(1deg) translate3d(0.25rem, -0.2rem, 0); }
+}
+
+@keyframes plan-check-in {
+  from { opacity: 0; transform: scale(0.65) rotate(-8deg); }
+  to { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+@media (max-width: 60rem) {
+  .plan-page--journey .plan-page__header {
+    gap: var(--espacio-5);
+  }
+
+  .plan-page--journey .plan-page__resumen {
+    gap: var(--espacio-4);
+  }
+
+  .plan-page--journey .plan-page__semana-tab {
+    grid-template-columns: 2.4rem minmax(0, 1fr);
+    padding-inline: var(--espacio-3);
+  }
+}
+
+@media (max-width: 48rem) {
+  .plan-page--journey .plan-page__header {
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: var(--espacio-3);
+    padding-top: var(--espacio-3);
+  }
+
+  .plan-page--journey .plan-page__titulo {
+    max-width: 12ch;
+    font-size: clamp(3rem, 14vw, 5rem);
+  }
+
+  .plan-page--journey .plan-sculpture {
+    justify-self: end;
+    width: min(100%, 25rem);
+    min-height: 13rem;
+    margin-top: calc(-1 * var(--espacio-3));
+  }
+
+  .plan-page--journey .plan-sculpture figcaption {
+    right: var(--espacio-2);
+  }
+
+  .plan-page--journey .plan-page__resumen {
+    grid-template-columns: 1fr;
+    margin-top: var(--espacio-3);
+  }
+
+  .plan-page--journey .plan-page__etiquetas {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .plan-page--journey .plan-page__revisar {
+    width: 100%;
+    text-align: center;
+  }
+
+  .plan-page--journey .plan-page__progreso-global {
+    grid-template-columns: 1fr;
+  }
+
+  .plan-page--journey .plan-page__anuncio {
+    grid-column: auto;
+    grid-row: auto;
+    text-align: left;
+  }
+
+  .plan-page--journey .plan-page__semanas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .plan-page--journey .plan-page__semana-tab {
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+  }
+
+  .plan-page--journey .plan-page__semana-foco {
+    grid-template-columns: 1fr;
+    gap: var(--espacio-3);
+    padding-block: var(--espacio-4);
+  }
+
+  .plan-page--journey .plan-page__sesiones {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 30rem) {
+  .plan-page--journey {
+    width: min(100% - 1.25rem, 78rem);
+  }
+
+  .plan-page--journey .plan-page__etiquetas {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .plan-page--journey .plan-page__mapa {
+    padding-inline: var(--espacio-3);
+  }
+
+  .plan-page--journey .plan-page__mapa-leyenda {
+    flex-direction: column;
+    gap: var(--espacio-1);
+  }
+
+  .plan-page--journey .plan-page__semanas {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plan-page--journey .plan-sculpture,
+  .plan-page--journey .plan-sculpture__route,
+  .plan-page--journey .plan-page__panel-semana,
+  .plan-page--journey .plan-page__sesion-estado svg {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .plan-page--journey .plan-page__progreso-relleno,
+  .plan-page__mapa-avance,
+  .plan-page__semana-anillo-avance,
+  .plan-page--journey .plan-page__semana-tab,
+  .plan-page--journey .plan-page__sesion,
+  .plan-page--journey .plan-page__ejercicio-enlace,
+  .plan-page--journey .plan-page__btn-panel,
+  .plan-page--journey .plan-page__revisar,
+  .plan-page__mapa-nodo-anillo,
+  .plan-page__mapa-nodo-centro {
+    transition: none;
   }
 }

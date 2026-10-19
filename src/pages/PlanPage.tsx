@@ -11,6 +11,8 @@ import {
 } from '../utils/storage';
 import { generatePlan, markSessionCompleted, getPlanProgress, getWeekProgress, areAnswersEqual } from '../utils/planGenerator';
 import { normalizeAnswers } from '../utils/quizEngine';
+import PlanJourneyMap from '../components/PlanJourneyMap';
+import PlanSculpture from '../components/PlanSculpture';
 
 interface PlanPageProps {
   onNavigate: (page: PageRoute, sectionId?: string) => void;
@@ -176,7 +178,7 @@ export const PlanPage: React.FC<PlanPageProps> = ({ onNavigate }) => {
     return (
       <main id="contenido" tabIndex={-1} className="plan-page container">
         <header className="plan-page__header">
-          <span className="plan-page__kicker">ORGANIZADOR PERSONAL</span>
+          <span className="plan-page__context">ORGANIZADOR PERSONAL</span>
           <h1 className="plan-page__titulo">Mi Plan de 4 Semanas</h1>
         </header>
         <div className="plan-page__bloqueo">
@@ -212,7 +214,7 @@ export const PlanPage: React.FC<PlanPageProps> = ({ onNavigate }) => {
     return (
       <main id="contenido" tabIndex={-1} className="plan-page container">
         <header className="plan-page__header">
-          <span className="plan-page__kicker">ORGANIZADOR PERSONAL</span>
+          <span className="plan-page__context">ORGANIZADOR PERSONAL</span>
           <h1 className="plan-page__titulo">Mi Plan de 4 Semanas</h1>
         </header>
         <div className="plan-page__vacío">
@@ -241,7 +243,7 @@ export const PlanPage: React.FC<PlanPageProps> = ({ onNavigate }) => {
     return (
       <main id="contenido" tabIndex={-1} className="plan-page container">
         <header className="plan-page__header">
-          <span className="plan-page__kicker">ORGANIZADOR PERSONAL</span>
+          <span className="plan-page__context">ORGANIZADOR PERSONAL</span>
           <h1 className="plan-page__titulo">Mi Plan de 4 Semanas</h1>
         </header>
         <div className="plan-page__insuficiente">
@@ -300,7 +302,7 @@ export const PlanPage: React.FC<PlanPageProps> = ({ onNavigate }) => {
   const activeWeekData = plan?.weeks.find(w => w.weekNumber === activeWeek);
 
   return (
-    <main id="contenido" tabIndex={-1} className="plan-page container">
+    <main id="contenido" tabIndex={-1} className="plan-page plan-page--journey container">
       <nav aria-label="Miga de pan" className="mb-4">
         <a
           href="#inicio"
@@ -315,8 +317,14 @@ export const PlanPage: React.FC<PlanPageProps> = ({ onNavigate }) => {
       </nav>
 
       <header className="plan-page__header">
-        <span className="plan-page__kicker">ORGANIZADOR PERSONAL</span>
-        <h1 className="plan-page__titulo">Mi Plan de 4 Semanas</h1>
+        <div className="plan-page__hero-copy">
+          <span className="plan-page__context">ORGANIZADOR PERSONAL</span>
+          <h1 className="plan-page__titulo">Mi Plan de 4 Semanas</h1>
+          <p className="plan-page__hero-lead">
+            Un recorrido de cuatro semanas para {OBJECTIVE_LABELS[answers.objective] || answers.objective}, ajustado a tu tiempo y disponibilidad.
+          </p>
+        </div>
+        <PlanSculpture />
 
         <div className="plan-page__resumen">
           <dl className="plan-page__etiquetas">
@@ -385,9 +393,15 @@ export const PlanPage: React.FC<PlanPageProps> = ({ onNavigate }) => {
         )}
       </div>
 
+      {plan && <PlanJourneyMap plan={plan} activeWeek={activeWeek} />}
+
       <div className="plan-page__semanas" role="tablist" aria-label="Semanas del plan">
         {plan?.weeks.map((week) => {
           const weekProg = getWeekProgress(plan, week.weekNumber);
+          const weekPercentage = weekProg.total > 0 ? Math.round((weekProg.completed / weekProg.total) * 100) : 0;
+          const weekComplete = weekProg.completed === weekProg.total && weekProg.total > 0;
+          const weekInProgress = weekProg.completed > 0 && !weekComplete;
+          const tabState = weekComplete ? 'completa' : activeWeek === week.weekNumber ? 'activa' : weekInProgress ? 'en-progreso' : 'pendiente';
           return (
             <button
               key={week.weekNumber}
@@ -395,13 +409,24 @@ export const PlanPage: React.FC<PlanPageProps> = ({ onNavigate }) => {
               role="tab"
               aria-selected={activeWeek === week.weekNumber}
               aria-controls={`panel-semana-${week.weekNumber}`}
+              aria-label={`Semana ${week.weekNumber}: ${weekProg.completed} de ${weekProg.total} sesiones completadas${activeWeek === week.weekNumber ? ', activa' : ''}`}
               id={`tab-semana-${week.weekNumber}`}
-              className={`plan-page__semana-tab ${activeWeek === week.weekNumber ? 'plan-page__semana-tab--activa' : ''} ${weekProg.completed === weekProg.total && weekProg.total > 0 ? 'plan-page__semana-tab--completa' : ''}`}
+              data-state={tabState}
+              className={`plan-page__semana-tab ${activeWeek === week.weekNumber ? 'plan-page__semana-tab--activa' : ''} ${weekComplete ? 'plan-page__semana-tab--completa' : ''}`}
               onClick={() => setActiveWeek(week.weekNumber)}
               onKeyDown={(e) => handleWeekKeyDown(e, week.weekNumber)}
             >
-              <span className="plan-page__semana-numero">Semana {week.weekNumber}</span>
-              <span className="plan-page__semana-estado">{weekProg.completed}/{weekProg.total}</span>
+              <span className="plan-page__semana-anillo" aria-hidden="true">
+                <svg viewBox="0 0 40 40" focusable="false">
+                  <circle className="plan-page__semana-anillo-fondo" cx="20" cy="20" r="15" pathLength="100" />
+                  <circle className="plan-page__semana-anillo-avance" cx="20" cy="20" r="15" pathLength="100" style={{ strokeDashoffset: `${100 - weekPercentage}` }} />
+                  <text x="20" y="24">{week.weekNumber}</text>
+                </svg>
+              </span>
+              <span className="plan-page__semana-copy">
+                <span className="plan-page__semana-numero">Semana {week.weekNumber}</span>
+                <span className="plan-page__semana-estado">{weekProg.completed}/{weekProg.total}</span>
+              </span>
             </button>
           );
         })}
@@ -409,6 +434,7 @@ export const PlanPage: React.FC<PlanPageProps> = ({ onNavigate }) => {
 
       {activeWeekData && (
         <div
+          key={activeWeekData.weekNumber}
           role="tabpanel"
           id={`panel-semana-${activeWeekData.weekNumber}`}
           aria-labelledby={`tab-semana-${activeWeekData.weekNumber}`}
@@ -428,9 +454,22 @@ export const PlanPage: React.FC<PlanPageProps> = ({ onNavigate }) => {
               }).filter(Boolean) as Array<{ name: string; difficulty: string; zone: string[]; category: string; id: string }>;
 
               return (
-                <li key={session.id} className={`plan-page__sesion ${session.completed ? 'plan-page__sesion--completada' : ''}`}>
+                <li
+                  key={session.id}
+                  className={`plan-page__sesion ${session.completed ? 'plan-page__sesion--completada' : ''}`}
+                  data-state={session.completed ? 'completada' : 'pendiente'}
+                >
                   <div className="plan-page__sesion-cabecera">
-                    <span className="plan-page__sesion-numero">Sesión {session.sessionNumber}</span>
+                    <span className="plan-page__sesion-titulo">
+                      <span className="plan-page__sesion-numero">Sesión {session.sessionNumber}</span>
+                      {session.completed && (
+                        <span className="plan-page__sesion-estado" aria-hidden="true">
+                          <svg viewBox="0 0 16 16" focusable="false">
+                            <path d="m3 8.5 3.1 3.1L13 4.9" />
+                          </svg>
+                        </span>
+                      )}
+                    </span>
                     <label className="plan-page__checkbox-label">
                       <input
                         type="checkbox"
