@@ -291,7 +291,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                 </filter>
                 <filter id="brillo-sutil" x="-50%" y="-50%" width="200%" height="200%">
                   <feGaussianBlur stdDeviation="1.5" result="blur" />
-                  <feSpecularLighting surfaceScale="2" specularConstant="0.4" specularExponent="20" lighting-color="var(--color-salvia-claro)" result="specOut">
+                  <feSpecularLighting surfaceScale="2" specularConstant="0.4" specularExponent="20" lightingColor="var(--color-salvia-claro)" result="specOut">
                     <fePointLight x="200" y="-100" z="200" />
                   </feSpecularLighting>
                   <feComposite in="specOut" in2="SourceAlpha" operator="in" result="specIn" />
