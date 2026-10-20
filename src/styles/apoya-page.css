@@ -911,10 +911,30 @@
   }
 }
 
+/* Entrada escalonada de productos */
+@media (prefers-reduced-motion: no-preference) {
+  .apoya-equipamiento-grid .producto-card {
+    opacity: 0;
+    transform: translateY(0.6rem);
+    animation: apoya-producto-entrada 0.5s var(--curva-suave) both;
+  }
+  .apoya-equipamiento-grid .producto-card:nth-child(2) { animation-delay: 0.08s; }
+  .apoya-equipamiento-grid .producto-card:nth-child(3) { animation-delay: 0.16s; }
+  .apoya-equipamiento-grid .producto-card:nth-child(4) { animation-delay: 0.24s; }
+  @keyframes apoya-producto-entrada {
+    to { opacity: 1; transform: none; }
+  }
+}
+
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   .producto-card {
     transition: none;
+  }
+  .apoya-equipamiento-grid .producto-card {
+    opacity: 1;
+    transform: none;
+    animation: none;
   }
 }
 

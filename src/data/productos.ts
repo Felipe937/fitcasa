@@ -8,6 +8,7 @@ export interface ProductoAfiliado {
   porQueEsUtil: string;
   ejerciciosRelacionados?: string[];
   urlAmazon?: string;
+  asin?: string;
   recomendacionUso: string;
 }
 
@@ -55,3 +56,47 @@ export function getProductoById(id: string): ProductoAfiliado | undefined {
 export function getProductosByEjercicioId(ejercicioId: string): ProductoAfiliado[] {
   return CATALOGO_EQUIPAMIENTO.filter((p) => p.ejerciciosRelacionados?.includes(ejercicioId));
 }
+
+// Selección editorial curada para la página #apoya (URLs pendientes de verificación)
+export const PRODUCTOS_APOYA: ProductoAfiliado[] = [
+  {
+    id: 'fit-simplify-loop-bands',
+    nombre: 'Fit Simplify Resistance Loop Bands Set of 5',
+    categoria: 'bandas',
+    descripcionCorta: 'Set de cinco bandas elásticas de resistencia progresiva para activar glúteos, cadera y cintura escapular.',
+    porQueEsUtil: 'Permite aplicar tensión gradual y controlada sin someter a la columna a impactos axiales bruscos.',
+    recomendacionUso: 'Comienza siempre por la resistencia más baja para priorizar la alineación y el control motor.',
+    asin: 'B01AVDVHTI',
+    urlAmazon: undefined,
+  },
+  {
+    id: 'gaiam-essentials-yoga-mat',
+    nombre: 'Gaiam Essentials Yoga Mat 6mm',
+    categoria: 'colchoneta',
+    descripcionCorta: 'Esterilla de 6 mm con superficie texturizada antideslizante para amortiguar el contacto con el suelo.',
+    porQueEsUtil: 'Amortigua el contacto con el suelo en posturas de cuadrupedia y decúbito, evitando molestias óseas.',
+    recomendacionUso: 'Busca superficies densas que no deslicen y aíslen del frío.',
+    asin: 'B07H9PZ6MH',
+    urlAmazon: undefined,
+  },
+  {
+    id: 'triggerpoint-grid-foam-roller',
+    nombre: 'TriggerPoint GRID 1.0 Foam Roller',
+    categoria: 'peso',
+    descripcionCorta: 'Rodillo de espuma de densidad firme para liberación miofascial y movilidad torácica.',
+    porQueEsUtil: 'Aporta resistencia externa suficiente para estimular musculatura dorsal sin sobrecargar la zona lumbar.',
+    recomendacionUso: 'El peso no debe comprometer la fluidez de la respiración ni la postura.',
+    asin: 'B006GUC9KC',
+    urlAmazon: undefined,
+  },
+  {
+    id: 'gaiam-yoga-block-strap',
+    nombre: 'Gaiam Yoga Block and Strap Combo',
+    categoria: 'peso',
+    descripcionCorta: 'Bloque de yoga y correa para apoyar la alineación y ampliar el alcance en posturas de movilidad.',
+    porQueEsUtil: 'Aporta soporte estable para mantener la alineación sin forzar el rango de movimiento.',
+    recomendacionUso: 'Utilízalo como apoyo, no como sustituto de la valoración profesional.',
+    asin: 'B075W5FNJX',
+    urlAmazon: undefined,
+  },
+];

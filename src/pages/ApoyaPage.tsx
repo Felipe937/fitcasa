@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { PageRoute } from '../components/Header';
-import { CATALOGO_EQUIPAMIENTO } from '../data/productos';
+import { PRODUCTOS_APOYA } from '../data/productos';
 import { ProductoRecomendado } from '../components/ProductoRecomendado';
 
 const PAYPAL_SDK_URL =
@@ -405,7 +405,7 @@ export const ApoyaPage: React.FC<ApoyaPageProps> = ({ onNavigate }) => {
         </div>
 
         <div className="apoya-equipamiento-grid">
-          {CATALOGO_EQUIPAMIENTO.map((producto) => (
+          {PRODUCTOS_APOYA.map((producto) => (
             <ProductoRecomendado key={producto.id} producto={producto} variant="card" />
           ))}
         </div>
