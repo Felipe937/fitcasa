@@ -470,6 +470,109 @@
   }
 }
 
+/* Opciones de apoyo (PayPal + Ko-fi) */
+.apoya-apoyo-section {
+  max-width: var(--ancho-texto);
+  margin: 0 auto var(--espacio-8);
+  padding-top: var(--espacio-7);
+  border-top: 1px solid var(--color-borde);
+}
+
+.apoya-apoyo-subtitulo {
+  max-width: 56ch;
+  margin: 0 auto var(--espacio-6);
+  text-align: center;
+  color: var(--color-texto);
+  font-size: var(--texto-base);
+  line-height: 1.6;
+}
+
+.apoya-apoyo-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--espacio-4);
+  max-width: var(--ancho-texto);
+  margin: 0 auto;
+}
+
+@media (min-width: 48rem) {
+  .apoya-apoyo-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.apoya-paypal-card,
+.apoya-kofi-card {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-lg);
+  padding: var(--espacio-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+}
+
+.apoya-apoyo-titulo {
+  margin: 0;
+  font-size: var(--texto-lg);
+  color: var(--color-primario-oscuro);
+  font-weight: 800;
+}
+
+.apoya-apoyo-texto {
+  margin: 0;
+  color: var(--color-texto);
+  font-size: var(--texto-sm);
+  line-height: 1.6;
+}
+
+.apoya-paypal-container {
+  min-height: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.apoya-paypal-estado {
+  margin: 0;
+  font-size: var(--texto-sm);
+  color: var(--color-texto-suave);
+  text-align: center;
+}
+
+.apoya-paypal-estado--error {
+  color: var(--color-foco);
+}
+
+.apoya-kofi-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--alto-objetivo-tactil);
+  padding: var(--espacio-2) var(--espacio-4);
+  color: var(--color-sobre-primario);
+  background: var(--color-primario);
+  border: 2px solid var(--color-primario);
+  border-radius: var(--radio-md);
+  font-weight: 750;
+  font-size: var(--texto-sm);
+  text-decoration: none;
+  align-self: flex-start;
+  transition: background var(--duracion-corta) ease, border-color var(--duracion-corta) ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .apoya-kofi-link:hover {
+    background: var(--color-primario-oscuro);
+    border-color: var(--color-primario-oscuro);
+  }
+}
+
+.apoya-kofi-link:focus-visible {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 2px;
+}
+
 /* Equipamiento Section */
 .apoya-equipamiento-section {
   max-width: var(--ancho-texto);

@@ -3,6 +3,58 @@ import { PageRoute } from '../components/Header';
 import { CATALOGO_EQUIPAMIENTO } from '../data/productos';
 import { ProductoRecomendado } from '../components/ProductoRecomendado';
 
+const PAYPAL_SDK_URL =
+  'https://www.paypal.com/sdk/js?client-id=BAAw1QzNRd2S5oGEekpJFK4V83o6O-brjaUdVOlTIhiM8la2h5WdZDSZEt0YA3KGn24J5fEVotgVjOGssM&components=hosted-buttons&disable-funding=venmo&currency=USD';
+const PAYPAL_HOSTED_BUTTON_ID = 'ZY8593NPGNPXL';
+const PAYPAL_CONTAINER_ID = `paypal-container-${PAYPAL_HOSTED_BUTTON_ID}`;
+const KOFI_URL = 'https://ko-fi.com/spaceyisus';
+
+let paypalSdkPromise: Promise<any> | null = null;
+
+function loadPayPalSdk(): Promise<any> {
+  if (typeof window === 'undefined') return Promise.reject(new Error('no-window'));
+  const w = window as any;
+  if (w.paypal && typeof w.paypal.HostedButtons === 'function') {
+    return Promise.resolve(w.paypal);
+  }
+  if (paypalSdkPromise) return paypalSdkPromise;
+
+  paypalSdkPromise = new Promise((resolve, reject) => {
+    const existing = document.querySelector('script[data-paypal-sdk="true"]') as HTMLScriptElement | null;
+    const settle = () => {
+      if (w.paypal && typeof w.paypal.HostedButtons === 'function') {
+        resolve(w.paypal);
+      } else {
+        reject(new Error('paypal-global-missing'));
+      }
+    };
+    if (existing) {
+      if (existing.dataset.loaded === 'true') {
+        settle();
+        return;
+      }
+      existing.addEventListener('load', () => {
+        existing.dataset.loaded = 'true';
+        settle();
+      });
+      existing.addEventListener('error', () => reject(new Error('paypal-sdk-load-error')));
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = PAYPAL_SDK_URL;
+    script.async = true;
+    script.dataset.paypalSdk = 'true';
+    script.onload = () => {
+      script.dataset.loaded = 'true';
+      settle();
+    };
+    script.onerror = () => reject(new Error('paypal-sdk-load-error'));
+    document.head.appendChild(script);
+  });
+
+  return paypalSdkPromise;
+}
+
 interface ApoyaPageProps {
   onNavigate: (page: PageRoute, sectionId?: string) => void;
 }
@@ -14,7 +66,10 @@ const QR_IMAGE_SRC = '/images/daviplata-bre-b-qr.png';
 export const ApoyaPage: React.FC<ApoyaPageProps> = ({ onNavigate }) => {
   const [isQrExpanded, setIsQrExpanded] = useState(false);
   const [copyStatus, setCopyStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [paypalStatus, setPaypalStatus] = useState<'loading' | 'ready' | 'error'>('loading');
   const qrImageRef = useRef<HTMLImageElement>(null);
+  const paypalContainerRef = useRef<HTMLDivElement>(null);
+  const paypalRenderedRef = useRef(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const previouslyFocusedRef = useRef<HTMLElement | null>(null);
@@ -83,6 +138,40 @@ export const ApoyaPage: React.FC<ApoyaPageProps> = ({ onNavigate }) => {
     };
   }, [isQrExpanded]);
 
+  // Integración segura del Hosted Button de PayPal (sin duplicar script ni render)
+  useEffect(() => {
+    const container = paypalContainerRef.current;
+    if (!container || paypalRenderedRef.current) return;
+
+    let cancelled = false;
+    loadPayPalSdk()
+      .then((paypal) => {
+        if (cancelled || paypalRenderedRef.current) return;
+        if (!container.isConnected) return;
+        if (container.childElementCount > 0) {
+          paypalRenderedRef.current = true;
+          setPaypalStatus('ready');
+          return;
+        }
+        try {
+          paypal.HostedButtons({ hostedButtonId: PAYPAL_HOSTED_BUTTON_ID }).render(`#${PAYPAL_CONTAINER_ID}`);
+          paypalRenderedRef.current = true;
+          setPaypalStatus('ready');
+        } catch (err) {
+          console.error('PayPal hosted button render failed', err);
+          if (!cancelled) setPaypalStatus('error');
+        }
+      })
+      .catch((err) => {
+        console.error('PayPal SDK failed to load', err);
+        if (!cancelled) setPaypalStatus('error');
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <main id="contenido" tabIndex={-1} className="apoya-page container">
       <nav aria-label="Miga de pan" className="mb-4">
@@ -135,6 +224,51 @@ export const ApoyaPage: React.FC<ApoyaPageProps> = ({ onNavigate }) => {
           </svg>
         </div>
       </header>
+
+      <section className="apoya-apoyo-section" aria-labelledby="apoyo-heading">
+        <h2 id="apoyo-heading" className="apoya-seccion-titulo">Otras formas de apoyar</h2>
+        <p className="apoya-apoyo-subtitulo">
+          Si prefieres contribuir desde fuera de Colombia o con otra plataforma, estas opciones están disponibles.
+        </p>
+
+        <div className="apoya-apoyo-grid">
+          <div className="apoya-paypal-card">
+            <h3 className="apoya-apoyo-titulo">PayPal</h3>
+            <p className="apoya-apoyo-texto">
+              Contribución voluntaria procesada por PayPal en USD.
+            </p>
+            <div
+              id={PAYPAL_CONTAINER_ID}
+              ref={paypalContainerRef}
+              className="apoya-paypal-container"
+              aria-label="Botón de contribución de PayPal"
+            />
+            {paypalStatus === 'loading' && (
+              <p className="apoya-paypal-estado" role="status">Cargando el botón de PayPal…</p>
+            )}
+            {paypalStatus === 'error' && (
+              <p className="apoya-paypal-estado apoya-paypal-estado--error" role="alert">
+                No se pudo cargar el botón de PayPal. Intenta de nuevo más tarde.
+              </p>
+            )}
+          </div>
+
+          <div className="apoya-kofi-card">
+            <h3 className="apoya-apoyo-titulo">Ko-fi</h3>
+            <p className="apoya-apoyo-texto">
+              Apoya el proyecto con un café o una contribución puntual.
+            </p>
+            <a
+              href={KOFI_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="apoya-kofi-link"
+            >
+              Apoyar en Ko-fi ↗
+            </a>
+          </div>
+        </div>
+      </section>
 
       <section className="apoya-qr-section" aria-labelledby="qr-heading">
         <h2 id="qr-heading" className="apoya-seccion-titulo">QR para apoyar vía DaviPlata / Bre-B</h2>
@@ -263,13 +397,10 @@ export const ApoyaPage: React.FC<ApoyaPageProps> = ({ onNavigate }) => {
         </p>
 
         <div className="apoya-divulgacion-amazon" role="note">
-          <p className="apoya-divulgacion-texto-ingles">
-            <strong>As an Amazon Associate I earn from qualifying purchases.</strong>
-          </p>
           <p className="apoya-divulgacion-texto-espanol">
-            FitCasa participa en el programa de afiliados de Amazon. Si compras a través de estos enlaces
-            patrocinados, FitCasa recibe una pequeña comisión sin ningún coste extra para ti, lo que nos ayuda
-            a mantener el proyecto gratuito y sin publicidad.
+            Algunos enlaces pueden ser de afiliado cuando se configuren. Si compras a través de ellos,
+            FITCASA podría recibir una comisión sin coste adicional para ti. Los enlaces de compra se
+            publicarán solo cuando estén verificados para el producto y la región correspondiente.
           </p>
         </div>
 
