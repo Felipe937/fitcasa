@@ -50,12 +50,12 @@ main.privacidad > section {
 }
 
 .privacidad__titulo {
-  max-width: 22ch;
+  max-width: 24ch;
   margin: 0 0 var(--espacio-3);
-  font-size: var(--texto-2xl);
-  line-height: var(--alto-linea-titulo);
+  font-size: clamp(2rem, 1.6rem + 2vw, 3rem);
+  line-height: 1.05;
   color: var(--color-primario-oscuro);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   text-wrap: balance;
 }
 
@@ -122,6 +122,35 @@ main.privacidad > section {
   color: var(--color-texto-suave);
   font-size: var(--texto-sm);
 }
+
+/* Diagrama de flujo de datos (hero) */
+.privacidad__diagrama {
+  margin: var(--espacio-5) 0;
+  padding: var(--espacio-4);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-lg);
+}
+
+.privacidad__diagrama-svg {
+  display: block;
+  width: 100%;
+  max-width: 26rem;
+  height: auto;
+}
+
+.privacidad__diagrama-flecha {
+  stroke-dasharray: 4 4;
+}
+
+.privacidad__diagrama-leyenda {
+  margin: var(--espacio-3) 0 0;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-sm);
+  line-height: var(--alto-linea);
+}
+
+
 
 .privacidad__fecha {
   display: inline-flex;

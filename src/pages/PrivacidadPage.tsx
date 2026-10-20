@@ -101,7 +101,6 @@ export const PrivacidadPage: React.FC<PrivacidadPageProps> = ({ onNavigate }) =>
     <main id="contenido" tabIndex={-1} className="privacidad">
       {/* Cabecera editorial de transparencia */}
       <header className="privacidad__cabecera" aria-labelledby="privacidad-titulo">
-        <span className="privacidad__chip">GOBERNANZA DE DATOS &amp; PRIVACIDAD</span>
         <h1 id="privacidad-titulo" className="privacidad__titulo">
           Política de Privacidad
         </h1>
@@ -112,27 +111,53 @@ export const PrivacidadPage: React.FC<PrivacidadPageProps> = ({ onNavigate }) =>
         </p>
         <div className="privacidad__principios">
           <div className="privacidad__principio">
-            <span className="privacidad__principio-numero">01</span>
-            <span className="privacidad__principio-titulo">Almacenamiento 100% Local</span>
+            <span className="privacidad__principio-titulo">Almacenamiento local</span>
             <p className="privacidad__principio-texto">
               Sin cuentas, sin contraseñas, sin base de datos central.
             </p>
           </div>
           <div className="privacidad__principio">
-            <span className="privacidad__principio-numero">02</span>
-            <span className="privacidad__principio-titulo">Cero Rastreo Publicitario</span>
+            <span className="privacidad__principio-titulo">Sin rastreo publicitario</span>
             <p className="privacidad__principio-texto">
               Sin Google Analytics, sin Meta Pixel, sin cookies comerciales.
             </p>
           </div>
           <div className="privacidad__principio">
-            <span className="privacidad__principio-numero">03</span>
-            <span className="privacidad__principio-titulo">Datos de Salud Facultativos</span>
+            <span className="privacidad__principio-titulo">Datos de salud facultativos</span>
             <p className="privacidad__principio-texto">
               Tú decides conscientemente si anotas tu percepción de dolor o solo tu actividad física.
             </p>
           </div>
         </div>
+        <div className="privacidad__diagrama" aria-hidden="true">
+          <svg viewBox="0 0 360 120" className="privacidad__diagrama-svg" focusable="false" role="presentation">
+            <defs>
+              <linearGradient id="priv-diag-line" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="var(--color-primario)" stopOpacity="0.9" />
+                <stop offset="100%" stopColor="var(--color-secundario)" stopOpacity="0.7" />
+              </linearGradient>
+            </defs>
+            {/* Navegador */}
+            <g transform="translate(20,30)">
+              <rect width="90" height="60" rx="8" fill="var(--color-superficie)" stroke="var(--color-primario)" strokeWidth="1.5" />
+              <text x="45" y="28" textAnchor="middle" fontSize="11" fontWeight="800" fill="var(--color-primario-oscuro)">Navegador</text>
+              <text x="45" y="44" textAnchor="middle" fontSize="9" fill="var(--color-texto-suave)">tu dispositivo</text>
+            </g>
+            {/* Flecha */}
+            <path d="M112 60 H 200" stroke="url(#priv-diag-line)" strokeWidth="2" fill="none" strokeDasharray="4 4" className="privacidad__diagrama-flecha" />
+            <polygon points="198,55 210,60 198,65" fill="var(--color-secundario)" />
+            {/* Almacenamiento local */}
+            <g transform="translate(210,30)">
+              <rect width="130" height="60" rx="8" fill="var(--color-fondo-verde)" stroke="var(--color-secundario)" strokeWidth="1.5" />
+              <text x="65" y="28" textAnchor="middle" fontSize="11" fontWeight="800" fill="var(--color-primario-oscuro)">localStorage</text>
+              <text x="65" y="44" textAnchor="middle" fontSize="9" fill="var(--color-texto-suave)">solo este navegador</text>
+            </g>
+          </svg>
+          <p className="privacidad__diagrama-leyenda">
+            Lo que escribes se queda en este navegador. No se envía a ningún servidor de FitCasa.
+          </p>
+        </div>
+
         <p className="privacidad__meta">
           <span className="privacidad__fecha">
             <Icono pathos={ICONO_CALENDARIO} />
@@ -372,8 +397,8 @@ export const PrivacidadPage: React.FC<PrivacidadPageProps> = ({ onNavigate }) =>
           </p>
           <ul>
             <li>
-              Los datos <strong>nunca salen de tu dispositivo</strong>: el código de la
-              aplicación no realiza ninguna petición de red para enviar lo que escribes.
+              La aplicación <strong>no envía lo que escribes</strong> a ningún servidor: el
+              código no realiza ninguna petición de red para transmitir tus registros.
             </li>
             <li>
               Los datos <strong>no se sincronizan</strong> entre navegador, dispositivo
