@@ -20,50 +20,100 @@
   color: var(--color-primario-oscuro);
 }
 
-.apoya-header {
-  max-width: var(--ancho-texto);
-  margin: 0 auto var(--espacio-8);
-  text-align: center;
-}
-
-.apoya-kicker {
-  display: inline-flex;
+.apoya-hero {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(var(--espacio-6), 4vw, var(--espacio-8));
   align-items: center;
-  gap: var(--espacio-2);
-  padding: var(--espacio-2) var(--espacio-4);
-  margin-bottom: var(--espacio-4);
-  color: var(--color-secundario-oscuro);
-  background: var(--color-fondo-verde);
-  border-radius: var(--radio-pill);
-  font-size: var(--texto-xs);
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  margin-bottom: var(--espacio-9);
+  padding-block: clamp(var(--espacio-5), 4vw, var(--espacio-7));
 }
 
-.apoya-kicker::before {
-  width: 0.5rem;
-  height: 0.5rem;
-  content: "";
-  background: var(--color-secundario);
-  border-radius: 50%;
+@media (min-width: 52rem) {
+  .apoya-hero {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  }
+}
+
+.apoya-hero__texto {
+  min-width: 0;
 }
 
 .apoya-titulo {
   margin: 0 0 var(--espacio-4);
-  font-size: var(--texto-3xl);
-  line-height: var(--alto-linea-titulo);
-  letter-spacing: -0.03em;
+  font-size: clamp(2.1rem, 1.6rem + 2.6vw, 3.4rem);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
   text-wrap: balance;
   color: var(--color-primario-oscuro);
 }
 
 .apoya-intro {
-  max-width: 56ch;
-  margin: 0 auto;
+  max-width: 58ch;
   color: var(--color-texto);
   font-size: var(--texto-lg);
   line-height: 1.65;
+}
+
+/* Escultura 3D (capas SVG con profundidad) */
+.apoya-hero__escultura {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 900px;
+  transform-style: preserve-3d;
+  transition: transform var(--duracion-media) var(--curva-suave);
+}
+
+@media (hover: hover) {
+  .apoya-hero__escultura:hover {
+    transform: rotateX(6deg) rotateY(-8deg);
+  }
+}
+
+.apoya-escultura__svg {
+  display: block;
+  width: min(100%, 16rem);
+  height: auto;
+  transform-style: preserve-3d;
+}
+
+.apoya-escultura__anello {
+  transform-origin: 120px 120px;
+  transition: transform var(--duracion-media) var(--curva-suave);
+}
+
+.apoya-escultura__anello--1 { transform: translateZ(12px) rotateX(12deg); }
+.apoya-escultura__anello--2 { transform: translateZ(-8px) rotateY(18deg); }
+.apoya-escultura__anello--3 { transform: translateZ(20px); }
+
+.apoya-escultura__nodo circle {
+  fill: var(--color-primario-oscuro);
+}
+
+/* Entrada escalonada del hero */
+@media (prefers-reduced-motion: no-preference) {
+  .apoya-hero__texto > * {
+    opacity: 0;
+    transform: translateY(0.75rem);
+    animation: apoya-entrada 0.6s var(--curva-suave) both;
+  }
+  .apoya-hero__texto > *:nth-child(2) { animation-delay: 0.12s; }
+  .apoya-hero__escultura {
+    opacity: 0;
+    transform: scale(0.96);
+    animation: apoya-entrada-escultura 0.8s var(--curva-suave) 0.2s both;
+  }
+  @keyframes apoya-entrada {
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes apoya-entrada-escultura {
+    to { opacity: 1; transform: none; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .apoya-hero__escultura { transform: none; }
 }
 
 .apoya-qr-section {

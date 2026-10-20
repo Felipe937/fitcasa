@@ -98,15 +98,42 @@ export const ApoyaPage: React.FC<ApoyaPageProps> = ({ onNavigate }) => {
         </a>
       </nav>
 
-      <header className="apoya-header">
-        <span className="apoya-kicker">APOYA EL PROYECTO</span>
-        <h1 className="apoya-titulo">Ayuda a que FitCasa siga creciendo</h1>
-        <p className="apoya-intro">
-          El contenido principal de FitCasa —guías, ejercicios, cuestionario y panel de seguimiento—
-          es y seguirá siendo gratuito. No hay muros de pago, suscripciones obligatorias ni publicidad.
-          Si el proyecto te resulta útil y quieres contribuir a su mantenimiento y evolución,
-          puedes hacerlo de forma voluntaria con el QR que encontrarás abajo.
-        </p>
+      <header className="apoya-hero">
+        <div className="apoya-hero__texto">
+          <h1 className="apoya-titulo">Ayúdanos a llevar el movimiento más lejos</h1>
+          <p className="apoya-intro">
+            FitCasa es un proyecto educativo gratuito: guías, ejercicios, cuestionario y panel de seguimiento
+            sin muros de pago, suscripciones obligatorias ni publicidad. Tu apoyo voluntario contribuye a
+            su mantenimiento y evolución, y ayuda a que más personas puedan moverse y comprender mejor su
+            bienestar desde casa.
+          </p>
+        </div>
+        <div className="apoya-hero__escultura" aria-hidden="true">
+          <svg viewBox="0 0 240 240" className="apoya-escultura__svg" focusable="false" role="presentation">
+            <defs>
+              <radialGradient id="apoya-escultura-glow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="var(--color-fondo-verde)" stopOpacity="0.9" />
+                <stop offset="100%" stopColor="var(--color-fondo)" stopOpacity="0" />
+              </radialGradient>
+            </defs>
+            <circle cx="120" cy="120" r="108" fill="url(#apoya-escultura-glow)" />
+            <g className="apoya-escultura__anello apoya-escultura__anello--1" fill="none" stroke="var(--color-primario)" strokeWidth="1.6">
+              <ellipse cx="120" cy="120" rx="92" ry="34" />
+            </g>
+            <g className="apoya-escultura__anello apoya-escultura__anello--2" fill="none" stroke="var(--color-secundario)" strokeWidth="1.4">
+              <ellipse cx="120" cy="120" rx="70" ry="86" />
+            </g>
+            <g className="apoya-escultura__anello apoya-escultura__anello--3" fill="none" stroke="var(--color-terciario)" strokeWidth="1.2" strokeDasharray="4 6">
+              <ellipse cx="120" cy="120" rx="46" ry="46" />
+            </g>
+            <g className="apoya-escultura__nodo" fill="var(--color-primario-oscuro)">
+              <circle cx="120" cy="36" r="5" />
+              <circle cx="206" cy="120" r="4" />
+              <circle cx="120" cy="204" r="5" />
+              <circle cx="34" cy="120" r="4" />
+            </g>
+          </svg>
+        </div>
       </header>
 
       <section className="apoya-qr-section" aria-labelledby="qr-heading">
@@ -230,7 +257,7 @@ export const ApoyaPage: React.FC<ApoyaPageProps> = ({ onNavigate }) => {
       </section>
 
       <section className="apoya-equipamiento-section" aria-labelledby="equipamiento-heading">
-        <h2 id="equipamiento-heading" className="apoya-seccion-titulo">Equipamiento útil para tu práctica en casa</h2>
+        <h2 id="equipamiento-heading" className="apoya-seccion-titulo">Herramientas para moverte en casa</h2>
         <p className="apoya-equipamiento-subtitulo">
           Material básico que puede hacer más cómodas tus sesiones de movilidad y fuerza.
         </p>
