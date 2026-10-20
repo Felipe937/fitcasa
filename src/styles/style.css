@@ -897,10 +897,20 @@ html.js .programas-entrada:not(.is-visible) .programas-grid > .programa {
 #como-funciona { width: min(100% - 2rem, var(--ancho-contenedor)); margin-inline: auto; }
 
 #como-funciona .como-funciona__cabecera {
-  display: flex;
-  flex-direction: column;
-  gap: var(--espacio-3);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--espacio-5);
   margin-bottom: var(--espacio-7);
+  align-items: center;
+}
+
+@media (min-width: 60rem) {
+  #como-funciona .como-funciona__cabecera {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
+  }
+  #como-funciona .como-funciona__rigor {
+    grid-column: 1 / -1;
+  }
 }
 
 #como-funciona .como-funciona__etiqueta {
@@ -928,12 +938,12 @@ html.js .programas-entrada:not(.is-visible) .programas-grid > .programa {
 
 #como-funciona .como-funciona__titulo {
   margin: 0;
-  font-size: var(--texto-2xl);
-  line-height: var(--alto-linea-titulo);
+  font-size: clamp(1.9rem, 1.5rem + 1.6vw, 2.75rem);
+  line-height: 1.05;
   color: var(--color-primario-oscuro);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   text-wrap: balance;
-  max-width: 42ch;
+  max-width: 38ch;
 }
 
 #como-funciona .como-funciona__intro {
@@ -967,6 +977,26 @@ html.js .programas-entrada:not(.is-visible) .programas-grid > .programa {
   stroke-width: 1.75;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+#como-funciona .como-funciona__firma {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 900px;
+}
+
+#como-funciona .como-funciona__firma-svg {
+  width: min(100%, 12rem);
+  height: auto;
+  transform-style: preserve-3d;
+  transition: transform var(--duracion-media) var(--curva-suave);
+}
+
+@media (hover: hover) {
+  #como-funciona .como-funciona__firma:hover .como-funciona__firma-svg {
+    transform: rotateX(8deg) rotateY(-10deg);
+  }
 }
 
 #como-funciona .pasos-trayectoria {
@@ -1053,6 +1083,7 @@ html.js .programas-entrada:not(.is-visible) .programas-grid > .programa {
     height: 2px;
     background: var(--color-borde);
     z-index: 0;
+    transform-origin: left center;
   }
 
   #como-funciona .paso {
@@ -1099,6 +1130,7 @@ html.js .programas-entrada:not(.is-visible) .programas-grid > .programa {
     width: 2px;
     background: var(--color-borde);
     z-index: 0;
+    transform-origin: top center;
   }
 
   #como-funciona .paso {
@@ -1131,6 +1163,60 @@ html.js .programas-entrada:not(.is-visible) .programas-grid > .programa {
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  #como-funciona .pasos-trayectoria::before {
+    transform-origin: left center;
+    animation: cf-linea-revela 0.9s var(--curva-suave) 0.2s both;
+  }
+  #como-funciona .paso__marcador {
+    animation: cf-nodo-aparece 0.5s var(--curva-suave) both;
+  }
+  #como-funciona .paso:nth-child(2) .paso__marcador { animation-delay: 0.15s; }
+  #como-funciona .paso:nth-child(3) .paso__marcador { animation-delay: 0.3s; }
+  #como-funciona .paso__icono svg path {
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
+    animation: cf-icono-dibuja 0.9s var(--curva-suave) both;
+  }
+  #como-funciona .paso:nth-child(2) .paso__icono svg path { animation-delay: 0.2s; }
+  #como-funciona .paso:nth-child(3) .paso__icono svg path { animation-delay: 0.4s; }
+  #como-funciona .paso__titulo {
+    opacity: 0;
+    transform: translateY(0.4rem);
+    animation: cf-texto-aparece 0.5s var(--curva-suave) both;
+  }
+  #como-funciona .paso:nth-child(1) .paso__titulo { animation-delay: 0.35s; }
+  #como-funciona .paso:nth-child(2) .paso__titulo { animation-delay: 0.5s; }
+  #como-funciona .paso:nth-child(3) .paso__titulo { animation-delay: 0.65s; }
+  #como-funciona .paso__texto {
+    opacity: 0;
+    transform: translateY(0.4rem);
+    animation: cf-texto-aparece 0.5s var(--curva-suave) both;
+  }
+  #como-funciona .paso:nth-child(1) .paso__texto { animation-delay: 0.45s; }
+  #como-funciona .paso:nth-child(2) .paso__texto { animation-delay: 0.6s; }
+  #como-funciona .paso:nth-child(3) .paso__texto { animation-delay: 0.75s; }
+  #como-funciona .como-funciona__firma-svg {
+    animation: cf-firma-flota 6s ease-in-out infinite alternate;
+  }
+  @keyframes cf-linea-revela {
+    from { transform: scale(0); }
+    to { transform: scale(1); }
+  }
+  @keyframes cf-nodo-aparece {
+    from { opacity: 0; transform: scale(0.85); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes cf-icono-dibuja {
+    to { stroke-dashoffset: 0; }
+  }
+  @keyframes cf-texto-aparece {
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes cf-firma-flota {
+    from { transform: rotateX(0deg) rotateY(0deg); }
+    to { transform: rotateX(6deg) rotateY(-8deg); }
+  }
+
   #como-funciona .paso:hover .paso__marcador {
     border-color: var(--color-primario);
     background: var(--color-fondo-azul);
@@ -1157,9 +1243,18 @@ html.js .programas-entrada:not(.is-visible) .programas-grid > .programa {
 @media (prefers-reduced-motion: reduce) {
   #como-funciona .paso__marcador,
   #como-funciona .paso__icono svg,
-  #como-funciona .paso__titulo {
+  #como-funciona .paso__titulo,
+  #como-funciona .paso__texto,
+  #como-funciona .pasos-trayectoria::before,
+  #como-funciona .como-funciona__firma-svg {
     transition: none !important;
     transform: none !important;
+    animation: none !important;
+    opacity: 1 !important;
+  }
+  #como-funciona .paso__icono svg path {
+    stroke-dashoffset: 0 !important;
+    animation: none !important;
   }
 }
 
