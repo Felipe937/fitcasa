@@ -514,11 +514,6 @@ export const ExercisesPage: React.FC = () => {
       <section className="exercise-hero" aria-labelledby="biblioteca-titulo">
         <div className="exercise-hero__inner">
           <div className="exercise-hero__texto">
-            <p className="exercise-hero__insignia">
-              <span className="exercise-hero__insignia-punto" aria-hidden="true" />
-              Catálogo de movimiento · Peso corporal
-            </p>
-
             <h1 id="biblioteca-titulo" className="exercise-hero__titulo">
               Biblioteca de ejercicios
             </h1>
@@ -532,11 +527,6 @@ export const ExercisesPage: React.FC = () => {
               <div className="exercise-hero__stat-item">
                 <span className="exercise-hero__stat-num">{EXERCISES_DATA.length}</span>
                 <span className="exercise-hero__stat-label">ejercicios curados</span>
-              </div>
-              <div className="exercise-hero__stat-divisor" aria-hidden="true" />
-              <div className="exercise-hero__stat-item">
-                <span className="exercise-hero__stat-num">0</span>
-                <span className="exercise-hero__stat-label">equipamiento requerido</span>
               </div>
               <div className="exercise-hero__stat-divisor" aria-hidden="true" />
               <div className="exercise-hero__stat-item">

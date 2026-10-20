@@ -87,30 +87,6 @@ main.exercise-main > section {
   min-width: 0;
 }
 
-.exercise-hero__insignia {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--espacio-2);
-  width: fit-content;
-  padding: 0.35rem 0.85rem 0.35rem 0.65rem;
-  margin: 0 0 var(--espacio-4);
-  color: var(--color-secundario-oscuro);
-  background: var(--color-fondo-verde);
-  border: 1px solid rgba(92, 130, 118, 0.2);
-  border-radius: var(--radio-pill);
-  font-size: var(--texto-xs);
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.exercise-hero__insignia-punto {
-  width: 0.5rem;
-  height: 0.5rem;
-  background: var(--color-primario);
-  border-radius: 50%;
-  border: 3px solid var(--color-fondo-verde);
-}
 
 .exercise-hero__titulo {
   margin: 0 0 var(--espacio-4);
@@ -811,21 +787,11 @@ main.exercise-main > section {
   border-color: var(--color-secundario);
 }
 
-/* RITMO EDITORIAL: Tarjeta destacada cuando no hay filtros activos */
+/* RITMO EDITORIAL: Tarjeta destacada cuando no hay filtros activos (sin masonry para evitar huecos) */
 @media (min-width: 64rem) {
   .exercise-card--destacada {
-    grid-column: span 2;
-    display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-    align-items: stretch;
     background: #fdfefe;
-    border-color: rgba(21, 67, 59, 0.25);
-  }
-
-  .exercise-card--destacada .exercise-media {
-    height: 100%;
-    margin-bottom: 0;
-    border-radius: 0;
+    border-color: rgba(21, 67, 59, 0.35);
   }
 
   .exercise-card--destacada .exercise-card__contenido {
