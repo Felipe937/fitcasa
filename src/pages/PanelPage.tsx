@@ -466,6 +466,18 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
   }, [sortedRecords, range, search, today]);
 
   const latest = sortedRecords[0];
+
+  // Métricas derivadas de los datos existentes (sin inventar valores)
+  const uniqueDays = useMemo(() => new Set(records.map((r) => r.date)).size, [records]);
+  const last30Start = shiftDays(today, -29);
+  const daysWithRecordLast30 = useMemo(
+    () => new Set(records.filter((r) => r.date >= last30Start).map((r) => r.date)).size,
+    [records, last30Start],
+  );
+  const recordsLast7 = useMemo(
+    () => records.filter((r) => r.date >= shiftDays(today, -6)).length,
+    [records, today],
+  );
   const linkedName = exerciseId
     ? EXERCISES_DATA.find((ex) => ex.id === exerciseId)?.name ?? ''
     : '';
@@ -501,7 +513,6 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
   return (
     <main id="contenido" tabIndex={-1} className="container app-main panel-page">
       <header className="panel-page__cabecera">
-        <p className="panel-page__eyebrow">Seguimiento personal</p>
         <div className="panel-page__motivo" aria-hidden="true">
           <svg viewBox="0 0 24 24" focusable="false">
             <path d="M12 2L1 21h22L12 2zm0 4.5v9l7-4.5z" />
@@ -566,6 +577,14 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
             <dd>{records.length}</dd>
           </div>
           <div className="panel-metrica">
+            <dt>Días con registro</dt>
+            <dd>{uniqueDays}</dd>
+          </div>
+          <div className="panel-metrica">
+            <dt>Registros esta semana</dt>
+            <dd>{recordsLast7}</dd>
+          </div>
+          <div className="panel-metrica">
             <dt>Fecha del último registro</dt>
             <dd>{latest ? formatDateLong(latest.date) : 'Sin registros'}</dd>
           </div>
@@ -574,6 +593,28 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
             <dd>{latest ? latest.activity || 'Sin indicar' : 'Ninguna registrada'}</dd>
           </div>
         </dl>
+
+        {records.length > 0 && (
+          <div className="panel-anillo" aria-label={`Días con registro en los últimos 30 días: ${daysWithRecordLast30} de 30`}>
+            <svg viewBox="0 0 120 120" className="panel-anillo__svg" role="img" aria-hidden="true" focusable="false">
+              <circle cx="60" cy="60" r="50" className="panel-anillo__pista" />
+              <circle
+                cx="60"
+                cy="60"
+                r="50"
+                className="panel-anillo__progreso"
+                style={{
+                  strokeDasharray: `${2 * Math.PI * 50}`,
+                  strokeDashoffset: `${2 * Math.PI * 50 * (1 - daysWithRecordLast30 / 30)}`,
+                }}
+              />
+            </svg>
+            <div className="panel-anillo__texto">
+              <span className="panel-anillo__numero">{daysWithRecordLast30}</span>
+              <span className="panel-anillo__leyenda">de 30 días con registro</span>
+            </div>
+          </div>
+        )}
       </section>
 
       <section className="app-card" aria-labelledby="entry-heading">

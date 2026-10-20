@@ -181,7 +181,69 @@ main.panel-page > section {
 }
 
 /* ==========================================================================
-   Avisos y retroalimentación
+    Anillo de días con registro (últimos 30 días)
+    ========================================================================== */
+
+.panel-anillo {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-4);
+  margin-top: var(--espacio-5);
+  padding: var(--espacio-4);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-lg);
+}
+
+.panel-anillo__svg {
+  width: 5.5rem;
+  height: 5.5rem;
+  flex-shrink: 0;
+  transform: rotate(-90deg);
+}
+
+.panel-anillo__pista {
+  fill: none;
+  stroke: var(--color-borde);
+  stroke-width: 8;
+}
+
+.panel-anillo__progreso {
+  fill: none;
+  stroke: var(--color-primario);
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset var(--panel-duracion) var(--curva-suave);
+}
+
+.panel-anillo__texto {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.panel-anillo__numero {
+  color: var(--color-primario-oscuro);
+  font-size: clamp(1.5rem, 2vw + 0.75rem, 2rem);
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.panel-anillo__leyenda {
+  color: var(--color-texto-suave);
+  font-size: var(--texto-sm);
+  font-weight: 650;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel-anillo__progreso {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+    Avisos y retroalimentación
    ========================================================================== */
 
 .panel-alerta,
