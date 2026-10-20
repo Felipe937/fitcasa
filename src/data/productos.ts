@@ -67,7 +67,7 @@ export const PRODUCTOS_APOYA: ProductoAfiliado[] = [
     porQueEsUtil: 'Permite aplicar tensión gradual y controlada sin someter a la columna a impactos axiales bruscos.',
     recomendacionUso: 'Comienza siempre por la resistencia más baja para priorizar la alineación y el control motor.',
     asin: 'B01AVDVHTI',
-    urlAmazon: undefined,
+    urlAmazon: 'https://www.amazon.com/-/es/Fit-Simplify-Resistencia-Instrucciones-Transporte/dp/B01AVDVHTI?tag=yisusrecomien-20',
   },
   {
     id: 'gaiam-essentials-yoga-mat',
@@ -77,7 +77,7 @@ export const PRODUCTOS_APOYA: ProductoAfiliado[] = [
     porQueEsUtil: 'Amortigua el contacto con el suelo en posturas de cuadrupedia y decúbito, evitando molestias óseas.',
     recomendacionUso: 'Busca superficies densas que no deslicen y aíslen del frío.',
     asin: 'B07H9PZ6MH',
-    urlAmazon: undefined,
+    urlAmazon: 'https://www.amazon.com/-/es/Gaiam-Essentials-Amortiguaci%C3%B3n-antideslizante-texturizada/dp/B07H9PZ6MH?tag=yisusrecomien-20',
   },
   {
     id: 'triggerpoint-grid-foam-roller',
@@ -87,7 +87,7 @@ export const PRODUCTOS_APOYA: ProductoAfiliado[] = [
     porQueEsUtil: 'Aporta resistencia externa suficiente para estimular musculatura dorsal sin sobrecargar la zona lumbar.',
     recomendacionUso: 'El peso no debe comprometer la fluidez de la respiración ni la postura.',
     asin: 'B006GUC9KC',
-    urlAmazon: undefined,
+    urlAmazon: 'https://www.amazon.com/-/es/Rodillo-TriggerPoint-pulgadas-instructivos-garantizado/dp/B006GUC9KC?tag=yisusrecomien-20',
   },
   {
     id: 'gaiam-yoga-block-strap',
@@ -97,6 +97,6 @@ export const PRODUCTOS_APOYA: ProductoAfiliado[] = [
     porQueEsUtil: 'Aporta soporte estable para mantener la alineación sin forzar el rango de movimiento.',
     recomendacionUso: 'Utilízalo como apoyo, no como sustituto de la valoración profesional.',
     asin: 'B075W5FNJX',
-    urlAmazon: undefined,
+    urlAmazon: 'https://www.amazon.com/-/es/Gaiam-05-62961/dp/B075W5FNJX?tag=yisusrecomien-20',
   },
 ];
