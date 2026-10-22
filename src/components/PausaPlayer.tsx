@@ -152,8 +152,8 @@ export const PausaPlayer: React.FC<PausaPlayerProps> = ({
         >
           <defs>
             <linearGradient id="pausa-progress-gradient" x1="0" x2="1" y1="0" y2="1">
-              <stop offset="0%" stopColor="var(--color-secundario)" />
-              <stop offset="100%" stopColor="var(--color-terciario)" />
+              <stop offset="0%" stopColor="var(--pausa-arco-a, var(--color-secundario))" />
+              <stop offset="100%" stopColor="var(--pausa-arco-b, var(--color-secundario-oscuro))" />
             </linearGradient>
           </defs>
           <circle
@@ -162,7 +162,7 @@ export const PausaPlayer: React.FC<PausaPlayerProps> = ({
             cy="100"
             r="90"
             fill="none"
-            stroke="var(--color-borde)"
+            stroke="var(--pausa-anillo-base, var(--color-borde))"
             strokeWidth="12"
           />
           <circle
@@ -184,7 +184,7 @@ export const PausaPlayer: React.FC<PausaPlayerProps> = ({
             cy="100"
             r="78"
             fill="none"
-            stroke="var(--color-secundario)"
+            stroke="var(--pausa-anillo-ambiental, var(--color-secundario))"
             strokeWidth="1.5"
             strokeDasharray="2 9"
             transform="rotate(-90 100 100)"

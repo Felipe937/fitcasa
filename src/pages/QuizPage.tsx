@@ -241,8 +241,28 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
 
   const stepTitles = ['actividad disponible', 'preguntas de seguridad', 'revisar y generar'];
 
+  /** Etapas del recorrido: alimentan el stepper visible y el anuncio accesible. */
+  const etapas = [
+    { num: 1, label: 'Actividad' },
+    { num: 2, label: 'Seguridad' },
+    { num: 3, label: 'Revisión' },
+  ];
+
+  /**
+   * La barra mide el recorrido completo: tres etapas y la propuesta generada.
+   * Solo llega al final cuando la propuesta existe.
+   */
+  const hito = results ? 4 : currentStep;
+  const valorTexto = results
+    ? 'Propuesta educativa generada'
+    : `Etapa ${currentStep} de 3: ${etapas[currentStep - 1].label}`;
+
   return (
-    <main id="contenido" tabIndex={-1} className="container app-main quiz-page">
+    <main
+      id="contenido"
+      tabIndex={-1}
+      className={`container app-main quiz-page quiz-page--step-${currentStep}`}
+    >
       <section className="quiz-hero" aria-labelledby="quiz-page-title">
         <div className="quiz-hero__copy">
           <p className="quiz-context">Orientación personalizada</p>
@@ -260,7 +280,7 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
         </svg>
         <div className="quiz-notice__contenido">
           <strong className="quiz-notice__titulo">Orientación educativa, no prescripción médica</strong>
-          <p className="quiz-notice__texto m-0">
+          <p className="quiz-notice__texto">
             La propuesta no es un diagnóstico, tratamiento ni prescripción médica. Una etiqueta de la biblioteca no equivale a autorización clínica individual. Consulta a tu profesional de la salud antes de iniciar cualquier programa de ejercicio.
           </p>
         </div>
@@ -273,37 +293,64 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
       )}
 
       {/* Stepper de 3 etapas */}
-      <nav aria-label="Progreso del cuestionario" className="quiz-stepper my-6">
-        <ol className="quiz-stepper__lista">
-          {[
-            { num: 1, label: 'Actividad' },
-            { num: 2, label: 'Seguridad' },
-            { num: 3, label: 'Revisión' },
-          ].map((s) => {
-            const isCurrent = currentStep === s.num;
-            const isCompleted = currentStep > s.num;
-            return (
-              <li
-                key={s.num}
-                className="quiz-stepper__item"
-                data-state={isCompleted ? 'completed' : isCurrent ? 'current' : 'upcoming'}
-                aria-current={isCurrent ? 'step' : undefined}
-                aria-label={`${s.label}: ${isCurrent ? 'etapa actual' : isCompleted ? 'completada' : 'pendiente'}`}
-              >
-                <span className="quiz-stepper__numero">
-                  {isCompleted ? (
+      <nav aria-label="Progreso del cuestionario" className="quiz-stepper">
+        <div className="quiz-stepper__marcas">
+          <svg
+            className="quiz-stepper__traza quiz-stepper__traza--a"
+            viewBox="0 0 100 4"
+            preserveAspectRatio="none"
+            focusable="false"
+            aria-hidden="true"
+          >
+            <line className="quiz-stepper__tramo quiz-stepper__tramo--base" x1="0" y1="2" x2="100" y2="2" vectorEffect="non-scaling-stroke" />
+            <line className="quiz-stepper__tramo quiz-stepper__tramo--avance" x1="0" y1="2" x2="100" y2="2" vectorEffect="non-scaling-stroke" />
+          </svg>
+          <svg
+            className="quiz-stepper__traza quiz-stepper__traza--b"
+            viewBox="0 0 100 4"
+            preserveAspectRatio="none"
+            focusable="false"
+            aria-hidden="true"
+          >
+            <line className="quiz-stepper__tramo quiz-stepper__tramo--base" x1="0" y1="2" x2="100" y2="2" vectorEffect="non-scaling-stroke" />
+            <line className="quiz-stepper__tramo quiz-stepper__tramo--avance" x1="0" y1="2" x2="100" y2="2" vectorEffect="non-scaling-stroke" />
+          </svg>
+          <ol className="quiz-stepper__lista">
+            {etapas.map((s) => {
+              const isCurrent = currentStep === s.num;
+              const isCompleted = currentStep > s.num;
+              return (
+                <li
+                  key={s.num}
+                  className="quiz-stepper__item"
+                  data-state={isCompleted ? 'completed' : isCurrent ? 'current' : 'upcoming'}
+                  aria-current={isCurrent ? 'step' : undefined}
+                  aria-label={`${s.label}: ${isCurrent ? 'etapa actual' : isCompleted ? 'completada' : 'pendiente'}`}
+                >
+                  <span className="quiz-stepper__numero">
+                    <span className="quiz-stepper__cifra" aria-hidden="true">
+                      {s.num}
+                    </span>
                     <svg viewBox="0 0 16 16" focusable="false" aria-hidden="true">
                       <path d="m3 8.5 3.1 3.1L13 4.9" />
                     </svg>
-                  ) : s.num}
-                </span>
-                <span className="quiz-stepper__etiqueta">{s.label}</span>
-              </li>
-            );
-          })}
-        </ol>
-        <div className="quiz-stepper__barra" role="progressbar" aria-valuenow={currentStep} aria-valuemin={1} aria-valuemax={3}>
-          <span className="quiz-stepper__relleno" style={{ width: `${((currentStep - 1) / 2) * 100}%` }}></span>
+                  </span>
+                  <span className="quiz-stepper__etiqueta">{s.label}</span>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+        <div
+          className="quiz-stepper__barra"
+          role="progressbar"
+          aria-label="Avance del cuestionario"
+          aria-valuemin={1}
+          aria-valuemax={4}
+          aria-valuenow={hito}
+          aria-valuetext={valorTexto}
+        >
+          <span className="quiz-stepper__relleno" style={{ width: `${(hito / 4) * 100}%` }}></span>
         </div>
       </nav>
 
@@ -324,7 +371,7 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
 
               <fieldset aria-describedby={fieldErrors.objective ? 'error-objective' : undefined}>
                 <legend>¿Cuál es tu objetivo general de actividad?</legend>
-                <div className="choice-grid">
+                <div className="choice-grid choice-grid--objetivo">
                   {(['movilidad', 'fuerza', 'bienestar'] as QuizObjective[]).map((val) => (
                     <label key={val} className="choice-card">
                       <input
@@ -350,7 +397,7 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
 
               <fieldset aria-describedby={fieldErrors.days ? 'error-days' : undefined}>
                 <legend>¿Cuántos días por semana tienes disponibles?</legend>
-                <div className="choice-grid">
+                <div className="choice-grid choice-grid--dias">
                   {(['1', '2', '3', '4', '5', '6', '7'] as QuizDays[]).map((num) => (
                     <label key={num} className="choice-card">
                       <input
@@ -428,7 +475,7 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
 
               <fieldset aria-describedby={fieldErrors.equipment ? 'error-equipment' : undefined}>
                 <legend>¿Qué equipamiento tienes disponible?</legend>
-                <div className="choice-grid">
+                <div className="choice-grid choice-grid--equipamiento">
                   {(['ninguno', 'bandas', 'peso', 'colchoneta'] as Equipment[]).map((eq) => (
                     <label key={eq} className="choice-card">
                       <input
@@ -457,13 +504,13 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
 
               {/* Contexto de Escoliosis (Opcional - No prescriptivo) */}
               <fieldset className="fieldset-opcional">
-                <legend className="font-semibold text-sm">
+                <legend>
                   Contexto sobre escoliosis o curvatura <span className="small-print">(totalmente opcional)</span>
                 </legend>
-                <p className="small-print text-[var(--color-texto-suave)] mb-3">
+                <p className="fieldset-opcional__nota">
                   Esta información permite incluir pautas pedagógicas en tu propuesta. No se utiliza para prohibir ejercicios de forma automática.
                 </p>
-                <div className="choice-grid">
+                <div className="choice-grid choice-grid--escoliosis">
                   {(
                     [
                       'ninguna',
@@ -473,7 +520,7 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
                       'no_sabe',
                     ] as ScoliosisContextOption[]
                   ).map((opt) => (
-                    <label key={opt} className="cursor-pointer text-sm">
+                    <label key={opt} className="choice-card">
                       <input
                         type="radio"
                         name="scoliosisContext"
@@ -492,12 +539,12 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
           {/* Paso 2: Preguntas de seguridad clínica */}
           {currentStep === 2 && (
             <section className="safety-card step-panel" data-step="2">
-              <div className="safety-card__header flex items-center gap-2 mb-2">
+              <div className="safety-card__header">
                 <svg className="safety-card__icono" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
                   <path d="M12 3.2 5 6v6c0 4 3 7.4 7 8.8 4-1.4 7-4.8 7-8.8V6l-7-2.8Z" fill="none" stroke="var(--color-terciario-oscuro)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/>
                   <path d="M9 12l2 2 4-4" fill="none" stroke="var(--color-terciario-oscuro)" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-                <h3 id="step-two-heading" tabIndex={-1} className="m-0 font-bold">
+                <h3 id="step-two-heading" tabIndex={-1}>
                   Paso 2 de 3: preguntas de seguridad clínica
                 </h3>
               </div>
@@ -506,7 +553,6 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
               </p>
 
               <fieldset
-                className="mt-4"
                 aria-describedby={fieldErrors.surgeryNoAuthorization ? 'error-surgery' : undefined}
               >
                 <legend>¿Has tenido una cirugía de columna y todavía no tienes autorización para retomar la actividad?</legend>
@@ -546,7 +592,6 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
               </fieldset>
 
               <fieldset
-                className="mt-4"
                 aria-describedby={fieldErrors.clinicalRestriction ? 'error-restriction' : undefined}
               >
                 <legend>¿Tienes restricciones de ejercicio indicadas por tu profesional sanitario?</legend>
@@ -586,7 +631,6 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
               </fieldset>
 
               <fieldset
-                className="mt-4"
                 aria-describedby={fieldErrors.concerningSymptoms ? 'error-symptoms' : undefined}
               >
                 <legend>
@@ -627,7 +671,7 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
                 )}
               </fieldset>
 
-              <div className="safety-card__reminder mt-4 p-3 rounded bg-[var(--color-fondo-alerta)] border border-[var(--color-terciario-oscuro)] text-xs text-[var(--color-terciario-oscuro)]">
+              <div className="safety-card__reminder">
                 <strong>Recordatorio clínico importante:</strong> si eres menor de edad en etapa de crecimiento activo o utilizas corsé ortopédico, cualquier rutina de ejercicios debe coordinarse directamente con tu médico ortopedista o fisioterapeuta especialista en escoliosis.
               </div>
             </section>
@@ -702,7 +746,7 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
           )}
 
           {stepError && (
-            <div id="quiz-error" className="notice warning mt-4" role="alert">
+            <div id="quiz-error" className="notice warning" role="alert">
               {stepError}
             </div>
           )}
@@ -742,22 +786,22 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
       {/* Resultados de sugerencias */}
       {results && (
         <section id="quiz-results" className="app-card" aria-labelledby="results-heading">
-          <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-            <h2 id="results-heading" tabIndex={-1} className="m-0">
+          <div className="quiz-results__cabecera">
+            <h2 id="results-heading" tabIndex={-1}>
               Propuesta educativa
             </h2>
             {!results.blocked && !results.insufficient && (
-              <div className="flex gap-2">
+              <div className="quiz-results__acciones">
                 <button
                   type="button"
-                  className="btn secondary text-sm"
+                  className="btn secondary"
                   onClick={handleAdjustProposal}
                 >
                   Ajustar propuesta
                 </button>
                 <button
                   type="button"
-                  className="btn text-sm"
+                  className="btn"
                   onClick={() => setShowExportModal(true)}
                 >
                   Exportar para consulta médica
@@ -780,7 +824,7 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
                 </p>
                 <button
                   type="button"
-                  className="btn secondary mt-3"
+                  className="btn secondary"
                   onClick={handleAdjustProposal}
                 >
                   Modificar preferencias
@@ -793,7 +837,7 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
                 </p>
                 <button
                   type="button"
-                  className="btn secondary mt-3"
+                  className="btn secondary"
                   onClick={handleAdjustProposal}
                 >
                   Modificar preferencias
@@ -803,8 +847,8 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
               <>
                 {/* Bloque de contexto clínico si declaró escoliosis */}
                 {results.scoliosisGuidance && (
-                  <div className="notice notice-info mb-4" role="note">
-                    <p className="m-0 font-medium">{results.scoliosisGuidance}</p>
+                  <div className="quiz-results__orientacion" role="note">
+                    <p>{results.scoliosisGuidance}</p>
                   </div>
                 )}
 
@@ -834,7 +878,7 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
                       <div className="plan-card__accion">
                         <a
                           href={`#ejercicios?search=${encodeURIComponent(day.exercise.name)}`}
-                          className="card-link text-sm"
+                          className="card-link"
                           onClick={(e) => {
                             e.preventDefault();
                             window.location.hash = `ejercicios`;
@@ -847,13 +891,13 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
                   ))}
                 </div>
 
-                <div className="quiz-notice quiz-notice--salud mt-4" role="note">
+                <div className="quiz-notice quiz-notice--salud" role="note">
                   <svg className="quiz-notice__icono" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
                     <path d="M12 2.65C6.68 2.65 2.35 6.97 2.35 12.29c0 1.54.46 2.99 1.24 4.27-.1.36-.15.73-.15 1.11 0 3.97 2.6 7.28 5.89 8.26.15.04.31.07.47.07h.01c.5 0 .93-.39.96-.88.06-.92-.68-3.44-1.41-5.64-1.7-.88-3.39-2.68-3.39-5.24 0-1.4.48-2.69 1.34-3.64 1.37-.09 2.31 1.33 2.57 2.07.62.17 1.23.26 1.87.26 2.94 0 5.32-2.39 5.32-5.33 0-2.83-2.26-5.14-5.05-5.14zm-.02 16.71c-1.11 0-2.01-.91-2.01-2.02s.9-2.02 2.01-2.02c1.11 0 2.01.91 2.01 2.02 0 1.11-.9 2.02-2.01 2.02zm0-10.88c-1.03 0-1.88.85-1.88 1.87s.85 1.88 1.88 1.88c1.04 0 1.89-.84 1.89-1.88s-.85-1.87-1.89-1.87z" fill="var(--color-terciario-oscuro)"/>
                   </svg>
                   <div className="quiz-notice__contenido">
                     <strong className="quiz-notice__titulo">Detén la actividad ante síntomas inusuales</strong>
-                    <p className="quiz-notice__texto m-0">
+                    <p className="quiz-notice__texto">
                       Detén la actividad si aparece dolor intenso, debilidad, entumecimiento u otros síntomas inusuales y consulta con un profesional. La etiqueta de la biblioteca no sustituye una valoración individual.
                     </p>
                   </div>
@@ -880,52 +924,52 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
               className="export-card"
               onClick={(e) => e.stopPropagation()}
             >
-            <div className="flex justify-between items-start border-b pb-3 mb-4">
+            <div className="export-card__cabecera">
               <div>
-                <h2 id="export-title" className="text-xl font-bold m-0 text-[#245a73]">
+                <h2 id="export-title">
                   FitCasa — Resumen de actividad para revisión clínica
                 </h2>
-                <p className="text-xs text-gray-500 m-0 mt-1">
+                <p className="export-card__fecha">
                   Generado el {new Date().toLocaleDateString('es-ES')} para consulta con Fisioterapeuta o Traumatólogo
                 </p>
               </div>
               <button
                 type="button"
-                className="btn secondary text-xs"
+                className="btn secondary"
                 onClick={() => setShowExportModal(false)}
               >
                 Cerrar
               </button>
             </div>
 
-            <div className="p-3 bg-blue-50 border border-blue-200 rounded text-xs mb-4 text-blue-900">
+            <div className="export-card__aviso">
               <strong>Aviso para el profesional tratante:</strong> Este documento contiene una propuesta educativa de acondicionamiento físico general con peso corporal recopilada según las preferencias del paciente. No constituye prescripción médica ni plan de ejercicios específicos de escoliosis (PSSE). Su validez y dosificación deben ser supervisadas conforme al cuadro clínico individual.
             </div>
 
-            <div className="text-xs space-y-1 mb-4 border p-3 rounded bg-gray-50">
-              <p className="font-bold text-sm text-gray-800 m-0 mb-1">Perfil declarado por el paciente:</p>
-              <p className="m-0"><strong>Objetivo:</strong> {objective ? objectiveLabels[objective] : ''}</p>
-              <p className="m-0"><strong>Frecuencia:</strong> {days} días/semana · <strong>Tiempo por sesión:</strong> {time ? timeLabels[time] : ''}</p>
-              <p className="m-0"><strong>Contexto de escoliosis:</strong> {scoliosisLabels[scoliosisContext]}</p>
-              <p className="m-0"><strong>Equipamiento disponible:</strong> {equipment.join(', ')}</p>
+            <div className="export-card__perfil">
+              <p className="export-card__perfil-title">Perfil declarado por el paciente:</p>
+              <p><strong>Objetivo:</strong> {objective ? objectiveLabels[objective] : ''}</p>
+              <p><strong>Frecuencia:</strong> {days} días/semana · <strong>Tiempo por sesión:</strong> {time ? timeLabels[time] : ''}</p>
+              <p><strong>Contexto de escoliosis:</strong> {scoliosisLabels[scoliosisContext]}</p>
+              <p><strong>Equipamiento disponible:</strong> {equipment.join(', ')}</p>
             </div>
 
-            <h3 className="text-sm font-bold border-b pb-1 mb-2">Propuesta de ejercicios seleccionados:</h3>
-            <div className="space-y-3 mb-6">
+            <h3 className="export-card__lista-titulo">Propuesta de ejercicios seleccionados:</h3>
+            <div>
               {results.days.map((day) => (
-                <div key={day.number} className="border-b pb-2 text-xs">
-                  <div className="flex justify-between font-bold text-sm text-[#245a73]">
+                <div key={day.number} className="export-card__ejercicio">
+                  <div className="export-card__ejercicio-cabecera">
                     <span>Día {day.number}: {day.exercise.name}</span>
                     <span>{day.exercise.duration} · {day.exercise.difficulty}</span>
                   </div>
-                  <p className="m-0 text-gray-700">{day.exercise.description}</p>
+                  <p>{day.exercise.description}</p>
                   {day.exercise.adaptation?.notes && (
-                    <p className="m-0 mt-1 text-amber-800">
+                    <p className="export-card__nota">
                       <strong>Nota de adaptación:</strong> {day.exercise.adaptation.notes}
                     </p>
                   )}
                   {day.exercise.clinicalMetadata?.precautions && (
-                    <p className="m-0 text-gray-600">
+                    <p className="export-card__precauciones">
                       <strong>Precauciones:</strong> {day.exercise.clinicalMetadata.precautions.join('; ')}
                     </p>
                   )}
@@ -933,7 +977,7 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
               ))}
             </div>
 
-            <div className="flex justify-end gap-2 border-t pt-3">
+            <div className="export-card__pie">
               <button
                 type="button"
                 className="btn secondary"
@@ -1005,7 +1049,7 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
           </div>
         )}
         {clearStatus && (
-          <p id="clear-status" role="status" className="small-print mt-2">
+          <p id="clear-status" role="status" className="small-print">
             {clearStatus}
           </p>
         )}

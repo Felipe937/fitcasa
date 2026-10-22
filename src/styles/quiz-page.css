@@ -1,0 +1,1568 @@
+/* ==========================================================================
+   Cuestionario #quiz — hoja propia
+   --------------------------------------------------------------------------
+   Reglas exclusivas de la pantalla de sugerencias: hero, escultura, stepper,
+   avisos, tarjetas de respuesta, tarjeta de seguridad, revision, resultados y
+   modal de exportacion. Los componentes compartidos con otras pantallas
+   (.app-card, .notice, .app-main, .panel-actions) siguen en fitcasa-app.css.
+   ========================================================================== */
+
+/* --- Acciones del paso ---------------------------------------------------- */
+.quiz-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-3);
+  margin-top: var(--espacio-5);
+}
+
+/* --- Panel de paso --------------------------------------------------------
+   El panel se reserva con una altura minima para que el paso no colapse al
+   cambiar: la ficha mantiene el mismo aire y el foco no salta de sitio. */
+.step-panel {
+  min-width: 0;
+}
+
+.step-panel > h2 {
+  margin-top: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .step-panel {
+    transition: opacity var(--duracion-media) var(--curva-suave), transform var(--duracion-media) var(--curva-suave);
+  }
+
+  .step-panel.step-enter {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+
+  .step-panel.step-enter-active {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step-panel { transition: none; }
+  .step-panel.step-enter,
+  .step-panel.step-enter-active { opacity: 1; transform: none; }
+}
+
+/* --- Rejilla de respuestas ------------------------------------------------
+   Una sola definicion. Las variantes por tipo de pregunta llegan despues
+   (.choice-grid--objetivo, --dias, --equipamiento, --escoliosis). */
+.choice-grid {
+  display: grid;
+  gap: var(--espacio-3);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+}
+
+.choice-grid label {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espacio-2);
+  min-height: var(--alto-objetivo-tactil);
+  padding: var(--espacio-3);
+  color: var(--color-texto-suave);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+  cursor: pointer;
+}
+
+.choice-grid label:hover {
+  color: var(--color-primario-oscuro);
+  border-color: var(--color-primario);
+  background: var(--color-fondo-azul);
+}
+
+.choice-grid input {
+  flex: 0 0 auto;
+  width: 1.35rem;
+  height: 1.35rem;
+  margin-top: 0.25rem;
+  accent-color: var(--color-primario);
+}
+
+/* --- Hero editorial ------------------------------------------------------- */
+.quiz-page {
+  max-width: min(100% - 2rem, 76rem);
+}
+
+/* Escritorio: dos columnas asimetricas. El texto manda; la escultura acompaña.
+   Movil: el titulo y la escultura comparten fila, y la entradilla debajo. */
+.quiz-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: var(--espacio-4);
+  padding-block: var(--espacio-5) var(--espacio-6);
+}
+
+.quiz-hero__copy {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  max-width: 34rem;
+}
+
+.quiz-context {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  margin: 0 0 var(--espacio-3);
+  color: var(--color-secundario-oscuro);
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.quiz-context::before {
+  content: '';
+  width: 0.65rem;
+  height: 0.65rem;
+  flex: 0 0 auto;
+  background: var(--color-terciario);
+  transform: rotate(45deg);
+}
+
+.quiz-titulo {
+  max-width: 12ch;
+  margin: 0 0 var(--espacio-3);
+  color: var(--color-primario-oscuro);
+  font-size: clamp(2.15rem, 1.45rem + 2.9vw, 4.2rem);
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+  text-wrap: balance;
+}
+
+.quiz-intro {
+  max-width: 56ch;
+  margin: 0;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-base);
+  line-height: 1.55;
+}
+
+/* --- Escultura por capas --------------------------------------------------
+   Una escena 3D de cuatro capas en Z. La composicion depende solo del paso
+   (clase .quiz-page--step-N del contenedor): nunca de las respuestas. */
+.quiz-sculpture {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  color: var(--color-primario);
+}
+
+.quiz-sculpture__escena {
+  position: relative;
+  width: 100%;
+  max-width: 18rem;
+  aspect-ratio: 5 / 4;
+  perspective: 900px;
+  transform-style: preserve-3d;
+}
+
+.quiz-sculpture__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  transform-style: preserve-3d;
+}
+
+.quiz-sculpture__capa {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* La primera capa es una superficie: sin ella, sola, la escena se leeria
+   como un aro suelto en vez de una forma que se construye por capas.
+   El canto inferior de cada placa le da grosor. */
+.quiz-sculpture__canto {
+  fill: var(--color-borde);
+  stroke: none;
+}
+
+.quiz-sculpture__placa {
+  fill: var(--color-superficie);
+  stroke: var(--color-primario-oscuro);
+  stroke-width: 2.5;
+}
+
+.quiz-sculpture__placa--dos {
+  fill: var(--color-fondo-verde);
+  stroke: var(--color-secundario);
+  stroke-width: 2.25;
+}
+
+.quiz-sculpture__placa--tres {
+  fill: var(--color-fondo-azul);
+  stroke: var(--color-terciario);
+  stroke-width: 2;
+}
+
+.quiz-sculpture__nucleo {
+  fill: var(--color-primario);
+  stroke: var(--color-superficie);
+  stroke-width: 4;
+}
+
+.quiz-sculpture__sombra {
+  fill: var(--color-primario-oscuro);
+  opacity: 0.09;
+}
+
+.quiz-sculpture figcaption {
+  max-width: 15rem;
+  margin: var(--espacio-3) 0 0;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-xs);
+  line-height: 1.45;
+  text-align: center;
+}
+
+/* --- Stepper conectado ----------------------------------------------------
+   Tres etapas en rejilla de tres columnas: los circulos quedan siempre en
+   1/6, 1/2 y 5/6 del ancho, y los tramos SVG se alinean con ellos. */
+.quiz-stepper {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--espacio-3);
+  margin-block: var(--espacio-6);
+}
+
+.quiz-stepper__marcas {
+  position: relative;
+}
+
+.quiz-stepper__lista {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: var(--espacio-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.quiz-stepper__traza {
+  position: absolute;
+  top: 1.05rem;
+  height: 4px;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.quiz-stepper__traza--a {
+  left: 16.667%;
+  width: 33.333%;
+}
+
+.quiz-stepper__traza--b {
+  left: 50%;
+  width: 33.333%;
+}
+
+.quiz-stepper__tramo {
+  fill: none;
+  stroke-linecap: butt;
+}
+
+.quiz-stepper__tramo--base {
+  stroke: var(--color-borde);
+  stroke-width: 2;
+  stroke-dasharray: 2 5;
+}
+
+.quiz-stepper__tramo--avance {
+  stroke: var(--color-primario);
+  stroke-width: 3;
+  transform-box: view-box;
+  transform-origin: 0px 50%;
+  transform: scaleX(0);
+}
+
+.quiz-stepper__item {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--espacio-2);
+  min-width: 0;
+}
+
+.quiz-stepper__numero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-borde);
+  background: var(--color-superficie);
+  color: var(--color-texto-suave);
+  font-weight: 800;
+  font-size: var(--texto-sm);
+  font-variant-numeric: tabular-nums;
+  transition: border-color 180ms ease, background-color 180ms ease, color 180ms ease;
+}
+
+.quiz-stepper__numero svg {
+  display: none;
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.25;
+}
+
+/* Pendiente: circulo hueco de trazo discontinuo. */
+.quiz-stepper__item[data-state="upcoming"] .quiz-stepper__numero {
+  border-style: dashed;
+  border-color: var(--color-borde);
+  color: var(--color-texto-suave);
+  background: var(--color-superficie);
+}
+
+/* Actual: aro doble y cifra en tinta plena. */
+.quiz-stepper__item[data-state="current"] .quiz-stepper__numero {
+  border-style: solid;
+  border-width: 2.5px;
+  border-color: var(--color-primario-oscuro);
+  color: var(--color-primario-oscuro);
+  background: var(--color-fondo-verde);
+  box-shadow: 0 0 0 3px var(--color-fondo-verde);
+}
+
+/* Completado: disco lleno con check. */
+.quiz-stepper__item[data-state="completed"] .quiz-stepper__numero {
+  border-style: solid;
+  border-color: var(--color-primario);
+  color: var(--color-sobre-primario);
+  background: var(--color-primario);
+}
+
+.quiz-stepper__item[data-state="completed"] .quiz-stepper__numero svg {
+  display: block;
+}
+
+.quiz-stepper__item[data-state="completed"] .quiz-stepper__cifra {
+  display: none;
+}
+
+.quiz-stepper__etiqueta {
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  color: var(--color-texto-suave);
+  text-align: center;
+  line-height: 1.35;
+}
+
+.quiz-stepper__item[data-state="completed"] .quiz-stepper__etiqueta {
+  color: var(--color-primario-oscuro);
+}
+
+/* El estado actual se marca con un filete bajo la etiqueta, no solo con color. */
+.quiz-stepper__item[data-state="current"] .quiz-stepper__etiqueta {
+  color: var(--color-primario-oscuro);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 5px;
+}
+
+/* Barra de avance: cuatro hitos (tres etapas y la propuesta generada). */
+.quiz-stepper__barra {
+  height: 6px;
+  border-radius: var(--radio-pill);
+  background: var(--color-borde);
+  overflow: hidden;
+}
+
+.quiz-stepper__relleno {
+  display: block;
+  height: 100%;
+  background: var(--color-secundario);
+  border-radius: inherit;
+  transition: width var(--duracion-media) var(--curva-suave);
+}
+
+/* --- Aviso de salud -------------------------------------------------------- */
+.quiz-notice {
+  display: flex;
+  gap: var(--espacio-3);
+  padding: var(--espacio-4);
+  margin: var(--espacio-5) 0;
+  background: var(--color-fondo-alerta);
+  border: 1px solid var(--color-terciario-oscuro);
+  border-left-width: 0.35rem;
+  border-radius: var(--radio-md);
+  color: var(--color-texto);
+  font-size: var(--texto-base);
+  line-height: var(--alto-linea);
+}
+
+.quiz-notice--salud {
+  background: var(--color-fondo-alerta);
+  border-color: var(--color-terciario-oscuro);
+}
+
+.quiz-notice__icono {
+  flex: 0 0 1.75rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-top: 0.15rem;
+  fill: none;
+  stroke: var(--color-terciario-oscuro);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+.quiz-notice__contenido {
+  display: flex;
+  flex-direction: column;
+}
+
+.quiz-notice__titulo {
+  display: block;
+  margin: 0 0 var(--espacio-1);
+  font-size: var(--texto-sm);
+  font-weight: 750;
+  color: var(--color-terciario-oscuro);
+}
+
+.quiz-notice__texto {
+  margin: 0;
+  color: var(--color-texto);
+}
+
+/* --- Tarjetas de respuesta ------------------------------------------------ */
+.choice-card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espacio-3);
+  padding: var(--espacio-4);
+  background: var(--color-superficie);
+  border: 1.5px solid var(--color-borde);
+  border-radius: var(--radio-md);
+  cursor: pointer;
+  transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease;
+}
+
+.choice-card:hover {
+  border-color: var(--color-secundario);
+  background: var(--color-superficie-suave);
+}
+
+.choice-card:has(input:checked) {
+  border-color: var(--color-primario);
+  background: var(--color-fondo-verde);
+  box-shadow: 0 4px 12px -2px rgba(23, 62, 80, 0.08);
+}
+
+.choice-card input {
+  flex: 0 0 auto;
+  width: 1.35rem;
+  height: 1.35rem;
+  margin-top: 0.2rem;
+  accent-color: var(--color-primario);
+  cursor: pointer;
+}
+
+.choice-card:focus-within {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 2px;
+  border-radius: var(--radio-md);
+}
+
+/* Marca de seleccion: un check dibujado, legible sin depender del color. */
+.quiz-page .choice-card::after {
+  content: '';
+  position: absolute;
+  top: var(--espacio-3);
+  right: var(--espacio-3);
+  display: grid;
+  width: 1.4rem;
+  height: 1.4rem;
+  place-items: center;
+  color: var(--color-superficie);
+  background: var(--color-primario);
+  border-radius: 50%;
+  clip-path: polygon(44% 70%, 21% 47%, 14% 55%, 45% 86%, 88% 26%, 80% 19%);
+  opacity: 0;
+  transform: translate3d(0, -0.15rem, 0) scale(0.75);
+  transition: opacity var(--duracion-corta) ease, transform var(--duracion-corta) var(--curva-suave);
+}
+
+.quiz-page .choice-card:has(input:checked)::after {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+/* --- Botones segmentados Sí/No (píldoras) --------------------------------- */
+.segmented-group {
+  display: flex;
+  gap: var(--espacio-2);
+}
+
+.segmented-btn {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-3) var(--espacio-4);
+  min-height: var(--alto-objetivo-tactil);
+  background: var(--color-superficie);
+  border: 1.5px solid var(--color-borde);
+  border-radius: var(--radio-pill);
+  color: var(--color-texto);
+  font-weight: 750;
+  font-size: var(--texto-sm);
+  cursor: pointer;
+  transition: border-color 180ms ease, background-color 180ms ease, color 180ms ease;
+}
+
+.segmented-btn:hover {
+  border-color: var(--color-secundario);
+  background: var(--color-superficie-suave);
+  color: var(--color-primario-oscuro);
+}
+
+/* El input nativo sigue visible: es la seccion estado para el teclado y los
+   lectores de pantalla, y la marca de seleccion no depende del color. */
+.segmented-btn input {
+  flex: 0 0 auto;
+  width: 1.35rem;
+  height: 1.35rem;
+  margin: 0;
+  accent-color: var(--color-primario);
+  cursor: pointer;
+}
+
+.segmented-btn:has(input:checked) {
+  border-color: var(--color-primario);
+  background: var(--color-fondo-verde);
+  color: var(--color-primario-oscuro);
+}
+
+.segmented-btn:focus-within {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 2px;
+  border-radius: var(--radio-pill);
+}
+
+/* --- Tarjeta de supervision de seguridad (paso 2) --------------------------
+   Superficie neutra con filete de arcilla: el tono de aviso queda reservado
+   para los avisos reales, que se leen mejor sobre fondo claro. */
+.safety-card {
+  padding: var(--espacio-5);
+  margin: var(--espacio-6) 0;
+  background: var(--color-superficie);
+  border: 1.5px solid var(--color-borde);
+  border-inline-start: 0.35rem solid var(--color-terciario-oscuro);
+  border-radius: var(--radio-lg);
+}
+
+.safety-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  margin-bottom: var(--espacio-3);
+}
+
+.safety-card__icono {
+  flex: 0 0 1.75rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  fill: none;
+  stroke: var(--color-terciario-oscuro);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.safety-card__header h3 {
+  margin: 0;
+  color: var(--color-primario-oscuro);
+  font-size: var(--texto-lg);
+  line-height: 1.25;
+}
+
+.safety-card > .quiz-intro {
+  max-width: 58ch;
+  margin: 0 0 var(--espacio-5);
+  color: var(--color-texto);
+  font-size: var(--texto-base);
+}
+
+/* El recordatorio clinico conserva (y gana) su propio tono de aviso. */
+.safety-card__reminder {
+  padding: var(--espacio-4);
+  border: 1px solid var(--color-terciario-oscuro);
+  border-inline-start-width: 0.35rem;
+  border-radius: var(--radio-md);
+  background: var(--color-fondo-alerta);
+  color: var(--color-texto);
+  font-size: var(--texto-sm);
+  line-height: 1.6;
+}
+
+.safety-card__reminder strong {
+  color: var(--color-terciario-oscuro);
+}
+
+/* --- Paso 3: ficha de revision --------------------------------------------- */
+.review-step .review-summary h4 {
+  margin: 0 0 var(--espacio-3);
+  font-size: var(--texto-lg);
+  font-weight: 800;
+  color: var(--color-primario-oscuro);
+}
+
+.review-group {
+  margin-top: var(--espacio-5);
+}
+
+.review-group__title {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  margin: 0 0 var(--espacio-3);
+  color: var(--color-secundario-oscuro);
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.review-group__title::before {
+  content: '';
+  width: 0.45rem;
+  height: 0.45rem;
+  flex: 0 0 auto;
+  background: var(--color-terciario);
+  transform: rotate(45deg);
+}
+
+.review-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 var(--espacio-5);
+  border-top: 1px solid var(--color-borde);
+}
+
+.review-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+  padding: var(--espacio-3) 0;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.review-item--wide {
+  grid-column: 1 / -1;
+}
+
+.review-label {
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  color: var(--color-texto-suave);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.review-valor {
+  font-size: var(--texto-base);
+  color: var(--color-texto);
+  font-weight: 600;
+}
+
+.review-valor--numeric {
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Boton primario dominante --------------------------------------------- */
+.btn--primario {
+  background: var(--color-primario);
+  color: var(--color-sobre-primario);
+  border: none;
+  min-height: var(--alto-objetivo-tactil);
+}
+
+.btn--primario:hover {
+  background: var(--color-primario-oscuro);
+}
+
+/* --- Fieldset opcional (contexto escoliosis) ------------------------------- */
+.fieldset-opcional {
+  padding: var(--espacio-4);
+  margin: var(--espacio-6) 0;
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+}
+
+.quiz-page .fieldset-opcional legend {
+  font-size: var(--texto-sm);
+  font-weight: 750;
+  line-height: 1.45;
+}
+
+.fieldset-opcional__nota {
+  max-width: 60ch;
+  margin: 0 0 var(--espacio-3);
+  color: var(--color-texto-suave);
+  font-size: var(--texto-xs);
+  line-height: 1.55;
+}
+
+/* --- Bloqueo de seguridad clinica — contencion serena ----------------------- */
+.bloqueo-seguridad {
+  padding: var(--espacio-5);
+  margin: var(--espacio-6) 0;
+  background: var(--color-fondo-alerta);
+  border: 1.5px solid var(--color-terciario-oscuro);
+  border-radius: var(--radio-lg);
+}
+
+.bloqueo-seguridad h3 {
+  margin: 0 0 var(--espacio-3);
+  color: var(--color-terciario-oscuro);
+  font-size: var(--texto-lg);
+  font-weight: 800;
+}
+
+.bloqueo-seguridad p {
+  margin: 0 0 var(--espacio-3);
+  color: var(--color-texto);
+}
+
+/* --- Resultados insuficientes ---------------------------------------------- */
+.resultados-insuficientes {
+  padding: var(--espacio-5);
+  margin: var(--espacio-6) 0;
+  background: var(--color-fondo-aviso);
+  border: 1px solid var(--color-foco);
+  border-radius: var(--radio-lg);
+}
+
+.resultados-insuficientes p {
+  margin: 0 0 var(--espacio-3);
+  color: var(--color-texto);
+}
+
+/* --- Tarjetas de plan semanal ---------------------------------------------- */
+.plan-grid {
+  display: grid;
+  gap: var(--espacio-3);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+}
+
+.plan-card {
+  display: flex;
+  flex-direction: column;
+  padding: var(--espacio-4);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.plan-card:hover {
+  border-color: var(--color-secundario);
+  box-shadow: 0 4px 12px -2px rgba(23, 62, 80, 0.08);
+}
+
+.plan-card__cabecera {
+  display: flex;
+  align-items: baseline;
+  gap: var(--espacio-2);
+  margin-bottom: var(--espacio-2);
+}
+
+.plan-card__dia {
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  color: var(--color-secundario-oscuro);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.plan-card__titulo {
+  margin: 0 0 var(--espacio-2);
+  font-size: var(--texto-lg);
+  font-weight: 750;
+  color: var(--color-texto);
+}
+
+.plan-card__descripcion {
+  margin: 0 0 var(--espacio-3);
+  font-size: var(--texto-base);
+  color: var(--color-texto-suave);
+  line-height: var(--alto-linea);
+}
+
+.plan-card__meta {
+  display: flex;
+  gap: var(--espacio-2);
+  margin-bottom: var(--espacio-3);
+  flex-wrap: wrap;
+}
+
+.plan-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--espacio-1) var(--espacio-2);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  border-radius: var(--radio-pill);
+}
+
+.plan-chip--categoria {
+  background: var(--color-fondo-verde);
+  color: var(--color-secundario-oscuro);
+}
+
+.plan-chip--duracion {
+  background: var(--color-fondo-azul);
+  color: var(--color-primario-oscuro);
+}
+
+.plan-chip--nivel {
+  background: var(--color-fondo-aviso);
+  color: var(--color-foco);
+}
+
+.plan-card__adaptacion {
+  margin: 0 0 var(--espacio-3);
+  font-size: var(--texto-sm);
+  color: var(--color-terciario-oscuro);
+}
+
+.plan-card__adaptacion strong {
+  color: var(--color-terciario-oscuro);
+}
+
+.plan-card__accion {
+  margin-top: auto;
+}
+
+/* --- Modal de exportacion — formato documento limpio ----------------------- */
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(23, 38, 48, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+  overscroll-behavior: contain;
+}
+
+.dialog-backdrop[hidden],
+.export-card[hidden] {
+  display: none !important;
+}
+
+.export-card {
+  background: var(--color-superficie);
+  color: var(--color-texto);
+  max-width: 46rem;
+  width: 100%;
+  border-radius: var(--radio-lg);
+  padding: var(--espacio-6);
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--sombra-flotante-alta);
+}
+
+.export-card h2 {
+  margin: 0;
+  color: var(--color-primario-oscuro);
+  font-size: var(--texto-xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.export-card__cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--espacio-4);
+  padding-bottom: var(--espacio-3);
+  margin-bottom: var(--espacio-4);
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.export-card__fecha {
+  margin: var(--espacio-1) 0 0;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-xs);
+}
+
+.export-card__aviso {
+  padding: var(--espacio-3);
+  margin-bottom: var(--espacio-4);
+  background: var(--color-fondo-azul);
+  border: 1px solid var(--color-borde);
+  border-inline-start: 0.35rem solid var(--color-primario);
+  border-radius: var(--radio-md);
+  color: var(--color-texto);
+  font-size: var(--texto-xs);
+  line-height: 1.6;
+}
+
+.export-card__perfil {
+  display: grid;
+  gap: var(--espacio-1);
+  padding: var(--espacio-3);
+  margin-bottom: var(--espacio-4);
+  background: var(--color-superficie-suave);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+  font-size: var(--texto-sm);
+}
+
+.export-card__perfil p {
+  margin: 0;
+}
+
+.export-card__perfil-title {
+  font-weight: 800;
+  color: var(--color-primario-oscuro);
+}
+
+.export-card__lista-titulo {
+  margin: 0 0 var(--espacio-2);
+  padding-bottom: var(--espacio-1);
+  border-bottom: 1px solid var(--color-borde);
+  font-size: var(--texto-sm);
+  font-weight: 800;
+  color: var(--color-primario-oscuro);
+}
+
+.export-card__ejercicio {
+  padding-bottom: var(--espacio-2);
+  margin-bottom: var(--espacio-3);
+  border-bottom: 1px solid var(--color-borde);
+  font-size: var(--texto-xs);
+}
+
+.export-card__ejercicio:last-child {
+  margin-bottom: 0;
+}
+
+.export-card__ejercicio-cabecera {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--espacio-3);
+  font-weight: 800;
+  color: var(--color-primario-oscuro);
+}
+
+.export-card__ejercicio-cabecera span:last-child {
+  font-weight: 700;
+  color: var(--color-texto-suave);
+  white-space: nowrap;
+}
+
+.export-card__nota {
+  margin: var(--espacio-1) 0 0;
+  color: var(--color-terciario-oscuro);
+}
+
+.export-card__precauciones {
+  margin: 0;
+  color: var(--color-texto-suave);
+}
+
+.export-card__pie {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--espacio-2);
+  padding-top: var(--espacio-3);
+  border-top: 1px solid var(--color-borde);
+}
+
+/* --- Ajustes propios del recorrido ----------------------------------------
+   Una sola superficie calma y controles con estados legibles, sin depender
+   de color o hover para explicar la accion. */
+
+/* La pagina lleva su propio ritmo: el padding generico de las secciones del
+   sitio se anula aqui para que el aire lo fije la hoja del cuestionario. */
+main.quiz-page > section {
+  padding-block: 0;
+}
+
+.quiz-page > .quiz-card {
+  margin-top: var(--espacio-5);
+  border-color: var(--color-borde);
+  box-shadow: none;
+}
+
+.quiz-page fieldset {
+  min-width: 0;
+  padding: 0;
+  margin: 0 0 var(--espacio-6);
+  border: 0;
+}
+
+.quiz-page legend {
+  max-width: 48rem;
+  padding: 0;
+  margin-bottom: var(--espacio-3);
+  color: var(--color-primario-oscuro);
+  font-size: var(--texto-lg);
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.quiz-page .fieldset-opcional {
+  padding: var(--espacio-4);
+  margin-top: var(--espacio-7);
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+}
+
+.quiz-page .choice-grid {
+  gap: var(--espacio-3);
+}
+
+.quiz-page .quiz-card > h2 {
+  margin: 0 0 var(--espacio-2);
+  font-size: var(--texto-lg);
+  color: var(--color-texto-suave);
+  font-weight: 750;
+  letter-spacing: 0.01em;
+}
+
+/* Titulo del paso: es el destino del foco al cambiar de etapa. */
+.quiz-page .step-panel > h3 {
+  margin: 0 0 var(--espacio-5);
+  color: var(--color-primario-oscuro);
+  font-size: var(--texto-xl);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.quiz-page .step-panel > h3:focus {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 4px;
+  border-radius: var(--radio-sm);
+}
+
+/* El estado del paso se anuncia en una region viva que no duplica el titular
+   en pantalla: el texto sigue en el arbol de accesibilidad. */
+.quiz-page .progress-text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- Variantes por tipo de pregunta ---------------------------------------
+   Objetivo: opciones grandes y editoriales.
+   Dias: escala segmentada de siete tramos.
+   Equipamiento: fichas compactas (chips).
+   Contexto de escoliosis: filas de formulario. */
+.quiz-page .choice-grid--objetivo {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+}
+
+.quiz-page .choice-grid--objetivo label {
+  align-items: flex-start;
+  min-height: 7rem;
+  padding: var(--espacio-4) var(--espacio-5);
+  color: var(--color-texto);
+  font-size: var(--texto-lg);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.quiz-page .choice-grid--objetivo label:hover {
+  transform: translate3d(0, -0.15rem, 0);
+}
+
+.quiz-page .choice-grid--objetivo input {
+  margin-top: 0.1rem;
+}
+
+.quiz-page .choice-grid--dias {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--espacio-1);
+  max-width: 40rem;
+}
+
+.quiz-page .choice-grid--dias label {
+  flex-direction: column;
+  align-items: center;
+  gap: var(--espacio-1);
+  min-height: 5.5rem;
+  padding: var(--espacio-2) var(--espacio-1);
+  text-align: center;
+  font-size: var(--texto-xs);
+  line-height: 1.3;
+}
+
+.quiz-page .choice-grid--dias input {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0;
+}
+
+.quiz-page .choice-grid--dias .choice-card::after {
+  top: var(--espacio-1);
+  right: var(--espacio-1);
+  width: 1rem;
+  height: 1rem;
+}
+
+.quiz-page .choice-grid--equipamiento {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+}
+
+.quiz-page .choice-grid--equipamiento label {
+  align-items: center;
+  min-height: var(--alto-objetivo-tactil);
+  padding: var(--espacio-3) var(--espacio-4);
+  border-radius: var(--radio-pill);
+  color: var(--color-texto);
+  font-weight: 650;
+}
+
+.quiz-page .choice-grid--equipamiento .choice-card::after {
+  top: 50%;
+  right: var(--espacio-4);
+  margin-top: -0.7rem;
+}
+
+.quiz-page .choice-grid--equipamiento label:has(input:checked) {
+  padding-right: var(--espacio-6);
+}
+
+.quiz-page .choice-grid--escoliosis {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--espacio-2);
+}
+
+.quiz-page .choice-grid--escoliosis label {
+  align-items: center;
+  min-height: var(--alto-objetivo-tactil);
+  padding: var(--espacio-3) var(--espacio-4);
+  color: var(--color-texto);
+}
+
+.quiz-page .choice-grid--escoliosis .choice-card::after {
+  top: 50%;
+  right: var(--espacio-4);
+  margin-top: -0.7rem;
+}
+
+.quiz-page .choice-grid--escoliosis label:has(input:checked) {
+  padding-right: var(--espacio-6);
+}
+
+/* --- Seguridad: los campos respiran y la marca de estado es visible ------- */
+.quiz-page .safety-card fieldset {
+  margin-bottom: var(--espacio-5);
+}
+
+.quiz-page .safety-card__header + .quiz-intro {
+  margin-bottom: var(--espacio-5);
+}
+
+.quiz-page .segmented-group {
+  max-width: 30rem;
+}
+
+.quiz-page .segmented-btn {
+  min-height: var(--alto-objetivo-tactil);
+}
+
+/* --- Revision: ficha editorial -------------------------------------------- */
+.quiz-page .review-summary {
+  padding-top: var(--espacio-2);
+}
+
+.quiz-page .review-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.quiz-page .review-item--wide {
+  grid-column: 1 / -1;
+}
+
+/* --- Resultados: cabecera y cuerpo con la misma jerarquia ---------------- */
+.quiz-page .quiz-results__cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--espacio-3) var(--espacio-4);
+  margin-bottom: var(--espacio-4);
+}
+
+.quiz-page .quiz-results__cabecera h2 {
+  margin: 0;
+  font-size: var(--texto-2xl);
+}
+
+.quiz-page .quiz-results__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+}
+
+.quiz-page .quiz-results__orientacion {
+  padding: var(--espacio-4);
+  margin-bottom: var(--espacio-4);
+  background: var(--color-fondo-azul);
+  border: 1px solid var(--color-borde);
+  border-inline-start: 0.35rem solid var(--color-primario);
+  border-radius: var(--radio-md);
+  color: var(--color-texto);
+  font-size: var(--texto-sm);
+  line-height: 1.6;
+}
+
+.quiz-page .quiz-results__orientacion p {
+  margin: 0;
+  font-weight: 600;
+}
+
+.quiz-page .quiz-results__acciones .btn {
+  min-height: var(--alto-objetivo-tactil);
+}
+
+/* --- Foco, transiciones y estados de la tarjeta --------------------------- */
+.quiz-page .btn,
+.quiz-page .quiz-actions button {
+  transition: background-color var(--duracion-corta) ease, color var(--duracion-corta) ease, border-color var(--duracion-corta) ease, transform var(--duracion-corta) var(--curva-suave), box-shadow var(--duracion-corta) ease;
+}
+
+.quiz-page .btn:active:not(:disabled),
+.quiz-page .quiz-actions button:active:not(:disabled) {
+  transform: scale(0.985);
+}
+
+.quiz-page .btn:focus-visible,
+.quiz-page button:focus-visible,
+.quiz-page a:focus-visible {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 3px;
+}
+
+.quiz-page button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.quiz-page .quiz-actions {
+  align-items: center;
+  justify-content: flex-end;
+  padding-top: var(--espacio-4);
+}
+
+.quiz-page .quiz-actions .secondary {
+  margin-right: auto;
+}
+
+/* --- Escultura: composicion por etapa -------------------------------------
+   Solo el paso decide que capas estan visibles. Las respuestas no intervienen. */
+.quiz-page--step-1 .quiz-sculpture__capa--2,
+.quiz-page--step-1 .quiz-sculpture__capa--3,
+.quiz-page--step-1 .quiz-sculpture__capa--4 {
+  opacity: 0;
+}
+
+.quiz-page--step-2 .quiz-sculpture__capa--3,
+.quiz-page--step-2 .quiz-sculpture__capa--4 {
+  opacity: 0;
+}
+
+.quiz-page--step-1 .quiz-sculpture__capa--2 { --z: -90px; --s: 0.9; }
+.quiz-page--step-1 .quiz-sculpture__capa--3 { --z: -120px; --s: 0.86; }
+.quiz-page--step-1 .quiz-sculpture__capa--4 { --z: -150px; --s: 0.82; }
+.quiz-page--step-2 .quiz-sculpture__capa--3 { --z: -90px; --s: 0.9; }
+.quiz-page--step-2 .quiz-sculpture__capa--4 { --z: -120px; --s: 0.86; }
+
+.quiz-sculpture__capa {
+  opacity: 1;
+  transform: rotateX(var(--rx, 0deg)) rotateZ(var(--rz, 0deg)) translateZ(var(--z, 0px)) scale(var(--s, 1));
+  transition: opacity var(--duracion-media) var(--curva-suave), transform var(--duracion-media) var(--curva-suave);
+}
+
+.quiz-sculpture__capa--1 { --rx: 57deg; --rz: -12deg; --z: -40px; }
+.quiz-sculpture__capa--2 { --rx: 57deg; --rz: 10deg; --z: 0px; }
+.quiz-sculpture__capa--3 { --rx: 57deg; --rz: 30deg; --z: 40px; }
+.quiz-sculpture__capa--4 { --rx: 57deg; --rz: -4deg; --z: 84px; }
+
+/* Inclinacion suave, solo con puntero fino: no esconde informacion. */
+@media (hover: hover) and (pointer: fine) {
+  .quiz-sculpture__escena {
+    transition: transform 480ms var(--curva-suave);
+  }
+
+  .quiz-sculpture:hover .quiz-sculpture__escena {
+    transform: rotateX(5deg) rotateY(-7deg);
+  }
+}
+
+/* --- Movimiento de entrada ------------------------------------------------ */
+@media (prefers-reduced-motion: no-preference) {
+  .quiz-hero__copy > * {
+    animation: quiz-copy-enter 520ms var(--curva-suave) both;
+  }
+
+  .quiz-hero__copy > :nth-child(2) { animation-delay: 80ms; }
+  .quiz-hero__copy > :nth-child(3) { animation-delay: 150ms; }
+  .quiz-page .step-panel { animation: quiz-step-enter 360ms var(--curva-suave) both; }
+  .quiz-stepper__item[data-state="completed"] .quiz-stepper__numero svg { animation: quiz-check-in 220ms var(--curva-suave) both; }
+  .quiz-stepper__tramo--avance { transition: transform var(--duracion-media) var(--curva-suave); }
+}
+
+@keyframes quiz-copy-enter {
+  from { opacity: 0; transform: translateY(0.65rem); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes quiz-step-enter {
+  from { opacity: 0; transform: translateY(0.45rem); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes quiz-check-in {
+  from { opacity: 0; transform: scale(0.65) rotate(-8deg); }
+  to { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+/* --- Adaptaciones --------------------------------------------------------- */
+@media (min-width: 48rem) {
+  .quiz-hero {
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+    gap: clamp(var(--espacio-5), 4vw, var(--espacio-8));
+    padding-block: clamp(var(--espacio-5), 3vw, var(--espacio-7)) clamp(var(--espacio-6), 4vw, var(--espacio-8));
+  }
+
+  .quiz-hero__copy {
+    max-width: 38rem;
+  }
+
+  .quiz-sculpture__escena {
+    max-width: 17rem;
+  }
+}
+
+@media (max-width: 47.99rem) {
+  /* Movil: el titulo y la escultura comparten fila; la entradilla va debajo.
+     La primera pregunta queda al alcance sin scroll largo. */
+  .quiz-hero {
+    grid-template-columns: minmax(0, 1fr) 7rem;
+    align-items: start;
+    gap: var(--espacio-3);
+    padding-block: var(--espacio-3) var(--espacio-5);
+  }
+
+  .quiz-hero__copy {
+    max-width: none;
+  }
+
+  .quiz-titulo {
+    max-width: 13ch;
+    font-size: clamp(1.9rem, 7.2vw, 2.7rem);
+  }
+
+  .quiz-intro {
+    font-size: var(--texto-sm);
+    line-height: 1.5;
+  }
+
+  .quiz-sculpture {
+    align-self: start;
+  }
+
+  .quiz-sculpture__escena {
+    max-width: 7rem;
+  }
+
+  /* Movil: version simplificada. Las placas se abren un poco para que la
+     forma se lea a 112 px y solo se muestran tres capas. */
+  .quiz-sculpture__capa--1 { --rx: 46deg; }
+  .quiz-sculpture__capa--2 { --rx: 46deg; }
+  .quiz-sculpture__capa--3 { --rx: 46deg; }
+  .quiz-sculpture__capa--4 { --rx: 46deg; }
+
+  .quiz-sculpture__capa--4 {
+    display: none;
+  }
+
+  .quiz-sculpture figcaption {
+    display: none;
+  }
+
+  /* El aviso mantiene su tono, su filete y su titular en negrita; solo
+     aprieta el cuerpo para que entre en el primer pliegue. */
+  .quiz-notice {
+    padding: var(--espacio-3);
+    margin: var(--espacio-4) 0;
+    font-size: var(--texto-sm);
+    line-height: 1.5;
+  }
+
+  .quiz-notice__icono {
+    width: 1.4rem;
+    height: 1.4rem;
+    flex-basis: 1.4rem;
+  }
+
+  .quiz-stepper {
+    margin-block: var(--espacio-4);
+  }
+
+  .quiz-page > .quiz-card {
+    margin-top: var(--espacio-4);
+  }
+
+  .quiz-page .choice-grid--dias {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--espacio-2);
+  }
+
+  .quiz-page .choice-grid--objetivo {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .quiz-page .choice-grid--objetivo label {
+    min-height: 0;
+  }
+
+  .quiz-page .review-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .quiz-page .review-item--wide {
+    grid-column: auto;
+  }
+
+  .quiz-page .quiz-actions {
+    justify-content: stretch;
+  }
+
+  .quiz-page .quiz-actions button {
+    flex: 1 1 12rem;
+  }
+}
+
+@media (max-width: 28rem) {
+  .quiz-page {
+    width: min(100% - 1.25rem, 76rem);
+  }
+
+  .quiz-hero {
+    grid-template-columns: minmax(0, 1fr) 5.5rem;
+  }
+
+  .quiz-titulo {
+    font-size: clamp(1.85rem, 7.4vw, 2.4rem);
+  }
+
+  .quiz-sculpture__escena {
+    max-width: 5.5rem;
+  }
+
+  .quiz-page .segmented-group {
+    flex-direction: column;
+  }
+
+  .quiz-page .choice-grid--dias {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* --- Movimiento reducido: sin animaciones decorativas ---------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .quiz-hero__copy > *,
+  .quiz-page .step-panel,
+  .quiz-stepper__numero svg {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .quiz-stepper__numero,
+  .quiz-stepper__relleno,
+  .quiz-stepper__tramo--avance,
+  .quiz-page .choice-card,
+  .quiz-page .choice-card::after,
+  .quiz-page .segmented-btn,
+  .quiz-sculpture__capa {
+    transition: none !important;
+  }
+
+  .quiz-sculpture__escena,
+  .quiz-sculpture:hover .quiz-sculpture__escena {
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .quiz-page--step-1 .quiz-sculpture__capa--2,
+  .quiz-page--step-1 .quiz-sculpture__capa--3,
+  .quiz-page--step-1 .quiz-sculpture__capa--4,
+  .quiz-page--step-2 .quiz-sculpture__capa--3,
+  .quiz-page--step-2 .quiz-sculpture__capa--4 {
+    transform: none !important;
+  }
+}
+
+/* --- Impresion del cuestionario y exportacion ----------------------------- */
+@media print {
+  .quiz-stepper,
+  .quiz-actions,
+  .dialog-backdrop button,
+  #imprimir-guia,
+  .btn {
+    display: none !important;
+  }
+  .quiz-notice,
+  .safety-card,
+  .bloqueo-seguridad,
+  .resultados-insuficientes,
+  .plan-card {
+    break-inside: avoid;
+    border-color: #000;
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .plan-chip {
+    border: 1px solid #000;
+    color: #000 !important;
+    background: #fff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .export-card {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+}

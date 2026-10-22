@@ -177,7 +177,6 @@ nav { display: flex; align-items: center; justify-content: space-between; gap: v
   .btn,
   button,
   .card-link,
-  .choice-grid label,
   .app-card,
   .exercise-card,
   .exercise-card button,
@@ -208,14 +207,14 @@ li + li { margin-top: var(--espacio-2); }
 /* --- Botones ---------------------------------------------------------------
    Un solo color de relleno y una sola forma, decidida aqui: 16 px. El borde
    de 2px mantiene el objetivo tactil sin depender de la sombra. */
-.btn, .quiz-actions button, .panel-actions button, .record-actions button, #clear-filters, #exercise-dialog button, #close-dialog {
+.btn, .panel-actions button, .record-actions button, #clear-filters, #exercise-dialog button, #close-dialog {
   display: inline-flex; align-items: center; justify-content: center; min-height: var(--alto-objetivo-tactil);
   padding: 0.7rem 1rem; color: var(--color-sobre-primario); background: var(--color-primario);
   border: 2px solid var(--color-primario); border-radius: var(--radio-md); font-weight: 750; line-height: 1.2; text-decoration: none;
 }
-.btn:hover, .btn:active, .quiz-actions button:hover, .quiz-actions button:active, .panel-actions button:hover, .panel-actions button:active, .record-actions button:hover, .record-actions button:active, #clear-filters:hover, #exercise-dialog button:hover, #close-dialog:hover { color: var(--color-sobre-primario); background: var(--color-primario-oscuro); border-color: var(--color-primario-oscuro); }
-.btn.secondary, .quiz-actions .secondary, .panel-actions .secondary, .record-actions .secondary, .app-card > .secondary, #clear-filters { color: var(--color-primario-oscuro); background: var(--color-superficie); border-color: var(--color-primario); }
-.btn.secondary:hover, .quiz-actions .secondary:hover, .quiz-actions .secondary:active, .panel-actions .secondary:hover, .panel-actions .secondary:active, .record-actions .secondary:hover, .record-actions .secondary:active, .app-card > .secondary:hover, #clear-filters:hover { color: var(--color-primario-oscuro); background: var(--color-fondo-azul); }
+.btn:hover, .btn:active, .panel-actions button:hover, .panel-actions button:active, .record-actions button:hover, .record-actions button:active, #clear-filters:hover, #exercise-dialog button:hover, #close-dialog:hover { color: var(--color-sobre-primario); background: var(--color-primario-oscuro); border-color: var(--color-primario-oscuro); }
+.btn.secondary, .panel-actions .secondary, .record-actions .secondary, .app-card > .secondary, #clear-filters { color: var(--color-primario-oscuro); background: var(--color-superficie); border-color: var(--color-primario); }
+.btn.secondary:hover, .panel-actions .secondary:hover, .panel-actions .secondary:active, .record-actions .secondary:hover, .record-actions .secondary:active, .app-card > .secondary:hover, #clear-filters:hover { color: var(--color-primario-oscuro); background: var(--color-fondo-azul); }
 .record-actions .danger { color: var(--color-sobre-primario); background: var(--color-peligro); border-color: var(--color-peligro); }
 
 /* Enlaces de accion dentro de tarjetas: el enlace ancla al fondo de la tarjeta. */

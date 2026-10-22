@@ -746,6 +746,8 @@ main.exercise-main > section {
   gap: clamp(var(--espacio-4), 3vw, var(--espacio-6));
   grid-template-columns: 1fr;
   width: 100%;
+  /* Contexto 3D para la inclinación ligera de las tarjetas. */
+  perspective: 70rem;
 }
 
 @media (min-width: 36rem) {
@@ -769,6 +771,14 @@ main.exercise-main > section {
 /* Tarjeta individual de ejercicio */
 .exercise-card {
   --card-index: 0;
+  /* Profundidad: el puntero fino inclina (--px/--py) y el foco aporta una
+     inclinación fija (--fx/--fy) en táctil y teclado. */
+  --px: 0deg;
+  --py: 0deg;
+  --fx: 0deg;
+  --fy: 0deg;
+  --fz: 0px;
+  --lift: 0px;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -777,36 +787,24 @@ main.exercise-main > section {
   border: 1px solid var(--color-borde);
   border-radius: var(--radio-lg);
   overflow: hidden;
-  transition: transform var(--duracion-media) var(--curva-suave),
-              border-color var(--duracion-media) var(--curva-suave);
+  transform: translateY(var(--lift)) rotateX(calc(var(--px) + var(--fx))) rotateY(calc(var(--py) + var(--fy))) translateZ(var(--fz));
+  transform-origin: center;
+  transition: transform 260ms var(--curva-suave), opacity 260ms var(--curva-suave);
 }
 
-.exercise-card:hover,
-.exercise-card:focus-within {
-  transform: translateY(-0.25rem);
+.exercise-card:hover {
+  --lift: -0.25rem;
   border-color: var(--color-secundario);
 }
 
-/* RITMO EDITORIAL: Tarjeta destacada cuando no hay filtros activos (sin masonry para evitar huecos) */
-@media (min-width: 64rem) {
-  .exercise-card--destacada {
-    background: #fdfefe;
-    border-color: rgba(21, 67, 59, 0.35);
-  }
-
-  .exercise-card--destacada .exercise-card__contenido {
-    padding: var(--espacio-6);
-  }
-
-  .exercise-card--destacada .exercise-card__titulo {
-    font-size: var(--texto-xl);
-  }
-
-  .exercise-card--destacada .exercise-desc {
-    -webkit-line-clamp: 4;
-    line-clamp: 4;
-    font-size: var(--texto-base);
-  }
+/* Alternativa sin puntero: al recibir el foco —con teclado o con el dedo—
+   la tarjeta se inclina de forma fija. No depende del hover. */
+.exercise-card:focus-within {
+  --fx: 1.4deg;
+  --fy: -1.4deg;
+  --fz: 8px;
+  --lift: -0.25rem;
+  border-color: var(--color-secundario);
 }
 
 /* Área multimedia (PosterArt + Video trigger) */
@@ -854,64 +852,44 @@ main.exercise-main > section {
   background: #faf4ef;
 }
 
-/* Botón de reproducción de vídeo sobre la tarjeta */
-.exercise-media__velo {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  background: transparent;
-  border: 0;
-  cursor: pointer;
-  touch-action: manipulation;
-  transition: background-color var(--duracion-corta) ease;
-}
-
-.exercise-media__velo:hover {
-  background-color: rgba(14, 47, 41, 0.12);
-}
-
-.exercise-media__play {
-  display: grid;
-  place-items: center;
-  width: 3.25rem;
-  height: 3.25rem;
-  color: var(--color-sobre-primario);
-  background: var(--color-primario);
-  border-radius: 50%;
-  transition: transform var(--duracion-corta) ease, background-color var(--duracion-corta) ease;
-}
-
-.exercise-media__velo:hover .exercise-media__play {
-  transform: scale(1.08);
-  background: var(--color-primario-oscuro);
-}
-
-.exercise-media__play svg {
-  width: 1.35rem;
-  height: 1.35rem;
-  margin-left: 0.18rem;
-  fill: currentColor;
-}
-
-.exercise-media__velo:focus-visible {
-  outline: 3px solid var(--color-foco);
-  outline-offset: -3px;
-}
-
+/* Estado del póster. El póster no es un control: el único control de cada
+   tarjeta es su botón de detalle, así que aquí solo se declara el estado. */
 .exercise-media__estado {
-  position: absolute;
-  inset-inline: var(--espacio-3);
-  bottom: var(--espacio-3);
   margin: 0;
-  padding: 0.25rem 0.5rem;
-  color: var(--color-texto-suave);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.exercise-media__estado--video {
+  position: absolute;
+  top: var(--espacio-3);
+  right: var(--espacio-3);
+  padding: 0.2rem 0.6rem;
+  color: var(--color-primario-oscuro);
   background: rgba(255, 255, 255, 0.92);
   border: 1px solid var(--color-borde);
   border-radius: var(--radio-pill);
-  font-size: var(--texto-xs);
-  font-weight: 700;
+}
+
+.exercise-media__estado--pendiente {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  padding: 0.45rem var(--espacio-3);
+  color: var(--color-texto-suave);
+  background: rgba(255, 255, 255, 0.94);
+  border-top: 1px dashed var(--color-borde);
   text-align: center;
+}
+
+/* Rótulo del póster: el arte es abstracto y no muestra la técnica. */
+.exercise-card__rotulo {
+  margin: 0 0 var(--espacio-3);
+  color: var(--color-texto-suave);
+  font-size: var(--texto-xs);
+  font-weight: 650;
+  line-height: 1.4;
 }
 
 /* Contenido de la tarjeta */
@@ -1417,12 +1395,16 @@ main.exercise-main > section {
    ========================================================================== */
 
 @media (prefers-reduced-motion: no-preference) {
-  /* La clase aparece al entrar en viewport; sin ella las tarjetas siguen visibles. */
-  #exercise-list.is-visible .exercise-card {
+  /* La entrada se anima en las capas interiores: el `transform` de la tarjeta
+     queda libre para la profundidad 3D. La clase aparece al entrar en
+     viewport; sin ella las tarjetas siguen visibles. */
+  #exercise-list.is-visible .exercise-media,
+  #exercise-list.is-visible .exercise-card__contenido {
     animation: entrada-tarjeta var(--duracion-entrada-tarjeta) var(--curva-suave) both;
     animation-delay: calc(var(--card-index) * var(--paso-entrada-tarjeta));
   }
 
+  #exercise-list.is-visible .exercise-card__rotulo,
   #exercise-list.is-visible .exercise-card__encabezado,
   #exercise-list.is-visible .exercise-card__titulo,
   #exercise-list.is-visible .exercise-desc,
@@ -1430,6 +1412,10 @@ main.exercise-main > section {
   #exercise-list.is-visible .exercise-tags,
   #exercise-list.is-visible .exercise-card__cta {
     animation: entrada-metadata var(--duracion-entrada-tarjeta) var(--curva-suave) both;
+  }
+
+  #exercise-list.is-visible .exercise-card__rotulo {
+    animation-delay: calc(var(--card-index) * var(--paso-entrada-tarjeta) + 70ms);
   }
 
   #exercise-list.is-visible .exercise-card__encabezado {
@@ -1501,10 +1487,20 @@ main.exercise-main > section {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .exercise-card,
+  /* Sin movimiento: la profundidad 3D se desactiva y el contenido se muestra
+     ya en su sitio. */
+  .exercise-card {
+    --px: 0deg;
+    --py: 0deg;
+    --fx: 0deg;
+    --fy: 0deg;
+    --fz: 0px;
+    --lift: 0px;
+    transition: none !important;
+  }
+
   .exercise-hero__visual,
   .exercise-media__arte,
-  .exercise-media__velo:hover .exercise-media__play,
   .exercise-card__cta,
   .exercise-card__cta svg,
   .category-tab,
@@ -1517,7 +1513,9 @@ main.exercise-main > section {
     transform: none !important;
   }
 
-  #exercise-list.is-visible .exercise-card,
+  #exercise-list.is-visible .exercise-media,
+  #exercise-list.is-visible .exercise-card__contenido,
+  #exercise-list.is-visible .exercise-card__rotulo,
   #exercise-list.is-visible .exercise-card__encabezado,
   #exercise-list.is-visible .exercise-card__titulo,
   #exercise-list.is-visible .exercise-desc,
@@ -1527,6 +1525,35 @@ main.exercise-main > section {
   #exercise-dialog[open],
   #exercise-dialog[open]::backdrop {
     animation: none !important;
+  }
+}
+
+/* ==========================================================================
+   9. IMPRESIÓN
+   ========================================================================== */
+@media print {
+  /* En papel importa el contenido, no los controles. */
+  .toolbar,
+  .category-tabs,
+  .active-filters,
+  .filters-panel,
+  .exercise-card__cta,
+  .exercise-hero__visual {
+    display: none;
+  }
+
+  .exercise-card {
+    --px: 0deg;
+    --py: 0deg;
+    --fx: 0deg;
+    --fy: 0deg;
+    --fz: 0px;
+    --lift: 0px;
+    break-inside: avoid;
+  }
+
+  .exercise-card__rotulo {
+    color: #000;
   }
 }
 

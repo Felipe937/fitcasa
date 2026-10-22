@@ -1,6 +1,5 @@
 /* ==========================================================================
    FitCasa — Guía editorial de escoliosis (ScoliosisPage)
-   Parte 2/2: Acabado premium, animaciones de nivel profesional y validación.
    Dirección: editorial científica, minimalismo cálido, profundidad 3D orgánica
    y composición asimétrica. Mobile-first, sin dependencias pesadas.
    ========================================================================== */
@@ -8,14 +7,10 @@
 .scoliosis-page {
   --scoliosis-texto-max: 66ch;
   --scoliosis-indice: 15rem;
-  --scoliosis-parallax: 0;
-  --tilt-x: 0deg;
-  --tilt-y: 0deg;
   color: var(--color-texto);
   background: var(--color-fondo);
 }
 
-/* El contenedor principal no constriñe el flujo editorial */
 .scoliosis-page p,
 .scoliosis-page ul,
 .scoliosis-page ol {
@@ -28,7 +23,7 @@
 }
 
 /* ==========================================================================
-   1. HERO EDITORIAL ASIMÉTRICO CON PROFUNDIDAD 3D
+   1. HERO EDITORIAL ASIMÉTRICO
    ========================================================================== */
 .scoliosis-hero {
   position: relative;
@@ -39,7 +34,6 @@
   isolation: isolate;
 }
 
-/* Campo de tono sutil y biofísico: dos gradientes radiales suaves sin estridencias */
 .scoliosis-hero::before {
   content: "";
   position: absolute;
@@ -52,7 +46,6 @@
   pointer-events: none;
 }
 
-/* Cuadrícula técnica nanométrica muy tenue */
 .scoliosis-hero::after {
   content: "";
   position: absolute;
@@ -87,7 +80,6 @@
   min-width: 0;
 }
 
-/* Insignia editorial: tipografía científica espaciada sin cajas gratuitas */
 .scoliosis-hero__insignia {
   display: inline-flex;
   align-items: center;
@@ -108,7 +100,6 @@
   flex-shrink: 0;
 }
 
-/* Titular fluido clamp(): 2 líneas máximo, equilibrado */
 .scoliosis-hero__titulo {
   margin: 0 0 var(--espacio-5);
   max-width: 18ch;
@@ -119,7 +110,6 @@
   text-wrap: balance;
 }
 
-/* Texto introductorio */
 .scoliosis-hero__apertura {
   margin: 0 0 var(--espacio-6);
   max-width: 48ch;
@@ -128,7 +118,6 @@
   line-height: 1.6;
 }
 
-/* Metadatos del artículo con línea de separación de tono */
 .scoliosis-hero__meta {
   display: flex;
   flex-wrap: wrap;
@@ -147,7 +136,6 @@
 .scoliosis-hero__etiqueta {
   color: var(--color-salvia-claro);
   font-size: var(--texto-sm);
-  opacity: 0.85;
 }
 
 .scoliosis-hero__valor {
@@ -156,7 +144,6 @@
   font-weight: 800;
 }
 
-/* Acciones principales del hero */
 .scoliosis-hero__acciones {
   display: flex;
   flex-wrap: wrap;
@@ -211,13 +198,19 @@
   background: rgb(255 255 255 / 0.05);
 }
 
-/* Estados de foco accesibles de alto contraste en entorno oscuro */
 .scoliosis-hero__btn:focus-visible {
   outline: 3px solid #ffffff;
   outline-offset: 3px;
 }
 
-/* Feedback táctil al presionar */
+.scoliosis-copia__estado {
+  margin: var(--espacio-3) 0 0;
+  min-height: 1.4em;
+  color: var(--color-salvia-claro);
+  font-size: var(--texto-sm);
+  font-weight: 700;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .scoliosis-hero__btn {
     transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 120ms ease;
@@ -228,7 +221,7 @@
 }
 
 /* ==========================================================================
-   2. ILUSTRACIÓN ANATÓMICA 3D: CAPAS Y PERSPECTIVA
+   2. COLUMNA EXPLORABLE DEL HERO
    ========================================================================== */
 .scoliosis-hero__visual {
   position: relative;
@@ -239,155 +232,215 @@
   perspective: 1200px;
 }
 
-/* Resplandor orgánico detrás de la columna vertebral */
-.scoliosis-hero__visual::before {
-  content: "";
-  position: absolute;
-  inset: -12% -8%;
-  z-index: -1;
-  background: radial-gradient(circle at 50% 45%, rgb(168 196 184 / 0.14), transparent 66%);
-  transform: translateY(calc(var(--scoliosis-parallax) * 16px));
-}
-
-.scoliosis-columna {
-  margin: 0;
-  width: 100%;
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-
-.scoliosis-columna__viewport {
+.scoliosis-columna-exp {
   width: 100%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  gap: var(--espacio-4);
+  min-width: 0;
 }
 
-.scoliosis-columna__svg {
+.scoliosis-columna-exp__auto {
+  transform-style: preserve-3d;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .scoliosis-columna-exp__auto {
+    animation: scoliosis-columna-respirar 12s ease-in-out infinite alternate;
+  }
+  .scoliosis-columna-exp__auto.esta-pausado {
+    animation: none;
+  }
+  @keyframes scoliosis-columna-respirar {
+    from {
+      transform: rotateY(-9deg) rotateX(2deg);
+    }
+    to {
+      transform: rotateY(9deg) rotateX(-2deg);
+    }
+  }
+}
+
+.scoliosis-columna-exp__giro {
+  /* El giro se escribe como variable CSS desde el arrastre: sin re-render. */
+  --giro-x: 0deg;
+  --giro-y: 0deg;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--giro-x)) rotateY(var(--giro-y));
+  transition: transform 140ms linear;
+}
+
+/* Mientras se arrastra, el esquema sigue al puntero sin suavizado. */
+.scoliosis-columna-exp[data-arrastrando="true"] .scoliosis-columna-exp__giro {
+  transition: none;
+}
+
+.scoliosis-columna-exp__viewport {
+  width: 100%;
+  aspect-ratio: 420 / 580;
+  max-height: 62vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: grab;
+  /* `pan-y` deja el desplazamiento vertical en manos del navegador para que
+     la página siga bajando con el dedo; el eje horizontal queda libre para
+     girar la vista. */
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  border-radius: var(--radio-lg);
+  outline: 3px solid transparent;
+  outline-offset: 4px;
+}
+
+.scoliosis-columna-exp__viewport:active {
+  cursor: grabbing;
+}
+
+.scoliosis-columna-exp__viewport:focus-visible {
+  outline-color: #ffffff;
+}
+
+.scoliosis-vista {
   display: block;
   width: 100%;
-  max-width: 16.5rem;
-  height: auto;
-  margin-inline: auto;
-  transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
-  transform-origin: 50% 50%;
-  transition: transform 240ms var(--curva-suave);
+  height: 100%;
+  max-width: 20rem;
 }
 
 @media (min-width: 48rem) {
-  .scoliosis-columna__svg {
-    max-width: 22.5rem;
+  .scoliosis-vista {
+    max-width: 24rem;
   }
 }
 
 @media (min-width: 64rem) {
-  .scoliosis-columna__svg {
-    max-width: 28rem;
+  .scoliosis-vista {
+    max-width: 26rem;
   }
 }
 
-/* Parallax multicapa entre los planos anatómicos internos del SVG */
-@media (prefers-reduced-motion: no-preference) {
-  .scoliosis-columna__capa {
-    transition: transform 180ms ease-out;
-  }
-
-  .scoliosis-columna__capa--fondo {
-    transform: translateY(calc(var(--scoliosis-parallax) * 18px));
-  }
-
-  .scoliosis-columna__capa--profunda {
-    transform: translateY(calc(var(--scoliosis-parallax) * 10px));
-  }
-
-  .scoliosis-columna__capa--costillas {
-    transform: translateY(calc(var(--scoliosis-parallax) * 4px));
-  }
-
-  .scoliosis-columna__capa--columna {
-    transform: translateY(calc(var(--scoliosis-parallax) * -8px));
-  }
-
-  .scoliosis-columna__capa--clinica {
-    transform: translateY(calc(var(--scoliosis-parallax) * -16px));
-  }
+.scoliosis-columna-exp__controles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espacio-3);
 }
 
-/* Coreografía de entrada del hero */
-@media (prefers-reduced-motion: no-preference) {
-  .scoliosis-hero__insignia {
-    animation: scoliosis-hero-rise 680ms var(--curva-suave) 0ms backwards;
-  }
-  .scoliosis-hero__titulo {
-    animation: scoliosis-hero-rise 680ms var(--curva-suave) 90ms backwards;
-  }
-  .scoliosis-hero__apertura {
-    animation: scoliosis-hero-rise 680ms var(--curva-suave) 180ms backwards;
-  }
-  .scoliosis-hero__meta {
-    animation: scoliosis-hero-rise 680ms var(--curva-suave) 260ms backwards;
-  }
-  .scoliosis-hero__acciones {
-    animation: scoliosis-hero-rise 680ms var(--curva-suave) 330ms backwards;
-  }
-  .scoliosis-hero__visual {
-    animation: scoliosis-hero-visual-in 920ms var(--curva-suave) 180ms backwards;
-  }
+.scoliosis-columna-exp__capas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+}
 
-  /* Revelado secuencial sutil de los vectores de la columna */
-  .scoliosis-columna__capa--columna {
-    animation: scoliosis-columna-build 840ms var(--curva-suave) 280ms backwards;
-  }
-  .scoliosis-columna__capa--clinica {
-    animation: scoliosis-annotations-in 760ms var(--curva-suave) 440ms backwards;
-  }
+/* Botones de giro: el esquema también se orienta sin arrastre y sin teclado. */
+.scoliosis-columna-exp__giro-ctrl {
+  display: inline-flex;
+  gap: var(--espacio-1);
+}
 
-  @keyframes scoliosis-hero-rise {
-    from {
-      opacity: 0;
-      transform: translateY(1.4rem);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+.scoliosis-columna-exp__giro-btn {
+  display: inline-grid;
+  place-items: center;
+  width: var(--alto-objetivo-tactil);
+  min-width: var(--alto-objetivo-tactil);
+  height: var(--alto-objetivo-tactil);
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / 0.28);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-sobre-primario);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: border-color var(--duracion-corta) ease, background-color var(--duracion-corta) ease;
+}
 
-  @keyframes scoliosis-hero-visual-in {
-    from {
-      opacity: 0;
-      transform: translateY(2rem) scale(0.96);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-  }
+.scoliosis-columna-exp__giro-btn:hover {
+  border-color: var(--color-salvia-claro);
+  background: rgb(255 255 255 / 0.08);
+}
 
-  @keyframes scoliosis-columna-build {
-    from {
-      opacity: 0;
-      transform: translateY(1rem);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(calc(var(--scoliosis-parallax) * -8px));
-    }
-  }
+.scoliosis-columna-exp__giro-btn:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
+}
 
-  @keyframes scoliosis-annotations-in {
-    from {
-      opacity: 0;
-      transform: translateY(0.75rem);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(calc(var(--scoliosis-parallax) * -16px));
-    }
-  }
+.scoliosis-columna-exp__giro-btn svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.scoliosis-columna-exp__capa {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--alto-objetivo-tactil);
+  padding: var(--espacio-2) var(--espacio-4);
+  border: 1px solid rgb(255 255 255 / 0.28);
+  border-radius: var(--radio-pill);
+  background: transparent;
+  color: var(--color-sobre-primario);
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.scoliosis-columna-exp__capa[aria-pressed="true"] {
+  background: var(--color-sobre-primario);
+  border-color: var(--color-sobre-primario);
+  color: var(--color-primario-oscuro);
+}
+
+.scoliosis-columna-exp__capa:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
+}
+
+.scoliosis-columna-exp__pausa {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--alto-objetivo-tactil);
+  padding: var(--espacio-2) var(--espacio-4);
+  border: 1px solid rgb(255 255 255 / 0.28);
+  border-radius: var(--radio-pill);
+  background: transparent;
+  color: var(--color-salvia-claro);
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.scoliosis-columna-exp__pausa:hover {
+  border-color: var(--color-salvia-claro);
+}
+
+.scoliosis-columna-exp__pausa:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
+}
+
+.scoliosis-columna-exp__nota {
+  margin: 0;
+  color: var(--color-salvia-claro);
+  font-size: var(--texto-sm);
+  line-height: 1.55;
+}
+
+.scoliosis-columna-exp__aviso {
+  margin: 0;
+  color: var(--color-salvia-claro);
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  letter-spacing: 0.04em;
 }
 
 /* ==========================================================================
-   3. SECCIÓN "LO ESENCIAL" — COMPOSICIÓN ASIMÉTRICA Y MICROINTERACCIONES
+   3. SECCIÓN "LO ESENCIAL"
    ========================================================================== */
 .scoliosis-esencial {
   margin-block: var(--espacio-8) var(--espacio-9);
@@ -524,7 +577,7 @@
 }
 
 /* ==========================================================================
-   4. ÍNDICE Y RETÍCULA EDITORIAL
+   4. ÍNDICE DE VÉRTEBRAS Y RETÍCULA EDITORIAL
    ========================================================================== */
 .scoliosis-toc-toggle {
   display: none;
@@ -576,6 +629,68 @@
   }
 }
 
+.scoliosis-layout > section {
+  min-width: 0;
+  padding-block: clamp(var(--espacio-6), 4vw, var(--espacio-7));
+}
+
+.scoliosis-layout > section + section {
+  border-top: 1px solid var(--color-borde);
+}
+
+.scoliosis-layout > section > article {
+  min-width: 0;
+}
+
+@media (min-width: 64rem) {
+  .scoliosis-layout > section {
+    grid-column: 2;
+  }
+}
+
+/* Banda de alertas a ancho completo */
+.scoliosis-seccion--alertas {
+  grid-column: 1 / -1 !important;
+  border-top: 0 !important;
+  padding-block: 0;
+  margin-block: var(--espacio-6);
+  position: relative;
+  z-index: 2;
+}
+
+.scoliosis-alerta {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  padding-block: clamp(var(--espacio-6), 4vw, var(--espacio-8));
+  background: var(--color-fondo-aviso);
+  color: var(--color-texto);
+}
+
+.scoliosis-alerta__inner {
+  width: min(100% - 2rem, var(--ancho-contenidor));
+  margin-inline: auto;
+}
+
+.scoliosis-alerta__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--espacio-5);
+}
+
+@media (min-width: 48rem) {
+  .scoliosis-alerta__grid {
+    grid-template-columns: 1.4fr 1fr;
+    align-items: start;
+  }
+}
+
+.scoliosis-alerta .scoliosis-h2 {
+  color: var(--color-primario-oscuro);
+}
+
+/* ==========================================================================
+   5. ÍNDICE DE VÉRTEBRAS
+   ========================================================================== */
 .scoliosis-toc {
   display: block;
   padding: var(--espacio-4);
@@ -586,9 +701,12 @@
 
 @media (min-width: 64rem) {
   .scoliosis-toc {
+    grid-column: 1;
+    grid-row: 1 / -1;
+    align-self: start;
     position: sticky;
     top: calc(var(--desplazamiento-ancla) + 1rem);
-    align-self: start;
+    z-index: 1;
   }
 }
 
@@ -599,6 +717,22 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-primario-oscuro);
+}
+
+.scoliosis-toc__progreso {
+  position: relative;
+  height: 0.35rem;
+  margin-bottom: var(--espacio-4);
+  background: var(--color-fondo-azul);
+  border-radius: var(--radio-pill);
+  overflow: hidden;
+}
+
+.scoliosis-toc__progreso-relleno {
+  height: 100%;
+  background: var(--color-terciario);
+  border-radius: var(--radio-pill);
+  transition: height 320ms var(--curva-suave);
 }
 
 .scoliosis-toc__lista {
@@ -620,10 +754,40 @@
   }
 }
 
+/* Móvil: tira horizontal compacta de vértebras con objetivos de 44 px */
+@media (max-width: 63.99rem) {
+  .scoliosis-toc__lista {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: var(--espacio-2);
+    padding-bottom: var(--espacio-2);
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .scoliosis-toc__enlace {
+    flex: 0 0 auto;
+    flex-direction: column;
+    gap: var(--espacio-1);
+    min-width: 44px;
+    min-height: 44px;
+    padding: var(--espacio-2);
+    text-align: center;
+  }
+
+  .scoliosis-toc__texto {
+    font-size: 0.65rem;
+    line-height: 1.2;
+    max-width: 4.5rem;
+    white-space: normal;
+  }
+}
+
 .scoliosis-toc__enlace {
   position: relative;
   display: flex;
   align-items: center;
+  gap: var(--espacio-3);
   min-height: var(--alto-objetivo-tactil);
   padding: var(--espacio-2) var(--espacio-3);
   color: var(--color-texto-suave);
@@ -631,18 +795,15 @@
   font-weight: 700;
   font-size: var(--texto-sm);
   border-radius: var(--radio-sm);
-  overflow: hidden;
 }
 
-.scoliosis-toc__indicador {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: var(--color-primario);
-  transform: scaleY(0);
-  transition: transform 180ms var(--curva-suave);
+.scoliosis-toc__vertebra {
+  display: block;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: 0 0 auto;
+  color: var(--color-secundario);
+  transition: color 180ms ease, transform 180ms ease;
 }
 
 .scoliosis-toc__enlace:hover {
@@ -650,36 +811,33 @@
   background: var(--color-fondo-azul);
 }
 
-.scoliosis-toc__enlace[aria-current="location"] {
+.scoliosis-toc__enlace--leida {
+  color: var(--color-secundario-oscuro);
+}
+
+.scoliosis-toc__enlace--leida .scoliosis-toc__vertebra {
+  color: var(--color-secundario-oscuro);
+}
+
+.scoliosis-toc__enlace--activa {
   color: var(--color-primario-oscuro);
   font-weight: 800;
   background: var(--color-fondo-verde);
 }
 
-.scoliosis-toc__enlace[aria-current="location"] .scoliosis-toc__indicador {
-  transform: scaleY(1);
+.scoliosis-toc__enlace--activa .scoliosis-toc__vertebra {
+  color: var(--color-terciario);
+  transform: scale(1.18);
+}
+
+.scoliosis-toc__enlace:focus-visible {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 2px;
 }
 
 /* ==========================================================================
-   5. SECCIONES DE CONTENIDO CON IDENTIDAD PROPIA
+   6. TITULARES Y CUERPO DE SECCIÓN
    ========================================================================== */
-.scoliosis-contenido {
-  min-width: 0;
-}
-
-.scoliosis-contenido > section {
-  padding-block: clamp(var(--espacio-6), 4vw, var(--espacio-7));
-}
-
-.scoliosis-contenido > section + section {
-  border-top: 1px solid var(--color-borde);
-}
-
-.scoliosis-contenido > section > article {
-  min-width: 0;
-}
-
-/* Titulares de sección: legibles, expresivos y asimétricos */
 .scoliosis-h2 {
   position: relative;
   margin: 0 0 var(--espacio-5);
@@ -691,20 +849,20 @@
   text-wrap: balance;
 }
 
-.scoliosis-contenido p {
+.scoliosis-layout p {
   max-width: var(--scoliosis-texto-max);
   color: var(--color-texto);
   line-height: 1.72;
 }
 
-.scoliosis-contenido ul,
-.scoliosis-contenido ol {
+.scoliosis-layout ul,
+.scoliosis-layout ol {
   max-width: var(--scoliosis-texto-max);
   color: var(--color-texto);
   line-height: 1.72;
 }
 
-.scoliosis-contenido li + li {
+.scoliosis-layout li + li {
   margin-top: var(--espacio-2);
 }
 
@@ -717,7 +875,6 @@
   padding-left: 0.25rem;
 }
 
-/* Enlaces de ancla accesibles con touch target */
 .scoliosis-ancla {
   display: inline-flex;
   align-items: center;
@@ -753,7 +910,7 @@ h2:hover .scoliosis-ancla,
 }
 
 /* ==========================================================================
-   6. TIPOS DE ESCOLIOSIS: TRATAMIENTO TIPOGRÁFICO Y ESPACIAL DIFERENCIADO
+   7. TIPOS DE ESCOLIOSIS: COMPOSICIÓN DIFERENCIADA
    ========================================================================== */
 .scoliosis-tipos {
   display: grid;
@@ -764,7 +921,7 @@ h2:hover .scoliosis-ancla,
 
 @media (min-width: 48rem) {
   .scoliosis-tipos {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--espacio-5);
   }
 }
@@ -789,19 +946,27 @@ h2:hover .scoliosis-ancla,
 }
 
 .scoliosis-tipo--a {
+  grid-column: 1 / -1;
   background: var(--color-fondo-verde);
-  border-left: 3px solid var(--color-primario);
+  border-left: 4px solid var(--color-primario);
+}
+
+.scoliosis-tipo__cabecera {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--espacio-3) var(--espacio-5);
 }
 
 .scoliosis-tipo--b {
   background: var(--color-superficie);
   border: 1px solid var(--color-borde);
-  border-left: 3px solid var(--color-secundario);
+  border-top: 4px solid var(--color-secundario);
 }
 
 .scoliosis-tipo--c {
   background: var(--color-superficie-suave);
-  border-left: 3px solid var(--color-terciario);
+  border-left: 4px solid var(--color-terciario);
 }
 
 .scoliosis-tipo__insignia {
@@ -814,12 +979,21 @@ h2:hover .scoliosis-ancla,
   border-radius: var(--radio-pill);
 }
 
+.scoliosis-tipo--a .scoliosis-tipo__insignia {
+  color: var(--color-primario-oscuro);
+  background: var(--color-superficie);
+}
+
 .scoliosis-tipo__titulo {
   margin: 0;
   font-size: var(--texto-lg);
   font-weight: 800;
   color: var(--color-primario-oscuro);
   line-height: var(--alto-linea-titulo);
+}
+
+.scoliosis-tipo--a .scoliosis-tipo__titulo {
+  font-size: var(--texto-2xl);
 }
 
 .scoliosis-tipo__texto {
@@ -829,8 +1003,13 @@ h2:hover .scoliosis-ancla,
   line-height: 1.65;
 }
 
+.scoliosis-tipo--a .scoliosis-tipo__texto {
+  max-width: 58ch;
+  font-size: var(--texto-base);
+}
+
 /* ==========================================================================
-   7. CITA EDITORIAL PROMINENTE
+   8. CITA EDITORIAL
    ========================================================================== */
 .scoliosis-cita {
   margin: var(--espacio-7) 0 0;
@@ -858,7 +1037,7 @@ h2:hover .scoliosis-ancla,
 }
 
 /* ==========================================================================
-   8. ENFOQUES DE FISIOTERAPIA (PSSE, SCHROTH, SEAS)
+   9. ENFOQUES DE FISIOTERAPIA
    ========================================================================== */
 .scoliosis-metodos {
   display: grid;
@@ -901,11 +1080,6 @@ h2:hover .scoliosis-ancla,
   font-weight: 700;
   color: var(--color-primario-oscuro);
   font-size: var(--texto-sm);
-  transition: transform 140ms ease;
-}
-
-.scoliosis-metodos__lista li:hover {
-  transform: translateY(-1px);
 }
 
 .scoliosis-metodos__nota {
@@ -915,7 +1089,7 @@ h2:hover .scoliosis-ancla,
 }
 
 /* ==========================================================================
-   9. TABLA DE EVIDENCIA CIENTÍFICA CON FOCO Y SCROLL ACCESIBLE
+   10. TABLA DE EVIDENCIA + ESCALA CUALITATIVA
    ========================================================================== */
 .table-wrapper {
   width: 100%;
@@ -987,7 +1161,6 @@ h2:hover .scoliosis-ancla,
   border-radius: var(--radio-pill);
 }
 
-/* Tabla adaptada a stacked en móvil */
 @media (max-width: 47.99rem) {
   .scoliosis-tabla-evidencia thead {
     display: none;
@@ -1024,8 +1197,112 @@ h2:hover .scoliosis-ancla,
   }
 }
 
+/* Escala cualitativa: complementa la tabla sin añadir cifras */
+.scoliosis-escala {
+  margin: var(--espacio-6) 0;
+  padding: var(--espacio-5);
+  background: var(--color-superficie);
+  border-radius: var(--radio-lg);
+}
+
+.scoliosis-escala__titulo {
+  margin: 0 0 var(--espacio-4);
+  font-weight: 800;
+  color: var(--color-primario-oscuro);
+}
+
+.scoliosis-escala__via {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--espacio-2);
+  margin-bottom: var(--espacio-5);
+  padding: var(--espacio-3) 0;
+}
+
+.scoliosis-escala__via::before {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 50%;
+  height: 2px;
+  background: var(--color-borde);
+}
+
+.scoliosis-escala__punto {
+  position: relative;
+  z-index: 1;
+  justify-self: center;
+  padding: var(--espacio-1) var(--espacio-2);
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  text-align: center;
+  border-radius: var(--radio-pill);
+  background: var(--color-superficie-suave);
+  color: var(--color-texto-suave);
+}
+
+.scoliosis-escala__punto--sin {
+  color: var(--color-primario-oscuro);
+}
+
+.scoliosis-escala__punto--pequeno {
+  color: var(--color-terciario-oscuro);
+  background: var(--color-fondo-aviso);
+}
+
+.scoliosis-escala__punto--mejora {
+  color: var(--color-secundario-oscuro);
+  background: var(--color-fondo-verde);
+}
+
+.scoliosis-escala__lista {
+  display: grid;
+  gap: var(--espacio-2);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.scoliosis-escala__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espacio-3);
+  font-size: var(--texto-sm);
+  line-height: 1.6;
+  color: var(--color-texto);
+}
+
+.scoliosis-escala__marca {
+  flex: 0 0 auto;
+  width: 0.85rem;
+  height: 0.85rem;
+  margin-top: 0.3rem;
+  border-radius: 50%;
+  background: var(--color-secundario);
+}
+
+.scoliosis-escala__item:nth-child(1) .scoliosis-escala__marca {
+  background: var(--color-terciario);
+}
+
+.scoliosis-escala__item:nth-child(2) .scoliosis-escala__marca {
+  background: var(--color-secundario);
+}
+
+.scoliosis-escala__item:nth-child(3) .scoliosis-escala__marca {
+  background: var(--color-primario);
+}
+
+.scoliosis-escala__nota {
+  margin: var(--espacio-4) 0 0;
+  font-size: var(--texto-xs);
+  color: var(--color-texto-suave);
+}
+
 /* ==========================================================================
-   10. AVISOS SANITARIOS — DISTINCIÓN ENTRE CITA Y URGENCIA
+   11. AVISOS SANITARIOS — BANDA DE ALERTA
    ========================================================================== */
 .scoliosis-notice-warn,
 .scoliosis-notice-urgent {
@@ -1036,13 +1313,15 @@ h2:hover .scoliosis-ancla,
 }
 
 .scoliosis-notice-warn {
-  background: var(--color-fondo-aviso);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
   border-left: 0.35rem solid var(--color-terciario-oscuro);
   color: var(--color-texto);
 }
 
 .scoliosis-notice-urgent {
   background: var(--color-fondo-alerta);
+  border: 1px solid var(--color-peligro);
   border-left: 0.35rem solid var(--color-peligro);
   color: var(--color-texto);
 }
@@ -1095,7 +1374,7 @@ h2:hover .scoliosis-ancla,
 }
 
 /* ==========================================================================
-   11. PREGUNTAS FRECUENTES (FAQ)
+   12. PREGUNTAS FRECUENTES
    ========================================================================== */
 .scoliosis-faq {
   display: grid;
@@ -1163,7 +1442,7 @@ h2:hover .scoliosis-ancla,
 }
 
 /* ==========================================================================
-   12. SIGUIENTES PASOS Y LISTA DE PREGUNTAS CLÍNICAS (CHECKLIST)
+   13. SIGUIENTES PASOS Y LISTA DE PREGUNTAS
    ========================================================================== */
 .scoliosis-pasos {
   padding-left: 1.25rem;
@@ -1303,13 +1582,14 @@ h2:hover .scoliosis-ancla,
 
 .scoliosis-checklist__confirmacion {
   margin: var(--espacio-2) 0 0;
+  min-height: 1.4em;
   font-size: var(--texto-sm);
   color: var(--color-secundario-oscuro);
   font-weight: 700;
 }
 
 /* ==========================================================================
-   13. FUENTES CIENTÍFICAS Y REFERENCIAS
+   14. FUENTES CIENTÍFICAS
    ========================================================================== */
 .scoliosis-enlaces {
   padding-left: 1.25rem;
@@ -1346,7 +1626,7 @@ h2:hover .scoliosis-ancla,
 }
 
 /* ==========================================================================
-   14. AVISO LEGAL Y DELIMITACIÓN DE RESPONSABILIDAD
+   15. AVISO LEGAL
    ========================================================================== */
 .scoliosis-seccion--legal {
   padding-bottom: var(--espacio-8);
@@ -1367,7 +1647,7 @@ h2:hover .scoliosis-ancla,
 }
 
 /* ==========================================================================
-   15. ANIMACIONES ORQUESTADAS AL ENTRAR EN VIEWPORT (data-reveal)
+   16. ANIMACIONES DE ENTRADA (data-reveal)
    ========================================================================== */
 html.js .scoliosis-seccion[data-reveal]:not(.is-visible) {
   opacity: 0;
@@ -1379,7 +1659,6 @@ html.js .scoliosis-seccion[data-reveal]:not(.is-visible) {
     transition: opacity 640ms var(--curva-suave), transform 640ms var(--curva-suave);
   }
 
-  /* Revelado escalonado en elementos clave */
   .scoliosis-seccion[data-reveal].is-visible .scoliosis-esencial__item--a {
     animation: scoliosis-fade-up 580ms var(--curva-suave) 60ms backwards;
   }
@@ -1413,7 +1692,7 @@ html.js .scoliosis-seccion[data-reveal]:not(.is-visible) {
 }
 
 /* ==========================================================================
-   16. ACCESIBILIDAD: PREFERS-REDUCED-MOTION
+   17. ACCESIBILIDAD: PREFERS-REDUCED-MOTION
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
   html.js .scoliosis-seccion[data-reveal]:not(.is-visible) {
@@ -1421,14 +1700,6 @@ html.js .scoliosis-seccion[data-reveal]:not(.is-visible) {
     transform: none;
   }
 
-  .scoliosis-hero__insignia,
-  .scoliosis-hero__titulo,
-  .scoliosis-hero__apertura,
-  .scoliosis-hero__meta,
-  .scoliosis-hero__acciones,
-  .scoliosis-hero__visual,
-  .scoliosis-columna__capa--columna,
-  .scoliosis-columna__capa--clinica,
   .scoliosis-seccion[data-reveal],
   .scoliosis-seccion[data-reveal].is-visible .scoliosis-esencial__item,
   .scoliosis-seccion[data-reveal].is-visible .scoliosis-tipo {
@@ -1437,28 +1708,38 @@ html.js .scoliosis-seccion[data-reveal]:not(.is-visible) {
     transform: none !important;
   }
 
-  .scoliosis-columna__svg {
+  /* La respiración automática se detiene; el giro lo elige la persona, así que
+     se mantiene y solo pierde el suavizado. */
+  .scoliosis-columna-exp__auto {
+    animation: none !important;
     transform: none !important;
+  }
+
+  .scoliosis-columna-exp__giro {
     transition: none !important;
   }
 
-  .scoliosis-columna__capa {
-    transform: none !important;
+  .scoliosis-columna-exp__viewport {
+    animation: none !important;
     transition: none !important;
   }
 
-  .scoliosis-hero__visual::before {
-    transform: none !important;
+  .scoliosis-toc__progreso-relleno {
+    transition: none !important;
   }
 
   .scoliosis-faq__item,
-  .scoliosis-checklist__item {
+  .scoliosis-checklist__item,
+  .scoliosis-hero__btn,
+  .scoliosis-esencial__item,
+  .scoliosis-tipo,
+  .scoliosis-checklist__btn-copiar {
     transition: none !important;
   }
 }
 
 /* ==========================================================================
-   17. IMPRESIÓN PROFESIONAL
+   18. IMPRESIÓN
    ========================================================================== */
 @media print {
   .scoliosis-page {
@@ -1474,15 +1755,49 @@ html.js .scoliosis-seccion[data-reveal]:not(.is-visible) {
     color: CanvasText;
   }
   .scoliosis-hero::before,
-  .scoliosis-hero::after,
-  .scoliosis-hero__visual {
+  .scoliosis-hero::after {
     display: none;
   }
   .scoliosis-hero__titulo,
   .scoliosis-hero__apertura,
-  .scoliosis-hero__etiqueta {
+  .scoliosis-hero__insignia,
+  .scoliosis-hero__etiqueta,
+  .scoliosis-hero__valor,
+  .scoliosis-columna-exp__nota,
+  .scoliosis-columna-exp__aviso {
     color: CanvasText;
   }
+
+  .scoliosis-hero__meta {
+    border-top-color: CanvasText;
+  }
+
+  /* Los controles del esquema no sirven en papel: solo estorban. */
+  .scoliosis-columna-exp__controles {
+    display: none;
+  }
+
+  /* El esquema se imprime en tinta: las etiquetas y los trazos tienen que
+     leerse sobre el papel, no sobre el verde del hero. */
+  .scoliosis-vista {
+    --color-salvia-claro: #33473f;
+    --color-secundario: #44685d;
+    --color-secundario-oscuro: #2b4239;
+    --color-primario-oscuro: #16241f;
+    --color-terciario: #8a4527;
+    --color-terciario-oscuro: #74391f;
+    --color-superficie: #ffffff;
+  }
+
+  .scoliosis-vista text {
+    fill: #000000 !important;
+  }
+
+  .scoliosis-vista__pastilla {
+    fill: #ffffff !important;
+    stroke: #000000 !important;
+  }
+
   .scoliosis-hero__btn--primario,
   .scoliosis-hero__btn--secundario {
     background: Canvas;
@@ -1497,14 +1812,25 @@ html.js .scoliosis-seccion[data-reveal]:not(.is-visible) {
   .scoliosis-toc-toggle,
   .scoliosis-hero__acciones,
   .scoliosis-checklist__accion,
-  .scoliosis-checklist__casilla {
+  .scoliosis-checklist__casilla,
+  .scoliosis-copia__estado,
+  .scoliosis-checklist__confirmacion {
     display: none;
   }
 
-  .scoliosis-contenido > section > article {
-    animation: none;
-    opacity: 1;
-    transform: none;
+  .scoliosis-seccion[data-reveal],
+  .scoliosis-seccion[data-reveal]:not(.is-visible) {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .scoliosis-seccion--alertas {
+    width: auto;
+    margin-left: 0;
+    background: none;
+    padding-inline: 0;
   }
 
   .scoliosis-h2,
@@ -1542,7 +1868,7 @@ html.js .scoliosis-seccion[data-reveal]:not(.is-visible) {
 }
 
 /* ==========================================================================
-   18. FORCED COLORS (ALTO CONTRASTE DE SISTEMA)
+   19. FORCED COLORS
    ========================================================================== */
 @media (forced-colors: active) {
   .scoliosis-toc,
@@ -1561,7 +1887,7 @@ html.js .scoliosis-seccion[data-reveal]:not(.is-visible) {
     opacity: 1;
   }
 
-  .scoliosis-columna__svg {
-    forced-color-adjust: none;
+  .scoliosis-columna-exp__viewport {
+    border: 1px solid CanvasText;
   }
 }

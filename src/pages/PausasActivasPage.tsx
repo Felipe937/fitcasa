@@ -34,8 +34,9 @@ const OptionGlyph: React.FC<{ kind: OptionGlyphKind }> = ({ kind }) => {
   if (kind === 'de-pie') {
     return (
       <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
-        <circle cx="12" cy="5" r="2.25" />
-        <path d="m12 8 2.5 4.25 3.75 1.25M12 8l-2 5.5-3 3M12 8l-1.25 7.25 3 4.25M10 13.5l-4.5-1.25" />
+        <path d="M12 20V6" />
+        <path d="m7.5 10.5 4.5-4.5 4.5 4.5" />
+        <path d="M7 20h10" />
       </svg>
     );
   }
@@ -43,8 +44,8 @@ const OptionGlyph: React.FC<{ kind: OptionGlyphKind }> = ({ kind }) => {
   if (kind === 'sentado') {
     return (
       <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
-        <circle cx="15.5" cy="5" r="2.25" />
-        <path d="M14 8 11 12h4l2.5 3.75M11 12l-4.5 1.25M17.5 15.75 20 19M11 12l-1 7M10 19H6" />
+        <path d="M3 13.5c3-2.5 6-2.5 9 0s6 2.5 9 0" />
+        <path d="M4 19h16" />
       </svg>
     );
   }
@@ -57,41 +58,24 @@ const OptionGlyph: React.FC<{ kind: OptionGlyphKind }> = ({ kind }) => {
   );
 };
 
+/**
+ * Escultura abstracta de cuatro capas con profundidad real (CSS 3D).
+ * No representa anatomía ni figuras humanas: es una forma que acompaña el
+ * cambio de ritmo. El color y la atmósfera los fija la clase de estado.
+ */
 const MovementSculpture: React.FC = () => (
-  <figure className="movement-sculpture" aria-labelledby="movement-sculpture-caption">
-    <div className="movement-sculpture__frame">
-      <svg
-        className="movement-sculpture__svg"
-        viewBox="0 0 480 380"
-        role="img"
-        aria-label="Escultura abstracta de curvas orgánicas y equilibrio"
-        focusable="false"
-      >
-        <g className="movement-sculpture__orbit" aria-hidden="true">
-          <ellipse cx="242" cy="186" rx="170" ry="108" />
-          <ellipse cx="242" cy="186" rx="118" ry="160" transform="rotate(38 242 186)" />
-          <path d="M76 292c61-112 142-180 241-174 39 2 67-10 88-39" />
-        </g>
-        <g className="movement-sculpture__back-shape" aria-hidden="true">
-          <path d="M118 286c4-72 22-142 70-190 35-35 79-31 93 2 16 38-26 69-54 101-24 27-29 62-18 96l-91-9Z" />
-        </g>
-        <g className="movement-sculpture__ribbon" aria-hidden="true">
-          <path d="M116 286c47-15 77-52 82-101 5-47-6-84 19-107 20-19 51-11 59 12 15 43-32 76-46 113-14 37-7 69 28 100l-142-17Z" />
-          <path d="M183 301c53-28 91-72 99-121 7-45-11-83 14-112 20-23 52-18 64 8 18 39-18 73-27 111-10 40 5 74 42 103l-192 11Z" />
-        </g>
-        <g className="movement-sculpture__foreground" aria-hidden="true">
-          <path d="M214 309c32-36 46-75 39-116-7-41-3-81 22-101 26-20 61-5 66 24 7 37-31 64-39 101-9 39 16 72 56 91l-144 1Z" />
-          <circle cx="299" cy="103" r="7" />
-        </g>
-        <g className="movement-sculpture__marks" aria-hidden="true">
-          <circle cx="88" cy="92" r="3" />
-          <circle cx="389" cy="282" r="4" />
-          <path d="M80 112h36M364 52h34M372 68h18" />
-        </g>
-      </svg>
-      <span className="movement-sculpture__stamp">PAUSA / PRESENCIA</span>
+  <figure className="movement-sculpture">
+    <div className="movement-sculpture__marco">
+      <div className="movement-sculpture__escena" aria-hidden="true">
+        <span className="movement-sculpture__capa movement-sculpture__capa--orbita-a" />
+        <span className="movement-sculpture__capa movement-sculpture__capa--orbita-b" />
+        <span className="movement-sculpture__capa movement-sculpture__capa--banda" />
+        <span className="movement-sculpture__capa movement-sculpture__capa--nucleo" />
+      </div>
+      <span className="movement-sculpture__estado" aria-hidden="true" />
+      <span className="movement-sculpture__sello">PAUSA / PRESENCIA</span>
     </div>
-    <figcaption id="movement-sculpture-caption" className="movement-sculpture__caption">
+    <figcaption className="movement-sculpture__pie">
       Una forma abstracta para acompañar el cambio de ritmo: suave, abierta y sin representar anatomía.
     </figcaption>
   </figure>
@@ -189,7 +173,10 @@ export const PausasActivasPage: React.FC<PausasActivasPageProps> = ({ onNavigate
         <div className="pausas-activas-hero">
           <div className="pausas-activas-hero__copy">
             <span className="pausas-activas-context">DESCANSOS DE MOVIMIENTO</span>
-            <h1 className="pausas-activas-titulo">Pausas activas</h1>
+            <h1 className="pausas-activas-titulo">
+              <span>Pausas</span>{' '}
+              <span>activas</span>
+            </h1>
             <p className="pausas-activas-subtitulo">
               Una herramienta sencilla para romper el sedentarismo durante el estudio o trabajo,
               facilitando descansos breves de 2 a 3 minutos sin forzar la espalda.

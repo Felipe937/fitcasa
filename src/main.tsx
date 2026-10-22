@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import './styles/style.css';
 import './styles/fitcasa-app.css';
+import './styles/quiz-page.css';
 import './styles/ejercicios.css';
 import './styles/scoliosis-page.css';
 import './styles/panel-page.css';
