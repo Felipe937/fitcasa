@@ -16,6 +16,10 @@
   text-underline-offset: 0.2em;
 }
 
+.apoya-miga {
+  margin-bottom: var(--espacio-4);
+}
+
 .apoya-breadcrumb-link:hover {
   color: var(--color-primario-oscuro);
 }
@@ -24,14 +28,15 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: clamp(var(--espacio-6), 4vw, var(--espacio-8));
-  align-items: center;
+  align-items: start;
   margin-bottom: var(--espacio-9);
   padding-block: clamp(var(--espacio-5), 4vw, var(--espacio-7));
 }
 
 @media (min-width: 52rem) {
   .apoya-hero {
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
+    align-items: center;
   }
 }
 
@@ -41,22 +46,24 @@
 
 .apoya-titulo {
   margin: 0 0 var(--espacio-4);
-  font-size: clamp(2.1rem, 1.6rem + 2.6vw, 3.4rem);
-  line-height: 1.05;
+  font-size: clamp(2.25rem, 1.5rem + 3.5vw, 4rem);
+  line-height: 1.02;
   letter-spacing: -0.035em;
   text-wrap: balance;
   color: var(--color-primario-oscuro);
+  max-width: 28ch;
 }
 
 .apoya-intro {
-  max-width: 58ch;
+  max-width: 54ch;
   color: var(--color-texto);
   font-size: var(--texto-lg);
-  line-height: 1.65;
+  line-height: 1.7;
 }
 
-/* Escultura 3D (capas SVG con profundidad) */
+/* Escultura 3D (anillos entrelazados con profundidad) */
 .apoya-hero__escultura {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -67,28 +74,71 @@
 
 @media (hover: hover) {
   .apoya-hero__escultura:hover {
-    transform: rotateX(6deg) rotateY(-8deg);
+    transform: rotateX(2deg) rotateY(-3deg);
   }
 }
 
 .apoya-escultura__svg {
   display: block;
-  width: min(100%, 16rem);
+  width: min(100%, 18rem);
   height: auto;
   transform-style: preserve-3d;
+  transform-origin: center center;
+  will-change: transform;
 }
 
-.apoya-escultura__anello {
+.apoya-escultura__anillo {
   transform-origin: 120px 120px;
-  transition: transform var(--duracion-media) var(--curva-suave);
+  transform-box: fill-box;
 }
 
-.apoya-escultura__anello--1 { transform: translateZ(12px) rotateX(12deg); }
-.apoya-escultura__anello--2 { transform: translateZ(-8px) rotateY(18deg); }
-.apoya-escultura__anello--3 { transform: translateZ(20px); }
+.apoya-escultura__anillo--1 { transform: translateZ(-12px) rotateX(15deg); }
+.apoya-escultura__anillo--2 { transform: translateZ(0) rotateY(15deg); }
+.apoya-escultura__anillo--3 { transform: translateZ(12px); }
+.apoya-escultura__anillo--4 { transform: translateZ(20px); }
 
 .apoya-escultura__nodo circle {
   fill: var(--color-primario-oscuro);
+}
+
+/* Botón de pausa de animación */
+.apoya-escultura__pausa {
+  position: absolute;
+  bottom: calc(var(--espacio-4) * -1);
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2) var(--espacio-3);
+  min-height: var(--alto-objetivo-tactil);
+  color: var(--color-primario-oscuro);
+  background: var(--color-superficie);
+  border: 2px solid var(--color-borde);
+  border-radius: var(--radio-pill);
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--sombra-flotante);
+  transition: border-color var(--duracion-corta) ease, box-shadow var(--duracion-corta) ease;
+  z-index: 10;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .apoya-escultura__pausa:hover {
+    border-color: var(--color-secundario);
+    box-shadow: var(--sombra-flotante-alta);
+    color: var(--color-secundario-oscuro);
+  }
+}
+
+.apoya-escultura__pausa:focus-visible {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 2px;
+}
+
+.apoya-escultura__pausa svg {
+  flex-shrink: 0;
 }
 
 /* Entrada escalonada del hero */
@@ -114,6 +164,19 @@
 
 @media (prefers-reduced-motion: reduce) {
   .apoya-hero__escultura { transform: none; }
+  .apoya-escultura__svg { transform: none !important; }
+  .apoya-escultura__anillo { transform: translateZ(0) !important; }
+}
+
+.apoya-transicion {
+  margin: var(--espacio-4) 0;
+  opacity: 0.6;
+}
+
+@media (min-width: 52rem) {
+  .apoya-transicion {
+    margin: var(--espacio-6) 0;
+  }
 }
 
 .apoya-qr-section {
@@ -369,7 +432,7 @@
   border: none;
   border-radius: var(--radio-sm);
   cursor: pointer;
-  transition: color var(--duracion-corta) ease, background var(--duracion-corta) ease;
+  transition: background var(--duracion-corta) ease, box-shadow var(--duracion-corta) ease;
 }
 
 .apoya-modal-cerrar:hover {
@@ -470,7 +533,7 @@
   }
 }
 
-/* Opciones de apoyo (PayPal + Ko-fi) */
+/* Opciones de apoyo (PayPal + Ko-fi + QR) - jerarquía visual distinta */
 .apoya-apoyo-section {
   max-width: var(--ancho-texto);
   margin: 0 auto var(--espacio-8);
@@ -501,12 +564,123 @@
   }
 }
 
-.apoya-paypal-card,
-.apoya-kofi-card {
+@media (min-width: 72rem) {
+  .apoya-apoyo-grid {
+    grid-template-columns: 1.5fr 1fr 1fr;
+    align-items: start;
+  }
+}
+
+/* PayPal - Tarjeta principal, más prominente */
+.apoya-paypal-card {
   background: var(--color-superficie);
+  border: 2px solid var(--color-primario);
+  border-radius: var(--radio-lg);
+  padding: var(--espacio-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+  transition: box-shadow var(--duracion-corta) ease, transform var(--duracion-corta) ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .apoya-paypal-card:hover {
+    box-shadow: var(--sombra-flotante-alta);
+    transform: translateY(-2px);
+  }
+}
+
+.apoya-paypal-card__icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: var(--color-fondo-verde);
+  color: var(--color-secundario);
+  border-radius: var(--radio-md);
+  flex-shrink: 0;
+}
+
+.apoya-paypal-card__contenido {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+}
+
+/* Ko-fi - Tarjeta secundaria */
+.apoya-kofi-card {
+  background: var(--color-fondo-azul);
   border: 1px solid var(--color-borde);
   border-radius: var(--radio-lg);
   padding: var(--espacio-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+  transition: box-shadow var(--duracion-corta) ease, transform var(--duracion-corta) ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .apoya-kofi-card:hover {
+    box-shadow: var(--sombra-flotante);
+    transform: translateY(-2px);
+  }
+}
+
+.apoya-kofi-card__icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: var(--color-superficie);
+  color: var(--color-primario);
+  border-radius: var(--radio-md);
+  border: 1px solid var(--color-borde);
+  flex-shrink: 0;
+}
+
+.apoya-kofi-card__contenido {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+}
+
+/* QR Mini - Tarjeta terciaria, visual */
+.apoya-qr-mini-card {
+  background: var(--color-fondo-verde);
+  border: 1px solid var(--color-secundario);
+  border-radius: var(--radio-lg);
+  padding: var(--espacio-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+  text-align: center;
+  transition: box-shadow var(--duracion-corta) ease, transform var(--duracion-corta) ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .apoya-qr-mini-card:hover {
+    box-shadow: var(--sombra-flotante);
+    transform: translateY(-2px);
+  }
+}
+
+.apoya-qr-mini-card__icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: var(--color-superficie);
+  color: var(--color-secundario);
+  border-radius: var(--radio-md);
+  border: 1px solid var(--color-borde);
+  margin: 0 auto;
+  flex-shrink: 0;
+}
+
+.apoya-qr-mini-card__contenido {
   display: flex;
   flex-direction: column;
   gap: var(--espacio-3);
@@ -527,7 +701,7 @@
 }
 
 .apoya-paypal-container {
-  min-height: 2.75rem;
+  min-height: 3.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -548,6 +722,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: var(--espacio-2);
   min-height: var(--alto-objetivo-tactil);
   padding: var(--espacio-2) var(--espacio-4);
   color: var(--color-sobre-primario);
@@ -557,20 +732,35 @@
   font-weight: 750;
   font-size: var(--texto-sm);
   text-decoration: none;
-  align-self: flex-start;
-  transition: background var(--duracion-corta) ease, border-color var(--duracion-corta) ease;
+  align-self: center;
+  transition: box-shadow var(--duracion-corta) ease, transform var(--duracion-corta) ease;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .apoya-kofi-link:hover {
-    background: var(--color-primario-oscuro);
-    border-color: var(--color-primario-oscuro);
+    box-shadow: var(--sombra-flotante);
+    transform: translateY(-1px);
   }
 }
 
 .apoya-kofi-link:focus-visible {
   outline: 3px solid var(--color-foco);
   outline-offset: 2px;
+}
+
+.apoya-btn-ampliar,
+.apoya-btn-descargar,
+.apoya-btn-copiar {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  min-height: var(--alto-objetivo-tactil);
+}
+
+.apoya-btn-icono {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
 }
 
 /* Equipamiento Section */
@@ -645,19 +835,31 @@
   }
 }
 
-.producto-card__icono {
+.producto-card__ilustracion {
+  width: 100%;
+  height: 140px;
+  background: var(--color-fondo-verde);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espacio-4);
+  overflow: hidden;
+}
+
+.producto-card__ilustracion-inner {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 120px;
-  background: var(--color-fondo-verde);
+  height: 100%;
   color: var(--color-secundario);
 }
 
-.producto-card__icono svg {
-  width: 48px;
-  height: 48px;
+.producto-card__ilustracion-inner svg {
+  width: 100%;
+  height: 100%;
+  max-width: 160px;
+  max-height: 160px;
 }
 
 .producto-card__contenido {
@@ -738,13 +940,13 @@
   font-weight: 750;
   font-size: var(--texto-sm);
   text-decoration: none;
-  transition: background var(--duracion-corta) ease, border-color var(--duracion-corta) ease;
+  transition: box-shadow var(--duracion-corta) ease, transform var(--duracion-corta) ease;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .producto-card__link:hover {
-    background: var(--color-primario-oscuro);
-    border-color: var(--color-primario-oscuro);
+    box-shadow: var(--sombra-flotante);
+    transform: translateY(-1px);
   }
 }
 
@@ -764,16 +966,6 @@
 
 .producto-card__estado-texto {
   font-weight: 600;
-}
-
-.producto-card__estado-badge {
-  padding: 0.15rem 0.5rem;
-  background: var(--color-fondo-aviso);
-  border: 1px solid var(--color-foco);
-  border-radius: var(--radio-pill);
-  font-size: var(--texto-xs);
-  font-weight: 700;
-  color: var(--color-foco);
 }
 
 .producto-card__patrocinado {
@@ -800,8 +992,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   background: var(--color-fondo-verde);
   color: var(--color-secundario);
   border-radius: var(--radio-sm);
@@ -809,8 +1001,8 @@
 }
 
 .producto-inline__icono svg {
-  width: 20px;
-  height: 20px;
+  width: 32px;
+  height: 32px;
 }
 
 .producto-inline__contenido {
@@ -854,13 +1046,13 @@
   font-size: var(--texto-xs);
   text-decoration: none;
   white-space: nowrap;
-  transition: background var(--duracion-corta) ease, border-color var(--duracion-corta) ease;
+  transition: box-shadow var(--duracion-corta) ease, transform var(--duracion-corta) ease;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .producto-inline__link:hover {
-    background: var(--color-primario-oscuro);
-    border-color: var(--color-primario-oscuro);
+    box-shadow: var(--sombra-flotante);
+    transform: translateY(-1px);
   }
 }
 
@@ -871,12 +1063,12 @@
 
 .producto-inline__estado {
   padding: var(--espacio-2) var(--espacio-3);
-  background: var(--color-fondo-aviso);
-  border: 1px solid var(--color-foco);
+  background: var(--color-superficie-suave);
+  border: 1px solid var(--color-borde);
   border-radius: var(--radio-pill);
   font-size: var(--texto-xs);
   font-weight: 600;
-  color: var(--color-foco);
+  color: var(--color-texto-suave);
 }
 
 /* Equipamiento sugerido en modal de ejercicios */
@@ -928,9 +1120,28 @@
 
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
-  .producto-card {
-    transition: none;
+  .apoya-hero__escultura,
+  .apoya-escultura__svg,
+  .apoya-escultura__anillo,
+  .apoya-escultura__pausa,
+  .apoya-paypal-card,
+  .apoya-kofi-card,
+  .apoya-qr-mini-card,
+  .producto-card,
+  .producto-card__link,
+  .producto-inline__link,
+  .apoya-kofi-link,
+  .apoya-btn-ampliar,
+  .apoya-btn-descargar,
+  .apoya-btn-copiar,
+  .apoya-modal,
+  .apoya-modal-contenido,
+  .apoya-modal-cerrar {
+    transition: none !important;
+    animation: none !important;
   }
+  .apoya-escultura__svg { transform: none !important; }
+  .apoya-escultura__anillo { transform: translateZ(0) !important; }
   .apoya-equipamiento-grid .producto-card {
     opacity: 1;
     transform: none;

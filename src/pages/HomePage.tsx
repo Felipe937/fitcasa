@@ -27,9 +27,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   }, []);
 
   /**
-   * Entrada progresiva del recorrido: se observa la seccion una sola vez y se
-   * anade `is-visible`. Sin la clase, el CSS deja todo visible, de modo que el
-   * contenido nunca depende del script ni queda oculto si no se observa.
+   * Entrada progresiva del recorrido de programas: se observa la seccion una sola vez
+   * y se anade `is-visible`. Sin la clase, el CSS deja todo visible.
    */
   const programasRef = useRef<HTMLElement | null>(null);
   const [programasInView, setProgramasInView] = useState(false);
@@ -54,6 +53,38 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
+
+  /**
+   * Entrada progresiva de la seccion "Como funciona": animaciones al entrar en viewport.
+   */
+  const comoFuncionaRef = useRef<HTMLElement | null>(null);
+  const [comoFuncionaInView, setComoFuncionaInView] = useState(false);
+
+  useEffect(() => {
+    const el = comoFuncionaRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      setComoFuncionaInView(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setComoFuncionaInView(true);
+            observer.disconnect();
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -8% 0px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  /**
+   * Estado de pausa para la animacion continua de la escultura (>5s).
+   */
+  const [animacionPausada, setAnimacionPausada] = useState(false);
 
   /**
    * Cifras de la biblioteca calculadas desde los datos reales, no escritas a
@@ -886,7 +917,13 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
       </section>
 
       {/* Cómo funciona */}
-      <section id="como-funciona" aria-labelledby="titulo-como-funciona" tabIndex={-1} className="container seccion como-funciona">
+      <section
+        id="como-funciona"
+        ref={comoFuncionaRef}
+        aria-labelledby="titulo-como-funciona"
+        tabIndex={-1}
+        className={`container seccion como-funciona${comoFuncionaInView ? ' is-visible' : ''}`}
+      >
         <header className="como-funciona__cabecera">
           <div className="como-funciona__cabecera-texto">
             <h2 id="titulo-como-funciona" className="como-funciona__titulo">Cómo funciona FitCasa</h2>
@@ -896,28 +933,60 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
             </p>
           </div>
           <div className="como-funciona__firma" aria-hidden="true">
-            <svg viewBox="0 0 160 120" className="como-funciona__firma-svg" focusable="false" role="presentation">
+            <svg viewBox="0 0 240 240" className="como-funciona__firma-svg" focusable="false" role="presentation">
               <defs>
                 <radialGradient id="cf-firma-glow" cx="50%" cy="50%" r="50%">
                   <stop offset="0%" stopColor="var(--color-fondo-verde)" stopOpacity="0.9" />
                   <stop offset="100%" stopColor="var(--color-fondo)" stopOpacity="0" />
                 </radialGradient>
               </defs>
-              <circle cx="80" cy="60" r="56" fill="url(#cf-firma-glow)" />
-              <g fill="none" stroke="var(--color-primario)" strokeWidth="1.4">
-                <ellipse cx="80" cy="60" rx="62" ry="22" />
+              <circle cx="120" cy="120" r="108" fill="url(#cf-firma-glow)" />
+              <g className="cf-firma__anillo cf-firma__anillo--1" fill="none" stroke="var(--color-primario)" strokeWidth="2" strokeLinecap="round">
+                <ellipse cx="120" cy="120" rx="98" ry="28" />
               </g>
-              <g fill="none" stroke="var(--color-secundario)" strokeWidth="1.2">
-                <ellipse cx="80" cy="60" rx="46" ry="52" />
+              <g className="cf-firma__anillo cf-firma__anillo--2" fill="none" stroke="var(--color-secundario)" strokeWidth="2" strokeLinecap="round">
+                <ellipse cx="120" cy="120" rx="32" ry="92" />
               </g>
-              <g fill="none" stroke="var(--color-terciario)" strokeWidth="1" strokeDasharray="3 5">
-                <ellipse cx="80" cy="60" rx="30" ry="30" />
+              <g className="cf-firma__anillo cf-firma__anillo--3" fill="none" stroke="var(--color-terciario)" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="6 4">
+                <path d="M120 28 C170 28 190 70 190 120 C190 170 170 212 120 212 C70 212 50 170 50 120 C50 70 70 28 120 28" />
               </g>
-              <circle cx="80" cy="8" r="3.5" fill="var(--color-primario-oscuro)" />
-              <circle cx="142" cy="60" r="3" fill="var(--color-secundario-oscuro)" />
-              <circle cx="80" cy="112" r="3.5" fill="var(--color-primario-oscuro)" />
-              <circle cx="18" cy="60" r="3" fill="var(--color-secundario-oscuro)" />
+              <g className="cf-firma__anillo cf-firma__anillo--4" fill="none" stroke="var(--color-primario-oscuro)" strokeWidth="1.5" strokeLinecap="round" strokeDasharray="4 6" opacity="0.6">
+                <path d="M120 212 C70 212 50 170 50 120 C50 70 70 28 120 28 C170 28 190 70 190 120 C190 170 170 212 120 212" />
+              </g>
+              <g className="cf-firma__nodo" fill="var(--color-primario-oscuro)">
+                <circle cx="120" cy="28" r="4" />
+                <circle cx="212" cy="120" r="3.5" />
+                <circle cx="120" cy="212" r="4" />
+                <circle cx="28" cy="120" r="3.5" />
+                <circle cx="68" cy="68" r="3" />
+                <circle cx="172" cy="68" r="2.5" />
+                <circle cx="172" cy="172" r="3" />
+                <circle cx="68" cy="172" r="2.5" />
+              </g>
             </svg>
+            <button
+              type="button"
+              className="como-funciona__firma-pausa"
+              onClick={() => setAnimacionPausada((p) => !p)}
+              aria-label={animacionPausada ? 'Reanudar movimiento' : 'Pausar movimiento'}
+              aria-pressed={animacionPausada}
+            >
+              {animacionPausada ? (
+                <>
+                  <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true" width="18" height="18">
+                    <path d="M8 5v14l11-7z" fill="currentColor" />
+                  </svg>
+                  Reanudar
+                </>
+              ) : (
+                <>
+                  <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true" width="18" height="18">
+                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" fill="currentColor" />
+                  </svg>
+                  Pausar movimiento
+                </>
+              )}
+            </button>
           </div>
           <div className="como-funciona__rigor" role="note" aria-label="Rigor divulgativo">
             <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -930,7 +999,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
         <ol className="pasos-trayectoria" aria-label="Recorrido guiado en tres pasos">
           <li className="paso">
-            <span className="paso__marcador">01</span>
+            <span className="paso__marcador" aria-hidden="true">01</span>
+            <span className="paso__numero-grafico" aria-hidden="true">01</span>
             <div className="paso__contenido">
               <div className="paso__icono" aria-hidden="true">
                 <svg viewBox="0 0 24 24" focusable="false">
@@ -939,15 +1009,22 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                   <path d="M8 8l3-3 3 3" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </div>
-              <h3 className="paso__titulo">Explora</h3>
-              <p className="paso__texto">
-                Consulta ejercicios y sus adaptaciones informativas sin asumir que una etiqueta
-                equivale a una autorización clínica.
-              </p>
+              <a
+                className="paso__enlace"
+                href="#ejercicios"
+                onClick={ir('ejercicios')}
+              >
+                <h3 className="paso__titulo">Explora</h3>
+                <p className="paso__texto">
+                  Consulta ejercicios y sus adaptaciones informativas sin asumir que una etiqueta
+                  equivale a una autorización clínica.
+                </p>
+              </a>
             </div>
           </li>
           <li className="paso">
-            <span className="paso__marcador">02</span>
+            <span className="paso__marcador" aria-hidden="true">02</span>
+            <span className="paso__numero-grafico" aria-hidden="true">02</span>
             <div className="paso__contenido">
               <div className="paso__icono" aria-hidden="true">
                 <svg viewBox="0 0 24 24" focusable="false">
@@ -956,15 +1033,22 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                   <path d="M12 12l4-4" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
                 </svg>
               </div>
-              <h3 className="paso__titulo">Orienta</h3>
-              <p className="paso__texto">
-                Usa el cuestionario para ordenar una propuesta educativa según tu tiempo, experiencia
-                y equipamiento.
-              </p>
+              <a
+                className="paso__enlace"
+                href="#quiz"
+                onClick={ir('quiz')}
+              >
+                <h3 className="paso__titulo">Orienta</h3>
+                <p className="paso__texto">
+                  Usa el cuestionario para ordenar una propuesta educativa según tu tiempo, experiencia
+                  y equipamiento.
+                </p>
+              </a>
             </div>
           </li>
           <li className="paso">
-            <span className="paso__marcador">03</span>
+            <span className="paso__marcador" aria-hidden="true">03</span>
+            <span className="paso__numero-grafico" aria-hidden="true">03</span>
             <div className="paso__contenido">
               <div className="paso__icono" aria-hidden="true">
                 <svg viewBox="0 0 24 24" focusable="false">
@@ -973,11 +1057,17 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                   <path d="M7 8l2 2 4-4" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </div>
-              <h3 className="paso__titulo">Registra</h3>
-              <p className="paso__texto">
-                Observa tu actividad y tus sensaciones en un historial local voluntario, sin crear
-                una cuenta.
-              </p>
+              <a
+                className="paso__enlace"
+                href="#panel"
+                onClick={ir('panel')}
+              >
+                <h3 className="paso__titulo">Registra</h3>
+                <p className="paso__texto">
+                  Observa tu actividad y tus sensaciones en un historial local voluntario, sin crear
+                  una cuenta.
+                </p>
+              </a>
             </div>
           </li>
         </ol>

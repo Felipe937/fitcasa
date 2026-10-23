@@ -10,6 +10,7 @@ import {
   STORAGE_KEYS,
   PANEL_STORAGE_VERSION,
 } from '../utils/storage';
+import { Constellation } from '../components/Constellation';
 
 const PAIN_MIN = 0;
 const PAIN_MAX = 10;
@@ -97,21 +98,6 @@ function withoutKey(errors: FieldErrors, key: string): FieldErrors {
   return next;
 }
 
-/** Consulta de medios con lectura inicial sincrónica, sin destello en el primer render. */
-function useMediaQuery(query: string): boolean {
-  const [matches, setMatches] = useState<boolean>(() => window.matchMedia(query).matches);
-
-  useEffect(() => {
-    const list = window.matchMedia(query);
-    const onChange = (event: MediaQueryListEvent) => setMatches(event.matches);
-    setMatches(list.matches);
-    list.addEventListener('change', onChange);
-    return () => list.removeEventListener('change', onChange);
-  }, [query]);
-
-  return matches;
-}
-
 function normalizeRecord(item: unknown): PanelRecord | null {
   if (!item || typeof item !== 'object') return null;
   const it = item as Partial<PanelRecord>;
@@ -138,7 +124,6 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
   onStorageCleared,
 }) => {
   const today = localDateString(new Date());
-  const isWide = useMediaQuery('(min-width: 48rem)');
 
   const [records, setRecords] = useState<PanelRecord[]>([]);
   const [date, setDate] = useState<string>(today);
@@ -162,6 +147,8 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
   const [search, setSearch] = useState<string>('');
   const [consent, setConsent] = useState<ConsentRegistry | null>(null);
   const [consentResetStatus, setConsentResetStatus] = useState<string>('');
+  const [isAnimationPaused, setIsAnimationPaused] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const dateRef = useRef<HTMLInputElement>(null);
   const activityRef = useRef<HTMLInputElement>(null);
@@ -204,11 +191,18 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
 
   // El botón disparador se desmonta mientras la confirmación está abierta, así que
   // el foco se devuelve en un efecto, no de forma síncrona al cerrar.
-  const confirmWasOpen = useRef(false);
+const animationFrameRef = useRef<number | null>(null);
+
   useEffect(() => {
-    if (confirmWasOpen.current && !confirmClear) clearTriggerRef.current?.focus();
-    confirmWasOpen.current = confirmClear;
-  }, [confirmClear]);
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, []);
+  const toggleAnimation = () => {
+    setIsAnimationPaused(prev => !prev);
+  };
 
   const announce = (text: string) => {
     if (statusTimer.current !== null) window.clearTimeout(statusTimer.current);
@@ -341,6 +335,7 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
     }
     setFieldErrors({});
     setFormError('');
+    setIsSaving(true);
 
     const healthAuthorized = consent?.health?.accepted !== false;
     const savedPain = healthAuthorized ? (pain ?? 0) : 0;
@@ -381,6 +376,7 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
     }
 
     resetForm();
+    setIsSaving(false);
   };
 
   const handleStartEdit = (record: PanelRecord) => {
@@ -467,8 +463,12 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
 
   const latest = sortedRecords[0];
 
+  const daysWithRecordSet = useMemo(
+    () => new Set(records.map((r) => r.date)),
+    [records]
+  );
+
   // Métricas derivadas de los datos existentes (sin inventar valores)
-  const uniqueDays = useMemo(() => new Set(records.map((r) => r.date)).size, [records]);
   const last30Start = shiftDays(today, -29);
   const daysWithRecordLast30 = useMemo(
     () => new Set(records.filter((r) => r.date >= last30Start).map((r) => r.date)).size,
@@ -512,7 +512,7 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
 
   return (
     <main id="contenido" tabIndex={-1} className="container app-main panel-page">
-      <header className="panel-page__cabecera">
+<header className="panel-page__cabecera">
         <div className="panel-page__motivo" aria-hidden="true">
           <svg viewBox="0 0 24 24" focusable="false">
             <path d="M12 2L1 21h22L12 2zm0 4.5v9l7-4.5z" />
@@ -535,7 +535,7 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
         </p>
       </header>
 
-      <div className="panel-alerta" role="note">
+      <div className="panel-alerta panel-alerta--seguridad" role="note">
         <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
           <path d="M12 3.6 2.6 20h18.8L12 3.6Z" />
           <path d="M12 10v4.5" />
@@ -552,7 +552,7 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
 
       <p className="panel-page__slot" role="status" aria-live="polite">
         {storageNotice && (
-          <span className="panel-estado">
+          <span className="panel-estado panel-estado--info">
             <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
               <circle cx="12" cy="12" r="9" />
               <path d="M12 11v5" />
@@ -571,50 +571,82 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
           Un vistazo a lo que has anotado hasta ahora. Es un resumen informativo de tus propias anotaciones, no una
           evaluación de progreso ni una medida de resultado clínico.
         </p>
-        <dl className="panel-metricas">
-          <div className="panel-metrica panel-metrica--numero">
-            <dt>Registros guardados</dt>
-            <dd>{records.length}</dd>
-          </div>
-          <div className="panel-metrica">
-            <dt>Días con registro</dt>
-            <dd>{uniqueDays}</dd>
-          </div>
-          <div className="panel-metrica">
-            <dt>Registros esta semana</dt>
-            <dd>{recordsLast7}</dd>
-          </div>
-          <div className="panel-metrica">
-            <dt>Fecha del último registro</dt>
-            <dd>{latest ? formatDateLong(latest.date) : 'Sin registros'}</dd>
-          </div>
-          <div className="panel-metrica">
-            <dt>Última actividad</dt>
-            <dd>{latest ? latest.activity || 'Sin indicar' : 'Ninguna registrada'}</dd>
-          </div>
-        </dl>
 
-        {records.length > 0 && (
-          <div className="panel-anillo" aria-label={`Días con registro en los últimos 30 días: ${daysWithRecordLast30} de 30`}>
-            <svg viewBox="0 0 120 120" className="panel-anillo__svg" role="img" aria-hidden="true" focusable="false">
-              <circle cx="60" cy="60" r="50" className="panel-anillo__pista" />
-              <circle
-                cx="60"
-                cy="60"
-                r="50"
-                className="panel-anillo__progreso"
-                style={{
-                  strokeDasharray: `${2 * Math.PI * 50}`,
-                  strokeDashoffset: `${2 * Math.PI * 50 * (1 - daysWithRecordLast30 / 30)}`,
-                }}
-              />
-            </svg>
-            <div className="panel-anillo__texto">
-              <span className="panel-anillo__numero">{daysWithRecordLast30}</span>
-              <span className="panel-anillo__leyenda">de 30 días con registro</span>
-            </div>
+        <div className="panel-resumen__principal">
+          <div className="panel-resumen__cifra">
+            <span className="panel-resumen__numero">{records.length}</span>
+            <span className="panel-resumen__etiqueta">registros guardados</span>
           </div>
-        )}
+
+          <Constellation
+            daysWithRecord={daysWithRecordSet}
+            today={today}
+            isAnimationPaused={isAnimationPaused}
+            onToggleAnimation={toggleAnimation}
+          />
+
+          <dl className="panel-resumen__secundario">
+            <div className="panel-resumen__dato">
+              <dt>Días con registro (30 días)</dt>
+              <dd>{daysWithRecordLast30} de 30</dd>
+            </div>
+            <div className="panel-resumen__dato">
+              <dt>Registros esta semana</dt>
+              <dd>{recordsLast7}</dd>
+            </div>
+            <div className="panel-resumen__dato">
+              <dt>Último registro</dt>
+              <dd>{latest ? formatDateLong(latest.date) : 'Sin registros'}</dd>
+            </div>
+            <div className="panel-resumen__dato">
+              <dt>Última actividad</dt>
+              <dd>{latest ? latest.activity || 'Sin indicar' : 'Ninguna registrada'}</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div className="panel-anillo" role="img" aria-label={`Días con registro en los últimos 30 días: ${daysWithRecordLast30} de 30`}>
+          <svg viewBox="0 0 120 120" className="panel-anillo__svg" aria-hidden="true" focusable="false">
+            <circle cx="60" cy="60" r="50" className="panel-anillo__pista" />
+            <circle
+              cx="60"
+              cy="60"
+              r="50"
+              className="panel-anillo__progreso"
+              style={{
+                strokeDasharray: `${2 * Math.PI * 50}`,
+                strokeDashoffset: `${2 * Math.PI * 50 * (1 - daysWithRecordLast30 / 30)}`,
+              }}
+            />
+          </svg>
+          <div className="panel-anillo__texto" aria-hidden="true">
+            <span className="panel-anillo__numero">{daysWithRecordLast30}</span>
+            <span className="panel-anillo__leyenda">de 30 días con registro</span>
+          </div>
+          <button
+            type="button"
+            className="panel-anillo__pausa"
+            onClick={toggleAnimation}
+            aria-label={isAnimationPaused ? 'Reanudar movimiento' : 'Pausar movimiento'}
+            aria-pressed={isAnimationPaused}
+          >
+            {isAnimationPaused ? (
+              <>
+                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true" width="16" height="16">
+                  <path d="M8 5v14l11-7z" fill="currentColor" />
+                </svg>
+                Reanudar
+              </>
+            ) : (
+              <>
+                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true" width="16" height="16">
+                  <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" fill="currentColor" />
+                </svg>
+                Pausar
+              </>
+            )}
+          </button>
+        </div>
       </section>
 
       <section className="app-card" aria-labelledby="entry-heading">
@@ -626,7 +658,7 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
           percibido, que debes elegir de forma consciente para poder guardar.
         </p>
 
-        <form id="panel-form" className="panel-form" noValidate onSubmit={handleSubmit}>
+        <form id="panel-form" className={`panel-form ${isSaving ? 'guardando' : ''}`} noValidate onSubmit={handleSubmit}>
           {/* Grupo: Actividad */}
           <div className="panel-form__grupo">
             <h3 className="panel-form__grupo-titulo">Actividad</h3>
@@ -790,18 +822,18 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
               </div>
 
               {showPainAlert && (
-                <div className="panel-alerta" role="note" aria-live="polite">
+                <div className="panel-alerta panel-alerta--dolor" role="alert" aria-live="assertive">
                   <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
                     <path d="M12 3.6 2.6 20h18.8L12 3.6Z" />
                     <path d="M12 10v4.5" />
                     <path d="M12 17.6h.01" />
                   </svg>
                   <div>
-                    <p className="panel-estado-fuerte">Aviso de precaución</p>
+                    <p className="panel-estado-fuerte">Aviso de precaución: dolor intenso</p>
                     <p>
-                      Ante dolor intenso, persistente, que empeora o que se acompaña de síntomas neurológicos
-                      (hormigueo, debilidad o pérdida de sensibilidad), detén la actividad y consulta a un profesional
-                      sanitario.
+                      Has indicado un nivel de dolor igual o superior a {PAIN_ALERT_FROM} de {PAIN_MAX}. Ante dolor
+                      intenso, persistente, que empeora o que se acompaña de síntomas neurológicos (hormigueo,
+                      debilidad o pérdida de sensibilidad), detén la actividad y consulta a un profesional sanitario.
                     </p>
                     <p>El dolor que registras es una percepción subjetiva y no sustituye una valoración médica.</p>
                   </div>
@@ -1023,104 +1055,71 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
               Quitar filtros
             </button>
           </div>
-        ) : isWide ? (
-          <table className="panel-tabla" id="history-table">
-            <caption className="sr-only">
-              Registros de actividad, dolor subjetivo y bienestar, del más reciente al más antiguo
-            </caption>
-            <thead>
-              <tr>
-                <th scope="col">Fecha</th>
-                <th scope="col">Actividad</th>
-                <th scope="col">Dolor percibido</th>
-                <th scope="col">Bienestar / Notas</th>
-                <th scope="col">
-                  <span className="sr-only">Acciones</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody id="history-body">
-              {filteredRecords.map((record) => (
-                <tr key={record.id}>
-                  <td className="panel-tabla__fecha">
-                    <time dateTime={record.date}>{formatDate(record.date)}</time>
-                  </td>
-                  <td className="panel-tabla__actividad">{record.activity || 'No indicada'}</td>
-                  <td>
-                    <span className={`panel-dolor-chip panel-dolor-chip--${painTone(record.pain)}`}>
-                      {record.pain} / {PAIN_MAX} · {painLabel(record.pain)}
-                    </span>
-                  </td>
-                  <td>{record.note || 'Sin nota'}</td>
-                  <td className="panel-tabla__acciones">
-                    <div className="panel-acciones">
-                      <button
-                        type="button"
-                        className="btn secondary panel-boton"
-                        onClick={() => handleStartEdit(record)}
-                      >
-                        Editar
-                        <span className="sr-only">
-                          {' '}
-                          el registro del {formatDate(record.date)}
-                          {record.activity ? `: ${record.activity}` : ''}
-                        </span>
-                      </button>
-                      <button
-                        type="button"
-                        className="btn secondary panel-boton panel-boton--peligro"
-                        onClick={() => handleRequestDelete(record)}
-                      >
-                        Eliminar
-                        <span className="sr-only">
-                          {' '}
-                          el registro del {formatDate(record.date)}
-                          {record.activity ? `: ${record.activity}` : ''}
-                        </span>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
         ) : (
-          <ul className="panel-tarjetas" id="history-cards">
+          <ol className="panel-linea-temporal" id="history-timeline">
             {filteredRecords.map((record) => (
-              <li className="panel-tarjeta" key={record.id}>
-                <div className="panel-tarjeta__cabecera">
-                  <time className="panel-tarjeta__fecha" dateTime={record.date}>
-                    {formatDateLong(record.date)}
-                  </time>
-                  <span className={`panel-dolor-chip panel-dolor-chip--${painTone(record.pain)}`}>
-                    {record.pain} / {PAIN_MAX} · {painLabel(record.pain)}
-                  </span>
+              <li key={record.id} className="panel-linea-temporal__nodo">
+                <div className="panel-linea-temporal__marcador" aria-hidden="true">
+                  <span className="panel-linea-temporal__punto" />
+                  <span className="panel-linea-temporal__linea" />
                 </div>
-                <p className="panel-tarjeta__actividad">{record.activity || 'Actividad no indicada'}</p>
-                <p className="panel-tarjeta__nota">
-                  <strong>Nota:</strong> {record.note || 'Sin nota'}
-                </p>
-                <div className="panel-acciones panel-tarjeta__acciones">
-                  <button
-                    type="button"
-                    className="btn secondary panel-boton"
-                    onClick={() => handleStartEdit(record)}
-                  >
-                    Editar
-                    <span className="sr-only"> el registro del {formatDateLong(record.date)}</span>
-                  </button>
-                  <button
-                    type="button"
-                    className="btn secondary panel-boton panel-boton--peligro"
-                    onClick={() => handleRequestDelete(record)}
-                  >
-                    Eliminar
-                    <span className="sr-only"> el registro del {formatDateLong(record.date)}</span>
-                  </button>
-                </div>
+                <article className="panel-linea-temporal__entrada">
+                  <header className="panel-linea-temporal__cabecera">
+                    <time className="panel-linea-temporal__fecha" dateTime={record.date}>
+                      {formatDateLong(record.date)}
+                    </time>
+                    {record.activity && (
+                      <span className="panel-linea-temporal__actividad">{record.activity}</span>
+                    )}
+                  </header>
+                  <div className="panel-linea-temporal__cuerpo">
+                    <dl className="panel-linea-temporal__detalles">
+                      <div className="panel-linea-temporal__detalle">
+                        <dt>Dolor percibido</dt>
+                        <dd>
+                          <span className={`panel-dolor-texto panel-dolor-texto--${painTone(record.pain)}`}>
+                            {record.pain} / {PAIN_MAX} · {painLabel(record.pain)}
+                          </span>
+                        </dd>
+                      </div>
+                      {record.note && (
+                        <div className="panel-linea-temporal__detalle">
+                          <dt>Nota</dt>
+                          <dd>{record.note}</dd>
+                        </div>
+                      )}
+                    </dl>
+                  </div>
+                  <footer className="panel-linea-temporal__acciones">
+                    <button
+                      type="button"
+                      className="btn secondary panel-boton"
+                      onClick={() => handleStartEdit(record)}
+                    >
+                      Editar
+                      <span className="sr-only">
+                        {' '}
+                        el registro del {formatDate(record.date)}
+                        {record.activity ? `: ${record.activity}` : ''}
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      className="btn secondary panel-boton panel-boton--peligro"
+                      onClick={() => handleRequestDelete(record)}
+                    >
+                      Eliminar
+                      <span className="sr-only">
+                        {' '}
+                        el registro del {formatDate(record.date)}
+                        {record.activity ? `: ${record.activity}` : ''}
+                      </span>
+                    </button>
+                  </footer>
+                </article>
               </li>
             ))}
-          </ul>
+          </ol>
         )}
       </section>
 
@@ -1169,7 +1168,7 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
 
         {consent && (
           <>
-            <div className="panel-privacidad__grupo">
+            <div className="panel-privacidad__grupo panel-privacidad__grupo--aviso">
               <p className="small-print">
                 Este registro vive en el almacenamiento local de tu navegador, que no está cifrado y
                 que puedes editar o borrar por tu cuenta. Acredita una trazabilidad personal, no es
@@ -1202,7 +1201,7 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
 
         <p className="panel-page__slot" role="status" aria-live="polite">
           {consentResetStatus && (
-            <span className="panel-estado">
+            <span className="panel-estado panel-estado--info">
               <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
                 <circle cx="12" cy="12" r="9" />
                 <path d="m8.2 12.4 2.6 2.6 5-5.6" />
@@ -1256,7 +1255,7 @@ export const PanelPage: React.FC<{ onStorageCleared?: () => void }> = ({
 
         <p className="panel-page__slot" role="status" aria-live="polite">
           {clearStatus && (
-            <span className="panel-estado">
+            <span className="panel-estado panel-estado--info">
               <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
                 <circle cx="12" cy="12" r="9" />
                 <path d="m8.2 12.4 2.6 2.6 5-5.6" />

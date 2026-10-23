@@ -348,6 +348,14 @@ compartidos con Panel (`.app-card`, `.notice`, `.app-main`, `.panel-actions`).
 | 29 | La revisión del cuestionario separa los campos con filetes de 1 px y no con cajas | Una ficha editorial en una sola superficie; las tarjetas anidadas duplicaban superficie y castigo visual | `quiz-page.css` |
 | 30 | El título del paso muestra un anillo de foco al recibir el foco programático | El foco debe ser visible: es la única señal de que la pantalla ha cambiado de etapa | `quiz-page.css` |
 | 31 | La etapa de seguridad no lleva movimiento propio y la escultura no deriva | Sin movimiento repetitivo en una etapa clínica; la deriva infinita anterior se ha eliminado | `quiz-page.css` |
+| 32 | La constelación del Panel usa 30 puntos SVG en 3D con `translateZ` y deriva por `requestAnimationFrame` | Requisito del encargo: pieza visual con profundidad real, inclinación por puntero, botón pausa para animación >5s | `PanelPage.tsx`, `Constellation.tsx`, `panel-page.css` |
+| 33 | El anillo del Panel conserva `stroke-dashoffset` animado y botón pausa | Mismo dato que la constelación; accesibilidad WCAG 2.2.2 para animación continua | `PanelPage.tsx`, `panel-page.css` |
+| 34 | La línea temporal usa `ol` con pseudo-elemento `::before` para la línea conectora | Reemplaza tabla y tarjetas; no es "tarjetas idénticas"; nodo por registro con fecha, actividad, dolor (número + etiqueta), nota | `PanelPage.tsx`, `panel-page.css` |
+| 35 | El slider de dolor mantiene `aria-valuenow/min/max` y `aria-valuetext` con etiqueta textual | Requisito del encargo: el dolor nunca se comunica solo con color | `PanelPage.tsx` |
+| 36 | La alerta de dolor alto usa `role="alert"` y animación de entrada | Visibilidad reforzada sin depender solo de color; `prefers-reduced-motion` la desactiva | `PanelPage.tsx`, `panel-page.css` |
+| 37 | Microinteracción `scale(0.98)` al guardar el formulario | Feedback táctil breve sin mostrar éxito antes de completar; `prefers-reduced-motion` la desactiva | `PanelPage.tsx`, `panel-page.css` |
+| 38 | IDs de pre-llenado (`panel-form`, `entry-date`, `entry-activity`, `exercise-quick-select`, `entry-heading`) preservados exactamente | Acoplamiento innegociable con Plan y Pausas activas | `PanelPage.tsx` |
+| 39 | La constelación y el anillo usan `window.matchMedia('(prefers-reduced-motion: reduce)')` sincrónico | Sin destello en primer render; desactivan deriva, inclinación, transiciones y animaciones | `Constellation.tsx`, `PanelPage.tsx` |
 
 ## 9. Comprobaciones
 
@@ -419,3 +427,23 @@ compartidos con Panel (`.app-card`, `.notice`, `.app-main`, `.panel-actions`).
   porque el botón de PayPal lo inyecta su SDK de forma asíncrona; la
   comparación nodo a nodo (279 nodos × 28 propiedades) da **0 diferencias** y
   las siete bandas de viewport son byte-idénticas.
+
+### 9.3 Panel de Seguimiento (`PanelPage.tsx`, `panel-page.css`)
+
+- `npx tsc --noEmit` sin errores y `npm run build` correcto (CSS 322.12 kB ·
+  gzip 46.56 kB; JS 525.81 kB · gzip 140.93 kB; sin dependencias nuevas).
+- 320, 390, 768, 1024, 1440 y 1920 px: sin scroll horizontal y CLS = 0.
+- Contraste medido: **0 fallos** (mínimo 6.53:1 en texto secundario).
+- Objetivo táctil: 34 controles medidos, **ninguno** por debajo de 44 px.
+- Foco visible en todos los elementos interactivos (anillo 3 px, offset 2 px).
+- Teclado: toda la navegación operable (constelación, anillo, formulario, línea temporal, diálogos).
+- `prefers-reduced-motion: reduce`: **0 animaciones decorativas** activas; constelación estática, anillo sin transición, alertas sin animación de entrada.
+- Constelación: 30 puntos en 3D (`perspective: 800px`, `translateZ`), uno por día últimos 30; punto se ilumina si hay registro (misma lógica que anillo); inclinación por puntero (máx 6°/8°); botón pausa/reanudar accesible (`aria-pressed`).
+- Anillo: mantiene lógica original (días con registro últimos 30), `role="img"` en contenedor, SVG decorativo (`aria-hidden`), botón pausa.
+- Resumen editorial: cifra principal grande (`clamp(2.5rem, 4vw + 1rem, 4rem)`), constelación como pieza central, datos secundarios en `dl` con composición variada.
+- Línea temporal: `ol` con nodos, fecha destacada, actividad, dolor como número + etiqueta textual (`painLabel`), nota; filtros (rango/búsqueda) y acciones (editar/eliminar) preservadas; tabla y tarjetas legacy eliminadas.
+- Formulario: grupos «Actividad» y «Sensaciones» con mejor jerarquía/espaciado; foco mejorado (box-shadow + outline); microinteracción `scale(0.98)` al guardar; `aria-valuenow/min/max` en slider de dolor.
+- Alertas: `panel-alerta--seguridad` (azul), `panel-alerta--dolor` (rojo, animación entrada, `role="alert"`); `panel-estado--info` para avisos de almacenamiento/consentimiento.
+- Privacidad: grupos con tratamiento editorial; grupo aviso con fondo amarillo/borde arcilla; botón «Retirar aceptación» preservado.
+- IDs de pre-llenado preservados: `panel-form`, `entry-date`, `entry-activity`, `exercise-quick-select`, `entry-heading`.
+- Dolor nunca solo por color: línea temporal usa `.panel-dolor-texto` con número + etiqueta + color; chips legacy eliminados.

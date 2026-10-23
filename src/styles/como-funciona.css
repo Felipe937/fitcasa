@@ -1,0 +1,512 @@
+/* ==========================================================================
+   Cómo funciona FitCasa — recorrido guiado infográfico
+   ========================================================================== */
+
+#como-funciona {
+  width: min(100% - 2rem, var(--ancho-contenedor));
+  margin-inline: auto;
+}
+
+#como-funciona .como-funciona__cabecera {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--espacio-5);
+  margin-bottom: var(--espacio-7);
+  align-items: center;
+}
+
+@media (min-width: 60rem) {
+  #como-funciona .como-funciona__cabecera {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
+  }
+  #como-funciona .como-funciona__rigor {
+    grid-column: 1 / -1;
+  }
+}
+
+#como-funciona .como-funciona__titulo {
+  margin: 0;
+  font-size: clamp(1.9rem, 1.5rem + 1.6vw, 2.75rem);
+  line-height: 1.05;
+  color: var(--color-primario-oscuro);
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  max-width: 38ch;
+}
+
+#como-funciona .como-funciona__intro {
+  margin: 0;
+  max-width: 56ch;
+  color: var(--color-texto);
+  font-size: var(--texto-base);
+  line-height: var(--alto-linea);
+}
+
+#como-funciona .como-funciona__rigor {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-3) var(--espacio-4);
+  margin-top: var(--espacio-2);
+  background: var(--color-fondo-azul);
+  border: 1px solid var(--color-borde);
+  border-left: 0.35rem solid var(--color-primario);
+  border-radius: var(--radio-md);
+  font-size: var(--texto-sm);
+  color: var(--color-texto-suave);
+}
+
+#como-funciona .como-funciona__rigor svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ==========================================================================
+   Escultura 3D (anillos entrelazados)
+   ========================================================================== */
+
+#como-funciona .como-funciona__firma {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 900px;
+}
+
+#como-funciona .como-funciona__firma-svg {
+  width: min(100%, 12rem);
+  height: auto;
+  transform-style: preserve-3d;
+  transition: transform var(--duracion-media) var(--curva-suave);
+}
+
+@media (hover: hover) {
+  #como-funciona .como-funciona__firma:hover .como-funciona__firma-svg {
+    transform: rotateX(8deg) rotateY(-10deg);
+  }
+}
+
+#como-funciona .como-funciona__firma-pausa {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2) var(--espacio-3);
+  min-height: var(--alto-objetivo-tactil);
+  color: var(--color-primario-oscuro);
+  background: var(--color-superficie);
+  border: 2px solid var(--color-borde);
+  border-radius: var(--radio-pill);
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--sombra-flotante);
+  transition: border-color var(--duracion-corta) ease, box-shadow var(--duracion-corta) ease, color var(--duracion-corta) ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  #como-funciona .como-funciona__firma-pausa:hover {
+    border-color: var(--color-secundario);
+    box-shadow: var(--sombra-flotante-alta);
+    color: var(--color-secundario-oscuro);
+  }
+}
+
+#como-funciona .como-funciona__firma-pausa:focus-visible {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 2px;
+}
+
+#como-funciona .como-funciona__firma-pausa svg {
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Recorrido: línea y pasos
+   ========================================================================== */
+
+#como-funciona .pasos-trayectoria {
+  display: grid;
+  gap: var(--espacio-6);
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  position: relative;
+}
+
+#como-funciona .paso {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--espacio-4);
+  align-items: start;
+  min-width: 0;
+  position: relative;
+}
+
+#como-funciona .paso__marcador {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-borde);
+  background: var(--color-superficie);
+  color: var(--color-primario-oscuro);
+  font-size: var(--texto-lg);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+#como-funciona .paso__icono {
+  width: 3rem;
+  height: 3rem;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+#como-funciona .paso__icono svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--color-secundario);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+#como-funciona .paso__enlace {
+  text-decoration: none;
+  color: inherit;
+  width: 100%;
+}
+
+#como-funciona .paso__enlace:focus-visible {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 3px;
+  border-radius: var(--radio-sm);
+}
+
+#como-funciona .paso__enlace:hover .paso__titulo {
+  color: var(--color-primario);
+}
+
+#como-funciona .paso__titulo {
+  margin: 0;
+  font-size: var(--texto-lg);
+  font-weight: 800;
+  color: var(--color-primario-oscuro);
+  text-wrap: balance;
+}
+
+#como-funciona .paso__texto {
+  margin: var(--espacio-1) 0 0;
+  color: var(--color-texto);
+  font-size: var(--texto-base);
+  line-height: var(--alto-linea);
+  max-width: 48ch;
+}
+
+/* Números decorativos grandes */
+#como-funciona .paso__numero-grafico {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  font-size: clamp(4rem, 8vw, 8rem);
+  font-weight: 800;
+  color: var(--color-primario);
+  opacity: 0.04;
+  line-height: 1;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 47.99rem) {
+  #como-funciona .paso__numero-grafico {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   Desktop: tres columnas con línea horizontal
+   ========================================================================== */
+
+@media (min-width: 48rem) {
+  #como-funciona .pasos-trayectoria {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--espacio-6);
+  }
+
+  #como-funciona .pasos-trayectoria::before {
+    content: "";
+    position: absolute;
+    top: 1.375rem;
+    left: 1.375rem;
+    right: 1.375rem;
+    height: 2px;
+    background: var(--color-borde);
+    z-index: 0;
+  }
+
+  #como-funciona .paso {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  #como-funciona .paso__marcador {
+    margin: 0 auto var(--espacio-4);
+  }
+
+  #como-funciona .paso__contenido {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  #como-funciona .paso__icono {
+    margin: 0 auto var(--espacio-3);
+  }
+
+  #como-funciona .paso__enlace {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  #como-funciona .paso__titulo,
+  #como-funciona .paso__texto {
+    text-align: center;
+  }
+}
+
+/* ==========================================================================
+   Móvil: una columna con línea vertical
+   ========================================================================== */
+
+@media (max-width: 47.99rem) {
+  #como-funciona .pasos-trayectoria {
+    grid-template-columns: 1fr;
+    gap: var(--espacio-6);
+  }
+
+  #como-funciona .pasos-trayectoria::before {
+    content: "";
+    position: absolute;
+    top: 1.375rem;
+    bottom: 1.375rem;
+    left: 1.375rem;
+    width: 2px;
+    background: var(--color-borde);
+    z-index: 0;
+  }
+
+  #como-funciona .paso {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--espacio-4);
+    align-items: start;
+  }
+
+  #como-funciona .paso__marcador {
+    margin: 0;
+  }
+
+  #como-funciona .paso__contenido {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    min-width: 0;
+  }
+
+  #como-funciona .paso__icono {
+    margin: 0 0 var(--espacio-2);
+  }
+
+  #como-funciona .paso__enlace {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  #como-funciona .paso__titulo,
+  #como-funciona .paso__texto {
+    text-align: left;
+  }
+}
+
+/* ==========================================================================
+   Animaciones (solo cuando la sección entra en viewport)
+   ========================================================================== */
+
+html.js #como-funciona .pasos-trayectoria::before,
+html.js #como-funciona .paso__marcador,
+html.js #como-funciona .paso__icono svg path,
+html.js #como-funciona .paso__titulo,
+html.js #como-funciona .paso__texto,
+html.js #como-funciona .como-funciona__firma-svg {
+  opacity: 0;
+}
+
+html.js #como-funciona.is-visible .pasos-trayectoria::before {
+  animation: cf-linea-revela 0.9s var(--curva-suave) 0.2s both;
+}
+
+html.js #como-funciona.is-visible .paso__marcador {
+  animation: cf-nodo-aparece 0.5s var(--curva-suave) both;
+}
+
+html.js #como-funciona.is-visible .paso:nth-child(2) .paso__marcador {
+  animation-delay: 0.15s;
+}
+
+html.js #como-funciona.is-visible .paso:nth-child(3) .paso__marcador {
+  animation-delay: 0.3s;
+}
+
+html.js #como-funciona.is-visible .paso__icono svg path {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  animation: cf-icono-dibuja 0.9s var(--curva-suave) both;
+}
+
+html.js #como-funciona.is-visible .paso:nth-child(2) .paso__icono svg path {
+  animation-delay: 0.2s;
+}
+
+html.js #como-funciona.is-visible .paso:nth-child(3) .paso__icono svg path {
+  animation-delay: 0.4s;
+}
+
+html.js #como-funciona.is-visible .paso__titulo {
+  animation: cf-texto-aparece 0.5s var(--curva-suave) both;
+}
+
+html.js #como-funciona.is-visible .paso:nth-child(1) .paso__titulo {
+  animation-delay: 0.35s;
+}
+
+html.js #como-funciona.is-visible .paso:nth-child(2) .paso__titulo {
+  animation-delay: 0.5s;
+}
+
+html.js #como-funciona.is-visible .paso:nth-child(3) .paso__titulo {
+  animation-delay: 0.65s;
+}
+
+html.js #como-funciona.is-visible .paso__texto {
+  animation: cf-texto-aparece 0.5s var(--curva-suave) both;
+}
+
+html.js #como-funciona.is-visible .paso:nth-child(1) .paso__texto {
+  animation-delay: 0.45s;
+}
+
+html.js #como-funciona.is-visible .paso:nth-child(2) .paso__texto {
+  animation-delay: 0.6s;
+}
+
+html.js #como-funciona.is-visible .paso:nth-child(3) .paso__texto {
+  animation-delay: 0.75s;
+}
+
+@keyframes cf-linea-revela {
+  from { transform: scaleX(0); transform-origin: left center; }
+  to { transform: scaleX(1); transform-origin: left center; }
+}
+
+@keyframes cf-nodo-aparece {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes cf-icono-dibuja {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes cf-texto-aparece {
+  to { opacity: 1; transform: none; }
+}
+
+/* Deriva lenta de la escultura (solo si no prefiere movimiento reducido) */
+@media (prefers-reduced-motion: no-preference) {
+  #como-funciona:not(.animacion-pausada) .como-funciona__firma-svg {
+    animation: cf-firma-flota 6s ease-in-out infinite alternate;
+  }
+
+  @keyframes cf-firma-flota {
+    from { transform: rotateX(0deg) rotateY(0deg); }
+    to { transform: rotateX(6deg) rotateY(-8deg); }
+  }
+}
+
+/* ==========================================================================
+   Reduced Motion
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  #como-funciona .paso__marcador,
+  #como-funciona .paso__icono svg,
+  #como-funciona .paso__titulo,
+  #como-funciona .paso__texto,
+  #como-funciona .pasos-trayectoria::before,
+  #como-funciona .como-funciona__firma-svg,
+  #como-funciona .como-funciona__firma-pausa {
+    transition: none !important;
+    transform: none !important;
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
+  #como-funciona .paso__icono svg path {
+    stroke-dashoffset: 0 !important;
+    animation: none !important;
+  }
+
+  html.js #como-funciona .pasos-trayectoria::before,
+  html.js #como-funciona .paso__marcador,
+  html.js #como-funciona .paso__icono svg path,
+  html.js #como-funciona .paso__titulo,
+  html.js #como-funciona .paso__texto,
+  html.js #como-funciona .como-funciona__firma-svg {
+    opacity: 1 !important;
+  }
+}
+
+/* ==========================================================================
+   Forced Colors Mode
+   ========================================================================== */
+
+@media (forced-colors: active) {
+  #como-funciona .paso__marcador,
+  #como-funciona .paso__icono svg,
+  #como-funciona .pasos-trayectoria::before {
+    border: 1px solid CanvasText;
+  }
+}
+
+/* ==========================================================================
+   Print
+   ========================================================================== */
+
+@media print {
+  #como-funciona .pasos-trayectoria::before { display: none; }
+  #como-funciona .paso { break-inside: avoid; }
+  #como-funciona .como-funciona__rigor { break-inside: avoid; border-color: #000; }
+  #como-funciona .como-funciona__firma-pausa { display: none; }
+}
