@@ -237,7 +237,7 @@ const construirComposicion = (ejercicio: Exercise): Composicion => {
  * El identificador del patrón lleva el id de la ficha, de modo que los
  * `pattern`/`gradient` SVG no se repiten nunca en el documento.
  */
-const PosterArt: React.FC<{ exercise: Exercise }> = ({ exercise }) => {
+export const PosterArt: React.FC<{ exercise: Exercise }> = ({ exercise }) => {
   const mod = categoryModifier[exercise.category || 'actividad_general'];
   const composicion = useMemo(() => construirComposicion(exercise), [exercise]);
   const idTrama = `puntos-${exercise.id}`;
@@ -1468,6 +1468,20 @@ export const ExercisesPage: React.FC = () => {
                 }}
               >
                 ← Anterior
+              </button>
+
+              <button
+                type="button"
+                className="btn dialog-guided-btn"
+                onClick={() => {
+                  window.location.hash = `guided-session:${activeModalExercise.id}`;
+                }}
+                aria-label={`Practicar ${activeModalExercise.name} en modo guiado`}
+              >
+                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
+                </svg>
+                Practicar en modo guiado
               </button>
 
               <button

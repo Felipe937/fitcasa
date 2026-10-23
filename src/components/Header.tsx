@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 export type PageRoute =
   | 'inicio'
   | 'ejercicios'
+  | 'guided-session'
   | 'quiz'
   | 'panel'
   | 'plan'

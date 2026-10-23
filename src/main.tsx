@@ -15,6 +15,7 @@ import './styles/terminos-page.css';
 import './styles/actualidad-page.css';
 import './styles/consent-guard.css';
 import './styles/como-funciona.css';
+import './styles/guided-session.css';
 
 // Add js class to html documentElement for progressive enhancement matching original script
 document.documentElement.classList.add('js');

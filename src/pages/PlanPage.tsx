@@ -508,6 +508,19 @@ export const PlanPage: React.FC<PlanPageProps> = ({ onNavigate }) => {
                   <div className="plan-page__sesion-acciones">
                     <button
                       type="button"
+                      className="btn plan-page__btn-guided"
+                      onClick={() => {
+                        window.location.hash = `guided-session:${session.exercises[0].exerciseId}:${activeWeekData.weekNumber}:${session.sessionNumber}`;
+                      }}
+                      aria-label={`Practicar sesión ${session.sessionNumber} en modo guiado`}
+                    >
+                      <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
+                      </svg>
+                      Practicar sesión
+                    </button>
+                    <button
+                      type="button"
                       className="btn secondary plan-page__btn-panel"
                       onClick={() => handleNavigateToPanel(activeWeekData.weekNumber, session.sessionNumber)}
                     >

@@ -10,6 +10,7 @@ import {
 import { ConsentRegistry } from './types';
 import { HomePage } from './pages/HomePage';
 import { ExercisesPage } from './pages/ExercisesPage';
+import { GuidedSessionPage } from './pages/GuidedSessionPage';
 import { QuizPage } from './pages/QuizPage';
 import { PanelPage } from './pages/PanelPage';
 import { PlanPage } from './pages/PlanPage';
@@ -31,6 +32,9 @@ function getRouteFromUrl(): { page: PageRoute; sectionId?: string } {
   const hash = window.location.hash.replace('#', '').toLowerCase();
   const path = window.location.pathname.toLowerCase();
 
+  if (hash.startsWith('guided-session') || path.includes('guided-session')) {
+    return { page: 'guided-session' };
+  }
   if (hash === 'ejercicios' || path.endsWith('/ejercicios') || path.endsWith('/ejercicios.html')) {
     return { page: 'ejercicios' };
   }
@@ -103,6 +107,7 @@ export const App: React.FC = () => {
     const titles: Record<PageRoute, string> = {
       inicio: 'FitCasa | Ejercicio en casa y rutinas guiadas',
       ejercicios: 'FitCasa – Biblioteca de ejercicios',
+      'guided-session': 'FitCasa – Práctica guiada',
       quiz: 'FitCasa – Sugerencias de actividad',
       panel: 'FitCasa – Panel de seguimiento',
       plan: 'FitCasa – Mi Plan de Actividad',
@@ -149,6 +154,7 @@ export const App: React.FC = () => {
       <div className="flex-1">
         {currentPage === 'inicio' && <HomePage onNavigate={handleNavigate} />}
         {currentPage === 'ejercicios' && <ExercisesPage />}
+        {currentPage === 'guided-session' && <GuidedSessionPage onNavigate={handleNavigate} />}
         {currentPage === 'escoliosis' && <ScoliosisPage onNavigate={handleNavigate} />}
         {currentPage === 'actualidad' && <ActualidadPage onNavigate={handleNavigate} articulo={articulosNoticias[0]} />}
         {currentPage === 'plan' && !showGuard && (

@@ -598,6 +598,37 @@
   border-color: var(--color-secundario);
 }
 
+.plan-page__btn-guided {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espacio-2);
+  width: 100%;
+  min-height: var(--alto-objetivo-tactil);
+  padding: var(--espacio-3) var(--espacio-4);
+  color: var(--color-primario-on);
+  background: var(--color-primario);
+  border: none;
+  border-radius: var(--radio-md);
+  font-weight: 750;
+  text-align: center;
+  margin-bottom: var(--espacio-2);
+}
+
+.plan-page__btn-guided svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.plan-page__btn-guided:hover {
+  background: var(--color-primario-hover);
+}
+
+.plan-page__btn-guided:focus-visible {
+  outline: 2px solid var(--color-primario);
+  outline-offset: 2px;
+}
+
 /* === Responsive === */
 @media (max-width: 48rem) {
   .plan-page__resumen {

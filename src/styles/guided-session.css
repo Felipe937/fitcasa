@@ -1,0 +1,459 @@
+/* ==========================================================================
+   FITCASA — Modo de Práctica Guiada
+   Estilos para el componente GuidedSession
+   ========================================================================== */
+
+:root {
+  --guided-timer-size: 14rem;
+  --guided-timer-stroke: 12px;
+  --guided-dialog-radius: 0.75rem;
+  --guided-dialog-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Contenedor principal */
+.guided-session {
+  min-height: 100vh;
+  background-color: var(--color-fondo);
+  display: flex;
+  flex-direction: column;
+  padding: var(--espacio-6);
+}
+
+/* Header */
+.guided-session__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--espacio-6);
+  padding-bottom: var(--espacio-4);
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.guided-session__back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2) var(--espacio-3);
+  background: transparent;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+  color: var(--color-ink);
+  font-size: var(--tamano-base);
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.guided-session__back-btn:hover {
+  background-color: var(--color-fondo-verde);
+  border-color: var(--color-secundario);
+}
+
+.guided-session__back-btn:focus-visible {
+  outline: 2px solid var(--color-primario);
+  outline-offset: 2px;
+}
+
+.guided-session__back-btn svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.guided-session__status-badge {
+  padding: var(--espacio-1) var(--espacio-3);
+  background-color: var(--color-fondo-verde);
+  border-radius: 999px;
+  font-size: var(--tamano-sm);
+  font-weight: 500;
+  color: var(--color-secundario-oscuro);
+}
+
+/* Contenido principal */
+.guided-session__content {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--espacio-8);
+  max-width: var(--ancho-contenedor);
+  margin: 0 auto;
+  width: 100%;
+}
+
+@media (min-width: 64rem) {
+  .guided-session__content {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+/* Visual del ejercicio */
+.guided-session__visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--espacio-4);
+  background-color: var(--color-fondo-verde);
+  border-radius: var(--radio-lg);
+}
+
+.guided-session__visual .exercise-media__arte {
+  width: 100%;
+  max-width: 24rem;
+  aspect-ratio: 16 / 9;
+}
+
+/* Información del ejercicio */
+.guided-session__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-5);
+}
+
+.guided-session__title {
+  margin: 0;
+  font-size: clamp(2rem, 1.5rem + 2vw, 2.75rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  font-weight: 800;
+  color: var(--color-primario-oscuro);
+  text-wrap: balance;
+}
+
+.guided-session__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-3);
+  font-size: var(--tamano-sm);
+  color: var(--color-ink-secondary);
+}
+
+.guided-session__duration,
+.guided-session__difficulty,
+.guided-session__review {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-1);
+}
+
+.guided-session__duration svg,
+.guided-session__difficulty svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.guided-session__review {
+  padding: var(--espacio-1) var(--espacio-2);
+  background-color: var(--color-fondo-verde);
+  border-radius: var(--radio-sm);
+}
+
+.guided-session__description {
+  margin: 0;
+  font-size: var(--tamano-lg);
+  line-height: 1.6;
+  color: var(--color-ink);
+}
+
+.guided-session__adaptation,
+.guided-session__precautions,
+.guided-session__contraindications {
+  padding: var(--espacio-4);
+  background-color: var(--color-fondo-verde);
+  border-radius: var(--radio-md);
+  border-left: 3px solid var(--color-secundario);
+}
+
+.guided-session__adaptation h3,
+.guided-session__precautions h3,
+.guided-session__contraindications h3 {
+  margin: 0 0 var(--espacio-2);
+  font-size: var(--tamano-base);
+  font-weight: 600;
+  color: var(--color-secundario-oscuro);
+}
+
+.guided-session__adaptation p,
+.guided-session__precautions p,
+.guided-session__contraindications p {
+  margin: 0;
+  font-size: var(--tamano-sm);
+  line-height: 1.5;
+  color: var(--color-ink-secondary);
+}
+
+.guided-session__precautions ul,
+.guided-session__contraindications ul {
+  margin: 0;
+  padding-left: var(--espacio-4);
+  font-size: var(--tamano-sm);
+  line-height: 1.6;
+  color: var(--color-ink-secondary);
+}
+
+.guided-session__contraindications {
+  border-left-color: var(--color-terciario);
+}
+
+/* Temporizador */
+.guided-session__timer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espacio-6);
+  background-color: var(--color-fondo-verde);
+  border-radius: var(--radio-lg);
+}
+
+.guided-session__progress-ring {
+  width: var(--guided-timer-size);
+  height: var(--guided-timer-size);
+}
+
+.guided-session__progress-bg {
+  stroke: var(--color-borde);
+}
+
+.guided-session__progress {
+  transition: stroke-dashoffset 1s linear;
+}
+
+.guided-session__time-display {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.guided-session__time-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--color-primario-oscuro);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.guided-session__time-label {
+  font-size: var(--tamano-sm);
+  color: var(--color-ink-secondary);
+  margin-top: var(--espacio-1);
+}
+
+/* Controles */
+.guided-session__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-3);
+  justify-content: center;
+  align-items: center;
+  padding: var(--espacio-6);
+  background-color: var(--color-fondo-verde);
+  border-radius: var(--radio-lg);
+}
+
+.guided-session__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-3) var(--espacio-5);
+  font-size: var(--tamano-base);
+  font-weight: 600;
+  border-radius: var(--radio-md);
+  cursor: pointer;
+  transition: transform 100ms ease, box-shadow 100ms ease;
+}
+
+.guided-session__btn svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.guided-session__btn:active {
+  transform: scale(0.98);
+}
+
+.guided-session__btn--primary {
+  background-color: var(--color-primario);
+  color: var(--color-primario-on);
+  border: none;
+}
+
+.guided-session__btn--primary:hover {
+  background-color: var(--color-primario-hover);
+}
+
+.guided-session__btn--primary:focus-visible {
+  outline: 2px solid var(--color-primario);
+  outline-offset: 2px;
+}
+
+.guided-session__btn--secondary {
+  background-color: var(--color-fondo);
+  color: var(--color-ink);
+  border: 1px solid var(--color-borde);
+}
+
+.guided-session__btn--secondary:hover {
+  background-color: var(--color-fondo-verde);
+  border-color: var(--color-secundario);
+}
+
+.guided-session__btn--secondary:focus-visible {
+  outline: 2px solid var(--color-secundario);
+  outline-offset: 2px;
+}
+
+.guided-session__voice-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2) var(--espacio-3);
+  background-color: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+  font-size: var(--tamano-sm);
+  color: var(--color-ink-secondary);
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.guided-session__voice-toggle svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.guided-session__voice-toggle--active {
+  background-color: var(--color-fondo-verde);
+  border-color: var(--color-secundario);
+  color: var(--color-secundario-oscuro);
+}
+
+.guided-session__voice-toggle:focus-visible {
+  outline: 2px solid var(--color-secundario);
+  outline-offset: 2px;
+}
+
+/* Diálogos */
+.guided-session__dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  padding: var(--espacio-6);
+  background-color: var(--color-fondo);
+  border-radius: var(--guided-dialog-radius);
+  box-shadow: var(--guided-dialog-shadow);
+  max-width: 28rem;
+  width: calc(100% - var(--espacio-8));
+  animation: guided-dialog-enter 200ms ease-out;
+}
+
+@keyframes guided-dialog-enter {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) translateY(0);
+  }
+}
+
+.guided-session__dialog h2 {
+  margin: 0 0 var(--espacio-3);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primario-oscuro);
+}
+
+.guided-session__dialog p {
+  margin: 0 0 var(--espacio-5);
+  font-size: var(--tamano-base);
+  line-height: 1.5;
+  color: var(--color-ink);
+}
+
+.guided-session__dialog--success {
+  border: 2px solid var(--color-secundario);
+}
+
+.guided-session__dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-3);
+  justify-content: flex-end;
+}
+
+.guided-session__dialog-btn--primary {
+  background-color: var(--color-primario);
+  color: var(--color-primario-on);
+  border: none;
+}
+
+.guided-session__dialog-btn--secondary {
+  background-color: var(--color-fondo);
+  color: var(--color-ink);
+  border: 1px solid var(--color-borde);
+}
+
+/* Announcer para screen readers */
+.guided-session__announcer {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Responsive */
+@media (max-width: 48rem) {
+  .guided-session {
+    padding: var(--espacio-4);
+  }
+
+  .guided-session__content {
+    gap: var(--espacio-6);
+  }
+
+  .guided-session__timer {
+    padding: var(--espacio-4);
+  }
+
+  .guided-session__controls {
+    padding: var(--espacio-4);
+  }
+
+  .guided-session__btn {
+    flex: 1;
+    min-width: 0;
+    justify-content: center;
+  }
+
+  .guided-session__time-value {
+    font-size: 2rem;
+  }
+}
+
+/* Prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .guided-session__progress {
+    transition: none;
+  }
+
+  .guided-session__dialog {
+    animation: none;
+  }
+
+  .guided-session__btn {
+    transition: none;
+  }
+
+  .guided-session__voice-toggle {
+    transition: none;
+  }
+}
