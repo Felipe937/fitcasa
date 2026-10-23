@@ -121,28 +121,189 @@ export const TerminosPage: React.FC<TerminosPageProps> = ({ onNavigate }) => {
     return () => observer.disconnect();
   }, []);
 
+  /* Animación de entrada de cláusulas al hacer scroll */
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('terminos__clausula--visible');
+          }
+        });
+      },
+      { rootMargin: '0px 0px -100px 0px', threshold: 0.1 },
+    );
+
+    const clausulas = document.querySelectorAll('.terminos__clausula');
+    clausulas.forEach((clausula) => {
+      observer.observe(clausula);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <main id="contenido" tabIndex={-1} className="terminos">
-      {/* Cabecera protagonista */}
+      {/* Cabecera protagonista editorial */}
       <header className="terminos__cabecera" aria-labelledby="terminos-titulo">
-        <span className="terminos__chip">CONDICIONES DE USO</span>
-        <h1 id="terminos-titulo" className="terminos__titulo">
-          Términos y Condiciones de Uso
-        </h1>
-        <p className="terminos__intro">
-          Las condiciones que rigen el uso de FitCasa, un recurso educativo sobre
-          ejercicio físico general, ergonomía cotidiana y escoliosis. Léelas antes de
-          usar la plataforma: hacen parte de la decisión de hacerlo.
-        </p>
-        <div className="terminos__meta">
-          <span className="terminos__insignia">
-            <Icono pathos={ICONO_CALENDARIO} />
-            Última actualización: {FECHA_ACTUALIZACION}
-          </span>
-          <span className="terminos__insignia">
-            <Icono pathos={ICONO_GLOBO} />
-            Jurisdicción: {JURISDICCION}
-          </span>
+        <div className="terminos__hero-layout">
+          <div className="terminos__hero-content">
+            <span className="terminos__chip">CONDICIONES DE USO</span>
+            <h1 id="terminos-titulo" className="terminos__titulo">
+              Términos y Condiciones de Uso
+            </h1>
+            <p className="terminos__intro">
+              Las condiciones que rigen el uso de FitCasa, un recurso educativo sobre
+              ejercicio físico general, ergonomía cotidiana y escoliosis. Léelas antes de
+              usar la plataforma: hacen parte de la decisión de hacerlo.
+            </p>
+            <div className="terminos__meta">
+              <span className="terminos__insignia">
+                <Icono pathos={ICONO_CALENDARIO} />
+                Última actualización: {FECHA_ACTUALIZACION}
+              </span>
+              <span className="terminos__insignia">
+                <Icono pathos={ICONO_GLOBO} />
+                Jurisdicción: {JURISDICCION}
+              </span>
+            </div>
+          </div>
+          <div className="terminos__hero-visual" aria-hidden="true">
+            <svg
+              className="terminos__illustration"
+              viewBox="0 0 400 320"
+              preserveAspectRatio="xMidYMid meet"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              {/* Capa 1: Documento base - fondo del acuerdo */}
+              <rect
+                x="80"
+                y="40"
+                width="240"
+                height="280"
+                fill="#eef3f0"
+                stroke="#5c8276"
+                strokeWidth="1.5"
+                rx="4"
+                className="terminos__doc-layer terminos__doc-layer--back"
+              />
+              {/* Líneas de texto en documento base */}
+              <line x1="100" y1="70" x2="300" y2="70" stroke="#5c8276" strokeWidth="1" opacity="0.4" />
+              <line x1="100" y1="90" x2="280" y2="90" stroke="#5c8276" strokeWidth="1" opacity="0.4" />
+              <line x1="100" y1="110" x2="290" y2="110" stroke="#5c8276" strokeWidth="1" opacity="0.4" />
+              <line x1="100" y1="130" x2="260" y2="130" stroke="#5c8276" strokeWidth="1" opacity="0.4" />
+
+              {/* Capa 2: Documento principal - el acuerdo */}
+              <rect
+                x="60"
+                y="60"
+                width="240"
+                height="280"
+                fill="#ffffff"
+                stroke="#15433b"
+                strokeWidth="2"
+                rx="4"
+                className="terminos__doc-layer terminos__doc-layer--main"
+              />
+              {/* Líneas de texto en documento principal */}
+              <line x1="80" y1="90" x2="280" y2="90" stroke="#15433b" strokeWidth="1.5" opacity="0.6" />
+              <line x1="80" y1="110" x2="260" y2="110" stroke="#15433b" strokeWidth="1" opacity="0.4" />
+              <line x1="80" y1="130" x2="270" y2="130" stroke="#15433b" strokeWidth="1" opacity="0.4" />
+              <line x1="80" y1="150" x2="240" y2="150" stroke="#15433b" strokeWidth="1" opacity="0.4" />
+              <line x1="80" y1="170" x2="250" y2="170" stroke="#15433b" strokeWidth="1" opacity="0.4" />
+              <line x1="80" y1="190" x2="220" y2="190" stroke="#15433b" strokeWidth="1" opacity="0.4" />
+              {/* Líneas de sección */}
+              <line x1="80" y1="220" x2="280" y2="220" stroke="#c86d51" strokeWidth="1.5" opacity="0.7" />
+              <line x1="80" y1="240" x2="270" y2="240" stroke="#15433b" strokeWidth="1" opacity="0.4" />
+              <line x1="80" y1="260" x2="250" y2="260" stroke="#15433b" strokeWidth="1" opacity="0.4" />
+              <line x1="80" y1="280" x2="230" y2="280" stroke="#15433b" strokeWidth="1" opacity="0.4" />
+              <line x1="80" y1="300" x2="260" y2="300" stroke="#15433b" strokeWidth="1" opacity="0.4" />
+
+              {/* Capa 3: Sello de transparencia - elemento gráfico simbólico */}
+              <circle
+                cx="200"
+                cy="160"
+                r="45"
+                fill="none"
+                stroke="#c86d51"
+                strokeWidth="2"
+                className="terminos__seal terminos__seal--outer"
+              />
+              <circle
+                cx="200"
+                cy="160"
+                r="38"
+                fill="none"
+                stroke="#c86d51"
+                strokeWidth="1"
+                opacity="0.6"
+                className="terminos__seal terminos__seal--inner"
+              />
+              {/* Texto simbólico en el sello */}
+              <text
+                x="200"
+                y="155"
+                textAnchor="middle"
+                fill="#c86d51"
+                fontSize="10"
+                fontWeight="700"
+                className="terminos__seal-text"
+                fontFamily="system-ui, sans-serif"
+              >
+                TRANSPARENCIA
+              </text>
+              <text
+                x="200"
+                y="168"
+                textAnchor="middle"
+                fill="#c86d51"
+                fontSize="8"
+                opacity="0.8"
+                className="terminos__seal-text"
+                fontFamily="system-ui, sans-serif"
+              >
+                CLARIDAD
+              </text>
+
+              {/* Líneas estructurales decorativas - indican profundidad */}
+              <line
+                x1="40"
+                y1="280"
+                x2="120"
+                y2="320"
+                stroke="#5c8276"
+                strokeWidth="1"
+                opacity="0.3"
+                className="terminos__structure-line"
+              />
+              <line
+                x1="320"
+                y1="40"
+                x2="360"
+                y2="80"
+                stroke="#5c8276"
+                strokeWidth="1"
+                opacity="0.3"
+                className="terminos__structure-line"
+              />
+              <line
+                x1="350"
+                y1="120"
+                x2="390"
+                y2="160"
+                stroke="#5c8276"
+                strokeWidth="1"
+                opacity="0.3"
+                className="terminos__structure-line"
+              />
+
+              {/* Puntos decorativos - estilo editorial */}
+              <circle cx="50" cy="100" r="3" fill="#5c8276" opacity="0.4" className="terminos__dot" />
+              <circle cx="370" cy="200" r="3" fill="#5c8276" opacity="0.4" className="terminos__dot" />
+              <circle cx="45" cy="250" r="2" fill="#5c8276" opacity="0.3" className="terminos__dot" />
+              <circle cx="375" cy="280" r="2" fill="#5c8276" opacity="0.3" className="terminos__dot" />
+            </svg>
+          </div>
         </div>
       </header>
 
