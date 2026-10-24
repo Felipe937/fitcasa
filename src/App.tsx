@@ -10,7 +10,7 @@ import {
 import { ConsentRegistry } from './types';
 import { HomePage } from './pages/HomePage';
 import { ExercisesPage } from './pages/ExercisesPage';
-import { GuidedSessionPage } from './pages/GuidedSessionPage';
+import GuidedSessionPage from './pages/GuidedSessionPage';
 import { QuizPage } from './pages/QuizPage';
 import { PanelPage } from './pages/PanelPage';
 import { PlanPage } from './pages/PlanPage';
