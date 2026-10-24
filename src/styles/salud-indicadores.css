@@ -1,0 +1,497 @@
+/* Página educativa: Cuerpo, movimiento y salud */
+/* Reutiliza tokens del sistema visual de FitCasa */
+
+.salud-indicadores {
+  padding-block: var(--espacio-7);
+}
+
+/* Cabecera editorial */
+.salud-indicadores__cabecera {
+  padding-block: var(--espacio-7);
+  border-bottom: 1px solid var(--color-borde);
+  margin-bottom: var(--espacio-7);
+}
+
+.salud-indicadores__titulo {
+  margin: 0 0 var(--espacio-4);
+  font-size: var(--texto-3xl);
+  line-height: var(--alto-linea-titulo);
+  letter-spacing: -0.025em;
+  color: var(--color-primario-oscuro);
+}
+
+.salud-indicadores__intro {
+  max-width: var(--ancho-texto);
+  margin: 0 0 var(--espacio-6);
+  font-size: var(--texto-lg);
+  line-height: 1.55;
+  color: var(--color-texto);
+}
+
+/* Principios en cabecera */
+.salud-indicadores__principios {
+  display: grid;
+  gap: var(--espacio-4);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  margin-bottom: var(--espacio-6);
+}
+
+.salud-indicadores__principio {
+  padding: var(--espacio-4);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+}
+
+.salud-indicadores__principio-titulo {
+  display: block;
+  margin: 0 0 var(--espacio-2);
+  font-size: var(--texto-sm);
+  font-weight: 750;
+  color: var(--color-primario);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.salud-indicadores__principio-texto {
+  margin: 0;
+  font-size: var(--texto-sm);
+  line-height: 1.5;
+  color: var(--color-texto-suave);
+}
+
+/* Índice de contenidos */
+.salud-indicadores__indice {
+  margin-bottom: var(--espacio-7);
+  padding: var(--espacio-4);
+  background: var(--color-superficie-suave);
+  border-radius: var(--radio-md);
+}
+
+.salud-indicadores__indice__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-3);
+  margin-bottom: var(--espacio-3);
+}
+
+.salud-indicadores__indice h2 {
+  margin: 0;
+  font-size: var(--texto-lg);
+  color: var(--color-primario-oscuro);
+}
+
+.salud-indicadores__indice__toggle {
+  padding: var(--espacio-2) var(--espacio-3);
+  font-size: var(--texto-sm);
+  font-weight: 650;
+  color: var(--color-primario);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-primario);
+  border-radius: var(--radio-sm);
+}
+
+.salud-indicadores__indice__toggle:hover {
+  background: var(--color-fondo-azul);
+}
+
+.salud-indicadores__indice__lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.html.js .salud-indicadores__indice__lista {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transition: max-height var(--duracion-media) var(--curva-suave),
+    opacity var(--duracion-corta) ease,
+    visibility var(--duracion-corta) ease;
+}
+
+.html.js .salud-indicadores__indice--abierto .salud-indicadores__indice__lista {
+  max-height: 20rem;
+  opacity: 1;
+  visibility: visible;
+}
+
+.salud-indicadores__indice__lista li {
+  margin: 0;
+}
+
+.salud-indicadores__indice__lista a {
+  display: block;
+  padding: var(--espacio-2) 0;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-sm);
+  font-weight: 650;
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  padding-left: var(--espacio-3);
+}
+
+.salud-indicadores__indice__lista a:hover {
+  color: var(--color-primario);
+  border-left-color: var(--color-secundario);
+}
+
+.salud-indicadores__indice__activo {
+  color: var(--color-primario);
+  border-left-color: var(--color-primario);
+}
+
+/* Secciones de contenido */
+.salud-indicadores__seccion {
+  padding-bottom: var(--espacio-7);
+  margin-bottom: var(--espacio-7);
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.salud-indicadores__seccion:last-of-type {
+  border-bottom: none;
+}
+
+.salud-indicadores__seccion h2 {
+  margin: 0 0 var(--espacio-4);
+  font-size: var(--texto-2xl);
+  color: var(--color-primario-oscuro);
+}
+
+.salud-indicadores__seccion h3 {
+  margin: var(--espacio-5) 0 var(--espacio-3);
+  font-size: var(--texto-xl);
+  color: var(--color-primario);
+}
+
+.salud-indicadores__seccion p {
+  max-width: var(--ancho-texto);
+  margin-bottom: var(--espacio-4);
+  line-height: 1.65;
+}
+
+.salud-indicadores__seccion ul {
+  max-width: var(--ancho-texto);
+  margin-bottom: var(--espacio-4);
+  padding-left: var(--espacio-5);
+}
+
+.salud-indicadores__seccion li {
+  margin-bottom: var(--espacio-2);
+  line-height: 1.65;
+}
+
+/* Destacados */
+.salud-indicadores__destacado {
+  display: flex;
+  gap: var(--espacio-4);
+  padding: var(--espacio-5);
+  margin: var(--espacio-5) 0;
+  background: var(--color-superficie);
+  border-radius: var(--radio-md);
+  border-left: 4px solid var(--color-secundario);
+}
+
+.salud-indicadores__destacado svg {
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--color-secundario);
+  margin-top: 0.1rem;
+}
+
+.salud-indicadores__destacado--info {
+  background: var(--color-fondo-verde);
+  border-left-color: var(--color-secundario);
+}
+
+.salud-indicadores__destacado--alerta {
+  background: var(--color-fondo-aviso);
+  border-left-color: var(--color-foco);
+}
+
+.salud-indicadores__destacado--cuidado {
+  background: var(--color-fondo-alerta);
+  border-left-color: var(--color-peligro);
+}
+
+.salud-indicadores__destacado--cuidado svg {
+  color: var(--color-peligro);
+}
+
+.salud-indicadores__destacado-titulo {
+  margin: 0 0 var(--espacio-2);
+  font-size: var(--texto-base);
+  font-weight: 750;
+  color: var(--color-primario-oscuro);
+}
+
+.salud-indicadores__destacado-texto {
+  margin: 0;
+  font-size: var(--texto-sm);
+  line-height: 1.55;
+  color: var(--color-texto);
+}
+
+/* Notas */
+.salud-indicadores__nota {
+  padding: var(--espacio-4);
+  margin: var(--espacio-5) 0;
+  background: var(--color-superficie-suave);
+  border-radius: var(--radio-sm);
+  border-left: 3px solid var(--color-secundario);
+}
+
+.salud-indicadores__nota--importante {
+  background: var(--color-fondo-aviso);
+  border-left-color: var(--color-foco);
+}
+
+.salud-indicadores__nota p {
+  margin: 0;
+  font-size: var(--texto-sm);
+  line-height: 1.55;
+}
+
+/* Fuentes */
+.salud-indicadores__fuentes {
+  padding: var(--espacio-4);
+  margin: var(--espacio-5) 0;
+  background: var(--color-fondo-azul);
+  border-radius: var(--radio-sm);
+}
+
+.salud-indicadores__fuentes-titulo {
+  margin: 0 0 var(--espacio-2);
+  font-size: var(--texto-xs);
+  font-weight: 750;
+  color: var(--color-secundario-oscuro);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.salud-indicadores__fuentes-lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.salud-indicadores__fuentes-lista li {
+  margin-bottom: var(--espacio-2);
+  font-size: var(--texto-sm);
+  line-height: 1.5;
+  color: var(--color-texto-suave);
+}
+
+.salud-indicadores__fuentes-lista a {
+  color: var(--color-primario);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+.salud-indicadores__fuentes-lista a:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* Tarjetas */
+.salud-indicadores__tarjetas {
+  display: grid;
+  gap: var(--espacio-4);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  margin: var(--espacio-5) 0;
+}
+
+.salud-indicadores__tarjeta {
+  padding: var(--espacio-5);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+}
+
+.salud-indicadores__tarjeta-icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: var(--espacio-3);
+  background: var(--color-fondo-verde);
+  border-radius: var(--radio-sm);
+  color: var(--color-secundario);
+}
+
+.salud-indicadores__tarjeta-icono svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.salud-indicadores__tarjeta-titulo {
+  margin: 0 0 var(--espacio-2);
+  font-size: var(--texto-base);
+  font-weight: 750;
+  color: var(--color-primario-oscuro);
+}
+
+.salud-indicadores__tarjeta-texto {
+  margin: 0;
+  font-size: var(--texto-sm);
+  line-height: 1.55;
+  color: var(--color-texto-suave);
+}
+
+/* Lista de beneficios */
+.salud-indicadores__beneficios {
+  padding: var(--espacio-5);
+  margin: var(--espacio-5) 0;
+  background: var(--color-superficie-suave);
+  border-radius: var(--radio-md);
+}
+
+.salud-indicadores__beneficios h3 {
+  margin: 0 0 var(--espacio-3);
+  font-size: var(--texto-lg);
+  color: var(--color-primario-oscuro);
+}
+
+.salud-indicadores__beneficios ul {
+  margin: 0;
+  padding-left: var(--espacio-4);
+}
+
+/* Lista de check */
+.salud-indicadores__lista-check {
+  padding: var(--espacio-5);
+  margin: var(--espacio-5) 0;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+}
+
+.salud-indicadores__lista-check h3 {
+  margin: 0 0 var(--espacio-3);
+  font-size: var(--texto-lg);
+  color: var(--color-primario-oscuro);
+}
+
+.salud-indicadores__lista-check ul {
+  margin: 0;
+  padding-left: var(--espacio-4);
+}
+
+/* Disclaimer final */
+.salud-indicadores__disclaimer {
+  padding: var(--espacio-6);
+  margin-top: var(--espacio-8);
+  background: var(--color-fondo-aviso);
+  border: 1px solid var(--color-foco);
+  border-radius: var(--radio-md);
+}
+
+.salud-indicadores__disclaimer-titulo {
+  margin: 0 0 var(--espacio-3);
+  font-size: var(--texto-lg);
+  font-weight: 750;
+  color: var(--color-primario-oscuro);
+}
+
+.salud-indicadores__disclaimer p {
+  margin-bottom: var(--espacio-3);
+}
+
+.salud-indicadores__disclaimer p:last-child {
+  margin-bottom: 0;
+}
+
+/* Responsive */
+@media (max-width: 51.99rem) {
+  .salud-indicadores__cabecera {
+    padding-block: var(--espacio-6);
+  }
+
+  .salud-indicadores__titulo {
+    font-size: var(--texto-2xl);
+  }
+
+  .salud-indicadores__intro {
+    font-size: var(--texto-base);
+  }
+
+  .salud-indicadores__principios {
+    grid-template-columns: 1fr;
+  }
+
+  .salud-indicadores__tarjetas {
+    grid-template-columns: 1fr;
+  }
+
+  .salud-indicadores__destacado {
+    flex-direction: column;
+    gap: var(--espacio-3);
+  }
+
+  .salud-indicadores__destacado svg {
+    margin-top: 0;
+  }
+}
+
+/* Animaciones con prefers-reduced-motion */
+@media (prefers-reduced-motion: no-preference) {
+  .salud-indicadores__seccion {
+    opacity: 0;
+    transform: translateY(0.5rem);
+    animation: fadeSlideUp var(--duracion-entrada) var(--curva-suave) forwards;
+  }
+
+  .salud-indicadores__seccion:nth-child(2) {
+    animation-delay: var(--retraso-escalon-1);
+  }
+
+  .salud-indicadores__seccion:nth-child(3) {
+    animation-delay: var(--retraso-escalon-2);
+  }
+
+  .salud-indicadores__seccion:nth-child(4) {
+    animation-delay: var(--retraso-escalon-3);
+  }
+
+  .salud-indicadores__tarjeta {
+    opacity: 0;
+    transform: translateY(0.5rem);
+    animation: fadeSlideUp var(--duracion-entrada) var(--curva-suave) forwards;
+  }
+
+  .salud-indicadores__tarjeta:nth-child(1) {
+    animation-delay: var(--retraso-escalon-1);
+  }
+
+  .salud-indicadores__tarjeta:nth-child(2) {
+    animation-delay: var(--retraso-escalon-2);
+  }
+
+  .salud-indicadores__tarjeta:nth-child(3) {
+    animation-delay: var(--retraso-escalon-3);
+  }
+
+  .salud-indicadores__tarjeta:nth-child(4) {
+    animation-delay: var(--retraso-escalon-4);
+  }
+}
+
+@keyframes fadeSlideUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .salud-indicadores__seccion,
+  .salud-indicadores__tarjeta {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}

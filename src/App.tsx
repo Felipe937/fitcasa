@@ -20,6 +20,7 @@ import { ScoliosisPage } from './pages/ScoliosisPage';
 import { ActualidadPage } from './pages/ActualidadPage';
 import { PrivacidadPage } from './pages/PrivacidadPage';
 import { TerminosPage } from './pages/TerminosPage';
+import { SaludIndicadoresPage } from './pages/SaludIndicadoresPage';
 import { articulosNoticias } from './data/noticias';
 
 /**
@@ -55,6 +56,9 @@ function getRouteFromUrl(): { page: PageRoute; sectionId?: string } {
   }
   if (hash === 'actualidad' || path.endsWith('/actualidad') || path.endsWith('/actualidad.html')) {
     return { page: 'actualidad' };
+  }
+  if (hash === 'salud-indicadores' || path.endsWith('/salud-indicadores') || path.endsWith('/salud-indicadores.html')) {
+    return { page: 'salud-indicadores' };
   }
   if (hash === 'plan' || path.endsWith('/plan') || path.endsWith('/plan.html')) {
     return { page: 'plan' };
@@ -117,6 +121,7 @@ export const App: React.FC = () => {
       actualidad: 'FitCasa – Actualidad y Evidencia Científica sobre Escoliosis',
       privacidad: 'FitCasa – Política de Privacidad',
       terminos: 'Términos y Condiciones | FitCasa',
+      'salud-indicadores': 'FitCasa – Cuerpo, movimiento y salud',
     };
     document.title = titles[currentPage] || titles.inicio;
   }, [currentPage]);
@@ -157,6 +162,7 @@ export const App: React.FC = () => {
         {currentPage === 'guided-session' && <GuidedSessionPage onNavigate={handleNavigate} />}
         {currentPage === 'escoliosis' && <ScoliosisPage onNavigate={handleNavigate} />}
         {currentPage === 'actualidad' && <ActualidadPage onNavigate={handleNavigate} articulo={articulosNoticias[0]} />}
+        {currentPage === 'salud-indicadores' && <SaludIndicadoresPage onNavigate={handleNavigate} />}
         {currentPage === 'plan' && !showGuard && (
           <PlanPage onNavigate={handleNavigate} onStorageCleared={refreshConsent} />
         )}

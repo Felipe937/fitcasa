@@ -12,7 +12,8 @@ export type PageRoute =
   | 'escoliosis'
   | 'actualidad'
   | 'privacidad'
-  | 'terminos';
+  | 'terminos'
+  | 'salud-indicadores';
 
 interface HeaderProps {
   currentPage: PageRoute;
@@ -34,6 +35,7 @@ const secondaryNavItems: Array<{ page: PageRoute; label: string; sectionId?: str
   { page: 'apoya', label: 'Apoya a FitCasa' },
   { page: 'panel', label: 'Seguimiento' },
   { page: 'inicio', label: 'Cómo funciona', sectionId: 'como-funciona' },
+  { page: 'salud-indicadores', label: 'Cuerpo y salud' },
   { page: 'privacidad', label: 'Privacidad' },
   { page: 'terminos', label: 'Términos' },
 ];
