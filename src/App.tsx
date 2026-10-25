@@ -21,6 +21,8 @@ import { ActualidadPage } from './pages/ActualidadPage';
 import { PrivacidadPage } from './pages/PrivacidadPage';
 import { TerminosPage } from './pages/TerminosPage';
 import { SaludIndicadoresPage } from './pages/SaludIndicadoresPage';
+import { CuerpoYSaludPage } from './pages/CuerpoYSaludPage';
+import { AlimentacionPage } from './pages/AlimentacionPage';
 import { articulosNoticias } from './data/noticias';
 
 /**
@@ -59,6 +61,12 @@ function getRouteFromUrl(): { page: PageRoute; sectionId?: string } {
   }
   if (hash === 'salud-indicadores' || path.endsWith('/salud-indicadores') || path.endsWith('/salud-indicadores.html')) {
     return { page: 'salud-indicadores' };
+  }
+  if (hash === 'cuerpo-y-salud' || path.endsWith('/cuerpo-y-salud') || path.endsWith('/cuerpo-y-salud.html')) {
+    return { page: 'cuerpo-y-salud' };
+  }
+  if (hash === 'alimentacion' || path.endsWith('/alimentacion') || path.endsWith('/alimentacion.html')) {
+    return { page: 'alimentacion' };
   }
   if (hash === 'plan' || path.endsWith('/plan') || path.endsWith('/plan.html')) {
     return { page: 'plan' };
@@ -122,6 +130,8 @@ export const App: React.FC = () => {
       privacidad: 'FitCasa – Política de Privacidad',
       terminos: 'Términos y Condiciones | FitCasa',
       'salud-indicadores': 'FitCasa – Cuerpo, movimiento y salud',
+      'cuerpo-y-salud': 'FitCasa – Cuerpo y salud',
+      'alimentacion': 'FitCasa – Alimentación y bienestar',
     };
     document.title = titles[currentPage] || titles.inicio;
   }, [currentPage]);
@@ -163,6 +173,8 @@ export const App: React.FC = () => {
         {currentPage === 'escoliosis' && <ScoliosisPage onNavigate={handleNavigate} />}
         {currentPage === 'actualidad' && <ActualidadPage onNavigate={handleNavigate} articulo={articulosNoticias[0]} />}
         {currentPage === 'salud-indicadores' && <SaludIndicadoresPage onNavigate={handleNavigate} />}
+        {currentPage === 'cuerpo-y-salud' && <CuerpoYSaludPage onNavigate={handleNavigate} />}
+        {currentPage === 'alimentacion' && <AlimentacionPage onNavigate={handleNavigate} />}
         {currentPage === 'plan' && !showGuard && (
           <PlanPage onNavigate={handleNavigate} onStorageCleared={refreshConsent} />
         )}

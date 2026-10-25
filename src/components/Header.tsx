@@ -13,7 +13,9 @@ export type PageRoute =
   | 'actualidad'
   | 'privacidad'
   | 'terminos'
-  | 'salud-indicadores';
+  | 'salud-indicadores'
+  | 'cuerpo-y-salud'
+  | 'alimentacion';
 
 interface HeaderProps {
   currentPage: PageRoute;
@@ -24,6 +26,8 @@ const primaryNavItems: Array<{ page: PageRoute; label: string; sectionId?: strin
   { page: 'inicio', label: 'Beneficios', sectionId: 'beneficios' },
   { page: 'inicio', label: 'Programas', sectionId: 'programas' },
   { page: 'escoliosis', label: 'Escoliosis' },
+  { page: 'cuerpo-y-salud', label: 'Cuerpo y salud' },
+  { page: 'alimentacion', label: 'Alimentación' },
   { page: 'ejercicios', label: 'Ejercicios' },
 ];
 
