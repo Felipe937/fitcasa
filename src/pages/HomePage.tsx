@@ -984,9 +984,10 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
             </div>
           </article>
 
-          {/* Paso 02. Los tres pasos son los del cuestionario real:
+          {/* Paso 02: Orienta — cuestionario de orientación:
               Actividad, Seguridad y Revisión. */}
-          <article className="programa programa--orienta">
+          <article className="programa programa--orienta" aria-label="Paso 02: Orienta">
+<article className=\"programa programa--orienta\" aria-label=\"Paso 02: Orienta\">
             <header className="programa__cabecera">
               <p className="programa__foco">Orienta</p>
             </header>
@@ -1005,7 +1006,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
             </a>
           </article>
 
-          {/* Paso 03. Soberanía de datos y estado local. */}
+          {/* Paso 03: Registra — cuestionario de seguimiento */}
           <article className="programa programa--registra">
             <header className="programa__cabecera">
               <p className="programa__foco">Registra</p>
@@ -1017,7 +1018,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
             <p className="programa__local">
               <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                 <path
-                  d="M6.5 10.5h11V20a1 1 0 0 1-1 1h-9a1 1 0 0 1-1-1v-9.5Z"
+                  d="M2 6.5L12 2L22 6.5V13L12 17.5L2 13ZM12 2l-7 4.5 2 7 8-5.5L12 2Z"
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2"
