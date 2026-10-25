@@ -55,6 +55,33 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   }, []);
 
   /**
+   * Entrada progresiva de la sección beneficios: animación al entrar en viewport.
+   */
+  const beneficiosRef = useRef<HTMLElement | null>(null);
+  const [beneficiosInView, setBeneficiosInView] = useState(false);
+
+  useEffect(() => {
+    const el = beneficiosRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      setBeneficiosInView(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setBeneficiosInView(true);
+            observer.disconnect();
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -8% 0px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  /**
    * Entrada progresiva de la seccion "Como funciona": animaciones al entrar en viewport.
    */
   const comoFuncionaRef = useRef<HTMLElement | null>(null);
@@ -170,6 +197,65 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
       escena.classList.remove('hero-escena--giro-ambiental');
     }
   }, [heroPausada]);
+
+  /**
+   * Tilt 3D interactivo en las tarjetas de beneficios: inclina cada tarjeta
+   * siguiendo al puntero fino. Solo en escritorio con puntero fino y sin
+   * prefers-reduced-motion: reduce. Los listeners se limpian al desmontar.
+   */
+  useEffect(() => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
+
+    if (reduce.matches || !fine.matches) return;
+
+    const cards = document.querySelectorAll<HTMLElement>('#beneficios [data-depth]');
+    if (cards.length === 0) return;
+
+    const articles = Array.from(cards).map((card) => card.querySelector('article')).filter((a): a is HTMLElement => a !== null);
+
+    const cleanupFunctions: (() => void)[] = [];
+
+    articles.forEach((article) => {
+      const onPointerMove = (event: PointerEvent) => {
+        if (reduce.matches || !fine.matches) return;
+        const rect = article.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const max = 4; // Rango de ±4°, más suave que el hero
+        const x = ((event.clientY - cy) / (rect.height / 2)) * max;
+        const y = ((event.clientX - cx) / (rect.width / 2)) * max;
+        article.style.transform = `rotateX(${x}deg) rotateY(${y}deg)`;
+      };
+
+      const onPointerEnter = () => {
+        article.style.willChange = 'transform';
+      };
+
+      const onPointerLeave = () => {
+        article.style.transition = 'transform 300ms var(--curva-suave)';
+        article.style.transform = 'rotateX(0) rotateY(0)';
+        setTimeout(() => {
+          article.style.transition = '';
+          article.style.willChange = '';
+        }, 300);
+      };
+
+      article.addEventListener('pointermove', onPointerMove, { passive: true });
+      article.addEventListener('pointerenter', onPointerEnter, { passive: true });
+      article.addEventListener('pointerleave', onPointerLeave, { passive: true });
+
+      cleanupFunctions.push(() => {
+        article.removeEventListener('pointermove', onPointerMove);
+        article.removeEventListener('pointerenter', onPointerEnter);
+        article.removeEventListener('pointerleave', onPointerLeave);
+      });
+    });
+
+    return () => {
+      cleanupFunctions.forEach((cleanup) => cleanup());
+    };
+  }, []);
 
   /**
    * Cifras de la biblioteca calculadas desde los datos reales, no escritas a
@@ -424,7 +510,13 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
       </section>
 
 {/* Beneficios */}
-      <section id="beneficios" aria-labelledby="titulo-beneficios" tabIndex={-1} className="container seccion beneficios-entrada">
+      <section
+        id="beneficios"
+        aria-labelledby="titulo-beneficios"
+        tabIndex={-1}
+        ref={beneficiosRef}
+        className={`container seccion beneficios-entrada${beneficiosInView ? ' is-visible' : ''}`}
+      >
         <div className="beneficios-hero" aria-hidden="true">
           <div className="beneficios-atmosfera" />
           <figure className="beneficios-escultura" aria-hidden="true">
@@ -571,6 +663,58 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                 <path d="M95 390 Q 115 370  135 345" strokeDasharray="3 6" />
                 <path d="M305 390 Q 285 370  265 345" strokeDasharray="3 6" />
               </g>
+
+              {/* Paths de trazo que se dibujan al revelar la sección (Fase C) */}
+              <g className="beneficios-escultura__trazos" stroke="var(--color-secundario)" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.6">
+                <path
+                  d="M80 180 Q 120 150 160 170 Q 200 190 240 160 Q 280 130 320 160"
+                  strokeDasharray="300"
+                  strokeDashoffset="300"
+                  style={{ animation: 'dibujar-trazo 1s var(--curva-suave) 0.2s forwards' }}
+                />
+                <path
+                  d="M70 300 Q 100 280 130 310 Q 160 340 200 320 Q 240 300 270 330 Q 300 360 330 340"
+                  strokeDasharray="280"
+                  strokeDashoffset="280"
+                  style={{ animation: 'dibujar-trazo 1.1s var(--curva-suave) 0.4s forwards' }}
+                />
+                <path
+                  d="M100 420 Q 140 400 180 430 Q 220 460 260 430 Q 300 400 340 420"
+                  strokeDasharray="260"
+                  strokeDashoffset="260"
+                  style={{ animation: 'dibujar-trazo 0.9s var(--curva-suave) 0.6s forwards' }}
+                />
+                <path
+                  d="M150 140 Q 180 120 210 145 Q 240 170 270 145 Q 300 120 330 140"
+                  strokeDasharray="220"
+                  strokeDashoffset="220"
+                  style={{ animation: 'dibujar-trazo 0.8s var(--curva-suave) 0.8s forwards' }}
+                />
+                <path
+                  d="M50 250 Q 90 230 130 255 Q 170 280 210 255 Q 250 230 290 255 Q 330 280 370 255"
+                  strokeDasharray="340"
+                  strokeDashoffset="340"
+                  style={{ animation: 'dibujar-trazo 1.2s var(--curva-suave) 1s forwards' }}
+                />
+                <path
+                  d="M60 380 Q 100 360 140 385 Q 180 410 220 385 Q 260 360 300 385 Q 340 410 380 385"
+                  strokeDasharray="320"
+                  strokeDashoffset="320"
+                  style={{ animation: 'dibujar-trazo 1s var(--curva-suave) 1.2s forwards' }}
+                />
+              </g>
+
+              <style>{`
+                @keyframes dibujar-trazo {
+                  to { stroke-dashoffset: 0; }
+                }
+                @media (prefers-reduced-motion: reduce) {
+                  .beneficios-escultura__trazos path {
+                    stroke-dashoffset: 0 !important;
+                    animation: none !important;
+                  }
+                }
+              `}</style>
             </svg>
           </figure>
 
@@ -593,7 +737,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
         <ul className="beneficios-grid">
           {/* Protagonista: ocupa 2x2 de la retícula en escritorio. */}
-          <li className="beneficio beneficio--destacado">
+          <li className="beneficio beneficio--destacado" data-depth>
             <article>
               <svg className="beneficio__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                 <path d="M12 3.5 19 6v5c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6Z" fill="none" stroke="currentColor" strokeWidth="2" />
@@ -612,7 +756,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           </li>
 
           {/* Tercera columna, fila 1. */}
-          <li className="beneficio">
+          <li className="beneficio" data-depth>
             <article>
               <svg className="beneficio__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                 <path d="M4 11.5 12 4l8 7.5" fill="none" stroke="currentColor" strokeWidth="2" />
@@ -630,7 +774,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           </li>
 
           {/* Tercera columna, fila 2. */}
-          <li className="beneficio">
+          <li className="beneficio" data-depth>
             <article>
               <svg className="beneficio__icono" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                 <path d="M4 20h16" fill="none" stroke="currentColor" strokeWidth="2" />
