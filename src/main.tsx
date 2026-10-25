@@ -18,6 +18,7 @@ import './styles/como-funciona.css';
 import './styles/guided-session.css';
 import './styles/salud-indicadores.css';
 import './styles/alimentacion-page.css';
+import './styles/navigation-assistant.css';
 
 // Add js class to html documentElement for progressive enhancement matching original script
 document.documentElement.classList.add('js');

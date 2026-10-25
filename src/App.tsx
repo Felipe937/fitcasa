@@ -23,6 +23,7 @@ import { TerminosPage } from './pages/TerminosPage';
 import { SaludIndicadoresPage } from './pages/SaludIndicadoresPage';
 import { AlimentacionPage } from './pages/AlimentacionPage';
 import { articulosNoticias } from './data/noticias';
+import { NavigationAssistant } from './components/NavigationAssistant';
 
 /**
  * Rutas cuyo uso guarda datos introducidos por la persona. Requieren una
@@ -197,6 +198,7 @@ export const App: React.FC = () => {
       </div>
 
       <Footer onNavigate={handleNavigate} />
+      <NavigationAssistant onNavigate={handleNavigate} />
     </div>
   );
 };
