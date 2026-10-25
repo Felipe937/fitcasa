@@ -21,7 +21,6 @@ import { ActualidadPage } from './pages/ActualidadPage';
 import { PrivacidadPage } from './pages/PrivacidadPage';
 import { TerminosPage } from './pages/TerminosPage';
 import { SaludIndicadoresPage } from './pages/SaludIndicadoresPage';
-import { CuerpoYSaludPage } from './pages/CuerpoYSaludPage';
 import { AlimentacionPage } from './pages/AlimentacionPage';
 import { articulosNoticias } from './data/noticias';
 
@@ -173,7 +172,7 @@ export const App: React.FC = () => {
         {currentPage === 'escoliosis' && <ScoliosisPage onNavigate={handleNavigate} />}
         {currentPage === 'actualidad' && <ActualidadPage onNavigate={handleNavigate} articulo={articulosNoticias[0]} />}
         {currentPage === 'salud-indicadores' && <SaludIndicadoresPage onNavigate={handleNavigate} />}
-        {currentPage === 'cuerpo-y-salud' && <CuerpoYSaludPage onNavigate={handleNavigate} />}
+        {currentPage === 'cuerpo-y-salud' && <SaludIndicadoresPage onNavigate={handleNavigate} />}
         {currentPage === 'alimentacion' && <AlimentacionPage onNavigate={handleNavigate} />}
         {currentPage === 'plan' && !showGuard && (
           <PlanPage onNavigate={handleNavigate} onStorageCleared={refreshConsent} />
