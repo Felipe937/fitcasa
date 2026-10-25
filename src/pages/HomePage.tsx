@@ -60,6 +60,9 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   const comoFuncionaRef = useRef<HTMLElement | null>(null);
   const [comoFuncionaInView, setComoFuncionaInView] = useState(false);
 
+  const heroVisualRef = useRef<HTMLDivElement | null>(null);
+  const heroEscenaRef = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => {
     const el = comoFuncionaRef.current;
     if (!el || typeof IntersectionObserver === 'undefined') {
@@ -85,6 +88,88 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
    * Estado de pausa para la animacion continua de la escultura (>5s).
    */
   const [animacionPausada, setAnimacionPausada] = useState(false);
+  const [heroPausada, setHeroPausada] = useState(false);
+  const heroPausedRef = useRef(false);
+  heroPausedRef.current = heroPausada;
+
+  /**
+   * Tilt interactivo del hero: inclina .hero-escena siguiendo al puntero fino.
+   * En táctil/teclado (sin puntero fino) la escena gira ambientalmente solo con CSS.
+   * Con prefers-reduced-motion: reduce no hay tilt, ni giro, ni requestAnimationFrame.
+   * El listener y el frame se limpian al desmontar.
+   */
+  useEffect(() => {
+    const visual = heroVisualRef.current;
+    const escena = heroEscenaRef.current;
+    if (!visual || !escena) return;
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
+
+    let frame: number | null = null;
+
+    const aplicarTransform = (x: number, y: number) => {
+      const max = parseFloat(getComputedStyle(escena).getPropertyValue('--tilt-max') || '6');
+      const vx = Math.min(max, Math.max(-max, x));
+      const vy = Math.min(max, Math.max(-max, y));
+      escena.style.transform = `rotateX(${vx}deg) rotateY(${vy}deg)`;
+    };
+
+    const onPointerMove = (event: PointerEvent) => {
+      if (reduce.matches || !fine.matches || heroPausedRef.current) return;
+      const rect = visual.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const max = parseFloat(getComputedStyle(escena).getPropertyValue('--tilt-max') || '6');
+      // rotateX sigue el eje vertical del puntero; rotateY sigue el horizontal.
+      const x = ((event.clientY - cy) / (rect.height / 2)) * max;
+      const y = ((event.clientX - cx) / (rect.width / 2)) * max;
+      if (frame) cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        aplicarTransform(x, y);
+        frame = null;
+      });
+    };
+
+    const onPointerLeave = () => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        escena.style.transition = 'transform 600ms var(--curva-suave)';
+        escena.style.transform = 'rotateX(0) rotateY(0)';
+        frame = null;
+        escena.style.transition = '';
+      });
+    };
+
+    const aplicarGiroAmbiental = () => {
+      if (reduce.matches || fine.matches || heroPausedRef.current) return;
+      escena.classList.add('hero-escena--giro-ambiental');
+    };
+
+    visual.addEventListener('pointermove', onPointerMove, { passive: true });
+    visual.addEventListener('pointerleave', onPointerLeave, { passive: true });
+    if (!reduce.matches && !fine.matches) aplicarGiroAmbiental();
+
+    return () => {
+      visual.removeEventListener('pointermove', onPointerMove);
+      visual.removeEventListener('pointerleave', onPointerLeave);
+      if (frame) cancelAnimationFrame(frame);
+      escena.classList.remove('hero-escena--giro-ambiental');
+      escena.style.transform = '';
+    };
+  }, [heroPausada]);
+
+  /**
+   * Reinicia la escena cuando se pausa o reanuda el hero.
+   */
+  useEffect(() => {
+    const escena = heroEscenaRef.current;
+    if (!escena) return;
+    escena.style.transform = '';
+    if (heroPausada) {
+      escena.classList.remove('hero-escena--giro-ambiental');
+    }
+  }, [heroPausada]);
 
   /**
    * Cifras de la biblioteca calculadas desde los datos reales, no escritas a
@@ -114,7 +199,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   return (
     <>
       {/* Hero */}
-      <section id="inicio" className="hero" aria-labelledby="titulo-inicio" tabIndex={-1}>
+      <section id="inicio" className="hero" aria-labelledby="titulo-inicio" tabIndex={-1} data-paused={heroPausada}>
         <div className="container hero-layout">
           <div className="hero-copy">
             <p className="hero-insignia">
@@ -145,6 +230,29 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
               <li>{biblioteca.sinEquipamiento === biblioteca.total ? 'Sin equipamiento' : `${biblioteca.sinEquipamiento} de ${biblioteca.total} sin equipamiento`}</li>
               <li>Tus datos se quedan en tu navegador</li>
             </ul>
+            <button
+              type="button"
+              className="hero-pausa"
+              aria-label={heroPausada ? 'Reanudar movimiento' : 'Pausar movimiento'}
+              aria-pressed={heroPausada}
+              onClick={() => setHeroPausada((p) => !p)}
+            >
+              {heroPausada ? (
+                <>
+                  <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true" width="18" height="18">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                  Reanudar movimiento
+                </>
+              ) : (
+                <>
+                  <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true" width="18" height="18">
+                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                  </svg>
+                  Pausar movimiento
+                </>
+              )}
+            </button>
           </div>
 
           {/* Composición visual 3D editorial: figura escultórica con profundidad */ }
@@ -574,6 +682,27 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
         ref={programasRef}
         className={`container seccion programas-entrada${programasInView ? ' is-visible' : ''}`}
       >
+        {/* Fase D: línea conectora entre los tres pasos. Se dibuja al revelar la sección. */}
+        <svg
+          className="programas-conectora"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          focusable="false"
+          aria-hidden="true"
+        >
+          <line
+            x1="0"
+            y1="50"
+            x2="100"
+            y2="50"
+            stroke="var(--color-primario)"
+            strokeOpacity={0.3}
+            strokeWidth="2"
+            fill="none"
+            strokeDasharray="100"
+            strokeDashoffset="100"
+          />
+        </svg>
         <header className="programas-header">
           <h2 id="titulo-programas">Un camino de tres pasos</h2>
           <p className="programas-subtitulo">
