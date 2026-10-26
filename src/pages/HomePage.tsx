@@ -987,7 +987,6 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           {/* Paso 02: Orienta — cuestionario de orientación:
               Actividad, Seguridad y Revisión. */}
           <article className="programa programa--orienta" aria-label="Paso 02: Orienta">
-<article className=\"programa programa--orienta\" aria-label=\"Paso 02: Orienta\">
             <header className="programa__cabecera">
               <p className="programa__foco">Orienta</p>
             </header>
