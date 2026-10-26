@@ -992,12 +992,103 @@ html.js .programas-entrada:not(.is-visible) .programas-grid > .programa {
   .escoliosis-visual:hover .escoliosis-arte { transform: translateY(-3px) rotate(2deg); }
   .escoliosis-cta { transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease, border-color 180ms ease; }
   .escoliosis-cta:hover { transform: translateY(-2px); box-shadow: var(--sombra-flotante); }
+
+  /* Animación de entrada escalonada para la sección escoliosis */
+  .escoliosis-entrada-cabecera,
+  .escoliosis-entrada-cuerpo,
+  .escoliosis-entrada-aviso,
+  .escoliosis-entrada-acciones {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 480ms var(--curva-suave), transform 480ms var(--curva-suave);
+  }
+
+  .escoliosis-visible .escoliosis-entrada-cabecera {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0ms;
+  }
+
+  .escoliosis-visible .escoliosis-entrada-cuerpo {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 100ms;
+  }
+
+  .escoliosis-visible .escoliosis-entrada-aviso {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 200ms;
+  }
+
+  .escoliosis-visible .escoliosis-entrada-acciones {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 300ms;
+  }
+
+  /* Animación del SVG: dibujo progresivo de la curva principal */
+  .escoliosis-curva-principal {
+    stroke-dasharray: 600;
+    stroke-dashoffset: 600;
+    transition: stroke-dashoffset 1.2s var(--curva-suave);
+  }
+
+  .escoliosis-visible .escoliosis-curva-principal {
+    stroke-dashoffset: 0;
+    transition-delay: 400ms;
+  }
+
+  /* Elementos secundarios del SVG aparecen después de la curva */
+  .escoliosis-arco-secundario,
+  .escoliosis-traza-punteada,
+  .escoliosis-marcas,
+  .escoliosis-nodos {
+    opacity: 0;
+    transition: opacity 600ms var(--curva-suave);
+  }
+
+  .escoliosis-visible .escoliosis-arco-secundario {
+    opacity: 0.62;
+    transition-delay: 1.4s;
+  }
+
+  .escoliosis-visible .escoliosis-traza-punteada {
+    opacity: 0.5;
+    transition-delay: 1.5s;
+  }
+
+  .escoliosis-visible .escoliosis-marcas {
+    opacity: 0.3;
+    transition-delay: 1.6s;
+  }
+
+  .escoliosis-visible .escoliosis-nodos {
+    opacity: 1;
+    transition-delay: 1.7s;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
 .escoliosis-arte,
   .escoliosis-visual:hover .escoliosis-arte,
   .escoliosis-cta,
   .escoliosis-cta:hover { transform: none; transition: none; }
+
+  /* Sin animaciones de entrada con movimiento reducido: todo visible inmediatamente */
+  .escoliosis-entrada-cabecera,
+  .escoliosis-entrada-cuerpo,
+  .escoliosis-entrada-aviso,
+  .escoliosis-entrada-acciones,
+  .escoliosis-curva-principal,
+  .escoliosis-arco-secundario,
+  .escoliosis-traza-punteada,
+  .escoliosis-marcas,
+  .escoliosis-nodos {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    stroke-dashoffset: 0;
+  }
 }
 
 /* --- Movimiento ----------------------------------------------------------- */

@@ -87,6 +87,12 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   const comoFuncionaRef = useRef<HTMLElement | null>(null);
   const [comoFuncionaInView, setComoFuncionaInView] = useState(false);
 
+  /**
+   * Entrada progresiva de la sección escoliosis: animación escalonada al entrar en viewport.
+   */
+  const escoliosisRef = useRef<HTMLElement | null>(null);
+  const [escoliosisInView, setEscoliosisInView] = useState(false);
+
   const heroVisualRef = useRef<HTMLDivElement | null>(null);
   const heroEscenaRef = useRef<HTMLDivElement | null>(null);
 
@@ -101,6 +107,27 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             setComoFuncionaInView(true);
+            observer.disconnect();
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -8% 0px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const el = escoliosisRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      setEscoliosisInView(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setEscoliosisInView(true);
             observer.disconnect();
           }
         });
@@ -1048,13 +1075,13 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
       </section>
 
       {/* Escoliosis */}
-      <section id="escoliosis" aria-labelledby="titulo-escoliosis" tabIndex={-1} className="container seccion">
+      <section id="escoliosis" ref={escoliosisRef} aria-labelledby="titulo-escoliosis" tabIndex={-1} className="container seccion">
         {/* Placa editorial: campo de tono propio, sin borde ni sombra. Las zonas
             se marcan por superficie y espacio, no por tarjetas anidadas. */}
-        <div className="escoliosis-placa">
+        <div className={`escoliosis-placa ${escoliosisInView ? 'escoliosis-visible' : ''}`}>
           <div className="escoliosis-grid">
             <div className="escoliosis-texto">
-              <header className="escoliosis-cabecera">
+              <header className="escoliosis-cabecera escoliosis-entrada-cabecera">
                 <p className="escoliosis-insignia">
                   <span className="escoliosis-insignia__punto" aria-hidden="true" />
                   Enfoque postural consciente
@@ -1067,7 +1094,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                 </h3>
               </header>
 
-              <div className="escoliosis-cuerpo">
+              <div className="escoliosis-cuerpo escoliosis-entrada-cuerpo">
                 <p>
                   La escoliosis implica curvas y rotaciones tridimensionales que varían en cada
                   persona. No existen rutinas universales ni ejercicios estándar válidos para todas
@@ -1084,7 +1111,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                   un aria-label sustituiria el texto visible por su nombre accesible
                   y el lector de pantalla se saltaria los 282 caracteres del aviso. */}
               <div
-                className="escoliosis-aviso"
+                className="escoliosis-aviso escoliosis-entrada-aviso"
                 role="note"
                 aria-labelledby="escoliosis-aviso-titulo"
               >
@@ -1104,7 +1131,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                 </p>
               </div>
 
-              <div className="escoliosis-acciones">
+              <div className="escoliosis-acciones escoliosis-entrada-acciones">
                 <a href="#escoliosis" className="btn escoliosis-cta" onClick={ir('escoliosis')}>
                   Leer guía completa de escoliosis
                 </a>
@@ -1134,6 +1161,16 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                   <pattern id="escoliosis-puntos" width="20" height="20" patternUnits="userSpaceOnUse">
                     <circle cx="2" cy="2" r="1.3" fill="var(--color-primario)" opacity="0.13" />
                   </pattern>
+                  {/* Gradiente sutil para profundidad en la curva principal */}
+                  <linearGradient id="escoliosis-curva-gradiente" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="var(--color-primario)" stopOpacity="1" />
+                    <stop offset="50%" stopColor="var(--color-primario)" stopOpacity="0.85" />
+                    <stop offset="100%" stopColor="var(--color-primario-oscuro)" stopOpacity="1" />
+                  </linearGradient>
+                  {/* Sombra suave para la curva principal */}
+                  <filter id="escoliosis-sombra-curva" x="-50%" y="-50%" width="200%" height="200%">
+                    <feDropShadow dx="0" dy="4" stdDeviation="6" floodColor="var(--color-primario-oscuro)" floodOpacity="0.15" />
+                  </filter>
                 </defs>
                 <rect x="196" y="42" width="128" height="150" fill="url(#escoliosis-puntos)" />
 
@@ -1143,15 +1180,18 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                   <path d="M40 100h9M40 152h18M40 204h9M40 256h18M40 308h9M40 360h18" strokeWidth="1.5" opacity="0.42" />
                 </g>
 
-                {/* 1. Curva dominante: el foco de la lamina. */}
+                {/* 1. Curva dominante: el foco de la lamina. Con gradiente y sombra para profundidad. */}
                 <path
+                  className="escoliosis-curva-principal"
                   d="M164 62C228 102 118 156 182 214 246 272 136 326 219 370"
-                  stroke="var(--color-primario)"
+                  stroke="url(#escoliosis-curva-gradiente)"
                   strokeWidth="3.25"
                   strokeLinecap="round"
+                  filter="url(#escoliosis-sombra-curva)"
                 />
                 {/* 2. Arco tendido: cruza en horizontal, no repite la S. */}
                 <path
+                  className="escoliosis-arco-secundario"
                   d="M54 306C134 346 236 258 330 306"
                   stroke="var(--color-secundario)"
                   strokeWidth="1.75"
@@ -1160,6 +1200,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                 />
                 {/* 3. Traza punteada, casi vertical, en el flanco derecho. */}
                 <path
+                  className="escoliosis-traza-punteada"
                   d="M312 74C268 162 328 254 274 358"
                   stroke="var(--color-terciario-oscuro)"
                   strokeWidth="1.75"
@@ -1169,11 +1210,11 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                 />
 
                 {/* Marcas de referencia en los puntos de inflexion. */}
-                <g stroke="var(--color-primario)" strokeWidth="1" opacity="0.3">
+                <g className="escoliosis-marcas" stroke="var(--color-primario)" strokeWidth="1" opacity="0.3">
                   <path d="M40 178h56" />
                   <path d="M40 286h104" />
                 </g>
-                <g>
+                <g className="escoliosis-nodos">
                   <circle cx="164" cy="62" r="7.5" fill="var(--color-primario)" />
                   <circle cx="134" cy="178" r="4.5" fill="var(--color-secundario-oscuro)" />
                   <circle cx="230" cy="286" r="6" fill="var(--color-primario-oscuro)" />
