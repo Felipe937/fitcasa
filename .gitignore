@@ -13,6 +13,7 @@ dist/
 
 # Informes y capturas de herramientas de diseno locales
 .taste-skill/
+screenshots/
 
 # VS Code settings
 .vscode/

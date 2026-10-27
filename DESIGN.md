@@ -359,6 +359,9 @@ compartidos con Panel (`.app-card`, `.notice`, `.app-main`, `.panel-actions`).
 | 37 | Microinteracción `scale(0.98)` al guardar el formulario | Feedback táctil breve sin mostrar éxito antes de completar; `prefers-reduced-motion` la desactiva | `PanelPage.tsx`, `panel-page.css` |
 | 38 | IDs de pre-llenado (`panel-form`, `entry-date`, `entry-activity`, `exercise-quick-select`, `entry-heading`) preservados exactamente | Acoplamiento innegociable con Plan y Pausas activas | `PanelPage.tsx` |
 | 39 | La constelación y el anillo usan `window.matchMedia('(prefers-reduced-motion: reduce)')` sincrónico | Sin destello en primer render; desactivan deriva, inclinación, transiciones y animaciones | `Constellation.tsx`, `PanelPage.tsx` |
+| 40 | Los números 01/02/03 en `#programas` se muestran a gran escala como tipografía de fondo detrás del contenido (`opacity: 0.04-0.08`) | Requisito del encargo para reforzar la jerarquía editorial sin empujar el layout (`position: absolute`) | `HomePage.tsx`, `style.css` |
+| 41 | La franja superior (`border-top`) de Orienta y Registra se amplía a 6 px | Diferenciación visual clara de pasos secundarios sin alterar el fondo neutro | `style.css` |
+| 42 | El paso destacado (Explora) incluye un patrón SVG de puntos al 5% de opacidad | Tratamiento sutil de textura que eleva el contenedor verde bosque sin salir de la paleta | `style.css` |
 
 ## 9. Comprobaciones
 
@@ -450,3 +453,19 @@ compartidos con Panel (`.app-card`, `.notice`, `.app-main`, `.panel-actions`).
 - Privacidad: grupos con tratamiento editorial; grupo aviso con fondo amarillo/borde arcilla; botón «Retirar aceptación» preservado.
 - IDs de pre-llenado preservados: `panel-form`, `entry-date`, `entry-activity`, `exercise-quick-select`, `entry-heading`.
 - Dolor nunca solo por color: línea temporal usa `.panel-dolor-texto` con número + etiqueta + color; chips legacy eliminados.
+
+### 9.4 Sección Programas (`#programas` en `HomePage.tsx`, `style.css`)
+
+- `npx tsc --noEmit` sin errores y `npm run build` correcto (CSS 350.49 kB · gzip 49.98 kB; JS 576.93 kB · gzip 153.04 kB; sin dependencias nuevas).
+- 320, 390, 768, 1440 y 1920 px: 0 px de desbordamiento horizontal (`scrollWidth <= innerWidth`).
+- Ruta orgánica SVG (`.programas-conectora`): conecta los centros reales de los tres pasos en desktop (1440 px):
+  - Paso 1 (Explora): centro (347, 356) vs punto de ruta (347, 356), diferencia = 0.3 px (≤ 20 px: CUMPLE).
+  - Paso 2 (Orienta): centro (953, 177) vs punto de ruta (953, 177), diferencia = 0.2 px (≤ 20 px: CUMPLE).
+  - Paso 3 (Registra): centro (953, 524) vs punto de ruta (953, 524), diferencia = 0.4 px (≤ 20 px: CUMPLE).
+- En móvil (≤ 63.99rem): la ruta es vertical (`.programas-conectora__movil`), discurre junto al borde derecho (X ≈ 90%) y no desborda.
+- Con `prefers-reduced-motion: reduce`: ruta visible, sin animación, sin `stroke-dashoffset`; derivas y oscilaciones ambientales de la escena Explora desactivadas (`animation: none !important; will-change: auto !important`).
+- Escena Explora: plataforma 2 oscila verticalmente (24 s), esfera superior deriva con rotación sutil (30 s), acentos flotantes en deriva (22 s); 4 trazos delgados escalonados (0.8–1.2 s) con `stroke-dashoffset` al activarse la sección (`is-visible`).
+- Números editoriales 01, 02, 03: posicionados en `position: absolute; top: 50%; right: var(--espacio-2); transform: translateY(-50%)` dentro de `programa__cabecera` con `opacity: 0.04-0.08`, `pointer-events: none; user-select: none; aria-hidden="true"`; no empujan el layout.
+- Diferenciación visual: Explora conserva verde bosque con patrón de puntos al 5% (`#a8c4b8`); Orienta amplía `border-top` a 6 px salvia con número 02 en salvia; Registra amplía `border-top` a 6 px terracota con número 03 en terracota.
+- Cero cambios en otras secciones (Inicio, Beneficios, Escoliosis comprobadas byte a byte en layout).
+- Todos los 3 enlaces existentes conservan su destino (`#ejercicios`, `#quiz`, `#panel`), textos y comportamiento `onClick`.

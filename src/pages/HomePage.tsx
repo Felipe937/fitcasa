@@ -853,27 +853,6 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
         ref={programasRef}
         className={`container seccion programas-entrada${programasInView ? ' is-visible' : ''}`}
       >
-        {/* Fase D: línea conectora entre los tres pasos. Se dibuja al revelar la sección. */}
-        <svg
-          className="programas-conectora"
-          viewBox="0 0 100 100"
-          preserveAspectRatio="none"
-          focusable="false"
-          aria-hidden="true"
-        >
-          <line
-            x1="0"
-            y1="50"
-            x2="100"
-            y2="50"
-            stroke="var(--color-primario)"
-            strokeOpacity={0.3}
-            strokeWidth="2"
-            fill="none"
-            strokeDasharray="100"
-            strokeDashoffset="100"
-          />
-        </svg>
         <header className="programas-header">
           <h2 id="titulo-programas">Un camino de tres pasos</h2>
           <p className="programas-subtitulo">
@@ -882,18 +861,25 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
         </header>
 
         <div className="programas-grid">
-          {/* Trayectoria decorativa que une las tres etapas. Solo escritorio: en
-              móvil y tableta el recorrido se lee por orden y por la pieza. */}
+          {/* Ruta orgánica que conecta los centros reales de los tres pasos.
+              Desktop: entra por el centro de Explora, pasa cerca del borde inferior de Orienta y sale por el centro de Registra.
+              Móvil: curva vertical de arriba abajo junto al borde derecho. */}
           <svg
-            className="programas-trail"
+            className="programas-conectora programas-trail"
             viewBox="0 0 100 100"
             preserveAspectRatio="none"
             aria-hidden="true"
             focusable="false"
           >
             <path
-              d="M 61 8 C 67 24 67 42 62 50 C 58 58 58 76 61 92"
-              vectorEffect="non-scaling-stroke"
+              className="programas-conectora__desktop"
+              pathLength={100}
+              d="M 29.3 53.6 C 50 48, 70 26.6, 80.5 26.6 C 89 26.6, 92 48, 88 52 C 84 56, 80.5 70, 80.5 78.8"
+            />
+            <path
+              className="programas-conectora__movil"
+              pathLength={100}
+              d="M 90 4 C 95 20, 88 35, 92 50 C 96 68, 88 80, 90 96"
             />
           </svg>
 
@@ -948,8 +934,8 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                   <polygon points="36,206 148,206 170,232 58,232" fill="var(--color-secundario)" />
                 </g>
 
-                {/* Plataforma 2 · orientación */}
-                <g>
+                {/* Plataforma 2 · orientación (movimiento ambiental) */}
+                <g className="programas-escena__plataforma-2">
                   <polygon points="150,160 242,160 242,192 150,192" fill="var(--color-secundario)" />
                   <polygon points="242,160 262,184 262,216 242,192" fill="var(--color-secundario-oscuro)" />
                   <polygon points="150,160 242,160 262,184 170,184" fill="var(--color-salvia-claro)" />
@@ -973,21 +959,32 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                 />
                 <path d="M 286 124 L 266 116 L 270 134 Z" fill="var(--color-salvia-claro)" opacity="0.9" />
 
-                {/* Acento único: esfera en la cima */}
-                <circle cx="300" cy="104" r="14" fill="var(--color-terciario)" />
-                <circle cx="295" cy="99" r="4.5" fill="var(--color-superficie)" opacity="0.35" />
+                {/* Acento único: esfera en la cima (deriva ambiental) */}
+                <g className="programas-escena__esfera">
+                  <circle cx="300" cy="104" r="14" fill="var(--color-terciario)" />
+                  <circle cx="295" cy="99" r="4.5" fill="var(--color-superficie)" opacity="0.35" />
+                </g>
 
-                {/* Acentos flotantes */}
-                <g fill="var(--color-salvia-claro)" opacity="0.4">
+                {/* Acentos flotantes (deriva ambiental) */}
+                <g className="programas-escena__acentos" fill="var(--color-salvia-claro)" opacity="0.4">
                   <circle cx="60" cy="120" r="4" />
                   <circle cx="332" cy="70" r="3" />
                   <circle cx="120" cy="80" r="2.5" />
+                </g>
+
+                {/* Trazos decorativos delgados que se dibujan al activar la sección (Fase B) */}
+                <g className="programas-escena__trazos" aria-hidden="true">
+                  <path pathLength={100} d="M 40 260 C 90 235 140 250 180 230 C 220 210 270 195 330 170" />
+                  <path pathLength={100} d="M 50 180 C 100 165 150 195 200 185 C 250 175 295 150 345 140" />
+                  <path pathLength={100} d="M 35 135 C 75 145 125 125 175 135 C 225 145 265 115 315 105" />
+                  <path pathLength={100} d="M 65 75 C 105 95 155 85 205 95 C 255 105 295 75 335 85" />
                 </g>
               </svg>
             </figure>
 
             <div className="programa__cuerpo">
               <header className="programa__cabecera">
+                <span className="programa__numero" aria-hidden="true">01</span>
                 <p className="programa__foco">Explora</p>
               </header>
               <h3>Biblioteca de ejercicios</h3>
@@ -1015,6 +1012,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
               Actividad, Seguridad y Revisión. */}
           <article className="programa programa--orienta" aria-label="Paso 02: Orienta">
             <header className="programa__cabecera">
+              <span className="programa__numero" aria-hidden="true">02</span>
               <p className="programa__foco">Orienta</p>
             </header>
             <h3>Sugerencias de actividad</h3>
@@ -1035,6 +1033,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           {/* Paso 03: Registra — cuestionario de seguimiento */}
           <article className="programa programa--registra">
             <header className="programa__cabecera">
+              <span className="programa__numero" aria-hidden="true">03</span>
               <p className="programa__foco">Registra</p>
             </header>
             <h3>Seguimiento personal</h3>
