@@ -997,7 +997,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
                   <li key={e.id}>
                     <span className="programa__nombre">{e.name}</span>
                     <span className="programa__meta">
-                      {durationLabels[e.duration]} · {zoneLabels[e.zone[0]] ?? e.zone[0]}
+                      {durationLabels[e.duration]} {'\u00B7'} {zoneLabels[e.zone[0]] ?? e.zone[0]}
                     </span>
                   </li>
                 ))}
