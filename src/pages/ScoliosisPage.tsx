@@ -358,7 +358,11 @@ export const ScoliosisPage: React.FC<ScoliosisPageProps> = ({ onNavigate }) => {
         </button>
 
         <div className="scoliosis-layout">
-          <nav className={`scoliosis-toc ${tocOpen ? 'scoliosis-toc--abierto' : ''}`} aria-labelledby="toc-title">
+          <nav
+            className={`scoliosis-toc ${tocOpen ? 'scoliosis-toc--abierto' : ''}`}
+            aria-labelledby="toc-title"
+            style={{ '--scoliosis-toc-progreso': `${progreso}%` } as React.CSSProperties}
+          >
             <p id="toc-title" className="scoliosis-toc__titulo">En esta página</p>
             <div
               className="scoliosis-toc__progreso"
@@ -540,6 +544,7 @@ export const ScoliosisPage: React.FC<ScoliosisPageProps> = ({ onNavigate }) => {
                       <th scope="col">Qué se estudió</th>
                       <th scope="col">Qué se observó</th>
                       <th scope="col">Límites y sesgo</th>
+                      <th scope="col" aria-hidden="true">Nivel</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -548,12 +553,30 @@ export const ScoliosisPage: React.FC<ScoliosisPageProps> = ({ onNavigate }) => {
                       <td data-label="Qué se estudió">Ejercicios de Schroth: ángulo de Cobb, rotación del tronco y calidad de vida</td>
                       <td data-label="Qué se observó">Reducción media del ángulo de Cobb de unos 3,2 grados, por debajo del umbral de 5 grados que suele considerarse clínicamente relevante, sin efecto significativo en la rotación del tronco y con mejora de la calidad de vida</td>
                       <td data-label="Límites y sesgo"><span className="scoliosis-etiqueta-sesgo">Evidencia moderada/baja · Riesgo de sesgo</span> La calidad de la evidencia era moderada a baja y la mayoría de los estudios tenía alto riesgo de sesgo</td>
+                      <td data-label="Nivel" aria-hidden="true">
+                        <svg viewBox="0 0 20 20" width="20" height="20" className="scoliosis-tabla-evidencia__escala">
+                          <rect x="0" y="0" width="4" height="4" rx="1" fill="var(--color-secundario)" />
+                          <rect x="6" y="0" width="4" height="4" rx="1" fill="var(--color-secundario)" />
+                          <rect x="12" y="0" width="4" height="4" rx="1" fill="var(--color-secundario)" opacity="0.4" />
+                          <rect x="0" y="6" width="4" height="4" rx="1" fill="var(--color-secundario)" opacity="0.4" />
+                          <rect x="6" y="6" width="4" height="4" rx="1" fill="var(--color-secundario)" opacity="0.4" />
+                        </svg>
+                      </td>
                     </tr>
                     <tr>
                       <td data-label="Población y estudio">Revisión de 10 ensayos con 600 adolescentes (Lee y Tak, 2026)</td>
                       <td data-label="Qué se estudió">Ejercicios específicos para escoliosis con distintas intensidades de supervisión: ángulo de Cobb, rotación y cuestionario SRS‑22</td>
                       <td data-label="Qué se observó">Mejoras en el ángulo de Cobb y en la rotación con heterogeneidad alta, pero sin mejora significativa en el cuestionario de calidad de vida SRS‑22</td>
                       <td data-label="Límites y sesgo"><span className="scoliosis-etiqueta-sesgo">Heterogeneidad alta · Riesgo de sesgo</span> Los autores piden interpretar el hallazgo con cautela por la heterogeneidad y el riesgo de sesgo</td>
+                      <td data-label="Nivel" aria-hidden="true">
+                        <svg viewBox="0 0 20 20" width="20" height="20" className="scoliosis-tabla-evidencia__escala">
+                          <rect x="0" y="0" width="4" height="4" rx="1" fill="var(--color-secundario)" />
+                          <rect x="6" y="0" width="4" height="4" rx="1" fill="var(--color-secundario)" opacity="0.4" />
+                          <rect x="12" y="0" width="4" height="4" rx="1" fill="var(--color-secundario)" opacity="0.4" />
+                          <rect x="0" y="6" width="4" height="4" rx="1" fill="var(--color-secundario)" opacity="0.4" />
+                          <rect x="6" y="6" width="4" height="4" rx="1" fill="var(--color-secundario)" opacity="0.4" />
+                        </svg>
+                      </td>
                     </tr>
                   </tbody>
                 </table>

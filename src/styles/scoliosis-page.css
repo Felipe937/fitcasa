@@ -62,7 +62,7 @@
 
 @media (min-width: 64rem) {
   .scoliosis-hero__inner {
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    grid-template-columns: minmax(0, 0.55fr) minmax(0, 0.45fr);
     align-items: center; min-height: var(--scoliosis-hero-altura-min);
   }
 }
@@ -84,13 +84,13 @@
 .scoliosis-hero__titulo {
   margin: 0 0 var(--espacio-4); max-width: 22ch;
   color: var(--color-sobre-primario);
-  font-size: clamp(2.2rem, 1.5rem + 3.2vw, 4rem);
+  font-size: clamp(2.5rem, 5vw, 4rem);
   line-height: 1.02; letter-spacing: -0.035em; text-wrap: balance;
   font-weight: 800;
 }
 
 .scoliosis-hero__apertura {
-  margin: 0 0 var(--espacio-5); max-width: 48ch;
+  margin: 0 0 var(--espacio-5); max-width: 52ch;
   color: var(--color-salvia-claro); font-size: var(--texto-lg);
   line-height: 1.65;
 }
@@ -155,11 +155,247 @@
 }
 
 /* ==========================================================================
-   2. ILUSTRACIÓN EDITORIAL DE LA COLUMNA
+   2. SECCIÓN "LO ESENCIAL"
+   ========================================================================== */
+.scoliosis-esencial {
+  position: relative;
+}
+.scoliosis-esencial__cabecera {
+  margin-bottom: var(--espacio-5);
+}
+.scoliosis-etiqueta {
+  display: inline-block; padding: var(--espacio-1) var(--espacio-3);
+  background: var(--color-fondo-verde); border-radius: var(--radio-pill);
+  font-size: var(--texto-xs); font-weight: 800; letter-spacing: 0.05em;
+  text-transform: uppercase; color: var(--color-primario-oscuro);
+  margin-bottom: var(--espacio-3);
+}
+.scoliosis-esencial__cabecera h2 {
+  margin: 0; font-size: clamp(1.8rem, 1.3rem + 2.2vw, 2.6rem);
+  line-height: 1.06; letter-spacing: -0.03em;
+  color: var(--color-primario-oscuro); text-wrap: balance;
+}
+
+.scoliosis-esencial__lista {
+  display: grid; gap: var(--espacio-4);
+  padding: 0; margin: 0; list-style: none;
+}
+@media (min-width: 48rem) {
+  .scoliosis-esencial__lista {
+    grid-template-columns: 1fr 1fr;
+  }
+  .scoliosis-esencial__item--a {
+    grid-column: 1 / -1;
+  }
+}
+
+.scoliosis-esencial__item {
+  display: flex; gap: var(--espacio-4);
+  padding: var(--espacio-5); border-radius: var(--radio-lg);
+  transform: translateZ(0);
+}
+.scoliosis-esencial__item--a {
+  background: var(--color-primario-oscuro);
+  color: var(--color-sobre-primario);
+}
+.scoliosis-esencial__item--b {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-top: 4px solid var(--color-secundario);
+}
+.scoliosis-esencial__item--c {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-top: 4px solid var(--color-terciario);
+}
+
+.scoliosis-esencial__icono {
+  flex: 0 0 auto; width: 2.5rem; height: 2.5rem;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-primario);
+}
+.scoliosis-esencial__item--a .scoliosis-esencial__icono {
+  color: var(--color-salvia-claro);
+}
+.scoliosis-esencial__item--b .scoliosis-esencial__icono {
+  color: var(--color-secundario);
+}
+.scoliosis-esencial__item--c .scoliosis-esencial__icono {
+  color: var(--color-terciario);
+}
+
+.scoliosis-esencial__cuerpo {
+  flex: 1; min-width: 0;
+}
+.scoliosis-esencial__cuerpo h3 {
+  margin: 0 0 var(--espacio-2); font-size: var(--texto-lg);
+  font-weight: 800; line-height: var(--alto-linea-titulo);
+}
+.scoliosis-esencial__item--a .scoliosis-esencial__cuerpo h3 {
+  color: var(--color-sobre-primario);
+}
+.scoliosis-esencial__item--b .scoliosis-esencial__cuerpo h3,
+.scoliosis-esencial__item--c .scoliosis-esencial__cuerpo h3 {
+  color: var(--color-primario-oscuro);
+}
+.scoliosis-esencial__cuerpo p {
+  margin: 0; font-size: var(--texto-sm); line-height: 1.65;
+}
+.scoliosis-esencial__item--a .scoliosis-esencial__cuerpo p {
+  color: var(--color-salvia-claro);
+}
+.scoliosis-esencial__item--b .scoliosis-esencial__cuerpo p,
+.scoliosis-esencial__item--c .scoliosis-esencial__cuerpo p {
+  color: var(--color-texto-suave);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .scoliosis-esencial__item {
+    transition: transform 200ms var(--curva-suave), border-color 200ms ease;
+  }
+  .scoliosis-esencial__item--b:hover,
+  .scoliosis-esencial__item--c:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* ==========================================================================
+   3. ILUSTRACIÓN EDITORIAL DE LA COLUMNA
    ========================================================================== */
 .scoliosis-hero__visual {
   position: relative; min-width: 0;
   display: flex; align-items: center; justify-content: center;
+  isolation: isolate;
+}
+
+.scoliosis-hero__visual::before {
+  content: ""; position: absolute; inset: -2rem; z-index: -1;
+  background: radial-gradient(circle at center, var(--color-primario-oscuro) 0%, transparent 70%);
+  opacity: 0.08; pointer-events: none;
+}
+
+.scoliosis-columna-exp {
+  width: 100%; max-width: 24rem;
+  display: flex; flex-direction: column; gap: var(--espacio-4);
+}
+.scoliosis-columna-exp__auto {
+  position: relative;
+}
+.scoliosis-columna-exp__giro {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease-out;
+}
+.scoliosis-columna-exp__viewport {
+  position: relative; width: 100%;
+  aspect-ratio: 16/21; border-radius: var(--radio-lg);
+  overflow: hidden; background: var(--color-superficie);
+  border: 1px solid rgb(255 255 255 / 0.18);
+  cursor: grab;
+}
+.scoliosis-columna-exp__viewport:active {
+  cursor: grabbing;
+}
+.scoliosis-columna-exp__viewport:focus-visible {
+  outline: 3px solid var(--color-salvia-claro); outline-offset: 3px;
+}
+.scoliosis-columna-exp__viewport[data-arrastrando="true"] {
+  cursor: grabbing;
+}
+
+.scoliosis-vista {
+  width: 100%; height: 100%;
+  transform: translateZ(0);
+}
+
+.scoliosis-columna-exp__controles {
+  display: flex; flex-direction: column; gap: var(--espacio-3);
+}
+.scoliosis-columna-exp__capas {
+  display: flex; gap: var(--espacio-2);
+  flex-wrap: wrap;
+}
+.scoliosis-columna-exp__capa {
+  flex: 1; min-width: 0;
+  padding: var(--espacio-2) var(--espacio-3);
+  border: 1px solid rgb(255 255 255 / 0.28);
+  border-radius: var(--radio-sm);
+  background: transparent;
+  color: var(--color-salvia-claro);
+  font-size: var(--texto-xs); font-weight: 700;
+  cursor: pointer; transition: background-color 160ms ease, border-color 160ms ease;
+}
+.scoliosis-columna-exp__capa:hover {
+  background: rgb(255 255 255 / 0.08);
+  border-color: var(--color-salvia-claro);
+}
+.scoliosis-columna-exp__capa[aria-pressed="true"] {
+  background: var(--color-salvia-claro);
+  border-color: var(--color-salvia-claro);
+  color: var(--color-primario-oscuro);
+}
+.scoliosis-columna-exp__capa:focus-visible {
+  outline: 2px solid var(--color-salvia-claro); outline-offset: 2px;
+}
+
+.scoliosis-columna-exp__giro-ctrl {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: var(--espacio-2);
+}
+.scoliosis-columna-exp__giro-btn {
+  display: flex; align-items: center; justify-content: center;
+  min-width: 44px; min-height: 44px;
+  padding: var(--espacio-2);
+  border: 1px solid rgb(255 255 255 / 0.28);
+  border-radius: var(--radio-sm);
+  background: transparent;
+  color: var(--color-salvia-claro);
+  cursor: pointer; transition: background-color 160ms ease, border-color 160ms ease;
+}
+.scoliosis-columna-exp__giro-btn svg {
+  width: 1.25rem; height: 1.25rem;
+  fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+.scoliosis-columna-exp__giro-btn:hover {
+  background: rgb(255 255 255 / 0.08);
+  border-color: var(--color-salvia-claro);
+}
+.scoliosis-columna-exp__giro-btn:focus-visible {
+  outline: 2px solid var(--color-salvia-claro); outline-offset: 2px;
+}
+
+.scoliosis-columna-exp__pausa {
+  padding: var(--espacio-2) var(--espacio-3);
+  border: 1px solid rgb(255 255 255 / 0.28);
+  border-radius: var(--radio-sm);
+  background: transparent;
+  color: var(--color-salvia-claro);
+  font-size: var(--texto-xs); font-weight: 700;
+  cursor: pointer; transition: background-color 160ms ease, border-color 160ms ease;
+}
+.scoliosis-columna-exp__pausa:hover {
+  background: rgb(255 255 255 / 0.08);
+  border-color: var(--color-salvia-claro);
+}
+.scoliosis-columna-exp__pausa:focus-visible {
+  outline: 2px solid var(--color-salvia-claro); outline-offset: 2px;
+}
+
+.scoliosis-columna-exp__nota {
+  margin: 0; font-size: var(--texto-sm); line-height: 1.5;
+  color: var(--color-salvia-claro); opacity: 0.9;
+}
+.scoliosis-columna-exp__aviso {
+  margin: var(--espacio-2) 0 0; font-size: var(--texto-xs);
+  color: var(--color-salvia-claro); opacity: 0.7;
+  font-style: italic;
+}
+
+.scoliosis-columna-exp__rotulo {
+  margin-bottom: var(--espacio-2);
+  font-size: var(--texto-xs); font-weight: 700;
+  color: var(--color-salvia-claro); opacity: 0.8;
+  letter-spacing: 0.04em; text-transform: uppercase;
 }
 
 .scoliosis-illo-columna {
@@ -294,11 +530,31 @@
   display: block; padding: var(--espacio-4);
   background: var(--color-superficie); border: 1px solid var(--color-borde);
   border-radius: var(--radio-md);
+  position: relative;
 }
 @media (min-width: 64rem) {
   .scoliosis-toc {
     grid-column: 1; grid-row: 1 / -1; align-self: start;
     position: sticky; top: calc(var(--desplazamiento-ancla) + 1rem); z-index: 1;
+  }
+  .scoliosis-toc::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; background: var(--color-fondo-azul);
+    border-radius: 0 2px 2px 0;
+  }
+  .scoliosis-toc::after {
+    content: ""; position: absolute; left: 0; top: 0;
+    width: 3px; background: var(--color-terciario);
+    border-radius: 0 2px 2px 0;
+    height: var(--scoliosis-toc-progreso, 0%);
+    transition: height 320ms var(--curva-suave);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  @media (min-width: 64rem) {
+    .scoliosis-toc::after {
+      height: 100% !important; transition: none !important;
+    }
   }
 }
 .scoliosis-toc__titulo {
@@ -516,6 +772,14 @@
   padding: var(--espacio-3) var(--espacio-4);
   border-bottom: 1px solid var(--color-borde);
   text-align: left; vertical-align: top;
+}
+.scoliosis-tabla-evidencia th:last-child,
+.scoliosis-tabla-evidencia td:last-child {
+  text-align: center;
+  width: 4rem;
+}
+.scoliosis-tabla-evidencia__escala {
+  display: block;
 }
 .scoliosis-tabla-evidencia th {
   background: var(--color-fondo-azul); color: var(--color-primario-oscuro);

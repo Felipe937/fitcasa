@@ -413,6 +413,9 @@ export const ColumnaExplorable: React.FC = () => {
       </div>
 
       <div className="scoliosis-columna-exp__controles">
+        <p className="scoliosis-columna-exp__rotulo" role="note">
+          Esquema conceptual, 3 planos
+        </p>
         <div className="scoliosis-columna-exp__capas" role="group" aria-label="Vista del esquema">
           {vistas.map((v) => (
             <button
