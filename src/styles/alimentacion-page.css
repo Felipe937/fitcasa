@@ -10,12 +10,13 @@
   padding-block: clamp(var(--espacio-6), 5vw, var(--espacio-8));
   border-bottom: 1px solid var(--color-borde);
   margin-bottom: var(--espacio-7);
+  position: relative;
 }
 
 .alimentacion-hero__layout {
   display: grid;
   gap: var(--espacio-6);
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  grid-template-columns: 1fr minmax(0, 280px);
   align-items: center;
 }
 
@@ -23,6 +24,7 @@
   min-width: 0;
 }
 
+/* Insignia editorial */
 .alimentacion-hero__insignia {
   display: inline-flex;
   align-items: center;
@@ -44,6 +46,7 @@
   border-radius: 50%;
 }
 
+/* Título principal */
 .alimentacion-hero__titulo {
   margin: 0 0 var(--espacio-4);
   font-size: clamp(var(--tamano-h1-min), var(--tamano-h1-preferido) + 3.3vw, var(--tamano-h1-max));
@@ -53,6 +56,7 @@
   color: var(--color-primario-oscuro);
 }
 
+/* Subtítulo */
 .alimentacion-hero__subtitulo {
   max-width: 48ch;
   margin: 0 0 var(--espacio-5);
@@ -61,24 +65,52 @@
   color: var(--color-texto);
 }
 
-.alimentacion-hero__visual {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 20rem;
-  background: var(--color-fondo-verde);
-  border-radius: var(--radio-lg);
-  padding: var(--espacio-6);
+/* Contenedor del diagrama SVG (solo desktop) */
+.alimentacion-hero__svg-container {
+  order: 1;
 }
 
+@media (max-width: 767.99px) {
+  .alimentacion-hero__svg-container {
+    order: -1;
+    text-align: center;
+    margin-top: var(--espacio-4);
+  }
+}
+
+/* Diagrama SVG */
 .alimentacion-hero__svg {
   width: 100%;
-  max-width: 16rem;
+  max-width: 280px;
   height: auto;
   color: var(--color-primario);
 }
 
-/* Secciones de contenido */
+/* Texto alternativo en móvil */
+.alimentacion-hero__texto-alternativo {
+  max-width: 48ch;
+  margin-top: var(--espacio-4);
+  font-size: var(--texto-sm);
+  color: var(--color-texto);
+}
+
+/* Efecto de profundidad sutil en el hero */
+.alimentacion-hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: var(--radio-lg);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.8) 0%,
+    rgba(255, 255, 255, 0.6) 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
 .alimentacion-section {
   padding-bottom: var(--espacio-7);
   margin-bottom: var(--espacio-7);
@@ -265,7 +297,177 @@
   text-decoration-thickness: 2px;
 }
 
+/* --- Sección: Por qué importa lo que comes --- */
+
+.alimentacion-section__recurso {
+  margin-top: var(--espacio-5);
+  padding-top: var(--espacio-4);
+  border-top: 1px solid var(--color-borde);
+}
+
+.alimentacion-section__icono {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  flex-shrink: 0;
+}
+
+.alimentacion-section__fuente {
+  font-size: var(--texto-sm);
+  color: var(--color-texto-suave);
+  margin-left: var(--espacio-2);
+}
+
+.alimentacion-section__fuente a {
+  color: var(--color-primario);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+/* --- Sección: Los grupos de alimentos --- */
+
+.alimentacion-grupos-grid {
+  display: grid;
+  gap: var(--espacio-4);
+}
+
+@media (min-width: 768px) {
+  .alimentacion-grupos-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+
+/* Cards de grupo con diseño editorial */
+.alimentacion-grupo-card {
+  padding: var(--espacio-5);
+  border-radius: var(--radio-md);
+  border: 1px solid var(--color-borde);
+  transition: border-color var(--duracion-entrada) var(--curva-suave),
+    box-shadow var(--duracion-entrada) var(--curva-suave);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.alimentacion-grupo-card:focus-visible {
+  outline: 2px solid var(--color-primario);
+  outline-offset: 2px;
+}
+
+.alimentacion-grupo-card:hover {
+  border-color: var(--color-secundario);
+}
+
+.alimentacion-grupo-card:focus-visible:hover {
+  border-color: var(--color-primario);
+  box-shadow: var(--sombra-md);
+}
+
+/* Símbolo dentro de cada card */
+.alimentacion-grupo-symbol {
+  width: 32px;
+  height: 32px;
+  margin: 0 auto var(--espacio-3);
+  flex-shrink: 0;
+}
+
+/* --- Sección: Nutrientes y huesos --- */
+
+.alimentacion-nutrientes-grid {
+  display: grid;
+  gap: var(--espacio-5);
+}
+
+@media (min-width: 768px) {
+  .alimentacion-nutrientes-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+/* Módulos individuales de nutriente */
+.alimentacion-nutriente-module {
+  padding: var(--espacio-4);
+  border-radius: var(--radio-md);
+  border: 1px solid var(--color-borde);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: border-color var(--duracion-entrada) var(--curva-suave),
+    box-shadow var(--duracion-entrada) var(--curva-suave);
+}
+
+.alimentacion-nutriente-module:focus-visible {
+  outline: 2px solid var(--color-primario);
+  outline-offset: 2px;
+}
+
+.alimentacion-nutriente-module:hover {
+  border-color: var(--color-secundario);
+}
+
+.alimentacion-nutriente-module:focus-visible:hover {
+  border-color: var(--color-primario);
+  box-shadow: var(--sombra-md);
+}
+
+/* Símbolo de nutriente */
+.alimentacion-nutriente-symbol {
+  width: 36px;
+  height: 36px;
+  margin: 0 auto var(--espacio-3);
+  flex-shrink: 0;
+}
+
+/* --- Sección: Hábitos, no reglas --- */
+
+.alimentacion-cierre-intervencion {
+  width: 100%;
+  max-width: 180px;
+  margin: 0 auto var(--espacio-5);
+}
+
 /* Nota de rigor */
+.alimentacion-disclaimer {
+  padding: var(--espacio-4);
+  margin-top: var(--espacio-7);
+  background: var(--color-fondo-aviso);
+  border: 1px solid var(--color-foco);
+  border-radius: var(--radio-md);
+  font-size: var(--texto-sm);
+  line-height: 1.55;
+  color: var(--color-texto);
+}
+
+/* CTA links */
+.alimentacion-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radio-pill);
+  font-size: var(--texto-sm);
+  font-weight: 500;
+  transition: background var(--duracion-entrada) var(--curva-suave),
+    color var(--duracion-entrada) var(--curva-suave);
+  cursor: pointer;
+}
+
+.alimentacion-cta:hover {
+  background: var(--color-fondo-azul);
+  color: var(--color-primario-oscuro);
+}
+
+.alimentacion-cta.secondary {
+  background: transparent;
+  border: 1px solid var(--color-borde);
+}
+
+.alimentacion-cta.secondary:hover {
+  color: var(--color-primario-oscuro);
+  background: var(--color-fondo-azul);
+}
 .alimentacion-disclaimer {
   padding: var(--espacio-4);
   margin-top: var(--espacio-7);
@@ -280,15 +482,6 @@
 /* Responsive */
 @media (max-width: 63.99rem) {
   .alimentacion-hero__layout {
-    grid-template-columns: 1fr;
-  }
-
-  .alimentacion-hero__visual {
-    order: -1;
-    min-height: 16rem;
-  }
-
-  .alimentacion-cards {
     grid-template-columns: 1fr;
   }
 }
