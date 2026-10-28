@@ -119,7 +119,7 @@ export const PrivacidadPage: React.FC<PrivacidadPageProps> = ({ onNavigate }) =>
           <div className="privacidad__principio">
             <span className="privacidad__principio-titulo">Sin rastreo publicitario</span>
             <p className="privacidad__principio-texto">
-              Sin Google Analytics, sin Meta Pixel, sin cookies comerciales.
+              Sin publicidad, sin píxeles de redes sociales, sin mapas de calor ni etiquetas de seguimiento de comportamiento. Google Analytics se usa solo con tu consentimiento explícito y solo para medir páginas visitadas, de forma agregada y anónima.
             </p>
           </div>
           <div className="privacidad__principio">
@@ -558,10 +558,10 @@ export const PrivacidadPage: React.FC<PrivacidadPageProps> = ({ onNavigate }) =>
 
           <h3>7.2 Analítica y publicidad</h3>
           <p>
-            <strong>FitCasa no incorpora ninguna herramienta de analítica, publicidad ni
-            seguimiento de comportamiento.</strong> No hay Google Analytics, Plausible,
-            Umami, Matomo, Hotjar, Mixpanel, Segment ni Sentry, ni ningún servicio
-            equivalente. Tampoco hay píxeles, mapas de calor ni etiquetas de terceros.
+            FitCasa puede utilizar <strong>Google Analytics 4 (GA4)</strong> para medir de forma agregada y anónima qué páginas visitan las personas. El uso de Google Analytics requiere tu consentimiento explícito: no se activa hasta que marcas la casilla de consentimiento de analítica. Si no lo das, no se envía ningún dato a Google Analytics.
+          </p>
+          <p>
+            FitCasa no incorpora publicidad, píxeles de redes sociales, mapas de calor ni etiquetas de seguimiento de comportamiento. Los únicos datos que se envían a Google Analytics son la ruta de la página visitada y su título; nunca se envían respuestas de cuestionarios, registros del panel, datos de salud ni información personal.
           </p>
 
           <h3>7.3 Servicios de terceros incrustados</h3>

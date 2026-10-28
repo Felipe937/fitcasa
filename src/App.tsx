@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Header, PageRoute } from './components/Header';
 import { Footer } from './components/Footer';
 import { TopDisclaimer } from './components/TopDisclaimer';
@@ -25,12 +25,106 @@ import { CuerpoYSaludPage } from './pages/CuerpoYSaludPage';
 import { AlimentacionPage } from './pages/AlimentacionPage';
 import { articulosNoticias } from './data/noticias';
 import { NavigationAssistant } from './components/NavigationAssistant';
+import { initGA4, pageView, disableGA4, hasAnalyticsConsent } from './utils/ga4';
 
 /**
  * Rutas cuyo uso guarda datos introducidos por la persona. Requieren una
  * decisión registrada y vigente; el resto del sitio es público.
  */
 const PROTECTED_ROUTES: ProtectedRoute[] = ['panel', 'quiz', 'plan'];
+
+/** URL base del sitio publicado para canonical y Open Graph. */
+const BASE_URL = 'https://fitcasa.fv143962.workers.dev';
+
+/** Descripciones meta específicas por página pública. */
+const DESCRIPTIONS: Record<PageRoute, string> = {
+  inicio: 'FitCasa: ejercicio en casa, rutinas guiadas, biblioteca de ejercicios y guía educativa sobre escoliosis y bienestar.',
+  ejercicios: 'Biblioteca de ejercicios para hacer en casa: movilidad, fuerza y cuidado postural con orientación educativa y sin equipo especializado.',
+  'guided-session': 'Sesión guiada de ejercicio con temporizador y orientación de duración para practicar en casa.',
+  quiz: 'Cuestionario de sugerencias de actividad física para obtener un plan de ejercicio personalizado según tus objetivos y disponibilidad.',
+  panel: 'Panel de seguimiento personal para registrar actividad física, molestias y bienestar.',
+  plan: 'Mi Plan de Actividad de 4 semanas: rutina semanal personalizada de ejercicio en casa.',
+  apoya: 'Apoya a FitCasa: descubre cómo contribuir al proyecto educativo de ejercicio y escoliosis.',
+  'pausas-activas': 'Pausas activas y descansos ergonómicos: ejercicios breves de movimiento para hacer durante la jornada.',
+  escoliosis: 'Guía educativa sobre escoliosis: qué es, tipos, papel del ejercicio y señales de alerta. No sustituye la evaluación médica.',
+  actualidad: 'Actualidad y evidencia científica sobre escoliosis: artículos revisados con fuentes verificables.',
+  privacidad: 'Política de privacidad de FitCasa: qué información se guarda, dónde y cómo ejercer tus derechos.',
+  terminos: 'Términos y condiciones de uso de FitCasa: naturaleza del servicio, exención de responsabilidad y canal de contacto.',
+  'salud-indicadores': 'Cuerpo, movimiento y salud: educación sobre indicadores como el IMC, sus limitaciones y cuándo consultar a un profesional.',
+  'cuerpo-y-salud': 'Cuerpo y salud: educación sobre indicadores de salud, movimiento sin meta de peso y cuándo buscar orientación profesional.',
+  'alimentacion': 'Alimentación y bienestar: información general sobre hábitos alimenticios saludables y nutrientes para la salud ósea.',
+};
+
+/** Rutas canónicas por página pública (sin fragmento de hash). */
+const CANONICAL_PATHS: Record<PageRoute, string> = {
+  inicio: '/',
+  ejercicios: '/ejercicios',
+  'guided-session': '/guided-session',
+  quiz: '/quiz',
+  panel: '/panel',
+  plan: '/plan',
+  apoya: '/apoya',
+  'pausas-activas': '/pausas-activas',
+  escoliosis: '/escoliosis',
+  actualidad: '/actualidad',
+  privacidad: '/privacidad',
+  terminos: '/terminos',
+  'salud-indicadores': '/salud-indicadores',
+  'cuerpo-y-salud': '/cuerpo-y-salud',
+  'alimentacion': '/alimentacion',
+};
+
+/** Actualiza etiquetas meta, canonical y Open Graph según la página actual. */
+function updateMetaTags(page: PageRoute): void {
+  const title = document.title;
+  const description = DESCRIPTIONS[page] || DESCRIPTIONS.inicio;
+  const canonical = CANONICAL_PATHS[page] || CANONICAL_PATHS.inicio;
+
+  // Meta description
+  let metaDesc = document.querySelector('meta[name="description"]');
+  if (!metaDesc) {
+    metaDesc = document.createElement('meta');
+    metaDesc.setAttribute('name', 'description');
+    document.head.appendChild(metaDesc);
+  }
+  metaDesc.setAttribute('content', description);
+
+  // Canonical
+  let linkCanonical = document.querySelector('link[rel="canonical"]');
+  if (!linkCanonical) {
+    linkCanonical = document.createElement('link');
+    linkCanonical.setAttribute('rel', 'canonical');
+    document.head.appendChild(linkCanonical);
+  }
+  linkCanonical.setAttribute('href', BASE_URL + canonical);
+
+  // Open Graph title
+  let ogTitle = document.querySelector('meta[property="og:title"]');
+  if (!ogTitle) {
+    ogTitle = document.createElement('meta');
+    ogTitle.setAttribute('property', 'og:title');
+    document.head.appendChild(ogTitle);
+  }
+  ogTitle.setAttribute('content', title);
+
+  // Open Graph description
+  let ogDesc = document.querySelector('meta[property="og:description"]');
+  if (!ogDesc) {
+    ogDesc = document.createElement('meta');
+    ogDesc.setAttribute('property', 'og:description');
+    document.head.appendChild(ogDesc);
+  }
+  ogDesc.setAttribute('content', description);
+
+  // Open Graph URL
+  let ogUrl = document.querySelector('meta[property="og:url"]');
+  if (!ogUrl) {
+    ogUrl = document.createElement('meta');
+    ogUrl.setAttribute('property', 'og:url');
+    document.head.appendChild(ogUrl);
+  }
+  ogUrl.setAttribute('content', BASE_URL + canonical);
+}
 
 function getRouteFromUrl(): { page: PageRoute; sectionId?: string } {
   const hash = window.location.hash.replace('#', '').toLowerCase();
@@ -90,6 +184,7 @@ export const App: React.FC = () => {
   // Registro vigente, o `null` si no hay decisión, está corrupto o quedó
   // desactualizado respecto a la versión actual de los documentos.
   const [registry, setRegistry] = useState<ConsentRegistry | null>(() => loadRegistry());
+  const ga4Initialized = useRef(false);
 
   /** Vuelve a leer el registro: por ejemplo tras borrar los datos del sitio. */
   const refreshConsent = useCallback(() => setRegistry(loadRegistry()), []);
@@ -116,6 +211,26 @@ export const App: React.FC = () => {
     };
   }, [refreshConsent]);
 
+  /** Inicializa GA4 solo si hay consentimiento de analítica; lo desactiva si se revoca. */
+  useEffect(() => {
+    if (!hasAnalyticsConsent(registry)) {
+      disableGA4();
+      ga4Initialized.current = false;
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      if (ga4Initialized.current || cancelled) return;
+      await initGA4();
+      if (cancelled) return;
+      ga4Initialized.current = true;
+      pageView(window.location.pathname + window.location.hash, document.title);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [registry]);
+
   useEffect(() => {
     const titles: Record<PageRoute, string> = {
       inicio: 'FitCasa | Ejercicio en casa y rutinas guiadas',
@@ -135,7 +250,11 @@ export const App: React.FC = () => {
       'alimentacion': 'FitCasa – Alimentación y bienestar',
     };
     document.title = titles[currentPage] || titles.inicio;
-  }, [currentPage]);
+    updateMetaTags(currentPage);
+    if (ga4Initialized.current && hasAnalyticsConsent(registry)) {
+      pageView(window.location.pathname + window.location.hash, document.title);
+    }
+  }, [currentPage, registry]);
 
   const handleNavigate = (page: PageRoute, sectionId?: string) => {
     setCurrentPage(page);

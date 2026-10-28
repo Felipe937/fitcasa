@@ -69,7 +69,7 @@ FitCasa guarda en tu navegador **solo lo que tú escribes o eliges**. La aplicac
 no pide nombre, correo electrónico, teléfono, documento de identidad, dirección
 postal ni ubicación.
 
-El proyecto usa dos claves de almacenamiento local:
+El proyecto usa tres claves de almacenamiento local:
 
 ### 3.1 Cuestionario de sugerencias — clave `fitcasa.quiz.v1`
 
@@ -105,6 +105,23 @@ Guarda una lista de registros. Cada registro contiene:
 | Ejercicio vinculado | identificador, opcional | Referencia a un ejercicio de la biblioteca |
 
 El dolor que anotas es una **percepción subjetiva**, no una medición diagnóstica.
+
+### 3.3 Registro de decisiones legales — clave `fitcasa.consent.v2`
+
+Guarda las decisiones que tomas al acceder a funciones protegidas (cuestionario
+de sugerencias, panel de seguimiento y plan de actividad). Contiene:
+
+| Dato | Tipo | Qué es |
+| --- | --- | --- |
+| Términos de Uso | decisión | Si aceptaste los Términos, con versión y fecha |
+| Política de Privacidad | decisión | Si aceptaste la política, con versión y fecha |
+| Datos de salud | decisión | Si autorizas guardar tu percepción de dolor y notas de bienestar (opcional) |
+| Analítica (GA4) | decisión | Si consientes medición anónima de uso con Google Analytics 4 (opcional) |
+| Fecha y hora | texto ISO | Cuándo se tomó cada decisión |
+
+Esta decisión se registra en el almacenamiento local de tu navegador, que no está
+cifrado y que puedes editar o borrar cuando quieras. Es una trazabilidad personal;
+no es un documento firmado ni una prueba fehaciente frente a un tercero.
 
 ---
 
@@ -214,10 +231,17 @@ cookies propias ni de terceros.
 
 ### 7.2 Analítica y publicidad
 
-**FitCasa no incorpora ninguna herramienta de analítica, publicidad ni seguimiento
-de comportamiento.** No hay Google Analytics, Plausible, Umami, Matomo, Hotjar,
-Mixpanel, Segment ni Sentry, ni ningún servicio equivalente. Tampoco hay píxeles,
-mapas de calor ni etiquetas de terceros.
+FitCasa puede utilizar **Google Analytics 4 (GA4)** para medir de forma agregada
+y anónima qué páginas visitan las personas. El uso de Google Analytics requiere
+tu consentimiento explícito: no se activa hasta que marcas la casilla de
+consentimiento de analítica. Si no lo das, no se envía ningún dato a Google
+Analytics.
+
+FitCasa no incorpora publicidad, píxeles de redes sociales, mapas de calor ni
+etiquetas de seguimiento de comportamiento. Los únicos datos que se envían a
+Google Analytics son la ruta de la página visitada y su título; nunca se envían
+respuestas de cuestionarios, registros del panel, datos de salud ni información
+personal.
 
 ### 7.3 Servicios de terceros incrustados
 

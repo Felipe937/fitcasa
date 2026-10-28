@@ -111,6 +111,8 @@ export interface QuizResult {
 export const DOC_VERSIONS = {
   terminos: '2026-10-16',
   privacidad: '2026-10-16',
+  /** Primera versión del consentimiento de analítica (GA4). */
+  analytics: '2026-10-27',
 } as const;
 
 /** Finalidad declarada de la autorización sobre datos de salud. */
@@ -132,6 +134,8 @@ export interface ConsentRegistry {
   privacy: Decision<(typeof DOC_VERSIONS)['privacidad']>;
   /** Autorización separada para los datos de salud, con su finalidad. */
   health: Decision & { purpose: string };
+  /** Consentimiento de analítica (GA4). Opcional: si no está presente, no se mide. */
+  analytics?: Decision<(typeof DOC_VERSIONS)['analytics']>;
   /** Última modificación del registro. */
   updatedAt: string;
 }

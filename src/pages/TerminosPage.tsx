@@ -597,18 +597,26 @@ export const TerminosPage: React.FC<TerminosPageProps> = ({ onNavigate }) => {
               <h3>3.3. Arquitectura local-first: lo que no ocurre</h3>
               <div className="terminos__destacado">
                 <p>
-                  FitCasa <strong>no tiene servidor de backend</strong> que reciba datos:
-                  la aplicación no realiza peticiones de red para transmitir lo que el
-                  usuario escribe.
+                  FitCasa <strong>no tiene servidor de backend</strong> que reciba
+                  datos: la aplicación no realiza peticiones de red para transmitir
+                  lo que el usuario escribe.
                 </p>
                 <p>
-                  FitCasa <strong>no incorpora telemetría, analítica, publicidad ni
-                  scripts de terceros</strong>: ni Google Analytics, Plausible, Umami,
-                  Matomo, Hotjar, Mixpanel, Segment, Sentry ni servicios equivalentes.
+                  FitCasa puede utilizar <strong>Google Analytics 4 (GA4)</strong>
+                  para medir de forma agregada y anónima qué páginas visitan las
+                  personas. El uso de Google Analytics requiere tu consentimiento
+                  explícito: no se activa hasta que marcas la casilla de consentimiento
+                  de analítica. Si no lo das, no se envía ningún dato a Google
+                  Analytics.
                 </p>
                 <p>
-                  FitCasa <strong>no traslada ningún dato a los autores del proyecto</strong>.
-                  Quien mantiene FitCasa no tiene acceso a lo que el usuario registra.
+                  FitCasa no incorpora publicidad, píxeles de redes sociales, mapas de
+                  calor ni etiquetas de seguimiento de comportamiento.
+                </p>
+                <p>
+                  FitCasa <strong>no traslada ningún dato a los autores del
+                  proyecto</strong>. Quien mantiene FitCasa no tiene acceso a lo que el
+                  usuario registra.
                 </p>
               </div>
               <p>

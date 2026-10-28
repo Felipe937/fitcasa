@@ -45,11 +45,14 @@ export function parseRegistry(data: unknown): ConsentRegistry | null {
   if (!isDecision(r.health, DOC_VERSIONS.terminos, false)) return null;
   if (typeof r.health?.purpose !== 'string' || r.health.purpose !== HEALTH_DATA_PURPOSE) return null;
   if (typeof r.updatedAt !== 'string' || Number.isNaN(Date.parse(r.updatedAt))) return null;
+  // Analítica es opcional: si está presente, debe ser una decisión válida.
+  if (r.analytics !== undefined && !isDecision(r.analytics, DOC_VERSIONS.analytics, false)) return null;
 
   return {
     terms: r.terms,
     privacy: r.privacy,
     health: { ...r.health, purpose: r.health.purpose },
+    analytics: r.analytics,
     updatedAt: r.updatedAt,
   };
 }
@@ -79,11 +82,12 @@ export function loadRegistryState(): { present: boolean; registry: ConsentRegist
 /** Documentos que necesitan una decisión nueva respecto a lo ya registrado. */
 export function pendingDecisions(
   current: ConsentRegistry | null
-): { terms: boolean; privacy: boolean; health: boolean } {
+): { terms: boolean; privacy: boolean; health: boolean; analytics: boolean } {
   return {
     terms: !current || !isDecision(current.terms, DOC_VERSIONS.terminos, true),
     privacy: !current || !isDecision(current.privacy, DOC_VERSIONS.privacidad, true),
     health: !current || !isDecision(current.health, DOC_VERSIONS.terminos, false),
+    analytics: !current || !isDecision(current.analytics, DOC_VERSIONS.analytics, false),
   };
 }
 
@@ -131,6 +135,7 @@ export const ConsentGuard: React.FC<ConsentGuardProps> = ({
   const [terms, setTerms] = React.useState<boolean>(false);
   const [privacy, setPrivacy] = React.useState<boolean>(false);
   const [health, setHealth] = React.useState<boolean>(false);
+  const [analytics, setAnalytics] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string>('');
 
   const titulo = TITULOS[route];
@@ -154,6 +159,7 @@ export const ConsentGuard: React.FC<ConsentGuardProps> = ({
   if (pending.terms) changed.push('Términos de Uso');
   if (pending.privacy) changed.push('Política de Privacidad');
   if (pending.health) changed.push('autorización sobre tus datos de salud');
+  if (pending.analytics) changed.push('consentimiento de analítica');
 
   const completo = terms && privacy;
 
@@ -180,6 +186,11 @@ export const ConsentGuard: React.FC<ConsentGuardProps> = ({
         docVersion: DOC_VERSIONS.terminos,
         purpose: HEALTH_DATA_PURPOSE,
       },
+      analytics: {
+        accepted: analytics,
+        at: ahora,
+        docVersion: DOC_VERSIONS.analytics,
+      },
       updatedAt: ahora,
     };
 
@@ -205,8 +216,12 @@ export const ConsentGuard: React.FC<ConsentGuardProps> = ({
         los Términos de Uso y la Política de Privacidad. La autorización para
         guardar tus datos de salud es opcional: si no la marcas, podrás usar la
         función pero no se guardarán tus notas de bienestar ni tu percepción de
-        dolor. Todo lo que anotes se guarda en este navegador, no sale de tu
-        dispositivo y FitCasa no lo envía a ningún servidor.
+        dolor. El consentimiento de analítica es opcional: si lo marcas, FitCasa
+        enviará datos anónimos de uso (páginas visitadas) a Google Analytics;
+        no se envían respuestas de cuestionario, ni registros del panel, ni
+        datos de salud ni información personal. Todo lo que anotes se guarda en
+        este navegador, no sale de tu dispositivo y FitCasa no lo envía a ningún
+        servidor.
       </p>
 
       {motivo === 'updated' && (
@@ -317,6 +332,45 @@ export const ConsentGuard: React.FC<ConsentGuardProps> = ({
             Es una autorización separada de haber leído la Política. Puedes retirar tu
             aceptación en cualquier momento desde «Privacidad y borrado» del panel, y eso
             no borra por sí solo lo que ya habías escrito.
+          </p>
+        </div>
+
+        <div className={`consent-guard__bloque consent-guard__bloque--analitica ${analytics ? 'consent-guard__bloque--marcado' : ''}`}>
+          <p className="consent-guard__autorizacion-titulo">
+            <IconoInfo />
+            Medición anónima de uso con Google Analytics
+          </p>
+          <p className="consent-guard__proposito">
+            <strong>Finalidad:</strong> entender qué páginas de FitCasa visitan las
+            personas, de forma agregada y anónima, para mejorar el sitio. No se
+            envían respuestas de cuestionarios, ni registros del panel, ni datos
+            de salud, ni información personal.
+          </p>
+          <label className="consent-guard__casilla">
+            <input
+              type="checkbox"
+              id="guard-analytics"
+              checked={analytics}
+              aria-describedby="guard-analytics-note"
+              onChange={(e) => {
+                setAnalytics(e.target.checked);
+                if (e.target.checked) setError('');
+              }}
+            />
+            <span>
+              Permitir que FitCasa envíe datos anónimos de uso a Google Analytics
+              <span className="consent-guard__obligatorio">(opcional)</span>
+            </span>
+            {analytics && (
+              <svg className="consent-guard__estado" viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12" fill="none" stroke="var(--color-sobre-primario)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            )}
+          </label>
+          <p id="guard-analytics-note" className="consent-guard__nota">
+            Puedes retirar este consentimiento en cualquier momento borrando el
+            almacenamiento local desde «Privacidad y borrado» del panel, o desde
+            los ajustes de tu navegador.
           </p>
         </div>
 

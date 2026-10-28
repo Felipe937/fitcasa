@@ -190,9 +190,12 @@ Comercio.]`
 3.3.1. FitCasa **no tiene servidor de backend** que reciba datos. La aplicación no
 realiza peticiones de red para transmitir lo que el usuario escribe.
 
-3.3.2. FitCasa **no incorpora telemetría, analítica, publicidad ni scripts de
-terceros**. No hay Google Analytics, Plausible, Umami, Matomo, Hotjar, Mixpanel,
-Segment, Sentry ni servicios equivalentes, ni píxeles ni etiquetas de terceros.
+3.3.2. FitCasa puede utilizar **Google Analytics 4 (GA4)** para medir de forma
+agregada y anónima qué páginas visitan las personas. El uso de Google Analytics
+requiere tu consentimiento explícito: no se activa hasta que marcas la casilla de
+consentimiento de analítica. Si no lo das, no se envía ningún dato a Google
+Analytics. FitCasa no incorpora publicidad, píxeles de redes sociales, mapas de
+calor ni etiquetas de seguimiento de comportamiento.
 
 3.3.3. FitCasa **no traslada** ningún dato a los autores del proyecto, ni a
 terceros mediante la aplicación. El autor del proyecto, por tanto, **no tiene
