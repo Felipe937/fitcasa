@@ -38,21 +38,21 @@ const BASE_URL = 'https://fitcasa.fv143962.workers.dev';
 
 /** Descripciones meta específicas por página pública. */
 const DESCRIPTIONS: Record<PageRoute, string> = {
-  inicio: 'FitCasa: ejercicio en casa, rutinas guiadas, biblioteca de ejercicios y guía educativa sobre escoliosis y bienestar.',
-  ejercicios: 'Biblioteca de ejercicios para hacer en casa: movilidad, fuerza y cuidado postural con orientación educativa y sin equipo especializado.',
+  inicio: 'Plataforma educativa de ejercicio en casa. Biblioteca de movimientos, orientación postural y seguimiento personal. Sin suscripción.',
+  ejercicios: 'Biblioteca de 20 ejercicios para casa con filtros por dificultad, duración y zona corporal. Información educativa general.',
   'guided-session': 'Sesión guiada de ejercicio con temporizador y orientación de duración para practicar en casa.',
   quiz: 'Cuestionario de sugerencias de actividad física para obtener un plan de ejercicio personalizado según tus objetivos y disponibilidad.',
   panel: 'Panel de seguimiento personal para registrar actividad física, molestias y bienestar.',
   plan: 'Mi Plan de Actividad de 4 semanas: rutina semanal personalizada de ejercicio en casa.',
-  apoya: 'Apoya a FitCasa: descubre cómo contribuir al proyecto educativo de ejercicio y escoliosis.',
-  'pausas-activas': 'Pausas activas y descansos ergonómicos: ejercicios breves de movimiento para hacer durante la jornada.',
-  escoliosis: 'Guía educativa sobre escoliosis: qué es, tipos, papel del ejercicio y señales de alerta. No sustituye la evaluación médica.',
-  actualidad: 'Actualidad y evidencia científica sobre escoliosis: artículos revisados con fuentes verificables.',
-  privacidad: 'Política de privacidad de FitCasa: qué información se guarda, dónde y cómo ejercer tus derechos.',
-  terminos: 'Términos y condiciones de uso de FitCasa: naturaleza del servicio, exención de responsabilidad y canal de contacto.',
-  'salud-indicadores': 'Cuerpo, movimiento y salud: educación sobre indicadores como el IMC, sus limitaciones y cuándo consultar a un profesional.',
-  'cuerpo-y-salud': 'Cuerpo y salud: educación sobre indicadores de salud, movimiento sin meta de peso y cuándo buscar orientación profesional.',
-  'alimentacion': 'Alimentación y bienestar: información general sobre hábitos alimenticios saludables y nutrientes para la salud ósea.',
+  apoya: 'Apoya el proyecto FitCasa con un apoyo voluntario o explorando los productos recomendados.',
+  'pausas-activas': 'Pausas de movimiento breves para el trabajo o estudio en casa. Temporizador incluido.',
+  escoliosis: 'Guía educativa sobre escoliosis: tipos, papel del ejercicio, evidencia disponible y señales de alarma. No sustituye valoración profesional.',
+  actualidad: 'Artículo de divulgación científica sobre escoliosis y actividad física. Fuentes citadas.',
+  privacidad: 'Política de privacidad de FitCasa: datos almacenados localmente, derechos y cómo ejercerlos.',
+  terminos: 'Términos de uso de FitCasa: carácter educativo, alcance del contenido y condiciones de uso.',
+  'salud-indicadores': 'Indicadores de salud y movimiento: qué miden y qué no. Guía educativa sin datos personales.',
+  'cuerpo-y-salud': 'Qué es el IMC, sus limitaciones y por qué el bienestar va más allá de un número. Contenido educativo.',
+  'alimentacion': 'Información educativa general sobre grupos de alimentos, nutrientes y hábitos. Sin dietas ni prescripciones.',
 };
 
 /** Rutas canónicas por página pública (sin fragmento de hash). */
@@ -250,6 +250,27 @@ export const App: React.FC = () => {
       'alimentacion': 'FitCasa – Alimentación y bienestar',
     };
     document.title = titles[currentPage] || titles.inicio;
+
+    // Set meta tags using setMeta pattern
+    const setMeta = (name: string, content: string, property = false) => {
+      const selector = property ? `meta[property="${name}"]` : `meta[name="${name}"]`;
+      let el = document.querySelector(selector) as HTMLMetaElement | null;
+      if (!el) { el = document.createElement('meta'); if (property) el.setAttribute('property', name); else el.name = name; document.head.appendChild(el); }
+      el.content = content;
+    };
+
+    setMeta('description', DESCRIPTIONS[currentPage] || DESCRIPTIONS.inicio);
+    setMeta('og:title', titles[currentPage] || titles.inicio, true);
+    setMeta('og:description', DESCRIPTIONS[currentPage] || DESCRIPTIONS.inicio);
+
+    // Add noindex for protected pages (quiz, plan, panel, guided-session)
+    const isProtectedPage = ['quiz', 'plan', 'panel', 'guided-session'].includes(currentPage);
+    if (isProtectedPage) {
+      let robots = document.querySelector('meta[name="robots"]') as HTMLMetaElement | null;
+      if (!robots) { robots = document.createElement('meta'); robots.name = 'robots'; document.head.appendChild(robots); }
+      robots.content = 'noindex';
+    }
+
     updateMetaTags(currentPage);
     if (ga4Initialized.current && hasAnalyticsConsent(registry)) {
       pageView(window.location.pathname + window.location.hash, document.title);
