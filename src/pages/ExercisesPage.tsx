@@ -547,6 +547,15 @@ export const ExercisesPage: React.FC = () => {
     return { total: EXERCISES_DATA.length, conVideo, categorias };
   }, []);
 
+// Contadores derivados de los ejercicios que coinciden con los filtros activos.
+  const filteredMetricas = useMemo(() => {
+    const conVideo = filteredExercises.filter((ex) => getExerciseVideo(ex.id).hasVideo).length;
+    const categorias = new Set(
+      filteredExercises.map((ex) => ex.category).filter((c): c is ExerciseCategory => Boolean(c)),
+    ).size;
+    return { total: filteredExercises.length, conVideo, categorias };
+  }, [searchTerm, selectedDuration, selectedDifficulty, selectedEquipment, selectedZone, selectedCategory, orderSelect]);
+
   // Available options
   const availableOptions = useMemo(() => {
     const duration = new Set<string>();
@@ -719,17 +728,17 @@ export const ExercisesPage: React.FC = () => {
             {/* Métrica viva calculada de datos reales */}
             <div className="exercise-hero__stats">
               <div className="exercise-hero__stat-item">
-                <span className="exercise-hero__stat-num">{metricas.total}</span>
+                <span className="exercise-hero__stat-num">{filteredMetricas.total}</span>
                 <span className="exercise-hero__stat-label">ejercicios en el catálogo</span>
               </div>
               <div className="exercise-hero__stat-divisor" aria-hidden="true" />
               <div className="exercise-hero__stat-item">
-                <span className="exercise-hero__stat-num">{metricas.conVideo}</span>
+                <span className="exercise-hero__stat-num">{filteredMetricas.conVideo}</span>
                 <span className="exercise-hero__stat-label">con vídeo de demostración</span>
               </div>
               <div className="exercise-hero__stat-divisor" aria-hidden="true" />
               <div className="exercise-hero__stat-item">
-                <span className="exercise-hero__stat-num">{metricas.categorias}</span>
+                <span className="exercise-hero__stat-num">{filteredMetricas.categorias}</span>
                 <span className="exercise-hero__stat-label">categorías con ejercicios</span>
               </div>
             </div>
