@@ -76,7 +76,13 @@ export const EXERCISE_VIDEOS: Record<string, ExerciseVideoAsset> = {
   e15: pendiente('e15'),
   e16: pendiente('e16'),
   e17: pendiente('e17'),
-  e18: pendiente('e18'),
+  e18: {
+    id: 'e18',
+    hasVideo: true,
+    src: '/videos/e18.mp4',
+    poster: '/posters/e18.svg',
+    durationText: 'Clip corto',
+  },
   e19: {
     id: 'e19',
     hasVideo: true,
