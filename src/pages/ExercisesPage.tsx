@@ -538,16 +538,7 @@ export const ExercisesPage: React.FC = () => {
     return counts;
   }, []);
 
-  // Métricas del hero: se calculan con los datos reales del catálogo.
-  const metricas = useMemo(() => {
-    const conVideo = EXERCISES_DATA.filter((ex) => getExerciseVideo(ex.id).hasVideo).length;
-    const categorias = new Set(
-      EXERCISES_DATA.map((ex) => ex.category).filter((c): c is ExerciseCategory => Boolean(c)),
-    ).size;
-    return { total: EXERCISES_DATA.length, conVideo, categorias };
-  }, []);
-
-// Contadores derivados de los ejercicios que coinciden con los filtros activos.
+  // Contadores derivados de los ejercicios que coinciden con los filtros activos.
   const filteredMetricas = useMemo(() => {
     const conVideo = filteredExercises.filter((ex) => getExerciseVideo(ex.id).hasVideo).length;
     const categorias = new Set(
