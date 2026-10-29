@@ -22,6 +22,24 @@ export const AlimentacionPage: React.FC<AlimentacionPageProps> = ({ onNavigate }
               Una alimentación variada y equilibrada contribuye al bienestar general.
             </p>
           </div>
+
+          <div className="alimentacion-hero__visual" aria-hidden="true">
+            <svg
+              width={360}
+              height={160}
+              viewBox="0 0 360 160"
+              fill="none"
+            >
+              <g stroke="var(--color-secundario)" strokeWidth={1.5} opacity={0.6}>
+                {/* Forma 1: círculo grande */}
+                <circle cx={90} cy={80} r={50} fill="var(--color-terciario)" opacity={0.4} />
+                {/* Forma 2: elipse mediana */}
+                <ellipse cx={200} cy={60} rx={80} ry={40} fill="var(--color-secundario)" opacity={0.3} />
+                {/* Forma 3: hexágono suave */}
+                <path d="M250 80 L 290 30 L 330 30 L 350 80 L 330 130 L 290 130 Z" fill="var(--color-terciario)" opacity={0.5} />
+                {/* Forma 4: círculo pequeño */}
+                <circle cx={320} cy={120} r={20} fill="none" />
+          </div>
         </div>
       </section>
       <div className="container alimentacion-contenido">
