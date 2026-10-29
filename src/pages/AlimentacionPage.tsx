@@ -39,6 +39,8 @@ export const AlimentacionPage: React.FC<AlimentacionPageProps> = ({ onNavigate }
                 <path d="M250 80 L 290 30 L 330 30 L 350 80 L 330 130 L 290 130 Z" fill="var(--color-terciario)" opacity={0.5} />
                 {/* Forma 4: círculo pequeño */}
                 <circle cx={320} cy={120} r={20} fill="none" />
+              </g>
+            </svg>
           </div>
         </div>
       </section>
