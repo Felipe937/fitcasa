@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { PageRoute } from '../components/Header';
 
 import { VisualAsociacion } from '../components/VisualAsociacion';
@@ -6,24 +6,27 @@ import { ArticuloCientifico, articulosNoticias } from '../data/noticias';
 
 interface ActualidadPageProps {
   onNavigate: (page: PageRoute, sectionId?: string) => void;
-  articulo: ArticuloCientifico;
+  articulo?: ArticuloCientifico;
 }
 
 export const ActualidadPage: React.FC<ActualidadPageProps> = ({ articulo, onNavigate }) => {
+  const [articulos, setArticulos] = useState<ArticuloCientifico[]>(articulosNoticias);
   const [indice, setIndice] = useState<number>(() => {
     const hash = window.location.hash;
     const match = hash.match(/actualidad\/(genetica|ejercicio)/);
     if (match) {
       return match[1] === 'genetica' ? 0 : 1;
     }
+    if (articulo) {
+      const found = articulosNoticias.findIndex((a) => a.id === articulo.id);
+      if (found !== -1) return found;
+    }
     return 0;
   });
-  const [articulos, setArticulos] = useState<ArticuloCientifico[]>(articulosNoticias);
   const pageRef = useRef<HTMLElement>(null);
   const railRef = useRef<HTMLElement>(null);
 
-  const articuloActual = articulos[indice];
-  const { articulo } = this.props; // Ensure articulo is used if needed
+  const articuloActual: ArticuloCientifico = articulos[indice] || articulo || articulos[0];
   const isActive = (id: string) => articulos.findIndex((a) => a.id === id) === indice;
 
   const cambiarArticulo = (id: string) => {
