@@ -23,6 +23,7 @@ export const ActualidadPage: React.FC<ActualidadPageProps> = ({ articulo, onNavi
   const railRef = useRef<HTMLElement>(null);
 
   const articuloActual = articulos[indice];
+  const { articulo } = this.props; // Ensure articulo is used if needed
   const isActive = (id: string) => articulos.findIndex((a) => a.id === id) === indice;
 
   const cambiarArticulo = (id: string) => {
@@ -88,7 +89,7 @@ export const ActualidadPage: React.FC<ActualidadPageProps> = ({ articulo, onNavi
     const rail = railRef.current;
     if (!rail) return undefined;
     const medir = () => {
-      const disponible = window.innerHeight - OFFSET_RAIL;
+      const disponible = window.innerHeight - 0;
       rail.classList.toggle('actualidad-rail--larga', rail.scrollHeight > disponible);
     };
     medir();
@@ -181,7 +182,7 @@ export const ActualidadPage: React.FC<ActualidadPageProps> = ({ articulo, onNavi
           </div>
           <div className="actualidad-hero__visual" data-reveal="hero-visual">
             {articuloActual.tipo === 'ejercicio' ? (
-              <VisualEsferaEjercicio />
+              <VisualAsociacion />
             ) : (
               <VisualAsociacion />
             )}
