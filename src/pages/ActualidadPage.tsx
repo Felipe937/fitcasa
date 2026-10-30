@@ -26,7 +26,9 @@ export const ActualidadPage: React.FC<ActualidadPageProps> = ({ articulo, onNavi
   const pageRef = useRef<HTMLElement>(null);
   const railRef = useRef<HTMLElement>(null);
 
-  const articuloActual: ArticuloCientifico = articulos[indice] || articulo || articulos[0];
+  const articuloActual: ArticuloCientifico | undefined =
+    articulos[indice] ?? articulo ?? articulos[0] ?? articulosNoticias[0];
+
   const isActive = (id: string) => articulos.findIndex((a) => a.id === id) === indice;
 
   const cambiarArticulo = (id: string) => {
@@ -38,14 +40,12 @@ export const ActualidadPage: React.FC<ActualidadPageProps> = ({ articulo, onNavi
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const fuentes = articuloActual.enlaces;
-
   // La clase de movimiento se aplica antes del primer pintado.
   useLayoutEffect(() => {
     pageRef.current?.classList.add('motion-ready');
   }, []);
 
-  // RevelaciÃ³n progresiva de secciones.
+  // Revelación progresiva de secciones.
   useEffect(() => {
     const page = pageRef.current;
     if (!page) return undefined;
@@ -104,6 +104,28 @@ export const ActualidadPage: React.FC<ActualidadPageProps> = ({ articulo, onNavi
       observador.disconnect();
     };
   }, []);
+
+  if (!articuloActual) {
+    return (
+      <main id="contenido" ref={pageRef} tabIndex={-1} className="actualidad-page container">
+        <nav aria-label="Miga de pan" className="actualidad-miga">
+          <a
+            href="#inicio"
+            className="actualidad-breadcrumb-link"
+            onClick={(e) => {
+              e.preventDefault();
+              onNavigate('inicio');
+            }}
+          >
+            <span aria-hidden="true">&#8592;</span>
+            Volver al inicio
+          </a>
+        </nav>
+        <p>No se encontró el artículo solicitado.</p>
+      </main>
+    );
+  }
+  const fuentes = articuloActual.enlaces;
 
   return (
     <main id="contenido" ref={pageRef} tabIndex={-1} className="actualidad-page container">
