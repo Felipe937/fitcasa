@@ -174,6 +174,79 @@ main.exercise-main > section {
   height: 100%;
 }
 
+/* --- Fase C: Animaciones del héroe cinemático --- */
+/* taste-skill-ignore: animación continua >5s con botón 'Pausar movimiento' (WCAG 2.2.2) */
+.hero-trazo-principal,
+.hero-trazo-secundario {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.hero-halo {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-trazo-principal {
+    animation: hero-dibujar-principal 1.4s ease-out both;
+  }
+
+  .hero-trazo-secundario {
+    animation: hero-dibujar-secundario 0.9s ease-out both;
+  }
+
+  .hero-halo {
+    animation: hero-halo-drift 30s ease-in-out alternate infinite;
+  }
+}
+
+@keyframes hero-dibujar-principal {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes hero-dibujar-secundario {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes hero-halo-drift {
+  from { transform: scale(1); }
+  to { transform: scale(1.03); }
+}
+
+/* Botón de pausa de movimiento continuo */
+.hero-movimiento__pausa {
+  --btn-ancho: max-content;
+  position: absolute;
+  top: var(--espacio-2);
+  right: var(--espacio-2);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-texto-suave);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+  cursor: pointer;
+  transition: color var(--duracion-corta) ease,
+              background-color var(--duracion-corta) ease,
+              border-color var(--duracion-corta) ease;
+}
+
+.hero-movimiento__pausa:hover {
+  color: var(--color-sobre-primario);
+  background: var(--color-primario-oscuro);
+  border-color: var(--color-primario);
+}
+
+.hero-movimiento__pausa:focus-visible {
+  outline: 2px solid var(--color-foco);
+  outline-offset: 2px;
+}
+
 /* ==========================================================================
    GUÍA CLÍNICA TRANSPARENTE (<details className="catalogo">)
    ========================================================================== */
@@ -746,8 +819,12 @@ main.exercise-main > section {
   gap: clamp(var(--espacio-4), 3vw, var(--espacio-6));
   grid-template-columns: 1fr;
   width: 100%;
-  /* Contexto 3D para la inclinación ligera de las tarjetas. */
-  perspective: 70rem;
+  /* Contexto 3D para la inclinación ligera de las tarjetas.
+     28rem (448 px) hace perceptible el tilt ±4°/±5° sin distorsión ni CLS. */
+  perspective: 28rem;
+  /* Altura mínima del grid: evita saltos de layout durante transiciones
+     de salida de tarjetas (Fase E). */
+  min-height: clamp(20rem, 40vw, 26rem);
 }
 
 @media (min-width: 36rem) {
@@ -772,13 +849,17 @@ main.exercise-main > section {
 .exercise-card {
   --card-index: 0;
   /* Profundidad: el puntero fino inclina (--px/--py) y el foco aporta una
-     inclinación fija (--fx/--fy) en táctil y teclado. */
+     inclinación fija (--fx/--fy) en táctil y teclado. --tilt-escala controla
+     la amplitud del tilt (1 = ±4°/±5°, 0.5 = ±2°/±2.5°). --scale permite
+     animaciones de entrada/salida sin conflictos con el transform de tilt. */
   --px: 0deg;
   --py: 0deg;
   --fx: 0deg;
   --fy: 0deg;
   --fz: 0px;
   --lift: 0px;
+  --tilt-escala: 1;
+  --scale: 1;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -787,7 +868,7 @@ main.exercise-main > section {
   border: 1px solid var(--color-borde);
   border-radius: var(--radio-lg);
   overflow: hidden;
-  transform: translateY(var(--lift)) rotateX(calc(var(--px) + var(--fx))) rotateY(calc(var(--py) + var(--fy))) translateZ(var(--fz));
+  transform: translateY(var(--lift)) rotateX(calc((var(--px) + var(--fx)) * var(--tilt-escala))) rotateY(calc((var(--py) + var(--fy)) * var(--tilt-escala))) translateZ(var(--fz)) scale(var(--scale));
   transform-origin: center;
   transition: transform 260ms var(--curva-suave), opacity 260ms var(--curva-suave);
 }
@@ -795,6 +876,89 @@ main.exercise-main > section {
 .exercise-card:hover {
   --lift: -0.25rem;
   border-color: var(--color-secundario);
+}
+
+/* --- Fase D: Tarjeta destacada --- */
+/* taste-skill-ignore: tarjeta destacada con composición horizontal 50/50 (Fase D) */
+.exercise-card--featured {
+  --tilt-escala: 0.5;
+  --scale: 1;
+  grid-column: 1 / -1;
+  background: var(--color-primario-oscuro);
+  color: var(--color-sobre-primario);
+}
+
+@media (min-width: 58rem) {
+  .exercise-card--featured {
+    flex-direction: row;
+  }
+
+  .exercise-card--featured .exercise-media {
+    flex: 0 0 50%;
+    max-width: 50%;
+    aspect-ratio: 1 / 1;
+    min-width: 280px;
+  }
+
+  .exercise-card--featured .exercise-card__contenido {
+    flex: 1;
+    padding: var(--espacio-5);
+  }
+
+  .exercise-card--featured .exercise-media__arte {
+    min-width: 280px;
+    min-height: 280px;
+  }
+
+  .exercise-card--featured .exercise-card__titulo {
+    font-size: clamp(1.4rem, 2.5vw, 2rem);
+  }
+}
+
+@media (max-width: 57.99rem) {
+  .exercise-card--featured .exercise-media {
+    aspect-ratio: 1 / 1;
+    min-height: 280px;
+  }
+
+  .exercise-card--featured .exercise-card__titulo {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+  }
+}
+
+/* --- Fase E: Transición de filtrado (entrada/salida) --- */
+/* taste-skill-ignore: animación de entrada/salida con --scale variable, compatible con transform 3D */
+@media (prefers-reduced-motion: no-preference) {
+  /* Entrada: tarjetas nuevas al aplicar/quitar un filtro */
+  .exercise-grid .exercise-card {
+    animation: card-entrada-filtro 200ms var(--curva-suave) both;
+    animation-delay: min(calc(var(--card-index, 0) * 25ms), 200ms);
+  }
+
+  /* Salida: tarjetas que desaparecen al cambiar filtro */
+  .exercise-card--saliendo {
+    animation: card-salida-filtro 150ms var(--curva-suave) forwards;
+    pointer-events: none;
+    z-index: -1;
+  }
+}
+
+@keyframes card-entrada-filtro {
+  from {
+    --scale: 0.97;
+    opacity: 0;
+  }
+  to {
+    --scale: 1;
+    opacity: 1;
+  }
+}
+
+@keyframes card-salida-filtro {
+  to {
+    --scale: 0.97;
+    opacity: 0;
+  }
 }
 
 /* Alternativa sin puntero: al recibir el foco —con teclado o con el dedo—
@@ -1088,6 +1252,23 @@ main.exercise-main > section {
 
 .poster-art text {
   user-select: none;
+}
+
+/* --- Fase A: Animación de dibujo de trazos del póster --- */
+/* taste-skill-ignore: animación de dibujo SVG requerida por encargo */
+.poster-art__trazo-animado {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .exercise-grid .poster-art__trazo-animado {
+    animation: poster-dibujar-trazo 0.9s var(--curva-suave) both;
+  }
+}
+
+@keyframes poster-dibujar-trazo {
+  to { stroke-dashoffset: 0; }
 }
 
 /* ==========================================================================
@@ -1526,6 +1707,11 @@ main.exercise-main > section {
 
   .exercise-hero__visual,
   .exercise-media__arte,
+  .poster-art__trazo-animado,
+  .hero-trazo-principal,
+  .hero-trazo-secundario,
+  .hero-halo,
+  .hero-movimiento__pausa,
   .exercise-card__cta,
   .exercise-card__cta svg,
   .category-tab,
@@ -1538,6 +1724,20 @@ main.exercise-main > section {
     transform: none !important;
   }
 
+  /* Trazos SVG: sin animación, visibles al 100 % */
+  .poster-art__trazo-animado,
+  .hero-trazo-principal,
+  .hero-trazo-secundario {
+    stroke-dasharray: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+
+  /* Hero halo: sin movimiento continuo */
+  .hero-halo {
+    animation: none !important;
+    transform: none !important;
+  }
+
   #exercise-list.is-visible .exercise-media,
   #exercise-list.is-visible .exercise-card__contenido,
   #exercise-list.is-visible .exercise-card__rotulo,
@@ -1547,6 +1747,7 @@ main.exercise-main > section {
   #exercise-list.is-visible .exercise-meta,
   #exercise-list.is-visible .exercise-tags,
   #exercise-list.is-visible .exercise-card__cta,
+  .exercise-card--saliendo,
   #exercise-dialog[open],
   #exercise-dialog[open]::backdrop {
     animation: none !important;

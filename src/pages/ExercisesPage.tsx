@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+﻿import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { EXERCISES_DATA } from '../data/exercisesData';
 import {
   durationLabels,
@@ -31,23 +31,23 @@ const categoryModifier: Record<string, string> = {
 };
 
 /**
- * Traduce el estado interno del catálogo a un rótulo sobre el estado de la
- * ficha. Evita fórmulas que suenen a validación clínica: una ficha no queda
- * «revisada», queda con la revisión documental completada o pendiente.
+ * Traduce el estado interno del catÃ¡logo a un rÃ³tulo sobre el estado de la
+ * ficha. Evita fÃ³rmulas que suenen a validaciÃ³n clÃ­nica: una ficha no queda
+ * Â«revisadaÂ», queda con la revisiÃ³n documental completada o pendiente.
  */
 const estadoFicha = (valor?: string): string => {
   const clave = (valor || '').trim().toLowerCase();
-  if (clave === 'revisado') return 'revisión documental completada';
-  if (clave === 'pendiente') return 'pendiente de revisión documental';
+  if (clave === 'revisado') return 'revisiÃ³n documental completada';
+  if (clave === 'pendiente') return 'pendiente de revisiÃ³n documental';
   return 'estado no registrado';
 };
 
 /**
- * Ilustración abstracta del hero: composición de capas en la paleta oficial
+ * IlustraciÃ³n abstracta del hero: composiciÃ³n de capas en la paleta oficial
  * (salvia, verde bosque y terracota).
  *
- * Regla de seguridad clínica: sin figuras humanas y sin ninguna secuencia que
- * sugiera la ejecución de una técnica. Solo curvas, anillos y ritmo.
+ * Regla de seguridad clÃ­nica: sin figuras humanas y sin ninguna secuencia que
+ * sugiera la ejecuciÃ³n de una tÃ©cnica. Solo curvas, anillos y ritmo.
  */
 const IlustracionCinematica = React.forwardRef<HTMLDivElement>((_, ref) => (
   <div ref={ref} className="exercise-hero__visual" aria-hidden="true">
@@ -68,7 +68,7 @@ const IlustracionCinematica = React.forwardRef<HTMLDivElement>((_, ref) => (
         </radialGradient>
       </defs>
 
-      {/* Malla nanométrica de referencia */}
+      {/* Malla nanomÃ©trica de referencia */}
       <rect width="460" height="300" fill="url(#hero-mov-grid)" rx="16" />
       <circle cx="230" cy="150" r="128" fill="var(--color-fondo-verde)" opacity="0.72" />
       <circle cx="230" cy="150" r="128" fill="url(#hero-mov-halo)" />
@@ -96,7 +96,7 @@ const IlustracionCinematica = React.forwardRef<HTMLDivElement>((_, ref) => (
         />
       </g>
 
-      {/* Anillos concéntricos: profundidad sin representación anatómica */}
+      {/* Anillos concÃ©ntricos: profundidad sin representaciÃ³n anatÃ³mica */}
       <g fill="none" stroke="var(--color-secundario)">
         <circle cx="230" cy="150" r="62" strokeWidth="1.4" opacity="0.32" />
         <circle cx="230" cy="150" r="96" strokeWidth="1.2" strokeDasharray="3 7" opacity="0.26" />
@@ -113,12 +113,12 @@ const IlustracionCinematica = React.forwardRef<HTMLDivElement>((_, ref) => (
 
 IlustracionCinematica.displayName = 'IlustracionCinematica';
 
-/* ── Composición determinista de los pósteres ─────────────────────────────
-   Cada póster se construye a partir de los datos reales de su ejercicio:
-   la dificultad fija el número de ondas, las zonas el número de anillos, la
-   duración el ritmo del trazo y el identificador la fase y la posición.
+/* â”€â”€ ComposiciÃ³n determinista de los pÃ³steres â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   Cada pÃ³ster se construye a partir de los datos reales de su ejercicio:
+   la dificultad fija el nÃºmero de ondas, las zonas el nÃºmero de anillos, la
+   duraciÃ³n el ritmo del trazo y el identificador la fase y la posiciÃ³n.
    El resultado es siempre el mismo para la misma ficha y distinto para cada
-   ejercicio del catálogo. Sin figuras humanas, sin técnica representada y sin
+   ejercicio del catÃ¡logo. Sin figuras humanas, sin tÃ©cnica representada y sin
    vectores correctores: solo formas. */
 
 const hashEstable = (texto: string): number => {
@@ -139,7 +139,7 @@ const secuencia = (semilla: number) => {
   };
 };
 
-/** Curva suave de cuatro tramos: es la onda base de la composición. */
+/** Curva suave de cuatro tramos: es la onda base de la composiciÃ³n. */
 const curvaOnda = (x0: number, x1: number, yBase: number, amplitud: number, fase: number): string => {
   const pasos = 4;
   const paso = (x1 - x0) / pasos;
@@ -159,7 +159,11 @@ interface Composicion {
   anillos: { cx: number; cy: number; r: number; grosor: number; opacidad: number }[];
   nodos: { cx: number; cy: number; r: number }[];
   foco: { cx: number; cy: number; r: number };
-  trama: { x: number; y: number; w: number; h: number };
+  trama: { x: number; y: number; w: number; h: number; densidad: number };
+  /* LÃ­nea de corte diagonal: Ã¡ngulo y posiciÃ³n varÃ­an por id. */
+  corte: { angulo: number; desplazamiento: number; opacidad: number };
+  /* Trazos cinÃ©ticos delgados: 2-3 strokes que se dibujan al montar el pÃ³ster. */
+  cinetas: { d: string; grosor: number; opacidad: number }[];
 }
 
 const ritmoPorDuracion: Record<Duration, string> = {
@@ -227,14 +231,36 @@ const construirComposicion = (ejercicio: Exercise): Composicion => {
       y: rnd() > 0.5 ? 14 : 92,
       w: 138,
       h: 74,
+      /* Densidad de la rejilla: varÃ­a el tamaÃ±o de la celda entre 14 y 22 px. */
+      densidad: Number((14 + rnd() * 8).toFixed(0)),
     },
+    /* LÃ­nea de corte: diagonal translÃºcida con Ã¡ngulo variable (-15Â° a 15Â°). */
+    corte: {
+      angulo: Number((rnd() * 30 - 15).toFixed(1)),
+      desplazamiento: Number((rnd() * 30 + 10).toFixed(1)),
+      opacidad: Number((0.08 + rnd() * 0.12).toFixed(2)),
+    },
+    /* Trazos cinÃ©ticos delgados: 2-3 strokes que se dibujan al montar. */
+    cinetas: Array.from({ length: 2 + Math.floor(rnd() * 2) }, (_, i) => {
+      const x0 = 12 + rnd() * 16;
+      const y0 = 14 + i * 52 + rnd() * 18;
+      const x1 = x0 + 42 + rnd() * 58;
+      const y1 = y0 + 28 + rnd() * 22;
+      const x2 = x1 + 44 + rnd() * 48;
+      const y2 = y1 + 16 + rnd() * 26;
+      return {
+        d: `M ${x0.toFixed(1)} ${y0.toFixed(1)} C ${x1.toFixed(1)} ${y1.toFixed(1)} ${x1.toFixed(1)} ${y2.toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}`.replace(/NaN/g, '0'),
+        grosor: Number((0.8 + rnd() * 0.7).toFixed(2)),
+        opacidad: Number((0.35 + rnd() * 0.25).toFixed(2)),
+      };
+    }),
   };
 };
 
 /**
- * Póster abstracto de un ejercicio.
+ * PÃ³ster abstracto de un ejercicio.
  *
- * El identificador del patrón lleva el id de la ficha, de modo que los
+ * El identificador del patrÃ³n lleva el id de la ficha, de modo que los
  * `pattern`/`gradient` SVG no se repiten nunca en el documento.
  */
 export const PosterArt: React.FC<{ exercise: Exercise }> = ({ exercise }) => {
@@ -244,11 +270,21 @@ export const PosterArt: React.FC<{ exercise: Exercise }> = ({ exercise }) => {
   const idHalo = `halo-${exercise.id}`;
 
   return (
-    <span className={`exercise-media__arte exercise-media--${mod}`} aria-hidden="true">
-      <svg viewBox="0 0 320 180" focusable="false" preserveAspectRatio="xMidYMid slice">
+    <span className={`exercise-media__arte exercise-media--${mod} poster-art`} aria-hidden="true">
+      <svg
+        viewBox="0 0 320 180"
+        className="poster-art__svg"
+        focusable="false"
+        preserveAspectRatio="xMidYMid slice"
+      >
         <defs>
-          <pattern id={idTrama} width="18" height="18" patternUnits="userSpaceOnUse">
-            <circle cx="2" cy="2" r="1.3" fill="currentColor" opacity="0.18" />
+          <pattern
+            id={idTrama}
+            width={composicion.trama.densidad}
+            height={composicion.trama.densidad}
+            patternUnits="userSpaceOnUse"
+          >
+            <circle cx="2" cy="2" r="1.1" fill="currentColor" opacity="0.18" />
           </pattern>
           <radialGradient id={idHalo} cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor="currentColor" stopOpacity="0.2" />
@@ -265,13 +301,26 @@ export const PosterArt: React.FC<{ exercise: Exercise }> = ({ exercise }) => {
           fill={`url(#${idHalo})`}
         />
 
-        {/* Capa de trama */}
+        {/* Capa de trama con densidad variable */}
         <rect
           x={composicion.trama.x}
           y={composicion.trama.y}
           width={composicion.trama.w}
           height={composicion.trama.h}
           fill={`url(#${idTrama})`}
+        />
+
+        {/* LÃ­nea de corte: Ã¡ngulo y posiciÃ³n determinados por el id del ejercicio */}
+        <line
+          x1="0"
+          y1="0"
+          x2="320"
+          y2="0"
+          stroke="currentColor"
+          strokeWidth="0.8"
+          opacity={composicion.corte.opacidad}
+          strokeDasharray="4 5"
+          transform={`translate(0 ${composicion.corte.desplazamiento}) rotate(${composicion.corte.angulo})`}
         />
 
         {/* Capas de curvas y anillos */}
@@ -301,6 +350,24 @@ export const PosterArt: React.FC<{ exercise: Exercise }> = ({ exercise }) => {
         <g fill="currentColor" opacity="0.55">
           {composicion.nodos.map((nodo, i) => (
             <circle key={`nodo-${i}`} cx={nodo.cx} cy={nodo.cy} r={nodo.r} />
+          ))}
+        </g>
+
+        {/* Trazos cinÃ©ticos delgados: se dibujan una vez al montar el pÃ³ster.
+            pathLength="1" normaliza la longitud del trazo a 1 unidad, por lo que
+            stroke-dasharray="1" cubre todo el trazo y stroke-dashoffset="1" lo
+            oculta. La animaciÃ³n CSS lleva dashoffset de 1 â†’ 0. */}
+        <g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+          {composicion.cinetas.map((cineta, i) => (
+            <path
+              key={`cineta-${i}`}
+              d={cineta.d}
+              pathLength="1"
+              strokeWidth={cineta.grosor}
+              opacity={cineta.opacidad}
+              className="poster-art__trazo-animado"
+              style={{ animationDelay: `${i * 200}ms` }}
+            />
           ))}
         </g>
       </svg>
@@ -385,7 +452,7 @@ export const ExercisesPage: React.FC = () => {
     );
   }, [urlStateReady, searchTerm, selectedDuration, selectedDifficulty, selectedEquipment, selectedZone, selectedCategory, orderSelect]);
 
-  // El contenido ya está en el DOM: el observador solo activa su entrada visual.
+  // El contenido ya estÃ¡ en el DOM: el observador solo activa su entrada visual.
   useEffect(() => {
     const list = exerciseListRef.current;
     if (!list || typeof window === 'undefined' || !('IntersectionObserver' in window)) {
@@ -436,8 +503,8 @@ export const ExercisesPage: React.FC = () => {
   }, []);
 
   // Profundidad 3D ligera: la tarjeta se inclina siguiendo al puntero fino.
-  // Los ángulos se escriben en variables CSS, así que no hay estado de React
-  // ni re-render en cada `pointermove`. En táctil y teclado la profundidad la
+  // Los Ã¡ngulos se escriben en variables CSS, asÃ­ que no hay estado de React
+  // ni re-render en cada `pointermove`. En tÃ¡ctil y teclado la profundidad la
   // aporta el foco (ver `.exercise-card:focus-within` en ejercicios.css).
   useEffect(() => {
     const grid = exerciseListRef.current;
@@ -479,7 +546,8 @@ export const ExercisesPage: React.FC = () => {
       if (!rect.width || !rect.height) return;
       const dx = (e.clientX - rect.left) / rect.width - 0.5;
       const dy = (e.clientY - rect.top) / rect.height - 0.5;
-      pendiente = { card, x: -dy * 4, y: dx * 5 };
+      // Â±4Â°/Â±5Â°: dx, dy âˆˆ [-0.5, 0.5] â†’ -dy*8 âˆˆ [-4,4], dx*10 âˆˆ [-5,5]
+      pendiente = { card, x: -dy * 8, y: dx * 10 };
       if (!frame) frame = window.requestAnimationFrame(pintar);
     };
 
@@ -522,7 +590,7 @@ export const ExercisesPage: React.FC = () => {
     return list;
   }, [searchTerm, selectedDuration, selectedDifficulty, selectedEquipment, selectedZone, selectedCategory, orderSelect]);
 
-  // Contadores por categoría calculados a partir de los datos reales
+  // Contadores por categorÃ­a calculados a partir de los datos reales
   const categoryCounts = useMemo(() => {
     const counts = {
       todas: EXERCISES_DATA.length,
@@ -658,7 +726,7 @@ export const ExercisesPage: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeModalExerciseIndex, filteredExercises.length]);
 
-  // Limpieza de vídeo
+  // Limpieza de vÃ­deo
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
@@ -691,7 +759,7 @@ export const ExercisesPage: React.FC = () => {
     );
   };
 
-  // Renderizado de duración con icono
+  // Renderizado de duraciÃ³n con icono
   const renderDurationBadge = (dur: Duration) => (
     <span className="exercise-duration">
       <svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden="true">
@@ -704,7 +772,7 @@ export const ExercisesPage: React.FC = () => {
 
   return (
     <main id="contenido" tabIndex={-1} className="exercise-main">
-      {/* ── 1. HERO EDITORIAL ASIMÉTRICO ── */}
+      {/* â”€â”€ 1. HERO EDITORIAL ASIMÃ‰TRICO â”€â”€ */}
       <section className="exercise-hero" aria-labelledby="biblioteca-titulo">
         <div className="exercise-hero__inner">
           <div className="exercise-hero__texto">
@@ -713,24 +781,24 @@ export const ExercisesPage: React.FC = () => {
             </h1>
 
             <p className="exercise-hero__lead">
-              Colección educativa de ejercicios generales ejecutables con el propio peso corporal. No constituye prescripción médica ni sustituye una valoración individual.
+              ColecciÃ³n educativa de ejercicios generales ejecutables con el propio peso corporal. No constituye prescripciÃ³n mÃ©dica ni sustituye una valoraciÃ³n individual.
             </p>
 
-            {/* Métrica viva calculada de datos reales */}
+            {/* MÃ©trica viva calculada de datos reales */}
             <div className="exercise-hero__stats">
               <div className="exercise-hero__stat-item">
                 <span className="exercise-hero__stat-num">{filteredMetricas.total}</span>
-                <span className="exercise-hero__stat-label">ejercicios en el catálogo</span>
+                <span className="exercise-hero__stat-label">ejercicios en el catÃ¡logo</span>
               </div>
               <div className="exercise-hero__stat-divisor" aria-hidden="true" />
               <div className="exercise-hero__stat-item">
                 <span className="exercise-hero__stat-num">{filteredMetricas.conVideo}</span>
-                <span className="exercise-hero__stat-label">con vídeo de demostración</span>
+                <span className="exercise-hero__stat-label">con vÃ­deo de demostraciÃ³n</span>
               </div>
               <div className="exercise-hero__stat-divisor" aria-hidden="true" />
               <div className="exercise-hero__stat-item">
                 <span className="exercise-hero__stat-num">{filteredMetricas.categorias}</span>
-                <span className="exercise-hero__stat-label">categorías con ejercicios</span>
+                <span className="exercise-hero__stat-label">categorÃ­as con ejercicios</span>
               </div>
             </div>
           </div>
@@ -740,43 +808,43 @@ export const ExercisesPage: React.FC = () => {
       </section>
 
       <div className="exercise-cuerpo">
-        {/* Categorización del catálogo transparente */}
+        {/* CategorizaciÃ³n del catÃ¡logo transparente */}
         <details className="catalogo">
           <summary className="catalogo__summary">
             <div className="catalogo__summary-header">
               <h2 className="catalogo__titulo" id="cat-heading">
-                Categorización transparente del catálogo
+                CategorizaciÃ³n transparente del catÃ¡logo
               </h2>
-              <span className="catalogo__badge">Guía clínica</span>
+              <span className="catalogo__badge">GuÃ­a clÃ­nica</span>
             </div>
             <span className="catalogo__resumen">
-              Tres grupos: actividad física general, cuidado postural y movilidad, y métodos específicos supervisados (PSSE).
+              Tres grupos: actividad fÃ­sica general, cuidado postural y movilidad, y mÃ©todos especÃ­ficos supervisados (PSSE).
             </span>
           </summary>
           <div className="catalogo__rejilla">
             <div className="catalogo__item catalogo__item--actividad">
-              <strong>1. Actividad física general</strong>
+              <strong>1. Actividad fÃ­sica general</strong>
               <p className="catalogo__texto">
-                Ejercicios estándar de fuerza y resistencia con peso corporal para toda la población.
+                Ejercicios estÃ¡ndar de fuerza y resistencia con peso corporal para toda la poblaciÃ³n.
               </p>
             </div>
             <div className="catalogo__item catalogo__item--postural">
               <strong>2. Cuidado postural y movilidad</strong>
               <p className="catalogo__texto">
-                Estiramientos, apertura torácica y estabilización de columna y pelvis.
+                Estiramientos, apertura torÃ¡cica y estabilizaciÃ³n de columna y pelvis.
               </p>
             </div>
             <div className="catalogo__item catalogo__item--psse">
-              <strong>3. Específicos supervisados (PSSE)</strong>
+              <strong>3. EspecÃ­ficos supervisados (PSSE)</strong>
               <p className="catalogo__texto">
-                Métodos tipo Schroth o SEAS. Requieren valoración y enseñanza presencial por un fisioterapeuta certificado.
+                MÃ©todos tipo Schroth o SEAS. Requieren valoraciÃ³n y enseÃ±anza presencial por un fisioterapeuta certificado.
               </p>
             </div>
           </div>
         </details>
 
-        {/* Pestañas rápidas de filtrado por categoría */}
-        <nav className="category-tabs" aria-label="Filtrar por categoría principal">
+        {/* PestaÃ±as rÃ¡pidas de filtrado por categorÃ­a */}
+        <nav className="category-tabs" aria-label="Filtrar por categorÃ­a principal">
           <button
             type="button"
             className={`category-tab ${selectedCategory === 'todas' ? 'is-active' : ''}`}
@@ -815,8 +883,8 @@ export const ExercisesPage: React.FC = () => {
           </button>
         </nav>
 
-        {/* Barra de herramientas: Búsqueda, ordenación y toggles de filtros */}
-        <section className="toolbar" aria-label="Herramientas de búsqueda y orden">
+        {/* Barra de herramientas: BÃºsqueda, ordenaciÃ³n y toggles de filtros */}
+        <section className="toolbar" aria-label="Herramientas de bÃºsqueda y orden">
           <div className="toolbar-search">
             <label htmlFor="search-input" className="sr-only">
               Buscar ejercicios
@@ -833,13 +901,13 @@ export const ExercisesPage: React.FC = () => {
                 autoComplete="off"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Buscar por nombre, zona o descripción…"
+                placeholder="Buscar por nombre, zona o descripciÃ³nâ€¦"
               />
               {searchTerm && (
                 <button
                   type="button"
                   className="toolbar-search__clear"
-                  aria-label="Borrar término de búsqueda"
+                  aria-label="Borrar tÃ©rmino de bÃºsqueda"
                   onClick={() => setSearchTerm('')}
                 >
                   Borrar
@@ -855,9 +923,9 @@ export const ExercisesPage: React.FC = () => {
               value={orderSelect}
               onChange={(e) => setOrderSelect(e.target.value as 'name' | 'difficulty' | 'duration')}
             >
-              <option value="name">Nombre (A–Z)</option>
+              <option value="name">Nombre (Aâ€“Z)</option>
               <option value="difficulty">Dificultad</option>
-              <option value="duration">Duración</option>
+              <option value="duration">DuraciÃ³n</option>
             </select>
           </div>
 
@@ -889,10 +957,10 @@ export const ExercisesPage: React.FC = () => {
               <button
                 type="button"
                 className="active-filter-tag"
-                aria-label={`Quitar filtro categoría: ${categoryLabels[selectedCategory]}`}
+                aria-label={`Quitar filtro categorÃ­a: ${categoryLabels[selectedCategory]}`}
                 onClick={() => quitarFiltro(() => setSelectedCategory('todas'))}
               >
-                {categoryLabels[selectedCategory]} · Quitar
+                {categoryLabels[selectedCategory]} Â· Quitar
               </button>
             )}
 
@@ -904,7 +972,7 @@ export const ExercisesPage: React.FC = () => {
                 aria-label={`Quitar filtro: ${durationLabels[dur as Duration] || dur}`}
                 onClick={() => quitarFiltro(() => setSelectedDuration((prev) => prev.filter((x) => x !== dur)))}
               >
-                {durationLabels[dur as Duration] || dur} · Quitar
+                {durationLabels[dur as Duration] || dur} Â· Quitar
               </button>
             ))}
 
@@ -916,7 +984,7 @@ export const ExercisesPage: React.FC = () => {
                 aria-label={`Quitar filtro: ${difficultyLabels[diff as Difficulty] || diff}`}
                 onClick={() => quitarFiltro(() => setSelectedDifficulty((prev) => prev.filter((x) => x !== diff)))}
               >
-                {difficultyLabels[diff as Difficulty] || diff} · Quitar
+                {difficultyLabels[diff as Difficulty] || diff} Â· Quitar
               </button>
             ))}
 
@@ -928,7 +996,7 @@ export const ExercisesPage: React.FC = () => {
                 aria-label={`Quitar filtro: ${equipmentLabels[eq] || eq}`}
                 onClick={() => quitarFiltro(() => setSelectedEquipment((prev) => prev.filter((x) => x !== eq)))}
               >
-                {equipmentLabels[eq] || eq} · Quitar
+                {equipmentLabels[eq] || eq} Â· Quitar
               </button>
             ))}
 
@@ -940,7 +1008,7 @@ export const ExercisesPage: React.FC = () => {
                 aria-label={`Quitar filtro: ${zoneLabels[z] || z}`}
                 onClick={() => quitarFiltro(() => setSelectedZone((prev) => prev.filter((x) => x !== z)))}
               >
-                {zoneLabels[z] || z} · Quitar
+                {zoneLabels[z] || z} Â· Quitar
               </button>
             ))}
 
@@ -948,10 +1016,10 @@ export const ExercisesPage: React.FC = () => {
               <button
                 type="button"
                 className="active-filter-tag"
-                aria-label={`Quitar búsqueda: ${searchTerm.trim()}`}
+                aria-label={`Quitar bÃºsqueda: ${searchTerm.trim()}`}
                 onClick={() => quitarFiltro(() => setSearchTerm(''))}
               >
-                Búsqueda: “{searchTerm.trim()}” · Quitar
+                BÃºsqueda: â€œ{searchTerm.trim()}â€ Â· Quitar
               </button>
             )}
 
@@ -971,7 +1039,7 @@ export const ExercisesPage: React.FC = () => {
           <form id="filter-form" onSubmit={(e) => e.preventDefault()}>
             <div className="filter-group">
               <fieldset>
-                <legend>Duración</legend>
+                <legend>DuraciÃ³n</legend>
                 <div className="choice-list">
                   {(['corta', 'media', 'larga'] as Duration[]).map((dur) => (
                     <label key={dur} className="chip">
@@ -1048,7 +1116,7 @@ export const ExercisesPage: React.FC = () => {
                 <div className="choice-list">
                   {[
                     'piernas',
-                    'glúteos',
+                    'glÃºteos',
                     'cadera',
                     'aductores',
                     'core',
@@ -1093,11 +1161,11 @@ export const ExercisesPage: React.FC = () => {
         <div className="result-counter-bar">
           <p id="result-count" role="status" className="result-counter">
             Mostrando <strong>{filteredExercises.length}</strong> {filteredExercises.length === 1 ? 'ejercicio' : 'ejercicios'}
-            {totalActiveFilterCount > 0 ? ' (filtrados)' : ' del catálogo'}
+            {totalActiveFilterCount > 0 ? ' (filtrados)' : ' del catÃ¡logo'}
           </p>
         </div>
 
-        {/* ── 2. CATÁLOGO CURADO DE TARJETAS ── */}
+        {/* â”€â”€ 2. CATÃLOGO CURADO DE TARJETAS â”€â”€ */}
         <section
           id="exercise-list"
           ref={exerciseListRef}
@@ -1117,7 +1185,7 @@ export const ExercisesPage: React.FC = () => {
               </div>
               <h3 className="exercise-empty-state__title">No se encontraron ejercicios</h3>
               <p className="exercise-empty-state__desc">
-                No hay coincidencias con los filtros aplicados. Prueba a buscar con otros términos o restablece los criterios.
+                No hay coincidencias con los filtros aplicados. Prueba a buscar con otros tÃ©rminos o restablece los criterios.
               </p>
               <button type="button" className="btn secondary" onClick={clearAllFilters}>
                 Restablecer todos los filtros
@@ -1137,16 +1205,16 @@ export const ExercisesPage: React.FC = () => {
                   <div className={`exercise-media exercise-media--${mod}`}>
                     <PosterArt exercise={exercise} />
                     {video.hasVideo ? (
-                      <span className="exercise-media__estado exercise-media__estado--video">Con vídeo</span>
+                      <span className="exercise-media__estado exercise-media__estado--video">Con vÃ­deo</span>
                     ) : (
                       <p className="exercise-media__estado exercise-media__estado--pendiente">
-                        Demostración en preparación
+                        DemostraciÃ³n en preparaciÃ³n
                       </p>
                     )}
                   </div>
 
                   <div className="exercise-card__contenido">
-                    <p className="exercise-card__rotulo">Esquema abstracto, no muestra la técnica</p>
+                    <p className="exercise-card__rotulo">Esquema abstracto, no muestra la tÃ©cnica</p>
 
                     <div className="exercise-card__encabezado">
                       <span className={`category-tag category-tag--${mod}`}>
@@ -1197,7 +1265,7 @@ export const ExercisesPage: React.FC = () => {
           )}
         </section>
 
-        {/* ── 3. MODAL DE DETALLE EN MODO CINE (<dialog> nativo) ── */}
+        {/* â”€â”€ 3. MODAL DE DETALLE EN MODO CINE (<dialog> nativo) â”€â”€ */}
         {activeModalExercise && (
           <dialog
             ref={dialogRef}
@@ -1239,9 +1307,9 @@ export const ExercisesPage: React.FC = () => {
                   controls
                   playsInline
                   preload="none"
-                  aria-label={`Demostración de ${activeModalExercise.name}`}
+                  aria-label={`DemostraciÃ³n de ${activeModalExercise.name}`}
                 >
-                  Tu navegador no puede reproducir este vídeo.
+                  Tu navegador no puede reproducir este vÃ­deo.
                 </video>
                 <div className="dialog-video-controls">
                   <div className="dialog-video-controls__grupo">
@@ -1252,14 +1320,14 @@ export const ExercisesPage: React.FC = () => {
                         aria-pressed={playbackRate === '0.5'}
                         onClick={() => setPlaybackRate('0.5')}
                       >
-                        0,5×
+                        0,5Ã—
                       </button>
                       <button
                         type="button"
                         aria-pressed={playbackRate === '1'}
                         onClick={() => setPlaybackRate('1')}
                       >
-                        1×
+                        1Ã—
                       </button>
                     </div>
                   </div>
@@ -1290,9 +1358,9 @@ export const ExercisesPage: React.FC = () => {
                   </svg>
                 </span>
                 <span>
-                  <strong>Demostración en preparación</strong>
+                  <strong>DemostraciÃ³n en preparaciÃ³n</strong>
                   <span>
-                    La demostración en vídeo de este ejercicio todavía no está publicada.
+                    La demostraciÃ³n en vÃ­deo de este ejercicio todavÃ­a no estÃ¡ publicada.
                   </span>
                 </span>
               </p>
@@ -1303,7 +1371,7 @@ export const ExercisesPage: React.FC = () => {
 
               <div className="exercise-meta dialog-meta">
                 <span className="exercise-meta-item">
-                  Duración: {durationLabels[activeModalExercise.duration] || activeModalExercise.duration}
+                  DuraciÃ³n: {durationLabels[activeModalExercise.duration] || activeModalExercise.duration}
                 </span>
                 <span className="exercise-meta-item">
                   Dificultad: {difficultyLabels[activeModalExercise.difficulty] || activeModalExercise.difficulty}
@@ -1340,7 +1408,7 @@ export const ExercisesPage: React.FC = () => {
                         ))}
                       </div>
                       <p className="exercise-equipamiento-sugerido__nota">
-                        El equipamiento es opcional y no sustituye la supervisión profesional. Prioriza siempre tu confort y seguridad.
+                        El equipamiento es opcional y no sustituye la supervisiÃ³n profesional. Prioriza siempre tu confort y seguridad.
                       </p>
                     </div>
                   );
@@ -1350,14 +1418,14 @@ export const ExercisesPage: React.FC = () => {
 
               {activeModalExercise.adaptation && activeModalExercise.adaptation.notes && (
                 <div className="notice warning dialog-notice">
-                  <strong>Nota general de adaptación:</strong> {activeModalExercise.adaptation.notes}
+                  <strong>Nota general de adaptaciÃ³n:</strong> {activeModalExercise.adaptation.notes}
                 </div>
               )}
 
-              {/* Metadatos Clínicos Auditables */}
+              {/* Metadatos ClÃ­nicos Auditables */}
               {activeModalExercise.clinicalMetadata && (
                 <div className="clinical-sheet">
-                  <h3 className="clinical-sheet__titulo">Ficha de revisión documental</h3>
+                  <h3 className="clinical-sheet__titulo">Ficha de revisiÃ³n documental</h3>
                   <div className="clinical-sheet__cuerpo">
                     <p className="m-0">
                       <strong>Estado de la ficha:</strong>{' '}
@@ -1371,18 +1439,18 @@ export const ExercisesPage: React.FC = () => {
                         }}
                       >
                         {activeModalExercise.clinicalMetadata.reviewStatus === 'revisado_profesional'
-                          ? 'Revisión documental completada'
-                          : 'En proceso de revisión documental'}
+                          ? 'RevisiÃ³n documental completada'
+                          : 'En proceso de revisiÃ³n documental'}
                       </span>
                       {activeModalExercise.clinicalMetadata.reviewedBy && (
-                        <span> · {activeModalExercise.clinicalMetadata.reviewedBy}</span>
+                        <span> Â· {activeModalExercise.clinicalMetadata.reviewedBy}</span>
                       )}
                       {activeModalExercise.clinicalMetadata.reviewDate && (
                         <span> ({activeModalExercise.clinicalMetadata.reviewDate})</span>
                       )}
                     </p>
                     <p className="clinical-sheet__disclaimer">
-                      Esta ficha recoge el contenido publicado y sus fuentes. No constituye una validación clínica por parte de un profesional sanitario.
+                      Esta ficha recoge el contenido publicado y sus fuentes. No constituye una validaciÃ³n clÃ­nica por parte de un profesional sanitario.
                     </p>
 
                     {activeModalExercise.clinicalMetadata.precautions &&
@@ -1416,7 +1484,7 @@ export const ExercisesPage: React.FC = () => {
                           <ul>
                             {activeModalExercise.clinicalMetadata.evidenceReferences.map((ref, i) => (
                               <li key={i}>
-                                {ref.title} — <em>{ref.source}</em>
+                                {ref.title} â€” <em>{ref.source}</em>
                                 {ref.url && (
                                   <>
                                     {' '}
@@ -1440,16 +1508,16 @@ export const ExercisesPage: React.FC = () => {
               )}
 
               <p className="dialog-aviso-clinico">
-                Información general orientativa, no sustituye la prescripción de un profesional sanitario.
+                InformaciÃ³n general orientativa, no sustituye la prescripciÃ³n de un profesional sanitario.
               </p>
 
               <p className="small-print">
                 {activeModalExercise.clinicalMetadata ? (
-                  <>Esta ficha recoge el contenido publicado y sus fuentes. Ninguna ficha sustituye la supervisión de un fisioterapeuta o médico.</>
+                  <>Esta ficha recoge el contenido publicado y sus fuentes. Ninguna ficha sustituye la supervisiÃ³n de un fisioterapeuta o mÃ©dico.</>
                 ) : (
                   <>
-                    Estado de la ficha en el catálogo: <strong>{estadoFicha(activeModalExercise.clinicalReview)}</strong>. Ninguna
-                    ficha sustituye la supervisión de un fisioterapeuta o médico.
+                    Estado de la ficha en el catÃ¡logo: <strong>{estadoFicha(activeModalExercise.clinicalReview)}</strong>. Ninguna
+                    ficha sustituye la supervisiÃ³n de un fisioterapeuta o mÃ©dico.
                   </>
                 )}
               </p>
@@ -1467,7 +1535,7 @@ export const ExercisesPage: React.FC = () => {
                   }
                 }}
               >
-                ← Anterior
+                â† Anterior
               </button>
 
               <button
@@ -1501,7 +1569,7 @@ export const ExercisesPage: React.FC = () => {
                   }
                 }}
               >
-                Siguiente →
+                Siguiente â†’
               </button>
             </div>
           </dialog>
@@ -1512,3 +1580,4 @@ export const ExercisesPage: React.FC = () => {
 };
 
 export default ExercisesPage;
+
