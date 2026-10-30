@@ -17,7 +17,7 @@ export const ActualidadPage: React.FC<ActualidadPageProps> = ({ articulo, onNavi
   const railRef = useRef<HTMLElement>(null);
 
   // La clase de movimiento se aplica antes del primer pintado: si se añadiera
-  // después, la pagina apareceria y se desvaneceria sola al cargar.
+  // después, la página aparecería y se desvaneceria sola al cargar.
   useLayoutEffect(() => {
     pageRef.current?.classList.add('motion-ready');
   }, []);
@@ -33,7 +33,7 @@ export const ActualidadPage: React.FC<ActualidadPageProps> = ({ articulo, onNavi
 
     /**
      * Revela un elemento. `will-change` solo se aplica mientras dura la
-     * animacion de ese elemento, nunca a todo el bloque desde el principio.
+     * animación de ese elemento, nunca a todo el bloque desde el principio.
      */
     const revelar = (item: HTMLElement) => {
       item.dataset.revealed = 'true';
@@ -73,7 +73,7 @@ export const ActualidadPage: React.FC<ActualidadPageProps> = ({ articulo, onNavi
   }, []);
 
   // El rail solo se pega si cabe en la altura visible: si no, se queda en el
-  // flujo para que ningun enlace quede fuera de la pantalla.
+  // flujo para que ningún enlace quede fuera de la pantalla.
   useEffect(() => {
     const rail = railRef.current;
 
@@ -107,27 +107,27 @@ export const ActualidadPage: React.FC<ActualidadPageProps> = ({ articulo, onNavi
             onNavigate('inicio');
           }}
         >
-          <span aria-hidden="true">←</span>
+          <span aria-hidden="true">&#8592;</span>
           Volver al inicio
         </a>
       </nav>
 
-      {/* --- Cabecera de pagina --- */}
+      {/* --- Cabecera de pagina: portada editorial --- */}
       <header className="actualidad-masthead">
         <p className="actualidad-etiqueta" data-reveal="masthead-context">
           {articulo.etiquetaEditorial}
         </p>
         <h1 className="actualidad-h1" data-reveal="masthead-title">
-          <span className="actualidad-h1__linea">La ciencia de la escoliosis,</span>{' '}
+          <span className="actualidad-h1__linea">La ciencia de la escoliosis,</span>
           <span className="actualidad-h1__linea actualidad-h1__linea--acento">explicada con claridad.</span>
         </h1>
         <p className="actualidad-subtitulo" data-reveal="masthead-copy">
-          FitCasa traduce publicaciones científicas indexadas a un lenguaje comprensible, diferenciando
-          hipótesis tempranas de guías clínicas consolidadas.
+          FitCasa traduce publicaciones científicas indexadas a un lenguaje comprensible,
+          diferenciando hipótesis tempranas de guías clínicas consolidadas.
         </p>
       </header>
 
-      {/* --- Articulo protagonista --- */}
+      {/* --- Artículo protagonista --- */}
       <section className="actualidad-hero" aria-labelledby="articulo-titular">
         <div className="actualidad-hero__meta" data-reveal="hero-meta">
           <span className="actualidad-badge-categoria">{articulo.categoria}</span>
@@ -150,7 +150,7 @@ export const ActualidadPage: React.FC<ActualidadPageProps> = ({ articulo, onNavi
         <div className="actualidad-hero__banda">
           <div className="actualidad-hero__texto" data-reveal="hero-deck">
             <p className="actualidad-deck">{articulo.enPocasPalabras}</p>
-            <p className="actualidad-curaduría">
+            <p className="actualidad-curacion">
               Revisión bibliográfica humana y manual · Selección basada en revistas con revisión por pares
             </p>
           </div>
@@ -160,7 +160,7 @@ export const ActualidadPage: React.FC<ActualidadPageProps> = ({ articulo, onNavi
         </div>
       </section>
 
-      {/* --- Limites: lo mas visible despues del titular --- */}
+      {/* --- Limites: lo más visible después del titular --- */}
       <section className="actualidad-limites" aria-labelledby="limites-titulo" data-reveal="limites">
         <div className="actualidad-limites__cabecera">
           <p className="actualidad-limites__kicker">
@@ -203,7 +203,7 @@ export const ActualidadPage: React.FC<ActualidadPageProps> = ({ articulo, onNavi
             </p>
           </section>
 
-          <section className="actualidad-seccion" aria-labelledby="hallazgos-titulo">
+          <section className="actualidad-seccion actualidad-seccion--hallazgos" aria-labelledby="hallazgos-titulo">
             <h3 id="hallazgos-titulo" className="actualidad-seccion-titulo" data-reveal="section-heading">
               Principales hallazgos
             </h3>
@@ -238,8 +238,8 @@ export const ActualidadPage: React.FC<ActualidadPageProps> = ({ articulo, onNavi
             </p>
           </section>
 
-          <section className="actualidad-ficha" aria-labelledby="ficha-titulo">
-            <h3 id="ficha-titulo" className="actualidad-seccion-titulo" data-reveal="section-heading">
+          <section className="actualidad-ficha" aria-labelledby="ficha-titulo" data-reveal="section-heading">
+            <h3 id="ficha-titulo" className="actualidad-seccion-titulo" data-reveal="section-content">
               Ficha bibliográfica completa
             </h3>
             <dl className="actualidad-registro" data-reveal="section-content">
