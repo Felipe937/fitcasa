@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { PageRoute } from '../components/Header';
 
 import { VisualAsociacion } from '../components/VisualAsociacion';
@@ -6,24 +6,29 @@ import { ArticuloCientifico, articulosNoticias } from '../data/noticias';
 
 interface ActualidadPageProps {
   onNavigate: (page: PageRoute, sectionId?: string) => void;
-  articulo: ArticuloCientifico;
+  articulo?: ArticuloCientifico;
 }
 
 export const ActualidadPage: React.FC<ActualidadPageProps> = ({ articulo, onNavigate }) => {
+  const [articulos, setArticulos] = useState<ArticuloCientifico[]>(articulosNoticias);
   const [indice, setIndice] = useState<number>(() => {
     const hash = window.location.hash;
     const match = hash.match(/actualidad\/(genetica|ejercicio)/);
     if (match) {
       return match[1] === 'genetica' ? 0 : 1;
     }
+    if (articulo) {
+      const found = articulosNoticias.findIndex((a) => a.id === articulo.id);
+      if (found !== -1) return found;
+    }
     return 0;
   });
-  const [articulos, setArticulos] = useState<ArticuloCientifico[]>(articulosNoticias);
   const pageRef = useRef<HTMLElement>(null);
   const railRef = useRef<HTMLElement>(null);
 
-  const articuloActual = articulos[indice];
-  const { articulo } = this.props; // Ensure articulo is used if needed
+  const articuloActual: ArticuloCientifico | undefined =
+    articulos[indice] ?? articulo ?? articulos[0] ?? articulosNoticias[0];
+
   const isActive = (id: string) => articulos.findIndex((a) => a.id === id) === indice;
 
   const cambiarArticulo = (id: string) => {
@@ -35,14 +40,12 @@ export const ActualidadPage: React.FC<ActualidadPageProps> = ({ articulo, onNavi
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const fuentes = articuloActual.enlaces;
-
   // La clase de movimiento se aplica antes del primer pintado.
   useLayoutEffect(() => {
     pageRef.current?.classList.add('motion-ready');
   }, []);
 
-  // RevelaciÃ³n progresiva de secciones.
+  // Revelación progresiva de secciones.
   useEffect(() => {
     const page = pageRef.current;
     if (!page) return undefined;
@@ -101,6 +104,28 @@ export const ActualidadPage: React.FC<ActualidadPageProps> = ({ articulo, onNavi
       observador.disconnect();
     };
   }, []);
+
+  if (!articuloActual) {
+    return (
+      <main id="contenido" ref={pageRef} tabIndex={-1} className="actualidad-page container">
+        <nav aria-label="Miga de pan" className="actualidad-miga">
+          <a
+            href="#inicio"
+            className="actualidad-breadcrumb-link"
+            onClick={(e) => {
+              e.preventDefault();
+              onNavigate('inicio');
+            }}
+          >
+            <span aria-hidden="true">&#8592;</span>
+            Volver al inicio
+          </a>
+        </nav>
+        <p>No se encontró el artículo solicitado.</p>
+      </main>
+    );
+  }
+  const fuentes = articuloActual.enlaces;
 
   return (
     <main id="contenido" ref={pageRef} tabIndex={-1} className="actualidad-page container">
