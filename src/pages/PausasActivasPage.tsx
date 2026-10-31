@@ -34,9 +34,8 @@ const OptionGlyph: React.FC<{ kind: OptionGlyphKind }> = ({ kind }) => {
   if (kind === 'de-pie') {
     return (
       <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
-        <path d="M12 20V6" />
-        <path d="m7.5 10.5 4.5-4.5 4.5 4.5" />
-        <path d="M7 20h10" />
+        <path d="M12 4v16" />
+        <path d="M7 9c2.5-3 7.5-3 10 0" />
       </svg>
     );
   }
@@ -44,16 +43,15 @@ const OptionGlyph: React.FC<{ kind: OptionGlyphKind }> = ({ kind }) => {
   if (kind === 'sentado') {
     return (
       <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
-        <path d="M3 13.5c3-2.5 6-2.5 9 0s6 2.5 9 0" />
-        <path d="M4 19h16" />
+        <path d="M8 6v8h8" />
+        <path d="M6 19h12" />
       </svg>
     );
   }
 
   return (
     <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
-      <path d="M5 12a7 7 0 0 1 12.3-4.55M19 12a7 7 0 0 1-12.3 4.55" />
-      <path d="M17 4.5v3.75h-3.75M7 19.5v-3.75h3.75" />
+      <path d="M12 12m-6 0a6 6 0 1 1 12 0a4 4 0 1 0 -8 0a2 2 0 1 1 4 0" />
     </svg>
   );
 };
@@ -139,6 +137,72 @@ export const PausasActivasPage: React.FC<PausasActivasPageProps> = ({ onNavigate
     };
   }, [isRunning, isFinished, endTime, durationSeconds, handleFinish]);
 
+  // Tilt reactivo del cursor sobre la escultura (solo mouse fino, sin movimiento reducido).
+  useEffect(() => {
+    const marco = document.querySelector('.movement-sculpture__marco') as HTMLElement | null;
+    const escena = marco?.querySelector('.movement-sculpture__escena') as HTMLElement | null;
+    if (!marco || !escena) return;
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const hoverCapable = window.matchMedia('(hover: hover) and (pointer: fine)');
+    if (reducedMotion.matches || !hoverCapable.matches) {
+      marco.style.setProperty('--pausa-giro-puntero', '0deg');
+      return;
+    }
+
+    let rafId = 0;
+    let pendingEvent: PointerEvent | null = null;
+
+    const applyTilt = () => {
+      rafId = 0;
+      const ev = pendingEvent;
+      pendingEvent = null;
+      if (!ev) return;
+      const rect = marco.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = (ev.clientX - cx) / (rect.width / 2);
+      const dy = (ev.clientY - cy) / (rect.height / 2);
+      const clampedX = Math.max(-1, Math.min(1, dx));
+      const clampedY = Math.max(-1, Math.min(1, dy));
+      const fraction = Math.max(-1, Math.min(1, (clampedX + clampedY) / 2));
+      const degrees = fraction * 6;
+      marco.style.setProperty('--pausa-giro-puntero', `${degrees}deg`);
+    };
+
+    const handleMove = (e: PointerEvent) => {
+      pendingEvent = e;
+      if (!rafId) {
+        rafId = requestAnimationFrame(applyTilt);
+      }
+    };
+
+    const handleLeave = () => {
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
+      pendingEvent = null;
+      escena.style.transition = 'transform 900ms var(--curva-suave, cubic-bezier(0.2, 0.8, 0.2, 1))';
+      marco.style.setProperty('--pausa-giro-puntero', '0deg');
+      window.setTimeout(() => {
+        escena.style.transition = '';
+      }, 950);
+    };
+
+    marco.addEventListener('pointermove', handleMove, { passive: true });
+    marco.addEventListener('pointerleave', handleLeave);
+
+    return () => {
+      marco.removeEventListener('pointermove', handleMove);
+      marco.removeEventListener('pointerleave', handleLeave);
+      if (rafId) cancelAnimationFrame(rafId);
+      marco.style.removeProperty('--pausa-giro-puntero');
+      escena.style.transition = '';
+    };
+  }, []);
+
   const handleNavigateToPanel = useCallback(() => {
     onNavigate('panel');
     const today = new Date().toISOString().split('T')[0];
@@ -172,6 +236,7 @@ export const PausasActivasPage: React.FC<PausasActivasPageProps> = ({ onNavigate
 
         <div className="pausas-activas-hero">
           <div className="pausas-activas-hero__copy">
+            <span className="pausas-activas-hero__numero" aria-hidden="true">01</span>
             <span className="pausas-activas-context">DESCANSOS DE MOVIMIENTO</span>
             <h1 className="pausas-activas-titulo">
               <span>Pausas</span>{' '}

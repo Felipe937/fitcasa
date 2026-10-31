@@ -195,10 +195,59 @@
   display: grid;
   gap: var(--espacio-6);
   align-items: center;
+  grid-template-columns: 1fr;
+}
+
+/* Móvil: escultura encima, reducida. */
+@media (max-width: 39.99rem) {
+  .movement-sculpture {
+    order: -1;
+  }
+  .movement-sculpture__marco {
+    max-height: 180px;
+    min-height: 0;
+  }
+  .movement-sculpture__escena {
+    min-height: 8rem;
+  }
+}
+
+/* Escritorio: dos columnas, escultura con más presencia. */
+@media (min-width: 40rem) {
+  .pausas-activas-hero {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--espacio-8);
+  }
+  .movement-sculpture {
+    transform: scale(1.2);
+    transform-origin: center;
+  }
 }
 
 .pausas-activas-hero__copy {
+  position: relative;
   min-width: 0;
+  isolation: isolate;
+}
+
+.pausas-activas-hero__numero {
+  position: absolute;
+  top: -1.5rem;
+  left: -0.5rem;
+  opacity: 0.04;
+  font-size: clamp(5rem, 14vw, 9rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--color-primario);
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+.pausas-activas-hero__copy > *:not(.pausas-activas-hero__numero) {
+  position: relative;
+  z-index: 1;
 }
 
 .pausas-activas-context {
@@ -223,7 +272,7 @@
 
 .pausas-activas-titulo {
   margin: 0;
-  font-size: clamp(3rem, 8.4vw, 6.4rem);
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
   line-height: 0.98;
   letter-spacing: -0.055em;
   text-wrap: balance;
@@ -448,6 +497,10 @@
   border-radius: 50%;
 }
 
+.pausas-activas-page--en-curso .pausa-player__progress {
+  stroke: var(--color-primario);
+}
+
 .pausas-activas-page--en-pausa .movement-sculpture__estado::before,
 .pausas-activas-page--en-pausa .movement-sculpture__estado::after {
   top: 0;
@@ -588,18 +641,6 @@
   cursor: pointer;
   transition: transform var(--duracion-respuesta) var(--curva-suave), box-shadow var(--duracion-respuesta) var(--curva-suave), border-color var(--duracion-respuesta) var(--curva-suave);
   box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-  position: relative;
-  display: flex;
-  min-width: 0;
-  align-items: center;
-  gap: var(--espacio-3);
-  min-height: var(--alto-objetivo-tactil);
-  padding: var(--espacio-3) var(--espacio-4);
-  border: 1px solid var(--color-borde);
-  border-radius: var(--radio-md);
-  background: var(--color-superficie);
-  cursor: pointer;
-  transition: transform var(--duracion-respuesta) var(--curva-suave), opacity var(--duracion-respuesta) var(--curva-suave);
 }
 
 .pausas-activas-option::before {
@@ -618,6 +659,13 @@
 .pausas-activas-option:has(input:checked) {
   border-color: var(--color-primario);
   background: var(--color-fondo-verde);
+}
+
+/* Icono seleccionado en verde oscuro, no solo por color: el borde también cambia. */
+.pausas-activas-option:has(input:checked) .pausas-activas-option__glyph {
+  background: transparent;
+  color: var(--color-primario-oscuro);
+  border: 1px solid var(--color-primario);
 }
 
 .pausas-activas-option:has(input:checked)::before {
@@ -677,8 +725,8 @@
   width: 2.25rem;
   height: 2.25rem;
   border-radius: var(--radio-sm);
-  background: var(--color-fondo-verde);
-  color: var(--color-secundario-oscuro);
+  background: var(--color-superficie-suave);
+  color: var(--color-borde);
   transition: transform var(--duracion-respuesta) var(--curva-suave), opacity var(--duracion-respuesta) var(--curva-suave);
 }
 
@@ -692,10 +740,6 @@
   stroke-linejoin: round;
 }
 
-.pausas-activas-option:has(input:checked) .pausas-activas-option__glyph {
-  background: var(--color-primario);
-  color: var(--color-sobre-primario);
-}
 
 .pausas-activas-option__copy {
   min-width: 0;
@@ -912,6 +956,17 @@
   opacity: 0.5;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .pausas-activas-page--en-curso .pausa-player__ambient-ring {
+    animation: pausa-pulso-ambiental 4s ease-in-out alternate infinite;
+  }
+}
+
+@keyframes pausa-pulso-ambiental {
+  from { opacity: 0.6; }
+  to { opacity: 0.25; }
+}
+
 .pausa-player__time {
   position: absolute;
   inset: 0;
@@ -926,7 +981,7 @@
   display: inline-block;
   min-width: 5.2ch;
   color: var(--pausa-tiempo);
-  font-size: clamp(3rem, 12vw, 5.2rem);
+  font-size: clamp(2.6rem, 6vw, 3.8rem);
   font-weight: 800;
   font-variant-numeric: tabular-nums;
   font-feature-settings: 'tnum' 1;
@@ -1029,103 +1084,92 @@
   white-space: nowrap;
 }
 
-/* --- 9. Deriva: solo durante el curso; en pausa se congela --------------- */
+/* --- 9. Deriva: capas con amplitud perceptible; pausa la congela, curso la ralentiza --- */
 
 @media (prefers-reduced-motion: no-preference) {
-  /* Movimiento ambiental en todos los estados salvo finalizada. */
   .pausas-activas-page--preparacion .movement-sculpture__capa,
   .pausas-activas-page--en-curso .movement-sculpture__capa,
   .pausas-activas-page--en-pausa .movement-sculpture__capa {
     animation-timing-function: ease-in-out;
     animation-iteration-count: infinite;
+    animation-direction: alternate;
   }
 
-  .pausas-activas-page--preparacion .movement-sculpture__capa {
-    animation-duration: 30s;
-    opacity: 0.7;
-  }
-
+  /* Base: preparación usa las velocidades indicadas. */
   .pausas-activas-page--preparacion .movement-sculpture__capa--orbita-a {
     animation-name: pausa-deriva-a;
-    animation-duration: 30s;
+    animation-duration: 14s;
   }
   .pausas-activas-page--preparacion .movement-sculpture__capa--orbita-b {
     animation-name: pausa-deriva-b;
-    animation-duration: 36s;
+    animation-duration: 19s;
   }
   .pausas-activas-page--preparacion .movement-sculpture__capa--banda {
     animation-name: pausa-deriva-c;
-    animation-duration: 42s;
+    animation-duration: 23s;
   }
   .pausas-activas-page--preparacion .movement-sculpture__capa--nucleo {
     animation-name: pausa-deriva-d;
-    animation-duration: 26s;
+    animation-duration: 11s;
   }
 
-  /* En curso: movimiento más perceptible. */
-  .pausas-activas-page--en-curso .movement-sculpture__capa {
-    animation-duration: 26s;
-  }
-
+  /* En curso: más lentas (velocidad x0.7). */
   .pausas-activas-page--en-curso .movement-sculpture__capa--orbita-a {
     animation-name: pausa-deriva-a;
+    animation-duration: 20s;
   }
   .pausas-activas-page--en-curso .movement-sculpture__capa--orbita-b {
     animation-name: pausa-deriva-b;
-    animation-duration: 32s;
+    animation-duration: 27.14s;
   }
   .pausas-activas-page--en-curso .movement-sculpture__capa--banda {
     animation-name: pausa-deriva-c;
-    animation-duration: 38s;
+    animation-duration: 32.86s;
   }
   .pausas-activas-page--en-curso .movement-sculpture__capa--nucleo {
     animation-name: pausa-deriva-d;
-    animation-duration: 22s;
+    animation-duration: 15.71s;
   }
 
-  /* En pausa: movimiento detenido. */
+  /* En pausa: detenido. */
   .pausas-activas-page--en-pausa .movement-sculpture__capa {
     animation-play-state: paused;
   }
 }
 
 @keyframes pausa-deriva-a {
-  0%,
-  100% {
-    transform: translate3d(-4%, -6%, -4rem) rotateX(62deg) rotateZ(-28deg);
+  0% {
+    transform: translate3d(-4%, -6%, -5rem) rotateX(62deg) rotateZ(-28deg);
   }
-  50% {
-    transform: translate3d(2%, -2%, -4rem) rotateX(65deg) rotateZ(-24deg);
+  100% {
+    transform: translate3d(6%, 4%, -4.5rem) rotateX(62deg) rotateZ(-28deg);
   }
 }
 
 @keyframes pausa-deriva-b {
-  0%,
-  100% {
-    transform: translate3d(8%, 2%, -1.5rem) rotateY(64deg) rotateZ(20deg);
+  0% {
+    transform: translate3d(8%, 2%, -2rem) rotateY(64deg) rotateZ(20deg);
   }
-  50% {
-    transform: translate3d(4%, 6%, -1.5rem) rotateY(60deg) rotateZ(24deg);
+  100% {
+    transform: translate3d(-2%, 8%, -2.5rem) rotateY(64deg) rotateZ(20deg);
   }
 }
 
 @keyframes pausa-deriva-c {
-  0%,
-  100% {
-    transform: translate3d(0, 4%, 1rem) rotateX(14deg) rotateY(-16deg) rotate(-10deg);
+  0% {
+    transform: translate3d(0, 4%, 1.5rem) rotateX(14deg) rotateY(-16deg) rotate(-10deg);
   }
-  50% {
-    transform: translate3d(-2%, 1%, 1rem) rotateX(10deg) rotateY(-12deg) rotate(-7deg);
+  100% {
+    transform: translate3d(8%, -6%, 2rem) rotateX(14deg) rotateY(-16deg) rotate(-10deg);
   }
 }
 
 @keyframes pausa-deriva-d {
-  0%,
-  100% {
-    transform: translate3d(2%, -2%, 3rem) rotateX(8deg) rotate(-4deg);
+  0% {
+    transform: translate3d(2%, -2%, 3.5rem) rotateX(8deg) rotate(-4deg);
   }
-  50% {
-    transform: translate3d(4%, -4%, 3rem) rotateX(11deg) rotate(-2deg);
+  100% {
+    transform: translate3d(-8%, 6%, 3rem) rotateX(8deg) rotate(-4deg);
   }
 }
 
@@ -1225,7 +1269,7 @@ html.js .pausas-activas-page.is-visible .pausas-activas-timer {
   }
 
   .pausa-player__time-value {
-    font-size: clamp(2rem, 9vw, 3.2rem);
+    font-size: clamp(2.6rem, 6vw, 3.8rem);
   }
 
   .pausa-player__timer {

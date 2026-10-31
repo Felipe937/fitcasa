@@ -208,11 +208,14 @@ paralaje decorativo.
 
 Herramienta de pausa guiada: no es una landing ni una ficha clínica.
 
-- **Composición.** Hero asimétrico con titular de dos líneas y escultura
-  abstracta de cuatro capas (`orbita-a`, `orbita-b`, `banda`, `nucleo`) en
-  `.movement-sculpture`; el pie y el sello explican que es una forma, no
-  anatomía. Configuración en dos fieldsets; reproductor en una superficie
-  propia.
+- **Composición.** Hero asimétrico 1fr/1fr en escritorio (a partir de 40rem):
+  texto a la izquierda con número editorial «01» de fondo (`opacity: 0.04`,
+  `aria-hidden`), escultura a la derecha con `transform: scale(1.2)`. En móvil
+  (< 40rem) columna única con la escultura encima y `max-height: 180px`.
+  Escultura abstracta de cuatro capas (`orbita-a`, `orbita-b`, `banda`,
+  `nucleo`) en `.movement-sculpture`; el pie y el sello explican que es una
+  forma, no anatomía. Configuración en dos fieldsets; reproductor en una
+  superficie propia.
 - **Estados.** `preparacion`, `en-curso`, `en-pausa` y `finalizada` cambian
   tokens de superficie (`--pausa-*`), no la estructura. El verde profundo
   envuelve el anillo durante el curso; la pausa usa azul frío; la finalizada
@@ -224,15 +227,24 @@ Herramienta de pausa guiada: no es una landing ni una ficha clínica.
   320 px, la etiqueta de estado ocupa una fila propia y el aviso de estado
   reserva dos líneas para no mover el anillo.
 - **Configuración.** Dos columnas desde `80rem`; una columna en tablet y móvil.
-  Tarjetas de opción con 44 px de alto táctil, selección por color y marca; el
-  filete de 1 px es el límite real de la tarjeta, no decoración.
-- **Tiempo.** Anillo SVG con `stroke-dashoffset`; cifras `tabular-nums`;
-  `role="timer"` con `aria-live="off"`. El estado se anuncia por el chip y por
-  `.pausa-player__announcer` (ver hallazgos en 9.2).
-- **Movimiento.** Solo `transform` y `opacity` en la escultura;
-  `stroke-dashoffset` en el anillo. La deriva de las capas solo existe en
-  `en-curso`; `prefers-reduced-motion` la detiene sin detener el temporizador.
-- **Tipografía.** Titular `clamp(3rem, 7.1vw, 6.4rem)`; h2
+  Tarjetas de opción con 44 px de alto táctil, selección por borde e icono
+  (no solo color); el filete de 1 px es el límite real de la tarjeta, no
+  decoración. Los tres selectores de modalidad llevan iconos SVG abstractos de
+  24 × 24 px (vertical con curva, ángulo de 90°, espiral).
+- **Tiempo.** Anillo SVG con `viewBox="0 0 160 160"`, radios 72/62 y
+  `stroke-width` 6 px (progreso) / 2 px (ambiental); `stroke-dashoffset`;
+  cifras `clamp(2.6rem, 6vw, 3.8rem)` con `tabular-nums`; `role="timer"` con
+  `aria-live="off"`. En curso el anillo toma `--color-primario` y el ambiental
+  pulsa 4 s (`alternate infinite`, `opacity 0.6 → 0.25`). El estado se anuncia
+  por el chip y por `.pausa-player__announcer`.
+- **Movimiento.** Tilt reactivo por puntero sobre `.movement-sculpture__marco`
+  con `requestAnimationFrame`, rango ±6°, retorno 900 ms; 0 listeners en táctil,
+  teclado y `prefers-reduced-motion`. Solo `transform`, `opacity` y
+  `stroke-dashoffset` en animaciones; sin `transition: all`. Deriva de capas con
+  amplitud 6-10 % en X/Y y ±0.5 rem en Z; velocidades 14 s / 19 s / 23 s /
+  11 s (`alternate infinite`, `ease-in-out`); en pausa `paused`; en curso
+  velocidad ×0.7; `prefers-reduced-motion: reduce` desactiva todo.
+- **Tipografía.** Titular `clamp(2.4rem, 5vw, 3.8rem)`; h2
   `clamp(1.8rem, 3.1vw, 2.75rem)`; cuerpo 15/16 px y etiquetas del sistema en
   13 px. Las mayúsculas espaciadas son etiquetas editoriales existentes, no
   titulares.

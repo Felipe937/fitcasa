@@ -53,7 +53,7 @@ export const PausaPlayer: React.FC<PausaPlayerProps> = ({
   remainingSeconds,
 }) => {
   const progress = durationSeconds > 0 ? elapsedSeconds / durationSeconds : 0;
-  const circumference = 2 * Math.PI * 90;
+  const circumference = 2 * Math.PI * 72;
   const strokeDashoffset = circumference * (1 - progress);
   const playerState = isFinished ? 'finished' : isRunning ? 'running' : elapsedSeconds > 0 ? 'paused' : 'ready';
 
@@ -147,7 +147,7 @@ export const PausaPlayer: React.FC<PausaPlayerProps> = ({
       >
         <svg
           className="pausa-player__progress-ring"
-          viewBox="0 0 200 200"
+          viewBox="0 0 160 160"
           aria-hidden="true"
         >
           <defs>
@@ -158,36 +158,36 @@ export const PausaPlayer: React.FC<PausaPlayerProps> = ({
           </defs>
           <circle
             className="pausa-player__progress-bg"
-            cx="100"
-            cy="100"
-            r="90"
+            cx="80"
+            cy="80"
+            r="72"
             fill="none"
             stroke="var(--pausa-anillo-base, var(--color-borde))"
-            strokeWidth="12"
+            strokeWidth="6"
           />
           <circle
             className="pausa-player__progress"
-            cx="100"
-            cy="100"
-            r="90"
+            cx="80"
+            cy="80"
+            r="72"
             fill="none"
             stroke="url(#pausa-progress-gradient)"
-            strokeWidth="12"
+            strokeWidth="6"
             strokeDasharray={circumference}
             strokeDashoffset={strokeDashoffset}
             strokeLinecap="round"
-            transform="rotate(-90 100 100)"
+            transform="rotate(-90 80 80)"
           />
           <circle
             className="pausa-player__ambient-ring"
-            cx="100"
-            cy="100"
-            r="78"
+            cx="80"
+            cy="80"
+            r="62"
             fill="none"
             stroke="var(--pausa-anillo-ambiental, var(--color-secundario))"
-            strokeWidth="1.5"
+            strokeWidth="2"
             strokeDasharray="2 9"
-            transform="rotate(-90 100 100)"
+            transform="rotate(-90 80 80)"
           />
         </svg>
         <div className="pausa-player__time" aria-hidden="true">
