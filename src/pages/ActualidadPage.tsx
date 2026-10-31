@@ -2,6 +2,7 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { PageRoute } from '../components/Header';
 
 import { VisualAsociacion } from '../components/VisualAsociacion';
+import { VisualRedConceptual } from '../components/VisualRedConceptual';
 import { ArticuloCientifico, articulosNoticias } from '../data/noticias';
 
 interface ActualidadPageProps {
@@ -145,7 +146,7 @@ export const ActualidadPage: React.FC<ActualidadPageProps> = ({ articulo, onNavi
 
       {/* Selector editorial entre publicaciones */}
       <nav aria-label="Publicaciones de Actualidad" className="actualidad-indice">
-        <span className="actualidad-indice__titulo">ArtÃ­culos</span>
+        <span className="actualidad-indice__titulo">Artículos</span>
         <div className="actualidad-indice__listado">
           {articulos.map((a) => (
             <button
@@ -154,9 +155,9 @@ export const ActualidadPage: React.FC<ActualidadPageProps> = ({ articulo, onNavi
               className={`actualidad-indice__boton${isActive(a.id) ? ' actualidad-indice__boton--activo' : ''}`}
               onClick={() => cambiarArticulo(a.id)}
               aria-pressed={isActive(a.id)}
+              title={a.tituloEditorial}
             >
               <span className="actualidad-indice__etiqueta">{a.etiquetaEditorial}</span>
-              <span className="actualidad-indice__titulo">{a.tituloEditorial}</span>
               <span className="actualidad-indice__fecha">{a.fechaPublicacion}</span>
             </button>
           ))}
@@ -207,7 +208,7 @@ export const ActualidadPage: React.FC<ActualidadPageProps> = ({ articulo, onNavi
           </div>
           <div className="actualidad-hero__visual" data-reveal="hero-visual">
             {articuloActual.tipo === 'ejercicio' ? (
-              <VisualAsociacion />
+              <VisualRedConceptual reducedMotion={false} />
             ) : (
               <VisualAsociacion />
             )}

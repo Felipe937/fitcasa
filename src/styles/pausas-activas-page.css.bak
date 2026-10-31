@@ -1,0 +1,1152 @@
+﻿/* ==========================================================================
+   Pausas activas
+   Hoja exclusiva de esta pantalla. Todos los selectores estÃ¡n namespacados
+   (.pausas-activas-page, .pausa-player, .movement-sculpture) para no tocar
+   ninguna otra pÃ¡gina. Solo se animan transform, opacity y stroke-dashoffset.
+   ========================================================================== */
+
+/* --- 1. Tokens de la escena ------------------------------------------------ */
+
+.pausas-activas-page {
+  /* Campos y superficies por estado. */
+  --pausa-campo-fondo: var(--color-fondo-verde);
+  --pausa-campo-borde: var(--color-borde);
+  --pausa-campo-texto: var(--color-texto);
+  --pausa-campo-texto-suave: var(--color-texto-suave);
+  --pausa-chip-fondo: var(--color-superficie);
+  --pausa-chip-texto: var(--color-secundario-oscuro);
+  --pausa-chip-borde: var(--color-borde);
+  --pausa-panel-fondo: var(--color-superficie);
+  --pausa-panel-borde: var(--color-borde);
+  --pausa-panel-texto: var(--color-texto);
+  --pausa-panel-texto-suave: var(--color-texto-suave);
+  --pausa-regla: var(--color-borde);
+
+  /* Marco de la escultura y su borde. */
+  --pausa-marco-fondo: var(--color-fondo-verde);
+  --pausa-marco-borde: var(--color-borde);
+
+  /* Capas de la escultura. */
+  --pausa-orbita: var(--color-secundario);
+  --pausa-banda: var(--color-secundario);
+  --pausa-nucleo: var(--color-secundario);
+  --pausa-marca: var(--color-terciario);
+  --pausa-sello-texto: var(--color-secundario-oscuro);
+  --pausa-sello-borde: var(--color-borde);
+  --pausa-arco-a: var(--color-secundario);
+  --pausa-arco-b: var(--color-secundario-oscuro);
+
+  /* Temporizador SVG. */
+  --pausa-anillo-base: var(--color-borde);
+  --pausa-anillo-ambiental: var(--color-secundario);
+  --pausa-tiempo: var(--color-texto);
+  --pausa-tiempo-total: var(--color-texto-suave);
+  --pausa-foco: var(--color-foco);
+  --pausa-ancho-temporizador: min(100%, 20rem);
+
+  /* AtmÃ³sfera y profundidad. */
+  --pausa-luz-ambiental: rgba(21, 67, 59, 0.06);
+  --pausa-luz-centro: rgba(21, 67, 59, 0.12);
+  --pausa-profundidad: 12rem;
+  --pausa-giro-puntero: 4deg;
+}
+
+/* PreparaciÃ³n: claro, abierto, en espera. */
+.pausas-activas-page--preparacion {
+  --pausa-campo-fondo: var(--color-fondo-verde);
+  --pausa-campo-borde: var(--color-borde);
+  --pausa-campo-texto: var(--color-texto);
+  --pausa-campo-texto-suave: var(--color-texto-suave);
+  --pausa-chip-fondo: var(--color-superficie);
+  --pausa-chip-texto: var(--color-secundario-oscuro);
+  --pausa-chip-borde: var(--color-borde);
+}
+
+/* En curso: el verde profundo envuelve el anillo y el tiempo. */
+.pausas-activas-page--en-curso {
+  --pausa-campo-fondo: var(--color-primario-oscuro);
+  --pausa-campo-borde: var(--color-primario);
+  --pausa-campo-texto: var(--color-sobre-primario);
+  --pausa-campo-texto-suave: var(--color-salvia-claro);
+  --pausa-chip-fondo: var(--color-primario);
+  --pausa-chip-texto: var(--color-salvia-claro);
+  --pausa-chip-borde: var(--color-secundario);
+  --pausa-panel-fondo: var(--color-primario-oscuro);
+  --pausa-panel-borde: var(--color-secundario);
+  --pausa-panel-texto: var(--color-sobre-primario);
+  --pausa-panel-texto-suave: var(--color-salvia-claro);
+  --pausa-regla: var(--color-primario);
+  --pausa-marco-fondo: var(--color-primario-oscuro);
+  --pausa-marco-borde: var(--color-primario);
+  --pausa-orbita: var(--color-salvia-claro);
+  --pausa-banda: var(--color-secundario);
+  --pausa-nucleo: var(--color-salvia-claro);
+  --pausa-marca: var(--color-terciario);
+  --pausa-sello-texto: var(--color-salvia-claro);
+  --pausa-sello-borde: var(--color-secundario);
+  --pausa-arco-a: var(--color-salvia-claro);
+  --pausa-arco-b: var(--color-sobre-primario);
+  --pausa-anillo-base: var(--color-secundario);
+  --pausa-anillo-ambiental: var(--color-secundario);
+  --pausa-tiempo: var(--color-sobre-primario);
+  --pausa-tiempo-total: var(--color-salvia-claro);
+  --pausa-foco: var(--color-foco-invertido);
+}
+
+/* En pausa: superficie clara y frÃ­a, borde marcado; se distingue del verde. */
+.pausas-activas-page--en-pausa {
+  --pausa-campo-fondo: var(--color-fondo-azul);
+  --pausa-campo-borde: var(--color-secundario);
+  --pausa-campo-texto: var(--color-texto);
+  --pausa-campo-texto-suave: var(--color-texto-suave);
+  --pausa-chip-fondo: var(--color-superficie);
+  --pausa-chip-texto: var(--color-primario);
+  --pausa-chip-borde: var(--color-primario);
+  --pausa-panel-fondo: var(--color-superficie);
+  --pausa-panel-borde: var(--color-primario);
+  --pausa-panel-texto: var(--color-texto);
+  --pausa-panel-texto-suave: var(--color-texto-suave);
+  --pausa-regla: var(--color-borde);
+  --pausa-marco-fondo: var(--color-fondo-azul);
+  --pausa-marco-borde: var(--color-borde);
+  --pausa-orbita: var(--color-secundario);
+  --pausa-banda: var(--color-salvia-claro);
+  --pausa-nucleo: var(--color-superficie);
+  --pausa-marca: var(--color-secundario-oscuro);
+  --pausa-sello-texto: var(--color-secundario-oscuro);
+  --pausa-sello-borde: var(--color-borde);
+  --pausa-arco-a: var(--color-secundario);
+  --pausa-arco-b: var(--color-secundario-oscuro);
+  --pausa-anillo-base: var(--color-borde);
+  --pausa-anillo-ambiental: var(--color-secundario);
+  --pausa-tiempo: var(--color-texto);
+  --pausa-tiempo-total: var(--color-texto-suave);
+  --pausa-foco: var(--color-foco);
+}
+
+/* Finalizada: serena, sin euforia; el nÃºcleo se abre en anillo. */
+.pausas-activas-page--finalizada {
+  --pausa-campo-fondo: var(--color-superficie-suave);
+  --pausa-campo-borde: var(--color-borde);
+  --pausa-campo-texto: var(--color-texto);
+  --pausa-campo-texto-suave: var(--color-texto-suave);
+  --pausa-chip-fondo: var(--color-superficie);
+  --pausa-chip-texto: var(--color-secundario-oscuro);
+  --pausa-chip-borde: var(--color-borde);
+  --pausa-panel-fondo: var(--color-superficie);
+  --pausa-panel-borde: var(--color-borde);
+  --pausa-panel-texto: var(--color-texto);
+  --pausa-panel-texto-suave: var(--color-texto-suave);
+  --pausa-regla: var(--color-borde);
+  --pausa-marco-fondo: var(--color-superficie);
+  --pausa-marco-borde: var(--color-borde);
+  --pausa-orbita: var(--color-secundario);
+  --pausa-banda: var(--color-salvia-claro);
+  --pausa-nucleo: var(--color-secundario);
+  --pausa-marca: var(--color-secundario-oscuro);
+  --pausa-sello-texto: var(--color-secundario-oscuro);
+  --pausa-sello-borde: var(--color-borde);
+  --pausa-arco-a: var(--color-secundario);
+  --pausa-arco-b: var(--color-secundario-oscuro);
+  --pausa-anillo-base: var(--color-borde);
+  --pausa-anillo-ambiental: var(--color-secundario);
+  --pausa-tiempo: var(--color-texto);
+  --pausa-tiempo-total: var(--color-texto-suave);
+  --pausa-foco: var(--color-foco);
+}
+
+/* --- 2. Estructura --------------------------------------------------------- */
+
+.pausas-activas-page {
+  padding-block: var(--espacio-7) var(--espacio-9);
+}
+
+.pausas-activas-header {
+  display: block;
+}
+
+.pausas-activas-volver {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  min-height: var(--alto-objetivo-tactil);
+  margin-bottom: var(--espacio-5);
+  color: var(--color-texto-suave);
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform var(--duracion-respuesta) var(--curva-suave), opacity var(--duracion-respuesta) var(--curva-suave);
+}
+
+.pausas-activas-volver:hover {
+  color: var(--color-primario);
+  transform: translateX(-2px);
+}
+
+.pausas-activas-volver:focus-visible {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 3px;
+  border-radius: var(--radio-sm);
+}
+
+/* --- 3. Hero asimÃ©trico ---------------------------------------------------- */
+
+.pausas-activas-hero {
+  display: grid;
+  gap: var(--espacio-6);
+  align-items: end;
+}
+
+.pausas-activas-hero__copy {
+  min-width: 0;
+}
+
+.pausas-activas-context {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  margin-bottom: var(--espacio-3);
+  color: var(--color-texto-suave);
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+}
+
+.pausas-activas-context::before {
+  width: 0.55rem;
+  height: 0.55rem;
+  content: '';
+  border-radius: 50%;
+  background: var(--color-secundario);
+}
+
+.pausas-activas-titulo {
+  margin: 0;
+  font-size: clamp(3rem, 8.4vw, 6.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+}
+
+.pausas-activas-titulo span {
+  display: block;
+}
+
+.pausas-activas-titulo span + span {
+  margin-left: 0.42em;
+  color: var(--color-secundario-oscuro);
+}
+
+.pausas-activas-subtitulo {
+  max-width: 46ch;
+  margin: var(--espacio-5) 0 0;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-lg);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+.pausas-activas-hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-3);
+  max-width: 28rem;
+  margin-top: var(--espacio-5);
+  color: var(--color-texto-suave);
+  font-size: var(--texto-sm);
+  font-weight: 650;
+}
+
+.pausas-activas-hero__meta span[aria-hidden] {
+  color: var(--color-borde);
+}
+
+/* --- 4. Escultura: cuatro planos en Z ------------------------------------- */
+
+.movement-sculpture {
+  margin: 0;
+}
+
+.movement-sculpture__marco {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  min-height: clamp(18rem, 34vw, 23rem);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--pausa-marco-borde);
+  border-radius: var(--radio-lg);
+  background: var(--pausa-marco-fondo);
+}
+
+.movement-sculpture__escena {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: clamp(12rem, 28vw, 17rem);
+  perspective: 62rem;
+  perspective-origin: 50% 45%;
+  transform-style: preserve-3d;
+}
+
+.movement-sculpture__capa {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  width: var(--capa-ancho);
+  height: var(--capa-alto);
+  margin-top: calc(var(--capa-alto) / -2);
+  margin-left: calc(var(--capa-ancho) / -2);
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  transition: transform 900ms var(--curva-suave), opacity var(--duracion-media) var(--curva-suave);
+}
+
+.movement-sculpture__capa--orbita-a {
+  --capa-ancho: 78%;
+  --capa-alto: 46%;
+  border: 1px solid var(--pausa-orbita);
+  border-radius: 50%;
+  opacity: 0.9;
+  transform: translate3d(-4%, -6%, -4rem) rotateX(62deg) rotateZ(-28deg);
+}
+
+.movement-sculpture__capa--orbita-b {
+  --capa-ancho: 42%;
+  --capa-alto: 78%;
+  border: 1px solid var(--pausa-orbita);
+  border-radius: 50%;
+  opacity: 0.5;
+  transform: translate3d(8%, 2%, -1.5rem) rotateY(64deg) rotateZ(20deg);
+}
+
+.movement-sculpture__capa--banda {
+  --capa-ancho: 52%;
+  --capa-alto: 62%;
+  border-radius: 58% 42% 47% 53% / 46% 52% 48% 54%;
+  background: var(--pausa-banda);
+  opacity: 0.16;
+  transform: translate3d(0, 4%, 1rem) rotateX(14deg) rotateY(-16deg) rotate(-10deg);
+}
+
+.movement-sculpture__capa--nucleo {
+  --capa-ancho: 28%;
+  --capa-alto: 34%;
+  border-radius: 50% 50% 46% 54% / 52% 48% 52% 48%;
+  background: var(--pausa-nucleo);
+  opacity: 0.95;
+  transform: translate3d(2%, -2%, 3rem) rotateX(8deg) rotate(-4deg);
+}
+
+/* Corte vertical: la forma se detiene, no desaparece. */
+.movement-sculpture__capa--nucleo::before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 34%;
+  height: 62%;
+  content: '';
+  border-radius: var(--radio-pill);
+  background: var(--pausa-marco-fondo);
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  transition: opacity var(--duracion-media) var(--curva-suave);
+}
+
+.pausas-activas-page--en-pausa .movement-sculpture__capa--nucleo::before {
+  opacity: 0.92;
+}
+
+/* Punto de arcilla: detalle mÃ­nimo, nunca el centro de la escena. */
+.movement-sculpture__capa--nucleo::after {
+  position: absolute;
+  top: 64%;
+  left: 62%;
+  width: 0.48rem;
+  height: 0.48rem;
+  content: '';
+  border-radius: 50%;
+  background: var(--pausa-marca);
+  transform: translate(-50%, -50%);
+}
+
+.pausas-activas-page--finalizada .movement-sculpture__capa--nucleo {
+  border: 1px solid var(--pausa-nucleo);
+  background: transparent;
+}
+
+.pausas-activas-page--finalizada .movement-sculpture__capa--nucleo::before,
+.pausas-activas-page--finalizada .movement-sculpture__capa--nucleo::after {
+  opacity: 0;
+}
+
+.movement-sculpture__sello {
+  align-self: flex-start;
+  display: inline-block;
+  margin-top: var(--espacio-4);
+  padding: var(--espacio-1) var(--espacio-3);
+  border: 1px solid var(--pausa-sello-borde);
+  border-radius: var(--radio-pill);
+  color: var(--pausa-sello-texto);
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  letter-spacing: 0.15em;
+}
+
+.movement-sculpture__estado {
+  position: absolute;
+  top: var(--espacio-5);
+  right: var(--espacio-5);
+  width: 1.05rem;
+  height: 1.05rem;
+  color: var(--pausa-marca);
+}
+
+.movement-sculpture__estado::before,
+.movement-sculpture__estado::after {
+  position: absolute;
+  content: '';
+  background: currentColor;
+}
+
+.pausas-activas-page--preparacion .movement-sculpture__estado::before {
+  inset: 0;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.pausas-activas-page--en-curso .movement-sculpture__estado::before {
+  inset: 0.12rem;
+  border-radius: 50%;
+}
+
+.pausas-activas-page--en-pausa .movement-sculpture__estado::before,
+.pausas-activas-page--en-pausa .movement-sculpture__estado::after {
+  top: 0;
+  bottom: 0;
+  width: 0.3rem;
+  border-radius: var(--radio-pill);
+}
+
+.pausas-activas-page--en-pausa .movement-sculpture__estado::before {
+  left: 0.14rem;
+}
+
+.pausas-activas-page--en-pausa .movement-sculpture__estado::after {
+  right: 0.14rem;
+}
+
+.pausas-activas-page--finalizada .movement-sculpture__estado::before {
+  top: 0.38rem;
+  left: 0.03rem;
+  width: 0.48rem;
+  height: 0.8rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  background: transparent;
+  transform: rotate(42deg);
+}
+
+.movement-sculpture__pie {
+  max-width: 44ch;
+  margin-top: var(--espacio-3);
+  color: var(--color-texto-suave);
+  font-size: var(--texto-xs);
+  line-height: 1.55;
+}
+
+/* --- 5. Recordatorio clÃ­nico ---------------------------------------------- */
+
+.pausas-activas-aviso {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--espacio-3);
+  align-items: start;
+  margin-top: var(--espacio-6);
+  padding: var(--espacio-4) var(--espacio-5);
+  border-left: 3px solid var(--color-terciario-oscuro);
+  border-radius: var(--radio-md);
+  background: var(--color-fondo-aviso);
+  color: var(--color-texto);
+  font-size: var(--texto-sm);
+  line-height: 1.55;
+}
+
+.pausas-activas-aviso-icono {
+  width: 1.3rem;
+  height: 1.3rem;
+  margin-top: 0.15rem;
+  fill: none;
+  stroke: var(--color-terciario-oscuro);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* --- 6. ConfiguraciÃ³n ------------------------------------------------------ */
+
+.pausas-activas-config {
+  display: grid;
+  gap: var(--espacio-6);
+  margin-top: var(--espacio-8);
+  padding-top: var(--espacio-7);
+}
+
+.pausas-activas-marker {
+  margin: 0 0 var(--espacio-2);
+  color: var(--color-texto-suave);
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.pausas-activas-config__intro h2,
+.pausas-activas-timer__heading h2 {
+  margin: 0;
+  font-size: var(--texto-2xl);
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+}
+
+.pausas-activas-config__intro > p:last-child {
+  max-width: 42ch;
+  margin: var(--espacio-3) 0 0;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-base);
+  line-height: 1.6;
+}
+
+.pausas-activas-config__fields {
+  display: grid;
+  gap: var(--espacio-5);
+  align-content: start;
+}
+
+.pausas-activas-fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.pausas-activas-legend {
+  margin-bottom: var(--espacio-3);
+  padding: 0;
+  color: var(--color-texto-suave);
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.pausas-activas-options {
+  display: grid;
+  gap: var(--espacio-2);
+  max-width: 32rem;
+}
+
+.pausas-activas-option {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--espacio-3);
+  min-height: var(--alto-objetivo-tactil);
+  padding: var(--espacio-3) var(--espacio-4);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+  background: var(--color-superficie);
+  cursor: pointer;
+  transition: transform var(--duracion-respuesta) var(--curva-suave), opacity var(--duracion-respuesta) var(--curva-suave);
+}
+
+.pausas-activas-option::before {
+  position: absolute;
+  top: var(--espacio-2);
+  bottom: var(--espacio-2);
+  left: -1px;
+  width: 3px;
+  content: '';
+  border-radius: var(--radio-pill);
+  background: var(--color-primario);
+  opacity: 0;
+  transition: opacity var(--duracion-respuesta) var(--curva-suave);
+}
+
+.pausas-activas-option:has(input:checked) {
+  border-color: var(--color-primario);
+  background: var(--color-fondo-verde);
+}
+
+.pausas-activas-option:has(input:checked)::before {
+  opacity: 1;
+}
+
+/* Marca de selecciÃ³n: forma ademÃ¡s de color. */
+.pausas-activas-option:has(input:checked)::after {
+  flex: 0 0 auto;
+  width: 0.45rem;
+  height: 0.8rem;
+  margin-left: auto;
+  content: '';
+  border-right: 2px solid var(--color-primario);
+  border-bottom: 2px solid var(--color-primario);
+  transform: rotate(42deg);
+}
+
+.pausas-activas-option:has(input:focus-visible) {
+  outline: 3px solid var(--color-foco);
+  outline-offset: 2px;
+}
+
+.pausas-activas-option:has(input:disabled) {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.pausas-activas-option input[type='radio'] {
+  flex: 0 0 auto;
+  width: var(--alto-objetivo-tactil);
+  height: var(--alto-objetivo-tactil);
+  margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center, transparent 0 0.5rem, var(--color-secundario) 0.5rem 0.625rem, transparent 0.625rem); /* taste-skill-ignore: aro del radio, control de formulario */
+  cursor: inherit;
+}
+
+.pausas-activas-option input[type='radio']:checked {
+  background:
+    radial-gradient(circle at center, var(--color-primario) 0 0.28rem, transparent 0.28rem), /* taste-skill-ignore: punto del radio, control de formulario */
+    radial-gradient(circle at center, transparent 0 0.5rem, var(--color-primario) 0.5rem 0.625rem, transparent 0.625rem); /* taste-skill-ignore: aro del radio, control de formulario */
+}
+
+.pausas-activas-option input[type='radio']:focus-visible {
+  outline: 3px solid var(--color-foco);
+  outline-offset: -6px;
+}
+
+.pausas-activas-option__glyph {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radio-sm);
+  background: var(--color-fondo-verde);
+  color: var(--color-secundario-oscuro);
+  transition: transform var(--duracion-respuesta) var(--curva-suave), opacity var(--duracion-respuesta) var(--curva-suave);
+}
+
+.pausas-activas-option__glyph svg {
+  width: 1.35rem;
+  height: 1.35rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pausas-activas-option:has(input:checked) .pausas-activas-option__glyph {
+  background: var(--color-primario);
+  color: var(--color-sobre-primario);
+}
+
+.pausas-activas-option__copy {
+  min-width: 0;
+  font-size: var(--texto-base);
+  font-weight: 650;
+  line-height: 1.35;
+  overflow-wrap: break-word;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pausas-activas-option:hover {
+    border-color: var(--color-secundario);
+    transform: perspective(48rem) translateY(-1px) rotateX(1.5deg);
+  }
+
+  .pausas-activas-option:hover .pausas-activas-option__glyph {
+    transform: translateZ(0.5rem);
+  }
+}
+
+/* --- 7. Escenario del temporizador ---------------------------------------- */
+
+.pausas-activas-timer {
+  position: relative;
+  margin-top: var(--espacio-8);
+  padding: clamp(1rem, 2.6vw, 2rem);
+  border-radius: var(--radio-lg);
+  background: var(--pausa-campo-fondo);
+  color: var(--pausa-campo-texto);
+}
+
+.pausas-activas-timer__heading {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-3);
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--espacio-5);
+}
+
+.pausas-activas-timer__heading > div {
+  min-width: 0;
+}
+
+.pausas-activas-timer__heading h2 {
+  color: var(--pausa-campo-texto);
+  text-wrap: balance;
+}
+
+.pausas-activas-timer__heading .pausas-activas-marker {
+  color: var(--pausa-campo-texto-suave);
+}
+
+.pausas-activas-timer__state {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espacio-2);
+  min-width: 9.5rem;
+  min-height: 2.5rem;
+  padding: var(--espacio-2) var(--espacio-4);
+  border: 1px solid var(--pausa-chip-borde);
+  border-radius: var(--radio-pill);
+  background: var(--pausa-chip-fondo);
+  color: var(--pausa-chip-texto);
+  font-size: var(--texto-sm);
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.pausas-activas-timer__state::before {
+  flex: 0 0 auto;
+  width: 0.6rem;
+  height: 0.6rem;
+  content: '';
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.pausas-activas-page--preparacion .pausas-activas-timer__state::before {
+  border: 2px solid currentColor;
+  background: transparent;
+}
+
+.pausas-activas-page--en-pausa .pausas-activas-timer__state::before {
+  width: 0.55rem;
+  height: 0.75rem;
+  border-radius: 1px;
+}
+
+.pausas-activas-page--finalizada .pausas-activas-timer__state::before {
+  width: 0.34rem;
+  height: 0.62rem;
+  margin-top: -0.2rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  border-radius: 0;
+  background: transparent;
+  transform: rotate(42deg);
+}
+
+/* --- 8. Reproductor ------------------------------------------------------- */
+
+.pausa-player {
+  position: relative;
+  display: grid;
+  gap: clamp(1rem, 2.4vw, 1.5rem);
+  justify-items: stretch;
+  padding: clamp(1rem, 3vw, 2rem);
+  border: 1px solid var(--pausa-panel-borde);
+  border-radius: var(--radio-md);
+  background: var(--pausa-panel-fondo);
+  color: var(--pausa-panel-texto);
+}
+
+.pausa-player:focus-visible {
+  outline: 3px solid var(--pausa-foco);
+  outline-offset: 3px;
+}
+
+.pausas-activas-page--en-curso .pausa-player :focus-visible {
+  outline-color: var(--color-foco-invertido);
+}
+
+.pausa-player__context {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2) var(--espacio-5);
+  align-items: baseline;
+  justify-content: space-between;
+  text-align: left;
+}
+
+.pausa-player__modo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+  align-items: baseline;
+}
+
+.pausa-player__modo-label {
+  color: var(--pausa-panel-texto-suave);
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.pausa-player__modo strong {
+  font-size: var(--texto-base);
+}
+
+.pausa-player__state-label {
+  color: var(--pausa-panel-texto-suave);
+  font-size: var(--texto-sm);
+}
+
+.pausa-player__descripcion {
+  max-width: 52ch;
+  margin: 0;
+  color: var(--pausa-panel-texto-suave);
+  font-size: var(--texto-sm);
+  line-height: 1.6;
+  text-align: left;
+  text-wrap: pretty;
+}
+
+.pausa-player__timer {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--pausa-ancho-temporizador);
+  margin-inline: auto;
+}
+
+.pausa-player__progress-ring {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.pausa-player__progress-bg {
+  stroke: var(--pausa-anillo-base);
+}
+
+.pausa-player__progress {
+  transition: stroke-dashoffset 1000ms linear;
+}
+
+.pausa-player__ambient-ring {
+  stroke: var(--pausa-anillo-ambiental);
+  opacity: 0.5;
+}
+
+.pausa-player__time {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--espacio-1);
+  text-align: center;
+}
+
+.pausa-player__time-value {
+  display: inline-block;
+  min-width: 5.2ch;
+  color: var(--pausa-tiempo);
+  font-size: clamp(2.6rem, 10.5vw, 4.4rem);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  text-align: center;
+}
+
+.pausa-player__time-total {
+  color: var(--pausa-tiempo-total);
+  font-size: var(--texto-sm);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+  letter-spacing: 0.02em;
+}
+
+.pausa-player__time-caption {
+  color: var(--pausa-tiempo-total);
+  font-size: var(--texto-xs);
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.pausa-player__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-3);
+  justify-content: center;
+  width: 100%;
+}
+
+.pausa-player__btn {
+  min-height: var(--alto-objetivo-tactil);
+  padding-inline: var(--espacio-5);
+  gap: var(--espacio-2);
+  font-size: var(--texto-base);
+  font-weight: 750;
+  transition: transform var(--duracion-respuesta) var(--curva-suave), opacity var(--duracion-respuesta) var(--curva-suave);
+}
+
+.pausa-player__btn:hover {
+  transform: translateY(-1px);
+}
+
+.pausa-player__btn:active {
+  transform: translateY(0);
+}
+
+.pausa-player__btn--secondary {
+  color: var(--color-primario-oscuro);
+  background: var(--color-superficie);
+  border-color: var(--color-primario);
+}
+
+.pausa-player__btn--secondary:hover {
+  color: var(--color-primario-oscuro);
+  background: var(--color-fondo-azul);
+  border-color: var(--color-primario-oscuro);
+}
+
+.pausas-activas-page--en-curso .pausa-player__btn--primary {
+  color: var(--color-primario-oscuro);
+  background: var(--color-salvia-claro);
+  border-color: var(--color-salvia-claro);
+}
+
+.pausas-activas-page--en-curso .pausa-player__btn--primary:hover {
+  color: var(--color-primario-oscuro);
+  background: var(--color-sobre-primario);
+  border-color: var(--color-sobre-primario);
+}
+
+.pausas-activas-page--en-curso .pausa-player__btn--secondary {
+  color: var(--color-sobre-primario);
+  background: transparent;
+  border-color: var(--color-salvia-claro);
+}
+
+.pausas-activas-page--en-curso .pausa-player__btn--secondary:hover {
+  color: var(--color-sobre-primario);
+  background: var(--color-primario);
+  border-color: var(--color-salvia-claro);
+}
+
+.pausa-player__btn-icon {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: currentColor;
+}
+
+.pausa-player__announcer {
+  position: absolute;
+  width: 1px;
+  height: 1px; /* taste-skill-ignore: announcer visualmente oculto para lectores de pantalla */
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* --- 9. Deriva: solo durante el curso; en pausa se congela --------------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  .pausas-activas-page--en-curso .movement-sculpture__capa,
+  .pausas-activas-page--en-pausa .movement-sculpture__capa {
+    animation-duration: 26s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+
+  .pausas-activas-page--en-curso .movement-sculpture__capa--orbita-a,
+  .pausas-activas-page--en-pausa .movement-sculpture__capa--orbita-a {
+    animation-name: pausa-deriva-a;
+  }
+
+  .pausas-activas-page--en-curso .movement-sculpture__capa--orbita-b,
+  .pausas-activas-page--en-pausa .movement-sculpture__capa--orbita-b {
+    animation-name: pausa-deriva-b;
+    animation-duration: 32s;
+  }
+
+  .pausas-activas-page--en-curso .movement-sculpture__capa--banda,
+  .pausas-activas-page--en-pausa .movement-sculpture__capa--banda {
+    animation-name: pausa-deriva-c;
+    animation-duration: 38s;
+  }
+
+  .pausas-activas-page--en-curso .movement-sculpture__capa--nucleo,
+  .pausas-activas-page--en-pausa .movement-sculpture__capa--nucleo {
+    animation-name: pausa-deriva-d;
+    animation-duration: 22s;
+  }
+
+  .pausas-activas-page--en-pausa .movement-sculpture__capa {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes pausa-deriva-a {
+  0%,
+  100% {
+    transform: translate3d(-4%, -6%, -4rem) rotateX(62deg) rotateZ(-28deg);
+  }
+  50% {
+    transform: translate3d(2%, -2%, -4rem) rotateX(65deg) rotateZ(-24deg);
+  }
+}
+
+@keyframes pausa-deriva-b {
+  0%,
+  100% {
+    transform: translate3d(8%, 2%, -1.5rem) rotateY(64deg) rotateZ(20deg);
+  }
+  50% {
+    transform: translate3d(4%, 6%, -1.5rem) rotateY(60deg) rotateZ(24deg);
+  }
+}
+
+@keyframes pausa-deriva-c {
+  0%,
+  100% {
+    transform: translate3d(0, 4%, 1rem) rotateX(14deg) rotateY(-16deg) rotate(-10deg);
+  }
+  50% {
+    transform: translate3d(-2%, 1%, 1rem) rotateX(10deg) rotateY(-12deg) rotate(-7deg);
+  }
+}
+
+@keyframes pausa-deriva-d {
+  0%,
+  100% {
+    transform: translate3d(2%, -2%, 3rem) rotateX(8deg) rotate(-4deg);
+  }
+  50% {
+    transform: translate3d(4%, -4%, 3rem) rotateX(11deg) rotate(-2deg);
+  }
+}
+
+/* --- 10. Responsive ------------------------------------------------------- */
+
+@media (min-width: 48rem) {
+  .pausas-activas-config {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: var(--espacio-8);
+    align-items: start;
+  }
+}
+
+@media (min-width: 80rem) {
+  .pausas-activas-config__fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--espacio-6);
+  }
+}
+
+@media (min-width: 64rem) {
+  .pausas-activas-hero {
+    grid-template-columns: minmax(0, 1.08fr) minmax(19rem, 0.92fr);
+    gap: var(--espacio-8);
+  }
+
+  .movement-sculpture__marco {
+    min-height: 27rem;
+    padding: var(--espacio-6);
+  }
+
+  .movement-sculpture__escena {
+    min-height: 19rem;
+  }
+
+  .pausas-activas-timer__heading {
+    margin-bottom: var(--espacio-6);
+  }
+}
+
+/* MÃ³vil: la retÃ­cula de la pantalla no cambia entre estados. AsÃ­ el botÃ³n que
+   se acaba de pulsar no salta cuando arranca, se pausa o se reanuda. */
+@media (max-width: 47.99rem) {
+  .pausas-activas-page--finalizada .pausa-player__controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pausas-activas-page--finalizada .pausa-player__controls .pausa-player__btn {
+    min-width: 0;
+    padding-inline: var(--espacio-2);
+    font-size: var(--texto-sm);
+    white-space: nowrap;
+  }
+
+  .pausas-activas-page--finalizada .pausa-player__controls .pausa-player__btn:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 22rem) {
+  .pausas-activas-timer__heading {
+    align-items: flex-start;
+  }
+
+  .pausas-activas-timer__heading > div {
+    flex: 1 0 100%;
+  }
+
+  .pausas-activas-timer__state {
+    margin-top: var(--espacio-2);
+  }
+
+  .pausa-player__state-label {
+    min-height: 3.1em;
+  }
+}
+
+/* --- 11. Movimiento reducido --------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .pausas-activas-page *,
+  .pausas-activas-page *::before,
+  .pausas-activas-page *::after {
+    animation: none !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .pausa-player__progress {
+    transition: none !important;
+  }
+}
+
+/* --- 12. Contraste forzado ----------------------------------------------- */
+
+@media (forced-colors: active) {
+  .movement-sculpture__capa {
+    forced-color-adjust: none;
+  }
+
+  .pausas-activas-option:has(input:checked) {
+    border-width: 2px;
+  }
+}
+
