@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { UserPlan } from '../types';
 import { getPlanProgress, getWeekProgress } from '../utils/planGenerator';
 
@@ -12,9 +12,29 @@ const ROUTE_PATH = 'M28 100 C94 30 154 164 216 92 S326 48 392 100';
 const PlanJourneyMap: React.FC<PlanJourneyMapProps> = ({ plan, activeWeek }) => {
   const progress = getPlanProgress(plan);
   const progressOffset = 100 - progress.percentage;
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const node = containerRef.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            node.classList.add('plan-page__mapa--visible');
+            observer.disconnect();
+          }
+        });
+      },
+      { threshold: 0.25 }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div
+      ref={containerRef}
       className="plan-page__mapa"
       role="img"
       aria-label={`Recorrido de cuatro semanas: ${progress.completed} de ${progress.total} sesiones completadas.`}

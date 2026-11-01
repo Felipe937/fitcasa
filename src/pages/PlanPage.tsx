@@ -380,6 +380,23 @@ export const PlanPage: React.FC<PlanPageProps> = ({ onNavigate }) => {
       )}
 
       <div className="plan-page__progreso-global" role="status" aria-live="polite" aria-label={`Progreso global: ${progress.completed} de ${progress.total} sesiones completadas, ${progress.percentage} por ciento`}>
+        <div className="plan-page__progreso-anillo" aria-hidden="true">
+          <svg viewBox="0 0 120 120" focusable="false">
+            <circle className="plan-page__progreso-anillo-fondo" cx="60" cy="60" r="48" pathLength="100" />
+            <circle
+              className="plan-page__progreso-anillo-avance"
+              cx="60"
+              cy="60"
+              r="48"
+              pathLength="100"
+              style={{ strokeDashoffset: `${100 - progress.percentage}` }}
+            />
+          </svg>
+          <div className="plan-page__progreso-anillo-centro">
+            <strong>{progress.percentage}%</strong>
+            <span>{progress.completed}/{progress.total}</span>
+          </div>
+        </div>
         <div className="plan-page__progreso-barra">
           <div className="plan-page__progreso-relleno" style={{ width: `${progress.percentage}%` }}></div>
         </div>

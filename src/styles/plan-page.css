@@ -1461,3 +1461,122 @@
     transition: none;
   }
 }
+/* === Plan premium: profundidad y anillo de progreso === */
+.plan-sculpture {
+  perspective: 48rem;
+  perspective-origin: 50% 45%;
+}
+
+.plan-sculpture__escena {
+  transform-style: preserve-3d;
+  transform: rotateX(var(--plan-giro-x, 0deg)) rotateY(var(--plan-giro-y, 0deg));
+  transition: transform 240ms var(--curva-suave);
+  will-change: transform;
+}
+
+.plan-sculpture__svg {
+  transform: translateZ(0);
+  filter: drop-shadow(0 1.2rem 2.4rem rgba(21, 67, 59, 0.12));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .plan-sculpture__route--deep,
+  .plan-sculpture__route--sage,
+  .plan-sculpture__route--clay,
+  .plan-sculpture__route--light {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .plan-sculpture__route--deep { animation: plan-route-float 18s ease-in-out infinite alternate; }
+  .plan-sculpture__route--sage { animation: plan-route-float 22s ease-in-out -6s infinite alternate-reverse; }
+  .plan-sculpture__route--clay { animation: plan-route-float 16s ease-in-out -3s infinite alternate; }
+}
+
+@keyframes plan-route-float {
+  from { transform: translate3d(0, 0, 0) rotate(0deg); }
+  to { transform: translate3d(0.35rem, -0.3rem, 0.6rem) rotate(0.8deg); }
+}
+
+.plan-page__progreso-global {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--espacio-5);
+}
+
+.plan-page__progreso-anillo {
+  position: relative;
+  width: 6.5rem;
+  height: 6.5rem;
+}
+
+.plan-page__progreso-anillo svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.plan-page__progreso-anillo-fondo,
+.plan-page__progreso-anillo-avance {
+  fill: none;
+  stroke-width: 6;
+}
+
+.plan-page__progreso-anillo-fondo { stroke: var(--color-borde); }
+.plan-page__progreso-anillo-avance {
+  stroke: var(--color-primario);
+  stroke-dasharray: 100;
+  stroke-linecap: round;
+  transition: stroke-dashoffset var(--duracion-media) var(--curva-suave);
+}
+
+.plan-page__progreso-anillo-centro {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+}
+
+.plan-page__progreso-anillo-centro strong {
+  color: var(--color-primario-oscuro);
+  font-size: var(--texto-xl);
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.plan-page__progreso-anillo-centro span {
+  color: var(--color-texto-suave);
+  font-size: var(--texto-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.plan-page__mapa {
+  opacity: 0;
+  transform: translate3d(0, 1rem, 0);
+  transition: opacity var(--duracion-entrada) var(--curva-suave), transform var(--duracion-entrada) var(--curva-suave);
+}
+
+.plan-page__mapa--visible {
+  opacity: 1;
+  transform: none;
+}
+
+.plan-page__mapa-nodo {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform var(--duracion-corta) var(--curva-suave);
+}
+
+.plan-page__mapa-nodo--activa { transform: scale(1.08) translateZ(6px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .plan-sculpture, .plan-sculpture__escena, .plan-sculpture__svg,
+  .plan-sculpture__route, .plan-page__mapa, .plan-page__progreso-anillo-avance {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+  .plan-page__mapa { opacity: 1; transform: none; }
+}
