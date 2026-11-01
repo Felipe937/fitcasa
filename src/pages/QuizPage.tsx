@@ -80,6 +80,56 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
     }
   }, []);
 
+  // Tilt reactivo de la escultura del quiz siguiendo al puntero fino.
+  useEffect(() => {
+    const escena = document.querySelector<HTMLElement>('.quiz-sculpture__escena');
+    if (!escena) return;
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
+    if (reduce.matches || !fine.matches) return;
+
+    let frame: number | null = null;
+
+    const onPointerMove = (event: PointerEvent) => {
+      if (reduce.matches || !fine.matches) return;
+      const rect = escena.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const fx = (event.clientX - cx) / (rect.width / 2);
+      const fy = (event.clientY - cy) / (rect.height / 2);
+      const rx = Math.max(-8, Math.min(8, -fy * 8));
+      const ry = Math.max(-8, Math.min(8, fx * 8));
+      if (frame) cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        escena.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+        frame = null;
+      });
+    };
+
+    const onPointerLeave = () => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        escena.style.transition = 'transform 600ms ease';
+        escena.style.transform = 'rotateX(0deg) rotateY(0deg)';
+        frame = null;
+        window.setTimeout(() => {
+          escena.style.transition = '';
+        }, 600);
+      });
+    };
+
+    escena.addEventListener('pointermove', onPointerMove, { passive: true });
+    escena.addEventListener('pointerleave', onPointerLeave, { passive: true });
+
+    return () => {
+      escena.removeEventListener('pointermove', onPointerMove);
+      escena.removeEventListener('pointerleave', onPointerLeave);
+      if (frame) cancelAnimationFrame(frame);
+      escena.style.transform = '';
+      escena.style.transition = '';
+    };
+  }, []);
   useEffect(() => {
     if (previousStep.current === currentStep) return;
 
@@ -91,6 +141,7 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
 
     return () => window.cancelAnimationFrame(frame);
   }, [currentStep]);
+
 
   const validateStep1 = (): boolean => {
     const errors: Record<string, string> = {};
@@ -384,6 +435,13 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
                           setFieldErrors((prev) => ({ ...prev, objective: '' }));
                         }}
                       />{' '}
+                      <span aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          {val === 'movilidad' && <path d="M3 15 C 7 5 13 5 17 15" />}
+                          {val === 'fuerza' && <path d="M4 16 L 10 4 L 16 16" />}
+                          {val === 'bienestar' && <path d="M3 12 C 6 8 8 16 10 10 C 12 4 14 12 17 8" />}
+                        </svg>
+                      </span>{' '}
                       {objectiveLabels[val]}
                     </label>
                   ))}
@@ -410,6 +468,11 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
                           setFieldErrors((prev) => ({ ...prev, days: '' }));
                         }}
                       />{' '}
+                      <span aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <text x="10" y="15" textAnchor="middle" fontSize="14" fontWeight="700" fill="none" stroke="currentColor" strokeWidth="1.5">{num}</text>
+                        </svg>
+                      </span>{' '}
                       {num} día{num !== '1' ? 's' : ''}
                     </label>
                   ))}
@@ -449,7 +512,7 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
 
               <fieldset aria-describedby={fieldErrors.level ? 'error-level' : undefined}>
                 <legend>¿Cuál es tu nivel de experiencia?</legend>
-                <div className="choice-grid">
+                <div className="choice-grid choice-grid--nivel">
                   {(['principiante', 'intermedio', 'avanzado'] as QuizLevel[]).map((lvl) => (
                     <label key={lvl} className="choice-card">
                       <input
@@ -462,6 +525,13 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
                           setFieldErrors((prev) => ({ ...prev, level: '' }));
                         }}
                       />{' '}
+                      <span aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          {lvl === 'principiante' && <path d="M4 16 h4 v-4 h4 v-4 h4" />}
+                          {lvl === 'intermedio' && <path d="M3 17 h3 v-3 h3 v-3 h3 v-3 h3" />}
+                          {lvl === 'avanzado' && <path d="M2 18 h2.5 v-2.5 h2.5 v-2.5 h2.5 v-2.5 h2.5 v-2.5 h2.5" />}
+                        </svg>
+                      </span>{' '}
                       {levelLabels[lvl]}
                     </label>
                   ))}
@@ -491,6 +561,14 @@ export const QuizPage: React.FC<{ onStorageCleared?: () => void }> = ({
                           setFieldErrors((prev) => ({ ...prev, equipment: '' }));
                         }}
                       />{' '}
+                      <span aria-hidden="true">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          {eq === 'ninguno' && <path d="M5 5 L15 15 M15 5 L5 15" />}
+                          {eq === 'colchoneta' && <rect x="3" y="7" width="14" height="6" rx="1" />}
+                          {eq === 'bandas' && <path d="M6 6 C 2 10 6 14 10 10 C 14 6 18 10 14 14" />}
+                          {eq === 'peso' && <path d="M7 6 V 4 H 13 V 6 M 5 6 H 15 V 16 H 5 Z" />}
+                        </svg>
+                      </span>{' '}
                       {equipmentLabels[eq]}
                     </label>
                   ))}

@@ -19,6 +19,16 @@ const QuizSculpture: React.FC = () => (
         focusable="false"
       >
         <ellipse className="quiz-sculpture__sombra" cx="200" cy="212" rx="104" ry="11" />
+        <g className="quiz-sculpture__orbitas" aria-hidden="true">
+          <path d="M 40 150 Q 200 40 360 150" />
+          <path d="M 55 175 Q 200 70 345 175" />
+          <line x1="30" y1="150" x2="370" y2="150" />
+          <path d="M 60 125 Q 200 230 340 125" />
+          <path d="M 75 195 Q 200 95 325 195" />
+          <line x1="50" y1="135" x2="350" y2="165" />
+          <path d="M 85 110 Q 200 210 315 110" />
+          <line x1="55" y1="185" x2="345" y2="115" />
+        </g>
         <g className="quiz-sculpture__capa quiz-sculpture__capa--1">
           <ellipse className="quiz-sculpture__canto" cx="200" cy="158" rx="172" ry="64" />
           <ellipse className="quiz-sculpture__placa" cx="200" cy="150" rx="172" ry="64" />
@@ -33,6 +43,7 @@ const QuizSculpture: React.FC = () => (
         </g>
         <g className="quiz-sculpture__capa quiz-sculpture__capa--4">
           <circle className="quiz-sculpture__nucleo" cx="200" cy="150" r="15" />
+          <circle className="quiz-sculpture__nucleo-halo" cx="200" cy="150" r="24" />
         </g>
       </svg>
     </div>

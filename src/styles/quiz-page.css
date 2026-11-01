@@ -212,6 +212,21 @@
   stroke-width: 4;
 }
 
+.quiz-sculpture__nucleo-halo {
+  fill: none;
+  stroke: var(--color-primario);
+  stroke-width: 1.5;
+  stroke-opacity: 0.25;
+}
+
+.quiz-sculpture__orbitas {
+  stroke: currentColor;
+  stroke-width: 0.5;
+  stroke-opacity: 0.18;
+  fill: none;
+  pointer-events: none;
+}
+
 .quiz-sculpture__sombra {
   fill: var(--color-primario-oscuro);
   opacity: 0.09;
@@ -283,9 +298,15 @@
 .quiz-stepper__tramo--avance {
   stroke: var(--color-primario);
   stroke-width: 3;
-  transform-box: view-box;
-  transform-origin: 0px 50%;
-  transform: scaleX(0);
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+}
+
+/* El avance se revela tramo a tramo segun el paso alcanzado. */
+.quiz-page--step-2 .quiz-stepper__traza--a .quiz-stepper__tramo--avance,
+.quiz-page--step-3 .quiz-stepper__traza--a .quiz-stepper__tramo--avance,
+.quiz-page--step-3 .quiz-stepper__traza--b .quiz-stepper__tramo--avance {
+  stroke-dashoffset: 0;
 }
 
 .quiz-stepper__item {
@@ -1340,7 +1361,30 @@ main.quiz-page > section {
   .quiz-hero__copy > :nth-child(3) { animation-delay: 150ms; }
   .quiz-page .step-panel { animation: quiz-step-enter 360ms var(--curva-suave) both; }
   .quiz-stepper__item[data-state="completed"] .quiz-stepper__numero svg { animation: quiz-check-in 220ms var(--curva-suave) both; }
-  .quiz-stepper__tramo--avance { transition: transform var(--duracion-media) var(--curva-suave); }
+  .quiz-stepper__tramo--avance { transition: stroke-dashoffset 400ms var(--curva-suave); }
+
+  /* Deriva ambiental de las capas de la escultura (sutil, no distrae). */
+  .quiz-sculpture__capa--1 { animation: quiz-sculpture-drift-1 14s ease-in-out infinite alternate; }
+  .quiz-sculpture__capa--2 { animation: quiz-sculpture-drift-2 19s ease-in-out infinite alternate; }
+  .quiz-sculpture__capa--3 { animation: quiz-sculpture-drift-3 23s ease-in-out infinite alternate; }
+  .quiz-sculpture__nucleo { animation: quiz-sculpture-pulso 8s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: center; }
+
+  @keyframes quiz-sculpture-drift-1 {
+    from { transform: rotateX(var(--rx, 0deg)) rotateZ(calc(var(--rz, 0deg) - 1.5deg)) translateZ(var(--z, 0px)) scale(var(--s, 1)); }
+    to { transform: rotateX(var(--rx, 0deg)) rotateZ(calc(var(--rz, 0deg) + 1.5deg)) translateZ(var(--z, 0px)) scale(var(--s, 1)); }
+  }
+  @keyframes quiz-sculpture-drift-2 {
+    from { transform: rotateX(var(--rx, 0deg)) rotateZ(calc(var(--rz, 0deg) - 2deg)) translateZ(var(--z, 0px)) scale(var(--s, 1)); }
+    to { transform: rotateX(var(--rx, 0deg)) rotateZ(calc(var(--rz, 0deg) + 2deg)) translateZ(var(--z, 0px)) scale(var(--s, 1)); }
+  }
+  @keyframes quiz-sculpture-drift-3 {
+    from { transform: rotateX(var(--rx, 0deg)) rotateZ(calc(var(--rz, 0deg) - 1deg)) translateZ(var(--z, 0px)) scale(var(--s, 1)); }
+    to { transform: rotateX(var(--rx, 0deg)) rotateZ(calc(var(--rz, 0deg) + 1deg)) translateZ(var(--z, 0px)) scale(var(--s, 1)); }
+  }
+  @keyframes quiz-sculpture-pulso {
+    from { transform: scale(0.98); }
+    to { transform: scale(1.02); }
+  }
 }
 
 @keyframes quiz-copy-enter {
@@ -1505,7 +1549,10 @@ main.quiz-page > section {
 @media (prefers-reduced-motion: reduce) {
   .quiz-hero__copy > *,
   .quiz-page .step-panel,
-  .quiz-stepper__numero svg {
+  .quiz-stepper__numero svg,
+  .quiz-sculpture__capa,
+  .quiz-sculpture__nucleo,
+  .quiz-sculpture__nucleo-halo {
     animation: none !important;
     transition: none !important;
   }

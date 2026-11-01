@@ -493,3 +493,11 @@ compartidos con Panel (`.app-card`, `.notice`, `.app-main`, `.panel-actions`).
 - Diferenciación visual: Explora conserva verde bosque con patrón de puntos al 5% (`#a8c4b8`); Orienta amplía `border-top` a 6 px salvia con número 02 en salvia; Registra amplía `border-top` a 6 px terracota con número 03 en terracota.
 - Cero cambios en otras secciones (Inicio, Beneficios, Escoliosis comprobadas byte a byte en layout).
 - Todos los 3 enlaces existentes conservan su destino (`#ejercicios`, `#quiz`, `#panel`), textos y comportamiento `onClick`.
+## Rediseño QuizSculpture (Fases A-E)
+
+- Escultura: placas con canto inferior desplazado +8 px, 8 orbitales finas (`stroke-width: 0.5`, `opacity: 0.18`), núcleo con halo r=24 `stroke-opacity: 0.25`.
+- Tilt reactivo ±8° vía `pointermove` pasivo sobre `.quiz-sculpture__escena`, `requestAnimationFrame`, retorno 600 ms; solo puntero fino y sin reduced motion.
+- Derivas ambientales: capa 1 ±1.5° (14 s), capa 2 ±2° (19 s), capa 3 ±1° (23 s), núcleo pulso 0.98–1.02 (8 s), `alternate infinite`.
+- Iconos SVG 20×20 (`aria-hidden`) en objetivo, días, nivel y equipamiento.
+- Stepper: avance por `stroke-dashoffset` 400 ms tramo a tramo.
+- Reduced motion: `animation: none`, escultura en posición final, sin listeners.
